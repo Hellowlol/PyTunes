@@ -40,7 +40,7 @@ $(document).ready(function () {
     loadQueue(1);
     setInterval(function() {
         loadQueue(0);
-    }, 5000);
+    }, 15000);
     loadHistory();
     loadWarnings();
 });
@@ -178,8 +178,13 @@ function loadQueue(once) {
             var state = data.status.toLowerCase();
             var formattedState = state.charAt(0).toUpperCase() + state.slice(1);
 
-            $('#queue_state').html(formattedState);
-            $('#queue_speed').html(data.speed + 'B/Sec');
+            $('#queue_state').html(formattedState + ' - ');
+            $('#queue_speed').html(data.speed + 'B/Sec -');
+            $('#eta').html(data.eta + ' - ');
+            $('#load_avg').html(data.loadavg);
+            $('#remaining').html(data.mbleft + ' MB');
+            $('#total_disk_space_1').html(data.diskspacetotal1 + ' GB -');
+            $('#disk_space_left_1').html(data.diskspace1 + ' GB');
 
             $('#active_table_body').html('');
 
