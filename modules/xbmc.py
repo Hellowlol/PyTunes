@@ -270,7 +270,7 @@ class Xbmc:
             properties = ['thumbnail', 'fanart']
             limits = {'start': int(start), 'end': int(end)}
             filter = {'field': 'artist', 'operator': 'contains', 'value': filter}
-            return xbmc.AudioLibrary.GetArtists(properties=properties, limits=limits, sort=sort, filter=filter)
+            return xbmc.AudioLibrary.GetArtists(properties=properties, limits=limits, sort=sort, filter=filter, albumartistsonly=True)
         except Exception, e:
             self.logger.debug("Exception: " + str(e))
             self.logger.error("Unable to fetch artists!")
