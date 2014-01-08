@@ -918,7 +918,17 @@ function errorHandler() {
     moviesLoading = false;
     return false;
 }
+function substring(str, part) {
+    return str.substring(0, part.length) == part;
+}
 
+function loadShowFromHash(hash) {
+    options = {'filter': searchString}
+    if (substring(hash, '#tvshow-')) {
+        var tvShowId = hash.substring(8);
+        loadEpisodes({'tvshowid':tvShowId})
+    }
+}
 function reloadTab() {
     options = {'filter': searchString}
 
