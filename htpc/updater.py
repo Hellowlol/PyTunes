@@ -26,8 +26,8 @@ import shutil
 from htpc.root import do_restart
 
 # configure git repo
-gitUser =  'styxit'
-gitRepo = 'HTPC-Manager'
+gitUser =  'madclicker'
+gitRepo = 'PyTunes-HTPC-Manager'
 gitBranch = 'master'
 
 class Updater:
