@@ -1,7 +1,12 @@
 var searchString = '';
 var hideWatched = 0;
-var playerLoader = null
-var position1 = null
+var playerLoader = null;
+var position1 = null;
+var sorting = { 
+    method:'title',
+    order: 'ascending' 
+}
+
 $(document).ready(function() {
     playerLoader = setInterval('loadNowPlaying()', 1000);
     hideWatched = $('#hidewatched').hasClass('active')?1:0;
@@ -12,8 +17,6 @@ $(document).ready(function() {
         searchString = ''
     }).on('shown', reloadTab);
     $(window).trigger('hashchange')
-
-    loadShowFromHash(location.hash);
 
     // Catch keyboard event and send to XBMC
     $(document).keydown(function(e) {
@@ -60,6 +63,16 @@ $(document).ready(function() {
         $(this).text(hideWatched?' Show Watched':' Hide Watched');
         $(this).prepend('<i class="icon-eye-open"></i>');
         $.get(WEBDIR + 'settings?xbmc_hide_watched='+hideWatched);
+        reloadTab();
+    });
+    
+    // Define sort method
+    $('[data-sort-method]').click(function (e) {
+        e.preventDefault();
+        sorting.method = $(this).attr('data-sort-method');
+        sorting.order = $(this).attr('data-sort-order');
+        $('[data-sort-method]').removeClass('active');
+        $(this).addClass('active');
         reloadTab();
     });
 
@@ -127,7 +140,7 @@ var movieLoad = {
     options: null
 }
 function loadMovies(options) {
-    var optionstr = JSON.stringify(options) + hideWatched;
+    var optionstr = JSON.stringify(options) + hideWatched + JSON.stringify(sorting);
     if (movieLoad.options != optionstr) {
         movieLoad.last = 0;
         $('#movie-grid').empty();
@@ -140,7 +153,9 @@ function loadMovies(options) {
     var sendData = {
         start: movieLoad.last,
         end: (movieLoad.last + movieLoad.limit),
-        hidewatched: hideWatched
+        hidewatched: hideWatched,
+        sortmethod: sorting.method,
+        sortorder: sorting.order
     }
     $.extend(sendData, options);
 
@@ -255,7 +270,7 @@ var showLoad = {
     options: null
 }
 function loadShows(options) {
-    var optionstr = JSON.stringify(options) + hideWatched;
+    var optionstr = JSON.stringify(options) + hideWatched + JSON.stringify(sorting);
     if (showLoad.options != optionstr) {
         showLoad.last = 0;
         $('#show-grid').empty();
@@ -268,7 +283,9 @@ function loadShows(options) {
     var sendData = {
         start: showLoad.last,
         end: (showLoad.last + showLoad.limit),
-        hidewatched: hideWatched
+        hidewatched: hideWatched,
+        sortmethod: sorting.method,
+        sortorder: sorting.order
     }
     $.extend(sendData, options);
 
@@ -291,8 +308,8 @@ function loadShows(options) {
                 $.each(data.tvshows, function (i, show) {
                     var showItem = $('<li>').attr('title', show.title);
 
-                    var showAnchor = $('<a>').attr('href', '#tvshow-' + show.tvshowid).click(function(e) {
-                        // e.preventDefault();
+                    var showAnchor = $('<a>').attr('href', '#').click(function(e) {
+                        e.preventDefault();
                         loadEpisodes({'tvshowid':show.tvshowid})
                     });
 
@@ -900,19 +917,6 @@ function errorHandler() {
     notify('Error','Error connecting to XBMC','error');
     moviesLoading = false;
     return false;
-}
-
-function substring(str, part) {
-    return str.substring(0, part.length) == part;
-}
-
-function loadShowFromHash(hash) {
-    options = {'filter': searchString}
-
-    if (substring(hash, '#tvshow-')) {
-        var tvShowId = hash.substring(8);
-        loadEpisodes({'tvshowid':tvShowId})
-    }
 }
 
 function reloadTab() {
