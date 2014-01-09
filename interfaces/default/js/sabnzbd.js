@@ -40,7 +40,7 @@ $(document).ready(function () {
     loadQueue(1);
     setInterval(function() {
         loadQueue(0);
-    }, 15000);
+    }, 60000);
     loadHistory();
     loadWarnings();
 });
