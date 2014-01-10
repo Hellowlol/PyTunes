@@ -40,7 +40,7 @@ $(document).ready(function () {
     loadQueue(1);
     setInterval(function() {
         loadQueue(0);
-    }, 15000);
+    }, 60000);
     loadHistory();
     loadWarnings();
 });
@@ -150,6 +150,12 @@ function changeCategory(id, cat) {
 
 var queueToggleStatusAction = '';
 
+function popupUploadForm(){
+		var uploadform="<form name='add_nzb_form'  enctype='multipart/form-data' id='add_nzb_form' method='post' action='sabnzbd/uploadNZB'><input  id='nzb_url' name='nzb_url' type='file' placeholder=\"Paste NZB url\" /><select  name='nzb_category' id='nzb_category'></select><input type='submit' class='btn btn-success' value='Add NZB'/></form>";
+        var newWindow = window.open('', 'name', "menubar=0, location=300, height=300,width=400");
+			newWindow.document.write(uploadform)
+    }
+
 function loadQueue(once) {
     $.ajax({
         url: WEBDIR + 'sabnzbd/GetStatus',
@@ -178,13 +184,13 @@ function loadQueue(once) {
             var state = data.status.toLowerCase();
             var formattedState = state.charAt(0).toUpperCase() + state.slice(1);
 
-            $('#queue_state').html(formattedState + ' - ');
-            $('#queue_speed').html(data.speed + 'B/Sec -');
-            $('#eta').html(data.eta + ' - ');
+            $('#queue_state').html(formattedState + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+            $('#queue_speed').html(data.speed + 'B/Sec&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp');
+            $('#eta').html(data.eta + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp');
             $('#load_avg').html(data.loadavg);
-            $('#remaining').html(data.mbleft + ' MB');
-            $('#total_disk_space_1').html(data.diskspacetotal1 + ' GB -');
-            $('#disk_space_left_1').html(data.diskspace1 + ' GB');
+            $('#remaining').html(data.mbleft + ' MB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+            $('#total_disk_space_1').html(data.diskspacetotal1 + ' GB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+            $('#disk_space_left_1').html(data.diskspace1 + ' GB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
 
             $('#active_table_body').html('');
 
@@ -218,15 +224,13 @@ function loadQueue(once) {
                 row.append($('<td>').html(progress));
                 row.append($('<td>').html(job.timeleft + ' / ' + job.mbleft + 'MB').addClass('span3'));
 
-                var deleteImage = $('<a>');
-                deleteImage.html('&times;');
+                var deleteImage = makeIcon('icon-remove', 'Delete');
                 deleteImage.attr('alt', 'Remove');
                 deleteImage.addClass('close');
                 deleteImage.attr('href', '#');
                 deleteImage.click(function () {
                     removeQueueItem(job.nzo_id);
                 });
-
                 row.append($('<td>').html(deleteImage));
 
                 $('#active_table_body').append(row);
