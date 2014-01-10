@@ -28,6 +28,11 @@ class Sabnzbd:
         return htpc.LOOKUP.get_template('sabnzbd.html').render(scriptname='sabnzbd')
 
     @cherrypy.expose()
+    def sabupload(self):
+        return 'sabupload.html'
+        #return htpc.LOOKUP.get_template('sabupload.html')
+
+    @cherrypy.expose()
     @cherrypy.tools.json_out()
     def version(self, sabnzbd_host, sabnzbd_basepath, sabnzbd_port, sabnzbd_apikey, sabnzbd_ssl=False, **kwargs):
         self.logger.debug("Fetching version information from sabnzbd")
@@ -73,6 +78,14 @@ class Sabnzbd:
     @cherrypy.tools.json_out()
     def AddNzbFromUrl(self, nzb_url, nzb_category=''):
         self.logger.debug("Adding nzb from url")
+        if nzb_category:
+            nzb_category = '&cat=' + nzb_category
+        return self.fetch('&mode=addurl&name=' + quote(nzb_url) + nzb_category)
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def UploadNzb(self, nzb_url, nzb_category=''):
+        self.logger.debug("Upload nzb from afar")
         if nzb_category:
             nzb_category = '&cat=' + nzb_category
         return self.fetch('&mode=addurl&name=' + quote(nzb_url) + nzb_category)
