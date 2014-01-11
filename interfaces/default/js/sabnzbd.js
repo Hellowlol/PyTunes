@@ -45,6 +45,34 @@ $(document).ready(function () {
     loadWarnings();
 });
 
+
+$(function() {
+	var name = $( "#name" ),
+	email = $( "#email" ),
+	password = $( "#password" ),
+	allFields = $( [] ).add( name ).add( email ).add( password ),
+	tips = $( ".validateTips" );
+	$( "#dialog-form" ).dialog({
+		autoOpen: false,
+		height: 375,
+		width: 450,
+		modal: true,
+		buttons: {
+			Cancel: function() {
+				$( this ).dialog( "close" );
+			}
+		},
+		close: function() {
+			allFields.val( "" ).removeClass( "ui-state-error" );
+		}
+	});
+	$( "#add-nzb" )
+	.button()
+	.click(function() {
+		$( "#dialog-form" ).dialog( "open" );
+	});
+});
+
 function removeHistoryItem(id) {
     if (confirm('Are you sure?')) {
         $.ajax({
@@ -150,11 +178,6 @@ function changeCategory(id, cat) {
 
 var queueToggleStatusAction = '';
 
-function popupUploadForm(){
-		var uploadform="<form name='add_nzb_form'  enctype='multipart/form-data' id='add_nzb_form' method='post' action='sabnzbd/uploadNZB'><input  id='nzb_url' name='nzb_url' type='file' placeholder=\"Paste NZB url\" /><select  name='nzb_category' id='nzb_category'></select><input type='submit' class='btn btn-success' value='Add NZB'/></form>";
-        var newWindow = window.open('', 'name', "menubar=0, location=300, height=300,width=400");
-			newWindow.document.write(uploadform)
-    }
 
 function loadQueue(once) {
     $.ajax({
@@ -184,13 +207,13 @@ function loadQueue(once) {
             var state = data.status.toLowerCase();
             var formattedState = state.charAt(0).toUpperCase() + state.slice(1);
 
-            $('#queue_state').html(formattedState + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-            $('#queue_speed').html(data.speed + 'B/Sec&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp');
-            $('#eta').html(data.eta + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp');
+            $('#queue_state').html(formattedState + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+            $('#queue_speed').html(data.speed + 'B/Sec&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+            $('#eta').html(data.eta + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp');
             $('#load_avg').html(data.loadavg);
-            $('#remaining').html(data.mbleft + ' MB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-            $('#total_disk_space_1').html(data.diskspacetotal1 + ' GB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
-            $('#disk_space_left_1').html(data.diskspace1 + ' GB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+            $('#remaining').html(data.mbleft + ' MB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+            $('#total_disk_space_1').html(data.diskspacetotal1 + ' GB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
+            $('#disk_space_left_1').html(data.diskspace1 + ' GB&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;');
 
             $('#active_table_body').html('');
 
