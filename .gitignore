@@ -1,6 +1,9 @@
 # Ignore folder containing user data #
 userdata/
 
+# Ignore gedit backups #
+*~
+
 # Ignore Versions file. If present, contains github commit hash for current version #
 VERSION.txt
 
