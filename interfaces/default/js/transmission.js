@@ -74,7 +74,11 @@ function getTorrents(){
           progress.append(progressBar);
 
           // Round to 2 decimals
-          ratio = Math.round(torrent.uploadRatio*100) / 100;
+          //ratio = Math.round(torrent.uploadRatio*100) / 100;
+          ratio = torrent.uploadRatio;
+          if (ratio == -1) {
+            ratio = 0.00;
+          }
 
           // Button group
           buttons = $('<div>').addClass('btn-group');
@@ -93,8 +97,8 @@ function getTorrents(){
 
           tr.append(
             $('<td>').html(torrent.name
-              +'<br><small><i class="icon-long-arrow-down"></i> ' + getReadableFileSizeString(torrent.rateDownload)
-              +'/s <i class="icon-long-arrow-up"></i> ' + getReadableFileSizeString(torrent.rateUpload) + '/s</small>'
+              +'<br><small><i class="icon-download"></i> ' + getReadableFileSizeString(torrent.rateDownload)
+              + '/s' + '&nbsp;&nbsp;' + ' <i class="icon-upload"></i> ' + getReadableFileSizeString(torrent.rateUpload) + '/s</small>'
             ),
             $('<td>').text(ratio),
             $('<td>').text(getReadableTime(torrent.eta)),
