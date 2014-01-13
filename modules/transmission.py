@@ -42,7 +42,9 @@ class Transmission:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def start(self, torrentId):
+    def start(self, torrentId = False):
+        if (torrentId == False) :
+            return self.fetch('torrent-start-now')
         try:
             torrentId = int(torrentId)
         except ValueError:
@@ -51,7 +53,9 @@ class Transmission:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def stop(self, torrentId):
+    def stop(self, torrentId = False):
+        if (torrentId == False) :
+            return self.fetch('torrent-stop')
         try:
             torrentId = int(torrentId)
         except ValueError:

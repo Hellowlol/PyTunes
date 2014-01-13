@@ -30,6 +30,22 @@ $(document).ready(function(){
     });
   });
 });
+  /**
+   * Start or stop all torrents
+   */
+  $('#transmission-stop-all , #transmission-resume-all').click(function(){
+    action = $(this).data('action');
+    $.ajax({
+      url: WEBDIR + 'transmission/' + action,
+      success: function(response) {
+        // Refresh torrent list after successfull request with a tiny delay
+        if (response.result == 'success') {
+          window.setTimeout(getTorrents, 500);
+        }
+      }
+    });
+  });
+
 
 function getTorrents(){
   $.ajax({
@@ -58,7 +74,11 @@ function getTorrents(){
           progress.append(progressBar);
 
           // Round to 2 decimals
-          ratio = Math.round(torrent.uploadRatio*100) / 100;
+          //ratio = Math.round(torrent.uploadRatio*100) / 100;
+          ratio = torrent.uploadRatio;
+          if (ratio == -1) {
+            ratio = 0.00;
+          }
 
           // Button group
           buttons = $('<div>').addClass('btn-group');
@@ -77,8 +97,8 @@ function getTorrents(){
 
           tr.append(
             $('<td>').html(torrent.name
-              +'<br><small><i class="icon-long-arrow-down"></i> ' + getReadableFileSizeString(torrent.rateDownload)
-              +'/s <i class="icon-long-arrow-up"></i> ' + getReadableFileSizeString(torrent.rateUpload) + '/s</small>'
+              +'<br><small><i class="icon-download"></i> ' + getReadableFileSizeString(torrent.rateDownload)
+              + '/s' + '&nbsp;&nbsp;' + ' <i class="icon-upload"></i> ' + getReadableFileSizeString(torrent.rateUpload) + '/s</small>'
             ),
             $('<td>').text(ratio),
             $('<td>').text(getReadableTime(torrent.eta)),
@@ -93,7 +113,9 @@ function getTorrents(){
     }
   });
 }
-
+/**
+ * Generate a start or stop button based on the torrent status
+ */
 function generateTorrentActionButton(torrent) {
   button = $('<a>').addClass('btn btn-mini');
   // Resume button if torrent is paused
