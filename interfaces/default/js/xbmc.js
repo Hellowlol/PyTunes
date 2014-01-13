@@ -759,9 +759,9 @@ function loadNowPlaying() {
                 $('#nowplaying i.icon-pause').removeClass().addClass('icon-play')
             }
             if (data.app.muted) {
-                $('#nowplaying i.icon-volume-up').removeClass().addClass('icon-volume-off')
+                $('#nowplaying i.icon-off').removeClass().addClass('icon-volume-off')
             } else {
-                $('#nowplaying i.icon-volume-off').removeClass().addClass('icon-volume-up')
+                $('#nowplaying i.icon-volume-off').removeClass().addClass('icon-off')
             }
 
             var playingTime = pad(data.playerInfo.time.hours, 2) + ':' +
