@@ -2,34 +2,36 @@
 var transmissionConnectionError = false;
 
 $(document).ready(function(){
-  $('.spinner').show();
-  getTorrents();
-  getStatus();
-  setInterval(function() {
-     getTorrents();
-     getStatus();
-  }, 4000);
+	$('.spinner').show();
+	getTorrents();
+	getStatus();
+	setInterval(function() {
+		getTorrents();
+		getStatus();
+	}, 4000);
 
-  // Torrent button ajax load
-  $(document.body).off('click', '#torrent-queue .torrent-action a');
-  $(document.body).on('click', '#torrent-queue .torrent-action a', function(event) {
-    event.preventDefault();
+	// Torrent button ajax load
+	//$(document.body).off('click', '#torrent-queue .torrent-action a');
+	//$(document.body).on('click', '#torrent-queue .torrent-action a', function(event) {
+	$(document.body).off('click', '#torrent-all .torrent-action a');
+	$(document.body).on('click', '#torrent-all .torrent-action a', function(event) {
+		event.preventDefault();
+		// set spinner inside button
+		$(this).html('<i class="icon-spinner icon-spin"></i>');
 
-    // set spinner inside button
-    $(this).html('<i class="icon-spinner icon-spin"></i>');
-
-    // do ajax request
-    $.ajax({
-      url: $(this).attr('href'),
-      success: function(response) {
-        // Refresh torrent list after successfull request with a tiny delay
-        if (response.result == 'success') {
-          window.setTimeout(getTorrents, 500);
-        }
-      }
-    });
-  });
+		// do ajax request
+		$.ajax({
+			url: $(this).attr('href'),
+			success: function(response) {
+				// Refresh torrent list after successfull request with a tiny delay
+				if (response.result == 'success') {
+					window.setTimeout(getTorrents, 500);
+				}
+			}
+		});
+	});
 });
+
   /**
    * Start or stop all torrents
    */
@@ -44,7 +46,7 @@ $(document).ready(function(){
         }
       }
     });
-  });
+});
 
 
 function getTorrents(){
@@ -52,11 +54,15 @@ function getTorrents(){
     url: WEBDIR + 'transmission/queue',
     success: function(response){
       if (response != null && response.arguments && response.result == 'success') {
-        $('#torrent-queue').html('');
+        //$('#torrent-queue').html('');
+        $('#torrent-all').html('');
+        //$('#torrent-paused').html('');
 
         // Empty queue
         if (response.arguments.torrents.length == 0) {
-          $('#torrent-queue').html('<tr><td colspan="5">Queue is empty</td></tr>');
+          //$('#torrent-queue').html('<tr><td colspan="5">Queue is empty</td></tr>');
+          $('#torrent-all').html('<tr><td colspan="5">Queue is empty</td></tr>');
+          //$('#torrent-paused').html('<tr><td colspan="5">Queue is empty</td></tr>');
         }
 
         $.each(response.arguments.torrents, function(index, torrent){
@@ -106,7 +112,11 @@ function getTorrents(){
             $('<td>').addClass('span3').html(progress),
             $('<td>').addClass('torrent-action').append(buttons)
           );
-          $('#torrent-queue').append(tr);
+          //$('#torrent-queue').append(tr);
+          $('#torrent-all').append(tr);
+          //if (torrent.status == 0) {
+			//$('#torrent-paused').append(tr);
+		  //}
         });
         $('.spinner').hide();
       }
