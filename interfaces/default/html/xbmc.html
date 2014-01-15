@@ -2,8 +2,12 @@
 <% settings = self.attr.settings %>
 <div class="container">
     <div class="content">
-        <h1 class="page-header page-title">
-            <img src="../img/XBMC_Logo_sm.png">
+        <h1 class="page-header page-title" style="background:url(../img/bg-falling.png)">
+            <!--<img src="../img/XBMC_Logo_sm.png">-->
+            <img src="../img/xbmc_logo.gif">
+<span style="float:right">
+
+          <form  id="xbmc_form" method="post" class="well form-inline" action="" style="background:url(../img/bodybg.jpg)">
             <div class="btn-toolbar pull-right">
                 <div class="btn-group">
                     <select id="servers" class="span2"></select>
@@ -48,7 +52,9 @@
                         <li><a href="System?action=Shutdown" class="ajax-confirm" title="Shutdown XBMC"><i class="icon-off"></i> Shutdown</a></li>
                     </ul>
                 </div>
-            </div>
+            </div><br>
+			</span>
+			</form>
         </h1>
         <ul class="nav nav-tabs">
             <li><a href="#movies" data-toggle="tab">Movies</a></li>
