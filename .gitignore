@@ -4,6 +4,9 @@ userdata/
 # Ignore gedit backups #
 *~
 
+# Ignore README file #
+README.md
+
 # Ignore Versions file. If present, contains github commit hash for current version #
 VERSION.txt
 
