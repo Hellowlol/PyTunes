@@ -25,19 +25,8 @@ $(function() {
 </script>
 <div class="container">
     <div class="content maincontent">
-		<h2class="page-header page-title"><div>
-            <small>
-                Speed: &nbsp; <strong> <span id="queue_speed"></span></strong>
-                Status: &nbsp; <strong> <span id="queue_state"></span></strong>
-                Remaining: &nbsp; <strong> <span id="remaining"></span></strong>
-                Disk Space Total: &nbsp; <strong> <span id="total_disk_space_1"></span></strong>
-                Disk Space Remaining: &nbsp; <strong> <span id="disk_space_left_1"></span></strong>
-                ETA: &nbsp; <strong> <span id="eta"></span></strong>
-                SysLoad: &nbsp; <strong> <span id="load_avg"></span></strong>
-            </small>
-		</div></h2><br><br>
         <h1 class="page-header page-title">
-             <img src="../img/sabnzbd_logo_med.png">
+             <img src="../img/sabnzbd_logo.png">
 <span style="float:right">
 
           <form  id="add_nzb_form" method="post" class="well form-inline" action="" style="background:url(../img/bodybg.jpg)">
@@ -47,6 +36,18 @@ $(function() {
         </form>
 </span>
 </h1>
+		<h4 class="page-header page-title"><div>
+		<div>
+            <small>
+                Speed: <strong> <span id="queue_speed"></span></strong>
+                Status: <strong> <span id="queue_state"></span></strong>
+                Remaining: <strong> <span id="remaining"></span></strong>
+                Disk Space Total: <strong> <span id="total_disk_space_1"></span></strong>
+                Disk Space Remaining: <strong> <span id="disk_space_left_1"></span></strong>
+                ETA: <strong> <span id="eta"></span></strong>
+                SysLoad: <strong> <span id="load_avg"></span></strong>
+            </small>
+		</div></h4>
 	<div id="dialog-form" title="ADD NZB">
 		<form name="add_nzb" id="add_nzb" method="post" class="well form-inline action=""">
 			<fieldset>
