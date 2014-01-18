@@ -67,6 +67,8 @@ def load_modules():
     htpc.ROOT.nzbget = NZBGet()
     from modules.plex import Plex
     htpc.ROOT.plex = Plex()
+    from modules.qbittorrent import qbittorrent
+    htpc.ROOT.qbittorrent = qbittorrent()
 
 
 def main():
