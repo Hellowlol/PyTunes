@@ -32,13 +32,39 @@ function get_torrents() {
 
 
                 var progressBar = $('<div>');
+				//progressLabel = $( ".progress-label" );
                 progressBar.addClass('bar');
                 progressBar.css('width', (torrent.progress * 100) + '%');
+				//progressBar.progressbar({
+				//	value: false,
+				//	change: function() {
+				//		progressLabel.text( progressBar.progressbar( "value" ) + "%" );
+				//	},
+				//	complete: function() {
+				//		progressLabel.text( "Complete!" );
+				//	}
+				//});
 
                 var progress = $('<div>');
                 progress.addClass('progress');
-                if (torrent.percentage_done >= 1) {
+                //if (torrent.percentage_done >= 1) {
+                if (torrent.state === "uploading") {
                     progress.addClass('progress-success');
+                }
+                if (torrent.state === "stalledUP") {
+                    progress.addClass('progress-danger');
+                }
+                if (torrent.state === "stalledDL") {
+                    progress.addClass('progress-danger');
+                }
+                if (torrent.state === "pausedDL") {
+                    progress.addClass('progress-warning');
+                }
+                 if (torrent.state === "pausedUP") {
+                    progress.addClass('progress-warning');
+                }
+                 if (torrent.state === "error") {
+                    progress.addClass('progress-danger progress-striped active');
                 }
                 progress.append(progressBar);
 
@@ -61,7 +87,7 @@ function get_torrents() {
 
                 tr.append(
 
-                $('<td>').addClass('qbt_name').html(torrent.name + '<br><small><i class="icon-long-arrow-down"></i> ' + torrent.dlspeed + '<i class="icon-long-arrow-up"></i> ' + torrent.upspeed + '</small>'),
+                $('<td>').addClass('qbt_name').html(torrent.name + '<br><small><i class="icon-download"></i> ' + torrent.dlspeed + '&nbsp;&nbsp;&nbsp;<i class="icon-upload"></i> ' + torrent.upspeed + '</small>'),
                 $('<td>').addClass('qbt_ratio').text(torrent.ratio),
                 $('<td>').addClass('qbit_eta').text(torrent.eta),
                 $('<td>').addClass('qbt_state').text(torrent.state),
