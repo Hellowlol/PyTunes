@@ -1,13 +1,28 @@
-
-$("#qbt_rp_icon").click(function () {
-    if ($("#qbt_rp_icon").hasClass("icon-play")) {
-        $.get(WEBDIR+'qbittorrent/command/resumeall');
-        $('#qbt_rp_icon').removeClass("icon-play").addClass("icon-pause");
-    } else {
-        $.get(WEBDIR + 'qbittorrent/command/pauseall');
-        $('#qbt_rp_icon').removeClass("icon-pause").addClass("icon-play");
+$("#qbt_rp_all_button").click(function () {
+    if ($("#qbt_rp_all_icon").hasClass("icon-pause")) {
+    //if (data.status == 'Paused') {
+        $('#qbt_rp_all_icon').html(' Resume');
+        $('#qbt_rp_all_icon').removeClass("icon-pause").addClass("icon-play");
+        $.get(WEBDIR+'qbittorrent/command/pauseall');
+    } 
+	else {
+        $('#qbt_rp_all_icon').html(' Pause')
+        $('#qbt_rp_all_icon').removeClass("icon-play").addClass("icon-pause");
+		$.get(WEBDIR + 'qbittorrent/command/resumeall');
     }
 });
+
+
+
+//$("#qbt_rp_button").click(function () {
+//    if ($("#qbt_rp_icon").hasClass("icon-play")) {
+//        $.get(WEBDIR+'qbittorrent/command/resumeall');
+//        $('#qbt_rp_icon').removeClass("icon-play").addClass("icon-pause");
+//    } else {
+//        $.get(WEBDIR + 'qbittorrent/command/pauseall');
+//        $('#qbt_rp_icon').removeClass("icon-pause").addClass("icon-play");
+//    }
+//});
 
 
 

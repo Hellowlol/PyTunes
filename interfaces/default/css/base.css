@@ -3,7 +3,7 @@ h1.page-header.page-title {
     padding: 15px 15px 15px;
     margin: -20px -20px 20px;
     font-size: 1.8em;
-	background:url(../img/bg-falling.png)
+	background: url('../img/bg-falling.png')
 }
 h1.page-header.page-title a {
     color: #000;
