@@ -31,22 +31,11 @@ function get_torrents() {
 
 
                 var progressBar = $('<div>');
-				//progressLabel = $( ".progress-label" );
                 progressBar.addClass('bar');
                 progressBar.css('width', (torrent.progress * 100) + '%');
-				//progressBar.progressbar({
-				//	value: false,
-				//	change: function() {
-				//		progressLabel.text( progressBar.progressbar( "value" ) + "%" );
-				//	},
-				//	complete: function() {
-				//		progressLabel.text( "Complete!" );
-				//	}
-				//});
-
+                progressBar.append("<font color='black'>" + Math.round(torrent.progress * 100) + "%</font>");
                 var progress = $('<div>');
                 progress.addClass('progress');
-                //if (torrent.percentage_done >= 1) {
                 if (torrent.state === "uploading") {
                     progress.addClass('progress-success');
                 }
