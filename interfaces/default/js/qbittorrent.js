@@ -1,6 +1,5 @@
 $("#qbt_rp_all_button").click(function () {
     if ($("#qbt_rp_all_icon").hasClass("icon-pause")) {
-    //if (data.status == 'Paused') {
         $('#qbt_rp_all_icon').html(' Resume');
         $('#qbt_rp_all_icon').removeClass("icon-pause").addClass("icon-play");
         $.get(WEBDIR+'qbittorrent/command/pauseall');
@@ -11,21 +10,6 @@ $("#qbt_rp_all_button").click(function () {
 		$.get(WEBDIR + 'qbittorrent/command/resumeall');
     }
 });
-
-
-
-//$("#qbt_rp_button").click(function () {
-//    if ($("#qbt_rp_icon").hasClass("icon-play")) {
-//        $.get(WEBDIR+'qbittorrent/command/resumeall');
-//        $('#qbt_rp_icon').removeClass("icon-play").addClass("icon-pause");
-//    } else {
-//        $.get(WEBDIR + 'qbittorrent/command/pauseall');
-//        $('#qbt_rp_icon').removeClass("icon-pause").addClass("icon-play");
-//    }
-//});
-
-
-
 function get_torrents() {
     $.ajax({
         'url': WEBDIR + 'qbittorrent/fetch',
