@@ -51,6 +51,7 @@ class qbittorrent:
     @cherrypy.expose()
     def fetch(self):
         result = None
+        self.logger.debug("Trying to get torrents")
        
         try:
             url = self.qbturl()

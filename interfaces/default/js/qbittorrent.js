@@ -2,14 +2,14 @@ $("#qbt_rp_all_button").click(function () {
     if ($("#qbt_rp_all_icon").hasClass("icon-pause")) {
         $('#qbt_rp_all_icon').html(' Resume');
         $('#qbt_rp_all_icon').removeClass("icon-pause").addClass("icon-play");
-        $.get(WEBDIR+'qbittorrent/command/pauseall');
-    } 
-	else {
-        $('#qbt_rp_all_icon').html(' Pause')
+        $.get(WEBDIR + 'qbittorrent/command/pauseall');
+    } else {
+        $('#qbt_rp_all_icon').html(' Pause');
         $('#qbt_rp_all_icon').removeClass("icon-play").addClass("icon-pause");
-		$.get(WEBDIR + 'qbittorrent/command/resumeall');
+        $.get(WEBDIR + 'qbittorrent/command/resumeall');
     }
 });
+
 function get_torrents() {
     $.ajax({
         'url': WEBDIR + 'qbittorrent/fetch',
@@ -33,7 +33,7 @@ function get_torrents() {
                 var progressBar = $('<div>');
                 progressBar.addClass('bar');
                 progressBar.css('width', (torrent.progress * 100) + '%');
-                progressBar.append("<font color='black'>" + Math.round(torrent.progress * 100) + "%</font>");
+                //progressBar.append("<font color='black'>" + Math.round(torrent.progress * 100) + "%</black>");
                 var progress = $('<div>');
                 progress.addClass('progress');
                 if (torrent.state === "uploading") {
@@ -48,10 +48,13 @@ function get_torrents() {
                 if (torrent.state === "pausedDL") {
                     progress.addClass('progress-warning');
                 }
-                 if (torrent.state === "pausedUP") {
+                if (torrent.state === "pausedUP") {
                     progress.addClass('progress-warning');
                 }
-                 if (torrent.state === "error") {
+                if (torrent.state === "checkingUP") {
+                    progress.addClass('progress-warning');
+                }
+                if (torrent.state === "error") {
                     progress.addClass('progress-danger progress-striped active');
                 }
                 progress.append(progressBar);
@@ -113,7 +116,9 @@ function generateTorrentActionButton(torrent) {
     button = $('<a>').addClass('btn btn-mini qbt_rp');
     // Resume button if torrent is paused
     var status = torrent.state;
-    var icon = cmd = title = "";
+    var icon = "";
+    var cmd = "";
+    var title = "";
 
     if (status == "pausedUP" || status == "pausedDL" || status == "error" || status == "checkingUP") {
         icon = "icon-play";
@@ -137,7 +142,7 @@ function generateTorrentActionButton(torrent) {
 
 // delete torrent
 $(document).on('click', '.qbt_removetorrent', function () {
-    $.get(WEBDIR + 'qbittorrent/command/' + $(this).attr('data-action') + '/' + $(this).attr('data-hash') + '/' + $(this).attr('data-name') + '/', function() {
+    $.get(WEBDIR + 'qbittorrent/command/' + $(this).attr('data-action') + '/' + $(this).attr('data-hash') + '/' + $(this).attr('data-name') + '/', function () {
 
     });
 
@@ -150,16 +155,16 @@ $(document).on('click', '.qbt_rp', function () {
     } else {
         ($(this).children("i").removeClass("icon-pause").addClass("icon-play"));
     }
-    $.get(WEBDIR + 'qbittorrent/command/' + $(this).attr('data-action') + '/' + $(this).attr('data-hash') + '/' + $(this).attr('data-name') + '/', function() {
-    
+    $.get(WEBDIR + 'qbittorrent/command/' + $(this).attr('data-action') + '/' + $(this).attr('data-hash') + '/' + $(this).attr('data-name') + '/', function () {
+
     });
 
 });
 
 //sets speed up and down
 $(document).on('focusout', '.container .content #ss input', function () {
-    $.get(WEBDIR + 'qbittorrent/set_speedlimit/' + $(this).data('action') + '/' + $(this).val() + '/', function() {
-    
+    $.get(WEBDIR + 'qbittorrent/set_speedlimit/' + $(this).data('action') + '/' + $(this).val() + '/', function () {
+
     });
 
 });
