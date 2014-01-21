@@ -4,7 +4,7 @@ $(document).ready(function () {
     loadLog();
 });
 
-function loadLog () {
+function loadLog() {
     $.ajax({
         url: WEBDIR + 'log/getlog',
         data: {
@@ -15,16 +15,16 @@ function loadLog () {
         dataType: 'json',
         success: function (data) {
             $('#log-grid tbody').empty();
-            if (data == null) return false;
+            if (data === null) return false;
             $.each(data, function (r, row) {
-                var tr = $('<tr>')
+                var tr = $('<tr>');
                 $.each(row, function (c, column) {
                     var td = $('<td>').text(column);
                     tr.append(td);
                 });
                 $('#log-grid tbody').append(tr);
             });
-            $('#log-grid tbody').trigger('update')
+            $('#log-grid tbody').trigger('update');
         }
     });
 }
