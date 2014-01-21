@@ -6,20 +6,20 @@ var movieLoad = {
     request: null,
     limit: 50,
     options: null
-}
+};
 
-$(document).ready(function() {
+$(document).ready(function () {
 
     // Load data on tab display
-    $('a[data-toggle=\'tab\']').click(function(e) {
+    $('a[data-toggle=\'tab\']').click(function (e) {
         $('#search').val('');
         searchString = '';
     }).on('shown', reloadTab);
-    $(window).trigger('hashchange')
+    $(window).trigger('hashchange');
 
-     // Load more titles on scroll
-    $(window).scroll(function() {
-        if($(window).scrollTop() + $(window).height() >= $(document).height() - 10) {
+    // Load more titles on scroll
+    $(window).scroll(function () {
+        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 10) {
             reloadTab();
         }
     });
@@ -34,12 +34,12 @@ function loadMovies(options) {
     }
     movieLoad.options = optionstr;
 
-    var active = (movieLoad.request != null && movieLoad.request.readyState != 4);
-    if (active || movieLoad.last == -1) return;
+    var active = (movieLoad.request !== null && movieLoad.request.readyState != 4);
+    if (active || movieLoad.last === -1) return;
 
     var sendData = {
         start: movieLoad.last,
-        end: (movieLoad.last + movieLoad.limit),
+        end: (movieLoad.last + movieLoad.limit)
     };
 
     $.extend(sendData, options);
@@ -62,18 +62,18 @@ function loadMovies(options) {
                 movieLoad.last += movieLoad.limit;
             }
 
-            if (parsedJson.movies != undefined) {
+            if (parsedJson.movies !== undefined) {
                 $.each(parsedJson.movies, function (i, movie) {
                     var movieItem = $('<li>').attr('title', movie.title);
 
-                    var movieAnchor = $('<a>').attr('href', '#').click(function(e) {
+                    var movieAnchor = $('<a>').attr('href', '#').click(function (e) {
                         e.preventDefault();
                         loadMovie(movie);
                     });
 
                     var src = 'holder.js/100x150/text:No artwork';
                     if (movie.thumbnail !== '') {
-                        src = WEBDIR + 'plex/GetThumb?w=100&h=150&thumb='+encodeURIComponent(movie.thumbnail);
+                        src = WEBDIR + 'plex/GetThumb?w=100&h=150&thumb=' + encodeURIComponent(movie.thumbnail);
                     }
                     movieAnchor.append($('<img>').attr('src', src).addClass('thumbnail'));
 
@@ -90,20 +90,20 @@ function loadMovies(options) {
             }
             Holder.run();
         },
-        complete: function() {
+        complete: function () {
             $('.spinner').hide();
         }
     });
 }
 
 function loadMovie(movie) {
-    var poster = WEBDIR + 'plex/GetThumb?w=200&h=300&thumb='+encodeURIComponent(movie.thumbnail)
+    var poster = WEBDIR + 'plex/GetThumb?w=200&h=300&thumb=' + encodeURIComponent(movie.thumbnail);
     var info = $('<div>').addClass('modal-movieinfo');
     if (movie.runtime) {
-    info.append($('<p>').html('<b>Runtime:</b> ' + movie.runtime + ' min'));
+        info.append($('<p>').html('<b>Runtime:</b> ' + movie.runtime + ' min'));
     }
     if (movie.plot) {
-    info.append($('<p>').html('<b>Plot:</b> ' + movie.plot));
+        info.append($('<p>').html('<b>Plot:</b> ' + movie.plot));
     }
     if (movie.genre) {
         info.append($('<p>').html('<b>Genre:</b> ' + movie.genre));
@@ -115,18 +115,17 @@ function loadMovie(movie) {
         info.append($('<span>').raty({
             readOnly: true,
             path: WEBDIR + 'img',
-            score: (movie.rating / 2),
+            score: (movie.rating / 2)
         }));
     }
     var buttons = {
 
-    }
-    showModal(movie.title + ' ('+movie.year+')', $('<div>').append(
-        $('<img>').attr('src', poster).addClass('thumbnail movie-poster pull-left'),
-        info
-    ), buttons);
+    };
+    showModal(movie.title + ' (' + movie.year + ')', $('<div>').append(
+    $('<img>').attr('src', poster).addClass('thumbnail movie-poster pull-left'),
+    info), buttons);
     $('.modal-fanart').css({
-        'background-image' : 'url('+WEBDIR+'plex/GetThumb?w=675&h=400&o=10&thumb='+encodeURIComponent(movie.fanart)+')'
+        'background-image': 'url(' + WEBDIR + 'plex/GetThumb?w=675&h=400&o=10&thumb=' + encodeURIComponent(movie.fanart) + ')'
     });
 }
 
@@ -148,7 +147,7 @@ function loadShows(options) {
     }
     showLoad.options = optionstr;
 
-    var active = (showLoad.request!=null && showLoad.request.readyState!=4);
+    var active = (showLoad.request !== null && showLoad.request.readyState != 4);
     if (active || showLoad.last == -1) return;
 
     var sendData = {
@@ -177,14 +176,16 @@ function loadShows(options) {
                 $.each(data.tvShows, function (i, show) {
                     var showItem = $('<li>').attr('title', show.title);
 
-                    var showAnchor = $('<a>').attr('href', '#').click(function(e) {
+                    var showAnchor = $('<a>').attr('href', '#').click(function (e) {
                         e.preventDefault();
-                        loadEpisodes({'tvshowid':show.tvshowid})
+                        loadEpisodes({
+                            'tvshowid': show.tvshowid
+                        });
                     });
 
                     var src = 'holder.js/100x150/text:No artwork';
-                    if (show.thumbnail != '') {
-                        src = WEBDIR + 'plex/GetThumb?w=100&h=150&thumb='+encodeURIComponent(show.thumbnail);
+                    if (show.thumbnail !== '') {
+                        src = WEBDIR + 'plex/GetThumb?w=100&h=150&thumb=' + encodeURIComponent(show.thumbnail);
                     }
                     showAnchor.append($('<img>').attr('src', src).addClass('thumbnail'));
 
@@ -201,7 +202,7 @@ function loadShows(options) {
             }
             Holder.run();
         },
-        complete: function() {
+        complete: function () {
             $('.spinner').hide();
         }
     });
@@ -212,8 +213,9 @@ var episodeLoad = {
     request: null,
     limit: 50,
     options: null
-}
+};
 var currentShow = null;
+
 function loadEpisodes(options) {
     currentShow = options.tvshowid;
     var optionstr = JSON.stringify(options) + hideWatched;
@@ -223,14 +225,14 @@ function loadEpisodes(options) {
     }
     episodeLoad.options = optionstr;
 
-    var active = (episodeLoad.request!=null && episodeLoad.request.readyState!=4);
+    var active = (episodeLoad.request !== null && episodeLoad.request.readyState != 4);
     if (active || episodeLoad.last == -1) return;
 
     var sendData = {
         start: episodeLoad.last,
         end: (episodeLoad.last + episodeLoad.limit),
         hidewatched: hideWatched
-    }
+    };
     $.extend(sendData, options);
 
     $('.spinner').show();
@@ -241,7 +243,7 @@ function loadEpisodes(options) {
         dataType: 'json',
         success: function (data) {
             data = JSON.parse(data);
-            if (data==null || data.limits.total==0) return errorHandler();
+            if (data === null || data.limits.total === 0) return errorHandler();
 
             if (data.limits.end == data.limits.total) {
                 episodeLoad.last = -1;
@@ -249,18 +251,18 @@ function loadEpisodes(options) {
                 episodeLoad.last += episodeLoad.limit;
             }
 
-            if (data.episodes != undefined) {
+            if (data.episodes !== undefined) {
                 $.each(data.episodes, function (i, episode) {
                     var episodeItem = $('<li>').attr('title', episode.plot);
 
-                    var episodeAnchor = $('<a>').attr('href', '#').click(function(e) {
+                    var episodeAnchor = $('<a>').attr('href', '#').click(function (e) {
                         e.preventDefault();
                         playItem(episode.episodeid, 'episode');
                     });
 
                     var src = 'holder.js/150x85/text:No artwork';
-                    if (episode.thumbnail != '') {
-                        src = WEBDIR + 'plex/GetThumb?w=150&h=85&thumb='+encodeURIComponent(episode.thumbnail);
+                    if (episode.thumbnail !== '') {
+                        src = WEBDIR + 'plex/GetThumb?w=150&h=85&thumb=' + encodeURIComponent(episode.thumbnail);
                     }
                     episodeAnchor.append($('<img>').attr('src', src).addClass('thumbnail'));
 
@@ -277,12 +279,12 @@ function loadEpisodes(options) {
             }
             Holder.run();
         },
-        complete: function() {
+        complete: function () {
             $('.spinner').hide();
             $('a[href=#episodes]').tab('show');
         }
     });
-    $('#episode-grid').slideDown()
+    $('#episode-grid').slideDown();
 }
 
 function reloadTab() {
@@ -293,9 +295,11 @@ function reloadTab() {
     } else if ($('#shows').is(':visible')) {
         loadShows(options);
     } else if ($('#episodes').is(':visible')) {
-        options = $.extend(options, {'tvshowid': currentShow});
+        options = $.extend(options, {
+            'tvshowid': currentShow
+        });
         loadEpisodes(options);
-}
+    }
 }
 
 function hideWatched() {
@@ -304,7 +308,7 @@ function hideWatched() {
 
 function errorHandler() {
     $('.spinner').hide();
-    notify('Error','Error connecting to Plex','error');
+    notify('Error', 'Error connecting to Plex', 'error');
     moviesLoading = false;
     return false;
 }
