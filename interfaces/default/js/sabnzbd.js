@@ -1,25 +1,25 @@
 $(document).ready(function () {
-    $(window).trigger('hashchange')
+    $(window).trigger('hashchange');
     $('#nzb_pause_button').click(function () {
         var clickItem = $(this);
         clickItem.button('loading');
         $.ajax({
-            url: WEBDIR + 'sabnzbd/TogglePause?mode='+queueToggleStatusAction,
+            url: WEBDIR + 'sabnzbd/TogglePause?mode=' + queueToggleStatusAction,
             dataType: 'json',
             type: 'get'
         });
     });
 
-    $('#add_nzb_button').click(function() {
+    $('#add_nzb_button').click(function () {
         $('#add_nzb_form').submit();
-    })
+    });
 
     $('#add_nzb_form').ajaxForm({
         url: WEBDIR + 'sabnzbd/AddNzbFromUrl',
         type: 'post',
         dataType: 'json',
         success: function (result) {
-            if (result.status != undefined && result.status) {
+            if (result.status !== undefined && result.status) {
                 $('[href=#active]').trigger('click');
                 $('#nzb_url').val('');
                 $('#nzb_category').val('');
@@ -29,7 +29,7 @@ $(document).ready(function () {
 
     setCategories('#nzb_category', 'Default');
 
-    $('#nzb_set_speed').click(function() {
+    $('#nzb_set_speed').click(function () {
         var speed = ($('#nzb_get_speed').val());
         $.ajax({
             url: WEBDIR + 'sabnzbd/SetSpeed?speed=' + speed,
@@ -38,7 +38,7 @@ $(document).ready(function () {
         });
     });
     loadQueue(1);
-    setInterval(function() {
+    setInterval(function () {
         loadQueue(0);
     }, 60000);
     loadHistory();
@@ -46,31 +46,31 @@ $(document).ready(function () {
 });
 
 
-$(function() {
-	var name = $( "#name" ),
-	email = $( "#email" ),
-	password = $( "#password" ),
-	allFields = $( [] ).add( name ).add( email ).add( password ),
-	tips = $( ".validateTips" );
-	$( "#dialog-form" ).dialog({
-		autoOpen: false,
-		height: 375,
-		width: 450,
-		modal: true,
-		buttons: {
-			Cancel: function() {
-				$( this ).dialog( "close" );
-			}
-		},
-		close: function() {
-			allFields.val( "" ).removeClass( "ui-state-error" );
-		}
-	});
-	$( "#add-nzb" )
-	.button()
-	.click(function() {
-		$( "#dialog-form" ).dialog( "open" );
-	});
+$(function () {
+    var name = $("#name"),
+        email = $("#email"),
+        password = $("#password"),
+        allFields = $([]).add(name).add(email).add(password),
+        tips = $(".validateTips");
+    $("#dialog-form").dialog({
+        autoOpen: false,
+        height: 375,
+        width: 450,
+        modal: true,
+        buttons: {
+            Cancel: function () {
+                $(this).dialog("close");
+            }
+        },
+        close: function () {
+            allFields.val("").removeClass("ui-state-error");
+        }
+    });
+    $("#add-nzb")
+        .button()
+        .click(function () {
+        $("#dialog-form").dialog("open");
+    });
 });
 
 function removeHistoryItem(id) {
@@ -107,7 +107,7 @@ function loadHistory() {
         type: 'get',
         dataType: 'json',
         success: function (data) {
-            if (data.status == false) {
+            if (data.status === false) {
                 $('#notification_area').addClass('alert alert-error');
                 $('#notification_area').html('<strong>Error</strong> Could not connect to SABnzbd, go to <a href="' + WEBDIR + 'settings">settings</a>');
                 return false;
@@ -121,7 +121,7 @@ function loadHistory() {
 
                 var retryImage = null;
                 if (slot.status == 'Failed') {
-                    var retryImage = makeIcon('icon-repeat', 'Retry');
+                    retryImage = makeIcon('icon-repeat', 'Retry');
                     retryImage.click(function () {
                         retryHistoryItem(slot.nzo_id);
                     });
@@ -132,7 +132,7 @@ function loadHistory() {
                 failMessage.addClass('label-important');
                 failMessage.html(slot.fail_message);
 
-                var row = $('<tr>')
+                var row = $('<tr>');
 
                 var name = $('<td>').html(slot.name);
                 if (slot.category != '*') {
@@ -185,7 +185,7 @@ function loadQueue(once) {
         type: 'get',
         dataType: 'json',
         success: function (object) {
-            if (object.status == false) {
+            if (object.status === false) {
                 $('#notification_area').addClass('alert alert-error');
                 $('#notification_area').html('<strong>Error</strong> Could not connect to SABnzbd, go to <a href="' + WEBDIR + 'settings">settings</a>');
                 return false;
@@ -200,7 +200,7 @@ function loadQueue(once) {
                 $('#nzb_pause_button').html('<i class="icon-play"></i> Resume');
                 queueToggleStatusAction = 'resume';
             } else {
-                $('#nzb_pause_button').html('<i class="icon-pause"></i> Pause')
+                $('#nzb_pause_button').html('<i class="icon-pause"></i> Pause');
                 queueToggleStatusAction = 'pause';
             }
 
@@ -217,8 +217,8 @@ function loadQueue(once) {
 
             $('#active_table_body').html('');
 
-            if (data.slots.length == 0) {
-                var row = $('<tr>')
+            if (data.slots.length === 0) {
+                var row = $('<tr>');
                 row.append($('<td>').html('Queue is empty').attr('colspan', 5));
                 $('#active_table_body').append(row);
             }
@@ -228,16 +228,16 @@ function loadQueue(once) {
                 progressBar.addClass('bar');
                 progressBar.css('width', job.percentage + '%');
 
-                var  progress = $('<div>');
+                var progress = $('<div>');
                 progress.addClass('progress');
                 progress.append(progressBar);
 
-                var row = $('<tr>')
+                var row = $('<tr>');
                 row.append($('<td>').html(job.filename));
 
                 var categories = $('<select>');
                 categories.addClass('span2');
-                categories.change(function() {
+                categories.change(function () {
                     changeCategory(job.nzo_id, $(this).val());
                 });
                 setCategories(categories, job.cat);
@@ -268,13 +268,13 @@ function loadWarnings() {
         type: 'get',
         dataType: 'json',
         success: function (data) {
-            if (data.warnings == 0) {
-                var row = $('<tr>')
+            if (data.warnings === 0) {
+                var row = $('<tr>');
                 row.append($('<td>').html('No warnings'));
                 $('#warning_table_body').append(row);
             }
             $.each(data.warnings, function (i, warning) {
-                var row = $('<tr>')
+                var row = $('<tr>');
                 row.append($('<td>').html(warning));
                 $('#warning_table_body').append(row);
             });
@@ -301,58 +301,53 @@ function setCategories(selector, select) {
     });
 }
 
-function sabnzbdStatusLabel(text){
-  var statusOK = ['Completed'];
-  var statusInfo = ['Extracting', 'Running'];
-  var statusError = ['Failed'];
-  var statusWarning = ['Verifying', 'Repairing'];
+function sabnzbdStatusLabel(text) {
+    var statusOK = ['Completed'];
+    var statusInfo = ['Extracting', 'Running'];
+    var statusError = ['Failed'];
+    var statusWarning = ['Verifying', 'Repairing'];
 
-  var label = $('<span>').addClass('label').text(text);
+    var label = $('<span>').addClass('label').text(text);
 
-  if (statusOK.indexOf(text) != -1) {
-    label.addClass('label-success');
-  }
-  else if (statusInfo.indexOf(text) != -1) {
-    label.addClass('label-info');
-  }
-  else if (statusError.indexOf(text) != -1) {
-    label.addClass('label-important');
-  }
-  else if (statusWarning.indexOf(text) != -1) {
-    label.addClass('label-warning');
-  }
+    if (statusOK.indexOf(text) != -1) {
+        label.addClass('label-success');
+    } else if (statusInfo.indexOf(text) != -1) {
+        label.addClass('label-info');
+    } else if (statusError.indexOf(text) != -1) {
+        label.addClass('label-important');
+    } else if (statusWarning.indexOf(text) != -1) {
+        label.addClass('label-warning');
+    }
 
-  var icon = sabnzbdStatusIcon(text, true);
-  if (icon != '') {
-    label.prepend(' ').prepend(icon);
-  }
-  return label;
+    var icon = sabnzbdStatusIcon(text, true);
+    if (icon !== '') {
+        label.prepend(' ').prepend(icon);
+    }
+    return label;
 }
 
-function sabnzbdStatusIcon(iconText, white){
-  var text =[
-    'Completed',
-    'Extracting',
-    'Running',
-    'Verifying',
-    'Failed',
-    'Repairing'
-  ];
-  var icons = [
-    'icon-ok',
-    'icon-share',
-    'icon-play-circle',
-    'icon-exchange',
-    'icon-remove',
-    'icon-wrench'
-  ];
+function sabnzbdStatusIcon(iconText, white) {
+    var text = [
+        'Completed',
+        'Extracting',
+        'Running',
+        'Verifying',
+        'Failed',
+        'Repairing'];
+    var icons = [
+        'icon-ok',
+        'icon-share',
+        'icon-play-circle',
+        'icon-exchange',
+        'icon-remove',
+        'icon-wrench'];
 
-  if (text.indexOf(iconText) != -1) {
-    var icon = $('<i>').addClass(icons[text.indexOf(iconText)]);
-    if (white == true) {
-      icon.addClass('icon-white');
+    if (text.indexOf(iconText) != -1) {
+        var icon = $('<i>').addClass(icons[text.indexOf(iconText)]);
+        if (white === true) {
+            icon.addClass('icon-white');
+        }
+        return icon;
     }
-    return icon;
-  }
-  return '';
+    return '';
 }
