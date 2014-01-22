@@ -236,7 +236,7 @@ function loadQueue(once) {
                 row.append($('<td>').html(job.filename));
 
                 var categories = $('<select>');
-                categories.addClass('span2');
+                categories.addClass('span1');
                 categories.change(function () {
                     changeCategory(job.nzo_id, $(this).val());
                 });

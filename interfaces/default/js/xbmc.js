@@ -235,6 +235,29 @@ function loadMovie(movie) {
         var genre = movie.genre.join(', ');
         info.append($('<p>').html('<b>Genre:</b> ' + genre));
     }
+    if (movie.writer) {
+        var writer = movie.writer.join(', ');
+        info.append($('<p>').html('<b>Writers:</b> ' + writer));
+    }
+    if (movie.director) {
+        var director = movie.director.join(', ');
+        info.append($('<p>').html('<b>Director:</b> ' + director));
+    }
+    //Save for later
+	//if (movie.cast) {
+    //    info.append($('<p>').html('<b>Cast:</b> '));
+//for (var i = 0;i<movie.cast.length;i++){
+//for (var j = 0;j<movie.cast[i].length;j++)
+//{
+//        info.append(movie.cast[i][j].toString());
+//}
+//}        
+//var cast = movie.cast.toString();
+//    }
+    if (movie.country) {
+        var country = movie.country.join(', ');
+        info.append($('<p>').html('<b>Country:</b> ' + country));
+    }
     if (movie.studio) {
         var studio = movie.studio.join(', ');
         info.append($('<p>').html('<b>Studio:</b> ' + studio));
