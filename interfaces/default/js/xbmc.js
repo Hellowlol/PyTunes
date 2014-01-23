@@ -226,11 +226,14 @@ function loadMovies(options) {
 function loadMovie(movie) {
     var poster = WEBDIR + 'xbmc/GetThumb?w=200&h=300&thumb=' + encodeURIComponent(movie.thumbnail);
     var info = $('<div>').addClass('modal-movieinfo');
-    if (movie.streamdetails && movie.streamdetails.video[0]) {
-        var runtime = parseSec(movie.streamdetails.video[0].duration);
-        info.append($('<p>').html('<b>Runtime:</b> ' + runtime));
-    }
     info.append($('<p>').html('<b>Plot:</b> ' + movie.plot));
+    if (movie.mpaa) {
+        //var runtime = parseSec(mov);
+        info.append($('<p>').html('<b>' + movie.mpaa + '</b>'));
+    }
+    if (movie.runtime) {
+        info.append($('<p>').html('<b>Runtime:</b> ' + parseSec(movie.runtime)));
+    }
     if (movie.genre) {
         var genre = movie.genre.join(', ');
         info.append($('<p>').html('<b>Genre:</b> ' + genre));
@@ -244,16 +247,17 @@ function loadMovie(movie) {
         info.append($('<p>').html('<b>Director:</b> ' + director));
     }
     //Save for later
-	//if (movie.cast) {
-    //    info.append($('<p>').html('<b>Cast:</b> '));
-//for (var i = 0;i<movie.cast.length;i++){
-//for (var j = 0;j<movie.cast[i].length;j++)
-//{
-//        info.append(movie.cast[i][j].toString());
-//}
-//}        
-//var cast = movie.cast.toString();
-//    }
+	if (movie.cast) {
+		var actors=[];
+		for (var i = 0;i<movie.cast.length;i++){
+        	//info.append(movie.cast.name[i]);
+			actors[i] = movie.cast[i].name;
+		}
+        var actors = actors.join(', ');
+		//var role = movie.cast[1].role;
+        info.append($('<p>').html('<b>Actors:</b> ' + actors));
+        //info.append($('<p>').html('<b>Role:</b> ' + role));
+	}
     if (movie.country) {
         var country = movie.country.join(', ');
         info.append($('<p>').html('<b>Country:</b> ' + country));
@@ -262,12 +266,26 @@ function loadMovie(movie) {
         var studio = movie.studio.join(', ');
         info.append($('<p>').html('<b>Studio:</b> ' + studio));
     }
+    if (movie.streamdetails && movie.streamdetails.video[0]) {
+        var runtime = parseSec(movie.streamdetails.video[0].duration);
+        info.append($('<p>').html('<b>Runtime:</b> ' + runtime));
+        var height = movie.streamdetails.video[0].height;
+        info.append($('<p>').html('<b>Height:</b> ' + height));
+        var width = movie.streamdetails.video[0].width;
+        info.append($('<p>').html('<b>Width:</b> ' + width));
+        var aspect = Math.round(movie.streamdetails.video[0].aspect*100)/100;
+        info.append($('<p>').html('<b>Aspect Ratio:</b> ' + aspect));
+        var codec = movie.streamdetails.video[0].codec;
+        info.append($('<p>').html('<b>Codec:</b> ' + codec));
+    }
+	var rating = '';
     if (movie.rating) {
-        info.append($('<span>').raty({
-            readOnly: true,
-            path: WEBDIR + 'img',
-            score: (movie.rating / 2)
-        }));
+		rating = $('<span>').raty({
+        readOnly: true,
+        path: WEBDIR + 'img',
+        score: (movie.rating / 2)
+        })
+        info.append(rating);
     }
     var buttons = {
         'Play': function () {
@@ -296,7 +314,7 @@ function loadMovie(movie) {
     $('<img>').attr('src', poster).addClass('thumbnail movie-poster pull-left'),
     info), buttons);
     $('.modal-fanart').css({
-        'background-image': 'url(' + WEBDIR + 'xbmc/GetThumb?w=675&h=400&o=10&thumb=' + encodeURIComponent(movie.fanart) + ')'
+        'background-image': 'url(' + WEBDIR + 'xbmc/GetThumb?w=675&h=410&o=10&thumb=' + encodeURIComponent(movie.fanart) + ')'
     });
 }
 

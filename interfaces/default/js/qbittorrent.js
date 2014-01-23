@@ -33,7 +33,7 @@ function get_torrents() {
                 var progressBar = $('<div>');
                 progressBar.addClass('bar');
                 progressBar.css('width', (torrent.progress * 100) + '%');
-                //progressBar.append("<font color='black'>" + Math.round(torrent.progress * 100) + "%</black>");
+                progressBar.append("<font color='black'>" + Math.round(torrent.progress * 100) + "%</black>");
                 var progress = $('<div>');
                 progress.addClass('progress');
                 if (torrent.state === "uploading") {
