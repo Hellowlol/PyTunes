@@ -45,15 +45,9 @@ function get_torrents() {
                 if (torrent.state === "stalledUP" || torrent.state === "stalledDL") {
                     progress.addClass('progress-danger');
                 }
-                //if (torrent.state === "stalledDL") {
-                //    progress.addClass('progress-danger');
-                //}
-                if (torrent.state === "pausedDL" || torrent.state === "pausedUP") {
+               if (torrent.state === "pausedDL" || torrent.state === "pausedUP") {
                     progress.addClass('progress-warning');
                 }
-                //if (torrent.state === "pausedUP") {
-                //    progress.addClass('progress-warning');
-                //}
                 if (torrent.state === "checkingUP") {
                     progress.addClass('progress-warning');
                 }
