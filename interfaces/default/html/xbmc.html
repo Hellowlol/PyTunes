@@ -1,16 +1,12 @@
 <%inherit file="base.html"/>
 <% settings = self.attr.settings %>
 <div class="container">
-    <div class="content">
+    <div class="content vertical-align: top">
         <h1 class="page-header page-title">
-            <img src="../img/xbmc_logo.gif">
+            <img src="../img/xbmc-lettering.png">
 <span style="float:right">
 
-        <div class="well form-inline" style="background:url(../img/bodybg.jpg)">
-            <div class="btn-toolbar pull-right">
-                <div class="btn-group">
-                    <select id="servers" class="span2"></select>
-                </div>
+           <div class="btn-toolbar pull-right">
                 <div class="btn-group">
                     <a href="#" id="xbmc-notify" class="btn" title="Send notification"><i class="icon-envelope"></i></a>
                 </div>
@@ -53,8 +49,12 @@
                 </div>
             </div><br>
 			</span>
-			</div>
         </h1>
+              <div class="form-inline">
+ <span style="float:right">
+                    <select id="servers" class="span2"></select>
+</span>  
+               </div>
         <ul class="nav nav-tabs">
             <li><a href="#movies" data-toggle="tab">Movies</a></li>
             <li><a href="#shows" data-toggle="tab">TV Shows</a></li>

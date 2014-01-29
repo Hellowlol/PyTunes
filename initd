@@ -1,18 +1,18 @@
 #! /bin/sh
 
 ### BEGIN INIT INFO
-# Provides:          HTPC-Manager application instance
+# Provides:          PyTunes-HTPC-Manager application instance
 # Required-Start:    $all
 # Required-Stop:     $all
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: starts instance of HTPC-Manager
-# Description:       starts instance of HTPC-Manager using start-stop-daemon
+# Short-Description: starts instance of PyTunes-HTPC-Manager
+# Description:       starts instance of PyTunes-HTPC-Manager using start-stop-daemon
 ### END INIT INFO
 
 ############### EDIT ME ##################
 # path to app
-APP_PATH=/path/to/htpc-manager
+APP_PATH=/path/to/pytunes-htpc-manager
 
 # path to python bin
 DAEMON=/usr/bin/python
@@ -21,15 +21,15 @@ DAEMON=/usr/bin/python
 DAEMON_OPTS=" Htpc.py"
 
 # script name
-NAME=htpc
+NAME=pytunes
 
 # app name
-DESC=HTPC-Manager
+DESC=PyTunes-HTPC-Manager
 
 # user
-RUN_AS=root
+RUN_AS=nobody
 
-PID_FILE=/var/run/htpcmanager.pid
+PID_FILE=/var/run/pytunes.pid
 
 ############### END EDIT ME ##################
 

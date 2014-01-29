@@ -6,6 +6,7 @@ var sorting = {
     method: 'title',
     order: 'ascending'
 };
+var spacerh10 = "<img src='../img/spacer.png' class='spacer-h10'>";
 
 $(document).ready(function () {
     playerLoader = setInterval('loadNowPlaying()', 1000);
@@ -87,6 +88,14 @@ $(document).ready(function () {
         $(this).addClass('active');
         reloadTab();
     });
+
+    $('.myFilters li').click(function (e) {
+        e.preventDefault();
+        var v = $(this).text()[0]
+        $('.myFilterItems li').hide().filter(function(){
+            return $(this).text().toUpperCase()[0] == v;
+         }).show()
+     });
 
     // Send notification to XBMC
     $('#xbmc-notify').click(function () {
@@ -224,40 +233,53 @@ function loadMovies(options) {
 }
 
 function loadMovie(movie) {
-    var poster = WEBDIR + 'xbmc/GetThumb?w=200&h=300&thumb=' + encodeURIComponent(movie.thumbnail);
+    var poster = WEBDIR + 'xbmc/GetThumb?w=133&h=200&thumb=' + encodeURIComponent(movie.thumbnail);
     var info = $('<div>').addClass('modal-movieinfo');
+    var footerbuttons = $('<div>').addClass('modal-footerbuttons');
+    //var actors = $('<div>').addClass('modal-actors');
+    //var rolls = $('<div>').addClass('modal-rolls');
+    var mpaaicon = "";
+    var resolutionicon = "";
+    var sourceicon = "";
     info.append($('<p>').html('<b>Plot:</b> ' + movie.plot));
     if (movie.mpaa) {
         //var runtime = parseSec(mov);
-        info.append($('<p>').html('<b>' + movie.mpaa + '</b>'));
+        //info.append($('<p>').html('<b>' + movie.mpaa + '</b>'));
+        //mpaaicon = "<font color='white' height='20'>" + movie.mpaa + "</font>";
+        mpaaicon = "<img src='../img/media/usmpaa/" + movie.mpaa + ".png' class='modal-codec'>";
     }
-    if (movie.runtime) {
-        info.append($('<p>').html('<b>Runtime:</b> ' + parseSec(movie.runtime)));
-    }
-    if (movie.genre) {
-        var genre = movie.genre.join(', ');
-        info.append($('<p>').html('<b>Genre:</b> ' + genre));
-    }
-    if (movie.writer) {
-        var writer = movie.writer.join(', ');
-        info.append($('<p>').html('<b>Writers:</b> ' + writer));
-    }
-    if (movie.director) {
-        var director = movie.director.join(', ');
-        info.append($('<p>').html('<b>Director:</b> ' + director));
-    }
+    //if (movie.runtime) {
+    //    info.append($('<p>').html('<b>Runtime:</b> ' + parseSec(movie.runtime)));
+    //}
     //Save for later
 	if (movie.cast) {
 		var actors=[];
 		for (var i = 0;i<movie.cast.length;i++){
-        	//info.append(movie.cast.name[i]);
-			actors[i] = movie.cast[i].name;
+		   actors[i] = movie.cast[i].name;
+           //actors.append($('<p>').html('<div><b>Actor:</b> ' + movie.cast[i].name + '</div><div>   <b>Role:</b> ' + movie.cast[i].role + '</div>'));
+           //rolls.append($('<p>').html('<b>Role:</b> ' + movie.cast[i].role));
 		}
         var actors = actors.join(', ');
 		//var role = movie.cast[1].role;
         info.append($('<p>').html('<b>Actors:</b> ' + actors));
         //info.append($('<p>').html('<b>Role:</b> ' + role));
+       // var table = "<div>" + actors + "</div><div>" + rolls + "</div>";
+        //info.append($('<div>' ).html(table));
+        //info.append(actors);
+        //info.append(rolls);
 	}
+    if (movie.director) {
+        var director = movie.director.join(', ');
+        info.append($('<p>').html('<b>Director:</b> ' + director));
+    }
+    if (movie.writer) {
+        var writer = movie.writer.join(', ');
+        info.append($('<p>').html('<b>Writers:</b> ' + writer));
+    }
+    if (movie.genre) {
+        var genre = movie.genre.join(', ');
+        info.append($('<p>').html('<b>Genre:</b> ' + genre));
+    }
     if (movie.country) {
         var country = movie.country.join(', ');
         info.append($('<p>').html('<b>Country:</b> ' + country));
@@ -266,6 +288,8 @@ function loadMovie(movie) {
         var studio = movie.studio.join(', ');
         info.append($('<p>').html('<b>Studio:</b> ' + studio));
     }
+    var aspecticon = "";
+    var videocodec ="";
     if (movie.streamdetails && movie.streamdetails.video[0]) {
         var runtime = parseSec(movie.streamdetails.video[0].duration);
         info.append($('<p>').html('<b>Runtime:</b> ' + runtime));
@@ -273,12 +297,47 @@ function loadMovie(movie) {
         info.append($('<p>').html('<b>Height:</b> ' + height));
         var width = movie.streamdetails.video[0].width;
         info.append($('<p>').html('<b>Width:</b> ' + width));
+        if ((width == '1920') || (height == '1080')) {
+            resolutionicon = "<img src='../img/media/resolution/white_400x200/1080.png' class='modal-resolution'>";
+            sourceicon = "<img src='../img/media/videocodec/white_400x200/bluray.png' class='modal-source'>";
+        } else if ((width == '1280') || (height == '720')) {
+                resolutionicon = "<img src='../img/media/resolution/white_400x200/720.png' class='modal-resolution'>";
+                sourceicon = "<img src='../img/media/videocodec/white_400x200/bluray.png' class='modal-source'>";
+        } else {
+                resolutionicon = "<img src='../img/media/resolution/white_400x200/480.png' class='modal-resolution'>";
+                sourceicon = "<img src='../img/media/videocodec/white_400x200/dvd.png' class='modal-source'>";
+        }
         var aspect = Math.round(movie.streamdetails.video[0].aspect*100)/100;
-        info.append($('<p>').html('<b>Aspect Ratio:</b> ' + aspect));
+        //info.append($('<p>').html('<b>Aspect Ratio:</b> ' + aspect));
+        if ((aspect > 1.82) && (aspect < 1.88)) {
+            //info.append("<img src='../img/media/aspectratio/white_161x109/1.85.png'>");
+            var aspecticon = "<img src='../img/media/aspectratio/white_400x200/1.85.png' class='modal-aspect'>";
+         }
+        if ((aspect > 1.28) && (aspect < 1.36)) {
+            //info.append("<img src='../img/media/aspectratio/white_161x109/1.33.png'>");
+            aspecticon = "<img src='../img/media/aspectratio/white_400x200/1.33.png' class='modal-aspect'>";
+        }
+        if ((aspect > 1.62) && (aspect < 1.70)) {
+            //info.append("<img src='../img/media/aspectratio/white_161x109/1.66.png'>");
+            aspecticon = "<img src='../img/media/aspectratio/white_400x200/1.66.png' class='modal-aspect'>";
+        }
+        if ((aspect > 1.74) && (aspect < 1.82)) {
+            //info.append("<img src='../img/media/aspectratio/white_161x109/1.78.png'>");
+            aspecticon = "<img src='../img/media/aspectratio/white_400x200/1.78.png' class='modal-aspect'>";
+        }
+        if ((aspect > 2.14) && (aspect < 2.26)) {
+            //info.append("<img src='../img/media/aspectratio/white_161x109/2.20.png'>");
+            aspecticon = "<img src='../img/media/aspectratio/white_400x200/2.20.png' class='modal-aspect'>";
+        }
+        if ((aspect > 2.30) && (aspect < 2.45)) {
+            //info.append("<img src='../img/media/aspectratio/white_161x109/2.35.png'>");
+            aspecticon = "<img src='../img/media/aspectratio/white_400x200/2.35.png' class='modal-aspect'>";
+        }
         var codec = movie.streamdetails.video[0].codec;
-        info.append($('<p>').html('<b>Codec:</b> ' + codec));
+        //info.append($('<p>').html('<b>Codec:</b> ' + codec));
+        videocodec = "<img src='../img/media/videocodec/white_400x200/" + codec + ".png' class='modal-codec'>";
     }
-	var rating = '';
+	var rating = "";
     if (movie.rating) {
 		rating = $('<span>').raty({
         readOnly: true,
@@ -293,6 +352,12 @@ function loadMovie(movie) {
             hideModal();
         }
     };
+    $.extend(buttons, {
+        'Queue': function () {
+           queueItem(movie.movieid, 'movie');
+           hideModal();
+        }
+    });
     if (movie.imdbnumber) {
         $.extend(buttons, {
             'IMDb': function () {
@@ -302,7 +367,7 @@ function loadMovie(movie) {
     }
     if (movie.trailer) {
         $.extend(buttons, {
-            'Trailer': function () {
+            'Play Trailer Here': function () {
                 var trailerid = movie.trailer.substr(movie.trailer.length - 11);
                 var src = 'http://www.youtube.com/embed/' + trailerid + '?rel=0&autoplay=1';
                 var youtube = $('<iframe>').attr('src', src).addClass('modal-youtube');
@@ -310,11 +375,24 @@ function loadMovie(movie) {
             }
         });
     }
-    showModal(movie.title + ' (' + movie.year + ')', $('<div>').append(
+    if (movie.trailer) {
+        $.extend(buttons, {
+            'Play Trailer XBMC': function () {
+                var trailerid = movie.trailer.substr(movie.trailer.length - 11);
+                var src = 'http://www.youtube.com/embed/' + trailerid + '?rel=0&autoplay=1';
+                var youtube = $('<iframe>').attr('src', src).addClass('modal-youtube');
+                $('#modal_dialog .modal-body').html(youtube);
+            }
+        });
+    }
+    var mybuttons = "<button type='button' class='btn btn-success' data-dismiss='modal'>Close</button>";
+    footerbuttons.append($('<span>').html("<button type='button' class='close btn btn-success' data-dismiss='modal'>Close</button>"));
+    var stream = "<span class='pull-right'>" + sourceicon + spacerh10 + resolutionicon + spacerh10  + mpaaicon + spacerh10 + aspecticon + spacerh10 + videocodec + spacerh10 +  spacerh10 + "</span>";
+    showModal(movie.title + ' (' + movie.year + ')' + stream, $('<div>').append(
     $('<img>').attr('src', poster).addClass('thumbnail movie-poster pull-left'),
     info), buttons);
     $('.modal-fanart').css({
-        'background-image': 'url(' + WEBDIR + 'xbmc/GetThumb?w=675&h=410&o=10&thumb=' + encodeURIComponent(movie.fanart) + ')'
+        'background-image': 'url(' + WEBDIR + 'xbmc/GetThumb?w=950&h=450&o=10&thumb=' + encodeURIComponent(movie.fanart) + ')'
     });
 }
 
