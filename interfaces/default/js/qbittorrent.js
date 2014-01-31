@@ -139,9 +139,10 @@ function generateTorrentActionButton(torrent) {
 
 // delete torrent
 $(document).on('click', '.qbt_removetorrent', function () {
-    $.get(WEBDIR + 'qbittorrent/command/' + $(this).attr('data-action') + '/' + $(this).attr('data-hash') + '/' + $(this).attr('data-name') + '/', function () {
-
-    });
+    var confirmed = confirm('Delete this torrent forever?');
+    if (confirmed === true) {
+        $.get(WEBDIR + 'qbittorrent/command/' + $(this).attr('data-action') + '/' + $(this).attr('data-hash') + '/' + $(this).attr('data-name') + '/', function () {});
+    }
 
 });
 

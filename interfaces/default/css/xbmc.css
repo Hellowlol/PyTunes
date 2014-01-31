@@ -1,8 +1,15 @@
 a:Hover {
     text-decoration: none;
 }
-.thumbnails li {
-    position: relative;
+img.remote-image {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+.star-rating {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
 #movie-grid img.thumbnail,
 #show-grid img.thumbnail {
@@ -88,11 +95,11 @@ h6.title {
     position: fixed;
     top: 0px;
     left: 300px;
-    width: 950px;
+    width: 1000px;
     height: 530px;
 }
 .modal-body {
-    width: 920px;
+    width: 970px;
     height: 500px;
 }
 .modal-codec {
@@ -118,6 +125,12 @@ h6.title {
 .modal-source {
     border: 0;
     height: 20px;
+}
+.modal-footer {
+    padding:9px 15px;
+    border-top:5px solid #dac91b;
+    background-color: #DADED3;
+	background: url('../img/bodybg.jpg')
 }
 .modal-header {
     padding:9px 15px;
