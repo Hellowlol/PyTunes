@@ -138,6 +138,10 @@ h6.title {
     height: 200px;
     width: 133px;
 }
+.modal .actor-thumb {
+    height: 125px;
+    width: 83px;
+}
 .spacer-h10 {
     height: 5px;
     width: 10px;
