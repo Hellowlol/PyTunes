@@ -387,12 +387,12 @@ function loadMovie(movie) {
     var stars = $('<p>').attr('id', 'star-rating').addClass('star-rating').append(rating);
     var stream = "<span class='pull-right'>" + sourceicon + spacerh10 + resolutionicon + spacerh10  + mpaaicon + spacerh10 + aspecticon + spacerh10 + videocodec + spacerh10 +  spacerh10 + "</span>";
     plot = $('<p>').html('<b>Plot:</b> ' + plot);
-    director = $('<div>').html('<b>Director:</b> ' + director);
-    writer = $('<div>').html('<b>Writer:</b> ' + writer);
-    genre = $('<div>').html('<b>Genre:</b> ' + genre);
-    country = $('<div>').html('<b>Country:</b> ' + country);
-    studio = $('<div>').html('<b>Studio:</b> ' + studio);
-    runtime = $('<div>').html('<b>Runtime:</b> ' + runtime);
+    director = $('<p>').html('<b>Director:</b> ' + director);
+    writer = $('<p>').html('<b>Writer:</b> ' + writer);
+    genre = $('<p>').html('<b>Genre:</b> ' + genre);
+    country = $('<p>').html('<b>Country:</b> ' + country);
+    studio = $('<p>').html('<b>Studio:</b> ' + studio);
+    runtime = $('<p>').html('<b>Runtime:</b> ' + runtime);
     moviethumb = $('<img>').attr('src', poster).addClass('thumbnail movie-poster');
 
     info.append(plot, director, writer, genre, country, studio, runtime);
