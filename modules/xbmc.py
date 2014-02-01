@@ -469,6 +469,8 @@ class Xbmc:
                 return xbmc.Player.GoTo(playerid=player[u'playerid'], to=int(value))
             elif action == 'party':
                 return xbmc.Player.Open(item={'partymode': 'audio'})
+            elif action == 'fullscreen':
+                return xbmc.GUI.SetFullscreen(fullscreen='toggle')
             else:
                 return xbmc.Input.ExecuteAction(action=action)
         except Exception, e:
