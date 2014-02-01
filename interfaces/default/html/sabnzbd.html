@@ -26,14 +26,14 @@ $(function() {
 <div class="container-fluid">
     <div class="content maincontent">
         <h1 class="page-header page-title">
-            <img alt="PyTunes" src="../img/pytuneslogomed.png"/>
+            <img alt="PyTunes" src="../img/pytuneslogosm.png"/>
             <span style="float:right">
 
-          <div  id="add_nzb" class="well well-short" style="background:url(../img/bodybg.jpg)">
+          <div  id="add_nzb" class="well-small" style="background:url(../img/bodybg.jpg)">
 <div>
-<input type="submit" class="btn btn-success" id="add-nzb" value="Add NZB" onclick="" />  <button class="btn" id="nzb_pause_button"><i class="icon-pause"></i> Pause</button>
+<input type="submit" class="btn btn-primary" id="add-nzb" value="Add NZB" onclick="" />  <button class="btn btn-primary" id="nzb_pause_button"><i class="icon-pause icon-white"></i> <font color='white'>Pause</font></button>
             <input type="text" class="span1 align:center" id="nzb_get_speed" placeholder="Kb/s" value="" />
-            <button class="btn" id="nzb_set_speed"><i class="icon-cog"></i> Set speed</button>
+            <button class="btn btn-primary" id="nzb_set_speed"><i class="icon-cog icon-white"></i> <font color='white'>Set speed</font></button>
         </div>
         </div>
 </span>
@@ -54,13 +54,13 @@ $(function() {
 		<form name="add_nzb" id="add_nzb" method="post" class="well form-inline action=""">
 			<fieldset>
 				<input type="file" name="name" id="name" class="span3"/><br>&nbsp;
-				<center><button class="btn btn-success" id="upload-nzb" align="center">Upload NZB File</button></center>
+				<center><button class="btn btn-primary" id="upload-nzb" align="center">Upload NZB File</button></center>
 			</fieldset>
 		<!--</form>
 		<form>-->&nbsp;
 			<fieldset>
 				<input type="text" name="name" id="name" class="span4" placeholder="Paste NZB url"/><br>&nbsp;
-				<center><button class="btn btn-success" id="post-url" align="center">Post NZB URL</button></center><br>
+				<center><button class="btn btn-primary" id="post-url" align="center">Post NZB URL</button></center><br>
 			</fieldset>
 			<center><span><label for="nzb_category">Category: </label>
             <select class="span2" name="nzb_category" id="nzb_category"></select></span></center>

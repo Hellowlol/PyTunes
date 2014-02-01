@@ -197,10 +197,10 @@ function loadQueue(once) {
 
             $('#nzb_pause_button').button('reset');
             if (data.status == 'Paused') {
-                $('#nzb_pause_button').html('<i class="icon-play"></i> Resume');
+                $('#nzb_pause_button').html('<i class="icon-play icon-white"></i> <font color="white">Resume</font>');
                 queueToggleStatusAction = 'resume';
             } else {
-                $('#nzb_pause_button').html('<i class="icon-pause"></i> Pause');
+                $('#nzb_pause_button').html('<i class="icon-pause icon-white"></i> <font color="white">Pause</font>');
                 queueToggleStatusAction = 'pause';
             }
 
@@ -224,13 +224,9 @@ function loadQueue(once) {
             }
 
             $.each(data.slots, function (i, job) {
-                var progressBar = $('<div>');
-                progressBar.addClass('bar');
-                progressBar.css('width', job.percentage + '%');
+                var progressBar = $('<div>').addClass('bar').css('width', job.percentage + '%');
 
-                var progress = $('<div>');
-                progress.addClass('progress');
-                progress.append(progressBar);
+                var progress = $('<div>').addClass('progress progress-success').append(progressBar);
 
                 var row = $('<tr>');
                 row.append($('<td>').html(job.filename));

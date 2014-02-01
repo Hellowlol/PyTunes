@@ -2,11 +2,17 @@ html, body {
     background: #eee url('../../../img/bodybg.jpg');
 }
 .navbar, .navbar-inner {
-    background: url('../../../img/headerbg.jpg') !important;
+  background-color: #5eb95e;
+  background-image: -moz-linear-gradient(top, #398f28, #193f11);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#398f28), to(#193f11));
+  background-image: -webkit-linear-gradient(top, #398f28, #193f11);
+  background-image: -o-linear-gradient(top, #398f28, #193f11);
+  background-image: linear-gradient(to bottom, #398f28, #193f11);
+  background-repeat: repeat-x;
 }
 .navbar .brand,
 .navbar .nav > li > a {
-    color: #999999;
+    color: #ffffff;
     text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
 }
 .navbar .brand:hover,
@@ -17,28 +23,28 @@ html, body {
 }
 
 .navbar .brand {
-  color: #999999;
+  color: #ffffff;
 }
 
 .navbar .navbar-text {
-  color: #999999;
+  color: #ffffff;
 }
 
 .navbar .nav > li > a:focus,
 .navbar .nav > li > a:hover {
   color: #ffffff;
-  background-color: transparent;
+  background-color: #193f11;
 }
 
 .navbar .nav .active > a,
 .navbar .nav .active > a:hover,
 .navbar .nav .active > a:focus {
   color: #ffffff;
-  background-color: #111111;
+  background-color: #398f28;
 }
 
 .navbar .navbar-link {
-  color: #999999;
+  color: #fffff;
 }
 
 .navbar .navbar-link:hover,
