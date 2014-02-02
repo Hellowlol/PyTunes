@@ -2,11 +2,13 @@
     import htpc
     settings = htpc.settings
     webdir = htpc.WEBDIR
-    %><% s = self.attr.settings %><!DOCTYPE html>
+    %>
+<% s = self.attr.settings %>
+<!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>PyTunes HTPC Manager</title>
+        <title>PyTunes Media Server Manager</title>
         <link href="${htpc.WEBDIR}img/favicon.ico" type="image/x-icon" rel="icon">
         <link rel="apple-touch-icon" href="${htpc.WEBDIR}img/ios/homescreen.png">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
