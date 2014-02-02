@@ -66,6 +66,11 @@ html, body {
 .navbar input {
     background: #eee;
 }
+.input-short input[type="text"] {
+   height: 40px;
+   font-size: 15px;
+   line-height: 15px;
+}
 .content {
     background: #fff;
     margin: -20px;
