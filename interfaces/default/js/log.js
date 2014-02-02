@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    $('#logsize, #loglevel').change(loadLog);
+    $('#logsize, #loglevel').click(loadLog);
     $('#refreshlog, #deletelog').click(loadLog);
     loadLog();
 });

@@ -1,5 +1,8 @@
 """
-Update HTPC-Manager from Github. Either through git command or tarball.
+Update PyTunes Media Server Manager from Github. Either through git command or tarball.
+
+Rewritten by madclicker
+https://github.com/madclicker
 
 Updater and SourceUpdater written by styxit
 https://github.com/styxit
@@ -27,8 +30,9 @@ from htpc.root import do_restart
 
 # configure git repo
 gitUser =  'madclicker'
-gitRepo = 'PyTunes-HTPC-Manager'
-gitBranch = 'master'
+gitRepo = 'PyTunes'
+#gitBranch = 'master'
+gitBranch = 'develop'
 
 class Updater:
     """ Main class """
@@ -69,7 +73,7 @@ class Updater:
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def status(self):
-        """ method to determine if HTPC Manager is currently updating """
+        """ method to determine if PyTunes Media Server Manager is currently updating """
         return self.updateEngine.UPDATING
 
 
@@ -93,12 +97,12 @@ class Updater:
         latest = self.latest()
 
         if (latest == False) :
-            self.logger.error("Failed to determine the latest version for HTPC Manager.")
+            self.logger.error("Failed to determine the latest version for PyTunes Media Server Manager.")
         else:
             output['latestVersion'] = latest
 
         if (current == False) :
-            self.logger.error("Failed to determine the current version for HTPC Manager.")
+            self.logger.error("Failed to determine the current version for PyTunes Media Server Manager.")
         else :
             output['currentVersion'] = current
 
@@ -110,7 +114,7 @@ class Updater:
 
         # If HTPC Manager is up to date, updating is not needed
         if current == latest:
-            self.logger.info("HTPC-Manager is Up-To-Date.")
+            self.logger.info("PyTunes Media Server Manager is Up-To-Date.")
             output['versionsBehind'] = 0
             output['updateNeeded'] = False
         else:
@@ -148,7 +152,7 @@ class Updater:
             return 'Unknown'
 
 
-""" Class to update HTPC Manager using git commands. """
+""" Class to update Pytunes Media Server Manager using git commands. """
 class GitUpdater():
     """ Main class """
     def __init__(self):
@@ -184,7 +188,7 @@ class GitUpdater():
             self.logger.error("Update aborted.")
         else:
             # Restart HTPC Manager to make sure all new code is loaded
-            self.logger.warning('Restarting HTPC Manager after update.')
+            self.logger.warning('Restarting PyTunes Media Server Manager after update.')
             do_restart()
 
         self.UPDATING = 0
@@ -223,7 +227,7 @@ class SourceUpdater():
         self.logger = logging.getLogger('htpc.updater')
 
         self.versionFile = os.path.join(htpc.RUNDIR, 'VERSION.txt')
-        self.updateFile = os.path.join(htpc.DATADIR, 'htpc-manager-update.tar.gz')
+        self.updateFile = os.path.join(htpc.DATADIR, 'pytunes-update.tar.gz')
         self.updateDir = os.path.join(htpc.DATADIR, 'update-source')
 
     """ Get hash of current runnig version """
@@ -285,8 +289,8 @@ class SourceUpdater():
         # Write new version to file
         self.__updateVersionFile(self.latestHash)
 
-        # Restart HTPC Manager to make sure all new code is loaded
-        self.logger.warning('Restarting HTPC Manager after update.')
+        # Restart Pytunes Media Server Manager to make sure all new code is loaded
+        self.logger.warning('Restarting Pytunes Media Server Manager after update.')
         do_restart()
 
         # Cleanup after yourself
@@ -322,7 +326,7 @@ class SourceUpdater():
             self.__finishUpdate()
             return False
 
-    """ Overwrite HTPC Manager sourcecode with (new) code from update path """
+    """ Overwrite Pytunes Media Server Manager sourcecode with (new) code from update path """
     def __updateSourcecode(self):
         # Determine the path where the updated should be located
         sourceUpdateFolder = os.path.join(self.updateDir, '%s-%s-%s' % (gitUser, gitRepo, self.latestHash[:7]))
@@ -332,7 +336,7 @@ class SourceUpdater():
 
         self.logger.debug('Overwriting files.')
         try:
-            # Loop files and folders and place them in the HTPC Manager path
+            # Loop files and folders and place them in the Pytunes Media Server Manager path
             for src_dir, dirs, files in os.walk(sourceUpdateFolder):
                 dst_dir = src_dir.replace(sourceUpdateFolder, targetFolder)
                 if not os.path.exists(dst_dir):

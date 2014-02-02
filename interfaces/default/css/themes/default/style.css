@@ -67,8 +67,8 @@ html, body {
     background: #eee;
 }
 .input-short input[type="text"] {
-   height: 40px;
-   font-size: 15px;
+   height: 10px;
+   font-size: 10px;
    line-height: 15px;
 }
 .content {
