@@ -20,6 +20,13 @@ html, body {
 .navbar .brand:focus,
 .navbar .nav > li > a:focus {
   color: #ffffff;
+  background-color: #193f11;
+}
+.navbar .brand .active > a,
+.navbar .brand .active > a:hover,
+.navbar .brand .active > a:focus {
+  color: #ffffff;
+  background-color: #398f28;
 }
 
 .navbar .brand {
