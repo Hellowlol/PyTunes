@@ -1,46 +1,46 @@
 <%inherit file="base.html"/>
 <% settings = self.attr.settings %>
 <script>
-$(function() {
-	$( "#dialog-form" ).dialog({
-		autoOpen: false,
-		height: 400,
-		width: 200,
-		modal: true,
-		buttons: {
-			Cancel: function() {
-				$( this ).dialog( "close" );
-			}
-		},
-		close: function() {
-			allFields.val( "" ).removeClass( "ui-state-error" );
-		}
-	});
-	$( "#add-nzb" )
-	.button()
-	.click(function() {
-		$( "#dialog-form" ).dialog( "open" );
-	});
-});
+    $(function() {
+    	$( "#dialog-form" ).dialog({
+    		autoOpen: false,
+    		height: 400,
+    		width: 200,
+    		modal: true,
+    		buttons: {
+    			Cancel: function() {
+    				$( this ).dialog( "close" );
+    			}
+    		},
+    		close: function() {
+    			allFields.val( "" ).removeClass( "ui-state-error" );
+    		}
+    	});
+    	$( "#add-nzb" )
+    	.button()
+    	.click(function() {
+    		$( "#dialog-form" ).dialog( "open" );
+    	});
+    });
 </script>
 <div class="container-fluid">
-    <div class="content maincontent">
-        <h1 class="page-header page-title">
-            <img alt="PyTunes" src="../img/pytuneslogosm.png"/>
-            <span style="float:right">
-
-          <div  id="add_nzb" class="well-small" style="background:url(../img/bodybg.jpg)">
-<div>
-<input type="submit" class="btn btn-primary" id="add-nzb" value="Add NZB" onclick="" />  <button class="btn btn-primary" id="nzb_pause_button"><i class="icon-pause icon-white"></i> <font color='white'>Pause</font></button>
-            <input type="text" class="span1 align:center" id="nzb_get_speed" placeholder="Kb/s" value="" />
-            <button class="btn btn-primary" id="nzb_set_speed"><i class="icon-cog icon-white"></i> <font color='white'>Set speed</font></button>
-        </div>
-        </div>
-</span>
-</h1>
-		<h5 class="page-header page-title"><div>
-		<div>
-            <small>
+<div class="content maincontent">
+    <h1 class="page-header page-title">
+        <img alt="PyTunes" src="../img/pytuneslogosm.png"/>
+        <span style="float:right">
+            <div  id="add_nzb" class="well-small" style="background:url(../img/bodybg.jpg)">
+                <div>
+                    <input type="submit" class="btn btn-primary" id="add-nzb" value="Add NZB" onclick="" />  <button class="btn btn-primary" id="nzb_pause_button"><i class="icon-pause icon-white"></i> <font color='white'>Pause</font></button>
+                    <input type="text" class="span1 align:center" id="nzb_get_speed" placeholder="Kb/s" value="" />
+                    <button class="btn btn-primary" id="nzb_set_speed"><i class="icon-cog icon-white"></i> <font color='white'>Set speed</font></button>
+                </div>
+            </div>
+        </span>
+    </h1>
+    <h5 class="page-header page-title">
+        <div>
+            <div>
+                <small>
                 Speed: <strong> <span id="queue_speed"></span></strong>
                 Status: <strong> <span id="queue_state"></span></strong>
                 Remaining: <strong> <span id="remaining"></span></strong>
@@ -48,80 +48,82 @@ $(function() {
                 Disk Space Remaining: <strong> <span id="disk_space_left_1"></span></strong>
                 ETA: <strong> <span id="eta"></span></strong>
                 SysLoad: <strong> <span id="load_avg"></span></strong>
-            </small>
-		</div></h5>
-	<div id="dialog-form" title="ADD NZB">
-		<form name="add_nzb" id="add_nzb" method="post" class="well form-inline action=""">
-			<fieldset>
-				<input type="file" name="name" id="name" class="span3"/><br>&nbsp;
-				<center><button class="btn btn-primary" id="upload-nzb" align="center">Upload NZB File</button></center>
-			</fieldset>
-		<!--</form>
-		<form>-->&nbsp;
-			<fieldset>
-				<input type="text" name="name" id="name" class="span4" placeholder="Paste NZB url"/><br>&nbsp;
-				<center><button class="btn btn-primary" id="post-url" align="center">Post NZB URL</button></center><br>
-			</fieldset>
-			<center><span><label for="nzb_category">Category: </label>
-            <select class="span2" name="nzb_category" id="nzb_category"></select></span></center>
-		</form>
-	</div>
-<!--        <form name="add_nzb_form"  id="add_nzb_form" method="post" class="well form-inline" action="sabnzbd/uploadNZB">
-            <input class="span3" id="nzb_url" name="nzb_url" type="text" placeholder="Paste NZB url" />
-            <select class="span1" name="nzb_category" id="nzb_category"></select>
-            <button class="btn btn-success" id="add_nzb_button"><i class="icon-plus icon-white"></i> Upload NZB</button>
+                </small>
+            </div>
+    </h5>
+    <div id="dialog-form" title="ADD NZB">
+    <form name="add_nzb" id="add_nzb" method="post" class="well form-inline action=""">
+    <fieldset>
+    <input type="file" name="name" id="name" class="span3"/><br>&nbsp;
+    <center><button class="btn btn-primary" id="upload-nzb" align="center">Upload NZB File</button></center>
+    </fieldset>
+    <!--</form>
+        <form>-->&nbsp;
+    <fieldset>
+    <input type="text" name="name" id="name" class="span4" placeholder="Paste NZB url"/><br>&nbsp;
+    <center><button class="btn btn-primary" id="post-url" align="center">Post NZB URL</button></center><br>
+    </fieldset>
+    <center><span><label for="nzb_category">Category: </label>
+    <select class="span2" name="nzb_category" id="nzb_category"></select></span></center>
+    </form>
+    </div>
+    <!--        <form name="add_nzb_form"  id="add_nzb_form" method="post" class="well form-inline" action="sabnzbd/uploadNZB">
+        <input class="span3" id="nzb_url" name="nzb_url" type="text" placeholder="Paste NZB url" />
+        <select class="span1" name="nzb_category" id="nzb_category"></select>
+        <button class="btn btn-success" id="add_nzb_button"><i class="icon-plus icon-white"></i> Upload NZB</button>
         </form>
         <form name="add_nzb_form"  id="add_nzb_form" method="post" class="well form-inline" action="sabnzbd/uploadNZB">
-            <input class="span3" id="nzb_url" name="nzb_url" type="text" placeholder="Paste NZB url" />
-            <select class="span1" name="nzb_category" id="nzb_category"></select>
-            <button class="btn btn-success" id="add_nzb_button"><i class="icon-plus icon-white"></i> Add NZB</button>
-            <button class="btn" id="nzb_pause_button"><i class="icon-pause"></i> Pause</button>
-            <input type="text" class="span1" id="nzb_get_speed" placeholder="Kb/s" value="" />
-            <button class="btn" id="nzb_set_speed"><i class="icon-cog"></i> Set speed</button>
+        <input class="span3" id="nzb_url" name="nzb_url" type="text" placeholder="Paste NZB url" />
+        <select class="span1" name="nzb_category" id="nzb_category"></select>
+        <button class="btn btn-success" id="add_nzb_button"><i class="icon-plus icon-white"></i> Add NZB</button>
+        <button class="btn" id="nzb_pause_button"><i class="icon-pause"></i> Pause</button>
+        <input type="text" class="span1" id="nzb_get_speed" placeholder="Kb/s" value="" />
+        <button class="btn" id="nzb_set_speed"><i class="icon-cog"></i> Set speed</button>
         </form>-->
-        <ul class="nav nav-tabs">
-            <li class="active"><a href="#active" data-toggle="tab">Active</a></li>
-            <li><a href="#history" data-toggle="tab">History</a></li>
-            <li><a href="#warnings" data-toggle="tab">Warnings</a></li>
-        </ul>
-        <div class="tab-content">
-            <div class="tab-pane active" id="active">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>File</th>
-                        <th>Category</th>
-                        <th class='span3'>Progress</th>
-                        <th>Remaining</th>
-                        <th>&nbsp;</th>
-                    </tr>
-                    </thead>
-                    <tbody id="active_table_body"></tbody>
-                </table>
-            </div>
-            <div id="history" class="tab-pane">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>File</th>
-                        <th>Status</th>
-                        <th>Size</th>
-                        <th>&nbsp;</th>
-                    </tr>
-                    </thead>
-                    <tbody id="history_table_body"></tbody>
-                </table>
-            </div>
-            <div id="warnings" class="tab-pane">
-                <table class="table table-striped">
-                    <thead>
-                    <tr>
-                        <th>Warnings</th>
-                    </tr>
-                    </thead>
-                    <tbody id="warning_table_body"></tbody>
-                </table>
-            </div>
-        </div>
+    <ul class="nav nav-tabs">
+    <li class="active"><a href="#active" data-toggle="tab">Active</a></li>
+    <li><a href="#history" data-toggle="tab">History</a></li>
+    <li><a href="#warnings" data-toggle="tab">Warnings</a></li>
+    </ul>
+    <div class="tab-content">
+    <div class="tab-pane active" id="active">
+    <table class="table table-striped">
+    <thead>
+    <tr>
+    <th>File</th>
+    <th>Category</th>
+    <th class='span3'>Progress</th>
+    <th>Remaining</th>
+    <th>&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody id="active_table_body"></tbody>
+    </table>
+    </div>
+    <div id="history" class="tab-pane">
+    <table class="table table-striped">
+    <thead>
+    <tr>
+    <th>File</th>
+    <th>Status</th>
+    <th>Size</th>
+    <th>&nbsp;</th>
+    </tr>
+    </thead>
+    <tbody id="history_table_body"></tbody>
+    </table>
+    </div>
+    <div id="warnings" class="tab-pane">
+    <table class="table table-striped">
+    <thead>
+    <tr>
+    <th>Warnings</th>
+    </tr>
+    </thead>
+    <tbody id="warning_table_body"></tbody>
+    </table>
+    </div>
+    </div>
     </div>
 </div>
+
