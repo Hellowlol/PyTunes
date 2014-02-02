@@ -1,6 +1,7 @@
 <%inherit file="base.html"/><%
-settings = self.attr.settings
-%><div class="container">
+    settings = self.attr.settings
+    %>
+<div class="container">
     <div class="content">
         <h1 class="page-header page-title">
             <div class="btn-toolbar pull-right">
@@ -24,12 +25,12 @@ settings = self.attr.settings
                 </div>
                 <div class="btn-group">
                     <a href="#" id="refreshlog" class="ajax-link btn">
-                        <i class="icon-refresh"></i>
+                    <i class="icon-refresh"></i>
                     </a>
                 </div>
                 <div class="btn-group">
                     <a href="deletelog" id="deletelog" class="ajax-confirm btn" title="Clear log">
-                        <i class="icon-trash"></i>
+                    <i class="icon-trash"></i>
                     </a>
                 </div>
             </div>
@@ -46,3 +47,4 @@ settings = self.attr.settings
         </table>
     </div>
 </div>
+
