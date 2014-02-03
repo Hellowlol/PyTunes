@@ -268,7 +268,7 @@ function loadMovie(movie) {
                     });
 
                     var src = 'holder.js/83x125/text:No artwork';
-                    if (castmember.thumbnail) {
+                    if (castmember.thumbnail !== '') {
                         src = WEBDIR + 'xbmc/GetThumb?w=83&h=125&thumb=' + encodeURIComponent(castmember.thumbnail);
                     }
                     castAnchor.append($('<img>').attr('src', src).addClass('thumbnail actor-thumb'));
@@ -280,9 +280,10 @@ function loadMovie(movie) {
                     castItem.append(castAnchor);
 
                     castshow.append(castItem);
+
+                    Holder.run();
                 });
             }
-            Holder.run();
     if (movie.director) {
         director = movie.director.join(', ');
     }
@@ -628,7 +629,7 @@ function loadArtists(options) {
                         queueItem(artist.artistid, 'artist');
                     })),
                     $('<td>').append(
-                    $('<a>').attr('href', '#').addClass('artist-link').html(artist.label).click(function (e) {
+                    $('<a>').attr('href', '#').addClass('artist-link').html(artist.label + artist.artistid).click(function (e) {
                         e.preventDefault(e);
                         $(this).parent().append(loadAlbums({
                             'artistid': artist.artistid
@@ -643,7 +644,6 @@ function loadArtists(options) {
         }
     });
 }
-
 var albumLoad = {
     last: 0,
     request: null,
