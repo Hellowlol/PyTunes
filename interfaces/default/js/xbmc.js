@@ -260,7 +260,7 @@ function loadMovie(movie) {
     }
             if (movie.cast) {
                 $.each(movie.cast, function (i, castmember) {
-                    var castItem = $('<li>').attr('title', castmember.role);
+                    var castItem = $('<li>').attr('title', castmember.name + ' --> ' + castmember.role);
 
                     var castAnchor = $('<a>').attr('href', '#').click(function (e) {
                         e.preventDefault();
@@ -273,7 +273,9 @@ function loadMovie(movie) {
                     }
                     castAnchor.append($('<img>').attr('src', src).addClass('thumbnail actor-thumb'));
 
-                    castAnchor.append($('<h6>').addClass('title').html(castmember.name));
+                    castAnchor.append($('<h6>').addClass('title').html(shortenText(castmember.name, 11)));
+
+                    castAnchor.append($('<h6>').addClass('title').html(shortenText(castmember.role, 11)));
 
                     castItem.append(castAnchor);
 
