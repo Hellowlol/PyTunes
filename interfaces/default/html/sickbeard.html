@@ -2,16 +2,16 @@
 <% settings = self.attr.settings %>
 <div class="container">
     <div class="content maincontent">
-        <h1 class="page-header page-title">
+        <div class="page-header page-title">
             <img alt="PyTunes" src="../img/pytuneslogosm.png"/>
             <div class="well-small form-inline pull-right" style="background:url(../img/bodybg.jpg)">
-                    <input class="span2 input-short" id="add_show_name" name="add_show_name" type="text" />
+                    <input class="span2" id="add_show_name" name="add_show_name" type="text" />
                     <select class="span6" style="display:none;" id="add_show_select" name="add_show_select"></select>
-                    <button class="btn btn-primary btn-small" type="button" id="add_show_button"><i class="icon-plus icon-white"></i> Add Show</button>
+                    <button class="btn btn-primary" type="button" id="add_show_button"><i class="icon-plus icon-white"></i> Add Show</button>
                     <button class="btn btn-primary hide" type="button" id="add_tvdbid_button"><i class="icon-ok icon-white"></i> Add show</button>
                     <button class="btn hide" type="button" id="cancel_show_button"> Cancel</button>
                 <span href="#" class="btn-group show-options-menu">
-                    <a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
+                    <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
                     <i class="icon-wrench"></i>&nbsp;<span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
@@ -24,7 +24,7 @@
                     </ul>
                 </span>
             </div>
-        </h1>
+        </div>
         <ul class="nav nav-tabs">
             <li class="active"><a href="#tvshows" data-toggle="tab">TV Shows</a></li>
             <li><a href="#nextaired" data-toggle="tab">Next aired</a></li>

@@ -2,18 +2,20 @@
 <% settings = self.attr.settings %>
 <div class="container">
     <div class="content">
-      <h1 class="page-header page-title">
+      <div class="page-header page-title">
             <img alt="PyTunes" src="../img/pytuneslogosm.png"/>
             <!--<img src="../img/qbittorrent_logo.png"><big> qBittorrent</big>-->
 
 			<span style="float:right">
             	<div id="ss" class="well-small form-inline" style="background:url(../img/bodybg.jpg)">
-                	<label><big>D/L Speed:&nbsp;</big></label><input type="text" id="qbittorrent_set_speeddown" class="span1 qbt_setspeed" title="Download Limit" data-action="setGlobalDlLimit" placeholder="Kb/s" value="">&nbsp;&nbsp;
-                	<label><big>U/L Speed:&nbsp;</big></label><input type="text" id="qbittorrent_set_speedup" class="span1 qbt_setspeed" title="Upload Limit" data-action="setGlobalUpLimit" placeholder="Kb/s" value="">
-                	<button class="btn" id="qbt_rp_all_button" title="Pause/Resume all"><i id="qbt_rp_all_icon" class="icon-pause" title="Pause/Resume all"> Pause</i></button>
+                    <button class="btn btn-primary">Download</button>
+<input type="text" id="qbittorrent_set_speeddown" class="span1 qbt_setspeed" title="Download Limit" data-action="setGlobalDlLimit" placeholder="Kb/s" value="">
+                    <button class="btn btn-primary">Upload</button>
+                    <input type="text" id="qbittorrent_set_speedup" class="span1 qbt_setspeed" title="Upload Limit" data-action="setGlobalUpLimit" placeholder="Kb/s" value="">
+                	<button class="btn btn-primary" id="qbt_rp_all_button" title="Pause/Resume all"><i id="qbt_rp_all_icon" class="icon-pause" title="Pause/Resume all"> Pause</i></button>
             	</div>
 			</span>
-      </h1>
+      </div>
 			<big><big><strong>
             <i class="icon-download"></i> <span id="qbittorrent_speed_down"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
             <i class="icon-upload"></i> <span id="qbittorrent_speed_up"></span>

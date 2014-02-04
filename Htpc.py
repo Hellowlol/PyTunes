@@ -138,7 +138,7 @@ def main():
     htpc.USERNAME = htpc.settings.get('app_username')
     htpc.PASSWORD = htpc.settings.get('app_password')
 
-    # Select wether to run as daemon
+    # Select whether to run as daemon
     htpc.DAEMON = args.daemon
 
     # Set Application PID
