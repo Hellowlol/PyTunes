@@ -1,5 +1,5 @@
 # Ignore folder containing user data #
-userdata/
+userdata/images/
 
 # Ignore gedit backups #
 *~
@@ -23,4 +23,6 @@ ehthumbs.db
 Icon?
 Thumbs.db
 .idea
+database.db
+htpcmanager.log
 htpc_manager.log
