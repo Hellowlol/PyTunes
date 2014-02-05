@@ -3,13 +3,14 @@
 <div class="container">
     <div class="content vertical-align: top">
         <div class="page-header page-title">
-            <img alt="PyTunes" src="../img/pytuneslogosm.png"/>
+            <img alt="PyTunes" src="../img/pytuneslogoxs.png"/>
                 <div id="xbmc-well" class="well-small btn-toolbar pull-right" style="float:right; background:url(../img/bodybg.jpg)">
                     <div class="btn-group">
-                        <a href="#" id="xbmc-notify" class="btn btn-small" title="Send notification"><i class="icon-envelope"></i></a>
+                        <a href="#" id="xbmc-notify" class="btn btn-small btn-primary" title="Send notification"><i class="icon-envelope"></i> Notify</a>
                     </div>
                     <div class="btn-group">
-                        <a href="#" class="btn btn-small dropdown-toggle" data-toggle="dropdown" title="Sort by"><i class="icon-sort"></i>
+                        <a href="#" class="btn btn-small btn-primary dropdown-toggle" data-toggle="dropdown" title="Sort by">
+                        <i class="icon-sort"></i> Sort 
                         <i class="caret"></i></a>
                         <ul class="dropdown-menu pull-right">
                             <li><a href="#" class="active" data-sort-method="title" data-sort-order="ascending"><i class="icon-sort-by-alphabet"></i> Title</a></li>
@@ -20,8 +21,9 @@
                         </ul>
                     </div>
                     <div class="btn-group">
-                        <a href="#" class="btn btn-small dropdown-toggle" data-toggle="dropdown"><i class="icon-th-list"></i>
-                        <i class="caret"></i></a>
+                        <a href="#" class="btn btn-small btn-primary dropdown-toggle" data-toggle="dropdown">
+                        <i class="icon-th-list"></i>
+                        Options <i class="caret"></i></a>
                         <ul class="dropdown-menu pull-right">
                             %if settings.get('xbmc_hide_watched', 0):
                             <li><a href="#" id="hidewatched" class="active"><i class="icon-eye-open"></i> Show Watched</a></li>
@@ -38,8 +40,8 @@
                         </ul>
                     </div>
                     <div class="btn-group">
-                        <a href="#" class="btn btn-small dropdown-toggle" data-toggle="dropdown"><i class="icon-off"></i>
-                        <i class="caret"></i></a>
+                        <a href="#" class="btn btn-small btn-primary dropdown-toggle" data-toggle="dropdown"><i class="icon-off"></i>
+                        System <i class="caret"></i></a>
                         <ul class="dropdown-menu pull-right">
                             <li><a href="Wake" class="ajax-link" title="Send WakeOnLan"><i class="icon-off"></i> Wake</a></li>
                             <li><a href="System?action=Suspend" class="ajax-confirm" title="Suspend XBMC"><i class="icon-eye-close"></i> Suspend</a></li>
@@ -120,37 +122,37 @@
                             </div>
                             <div class="btn-toolbar">
                                 <div class="btn-group">
-                                    <button class="btn btn-large" data-player-control="skipprevious"><i class="icon-fast-backward"></i></button>
+                                    <button class="btn btn-primary" data-player-control="skipprevious"><i class="icon-fast-backward"></i></button>
                                 </div>
                                 <div class="btn-group">
-                                    <button class="btn btn-large" data-player-control="stepback"><i class="icon-step-backward"></i></button>
+                                    <button class="btn btn-primary" data-player-control="stepback"><i class="icon-step-backward"></i></button>
                                 </div>
                                 <div class="btn-group">
-                                    <button class="btn btn-large" data-player-control="rewind"><i class="icon-backward"></i></button>
+                                    <button class="btn btn-primary" data-player-control="rewind"><i class="icon-backward"></i></button>
                                 </div>
                                 <div class="btn-group">
-                                    <button class="btn btn-large" data-player-control="stop"><i class="icon-stop"></i></button>
+                                    <button class="btn btn-primary" data-player-control="stop"><i class="icon-stop"></i></button>
                                 </div>
                                 <div class="btn-group">
-                                    <button class="btn btn-large" data-player-control="play"><i class="icon-pause"></i></button>
+                                    <button class="btn btn-primary" data-player-control="play"><i class="icon-pause"></i></button>
                                 </div>
                                 <div class="btn-group">
-                                    <button class="btn btn-large" data-player-control="fastforward"><i class="icon-forward"></i></button>
+                                    <button class="btn btn-primary" data-player-control="fastforward"><i class="icon-forward"></i></button>
                                 </div>
                                 <div class="btn-group">
-                                    <button class="btn btn-large" data-player-control="stepforward"><i class="icon-step-forward"></i></button>
+                                    <button class="btn btn-primary" data-player-control="stepforward"><i class="icon-step-forward"></i></button>
                                 </div>
                                 <div class="btn-group">
-                                    <button class="btn btn-large" data-player-control="skipnext"><i class="icon-fast-forward"></i></button>
+                                    <button class="btn btn-primary" data-player-control="skipnext"><i class="icon-fast-forward"></i></button>
                                 </div>
                                 <div class="btn-group">
-                                    <button class="btn btn-large" data-player-control="mute"><i class="icon-volume-off"></i>X</button>
+                                    <button class="btn btn-primary" data-player-control="mute"><i class="icon-volume-off"></i>X</button>
                                 </div>
                                 <div class="btn-group">
-                                    <button class="btn btn-large" data-player-control="volumedown"><i class="icon-volume-down"></i></button>
+                                    <button class="btn btn-primary" data-player-control="volumedown"><i class="icon-volume-down"></i></button>
                                 </div>
                                 <div class="btn-group">
-                                    <button class="btn btn-large" data-player-control="volumeup"><i class="icon-volume-up"></i></button>
+                                    <button class="btn btn-primary" data-player-control="volumeup"><i class="icon-volume-up"></i></button>
                                 </div>
                                 <div class="input-prepend pull-right">
                                     <span class="add-on"><i class="icon-text-width"></i></span>
