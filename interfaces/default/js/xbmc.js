@@ -243,6 +243,7 @@ function loadMovie(movie) {
     var director = "";
     var writers = "";
     var genre = "";
+    var path = "";
     var country = "";
     var studio = "";
     var runtime = "";
@@ -390,6 +391,7 @@ function loadMovie(movie) {
     var stars = $('<p>').attr('id', 'modal-star-rating').addClass('modal-star-rating').append(rating);
     var stream = "<span class='pull-right'>" + sourceicon + spacerh10 + resolutionicon + spacerh10  + mpaaicon + spacerh10 + aspecticon + spacerh10 + videocodec + spacerh10 +  spacerh10 + "</span>";
     plot = $('<p>').html('<b>Plot:</b> ' + plot);
+    //path = $('<p>').html('<b>Path:</b> ' + path);
     director = $('<p>').addClass('modal-info-item').html('<b>Director:</b> ' + director);
     writer = $('<p>').addClass('modal-info-item').html('<b>Writer:</b> ' + writer);
     genre = $('<p>').addClass('modal-info-item').html('<b>Genre:</b> ' + genre);
