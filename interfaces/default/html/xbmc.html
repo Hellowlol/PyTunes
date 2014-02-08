@@ -6,10 +6,10 @@
             <img alt="PyTunes" src="../img/pytuneslogoxs.png"/>
                 <div id="xbmc-well" class="well-small btn-toolbar pull-right form-inline" style="float:right; background:url(../img/bodybg.jpg)">
                     <div class="btn-group">
-                        <a href="#" id="xbmc-notify" class="btn btn-primary" title="Send notification"><i class="icon-envelope"></i> Notify</a>
+                        <a href="#" id="xbmc-notify" class="btn btn-primary btn-small" title="Send notification"><i class="icon-envelope"></i> Notify</a>
                     </div>
                     <div class="btn-group">
-                        <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" title="Sort by">
+                        <a href="#" class="btn btn-primary btn-small dropdown-toggle" data-toggle="dropdown" title="Sort by">
                         <i class="icon-sort"></i> Sort 
                         <i class="caret"></i></a>
                         <ul class="dropdown-menu pull-right">
@@ -21,10 +21,11 @@
                         </ul>
                     </div>
                     <div class="btn-group">
-                        <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                        <a href="#" class="btn btn-primary btn-small dropdown-toggle" data-toggle="dropdown">
                         <i class="icon-th-list"></i>
                         Options <i class="caret"></i></a>
                         <ul class="dropdown-menu pull-right">
+                            <li><a href="#" id="xbmc-notify" title="Send Message To Screen"><i class="icon-envelope"></i> Send Message</a></li>
                             %if settings.get('xbmc_hide_watched', 0):
                             <li><a href="#" id="hidewatched" class="active"><i class="icon-eye-open"></i> Show Watched</a></li>
                             %else:
@@ -40,7 +41,7 @@
                         </ul>
                     </div>
                     <div class="btn-group">
-                        <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="icon-off"></i>
+                        <a href="#" class="btn btn-primary btn-small dropdown-toggle" data-toggle="dropdown"><i class="icon-off"></i>
                         System <i class="caret"></i></a>
                         <ul class="dropdown-menu pull-right">
                             <li><a href="Wake" class="ajax-link" title="Send WakeOnLan"><i class="icon-off"></i> Wake</a></li>

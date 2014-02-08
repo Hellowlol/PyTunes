@@ -570,7 +570,7 @@ class Xbmc:
         self.logger.debug("Sending notification to XBMC: " + text)
         xbmc = Server(self.url('/jsonrpc', True))
         image = 'https://raw.github.com/styxit/HTPC-Manager/master/interfaces/default/img/xbmc-logo.png'
-        return xbmc.GUI.ShowNotification(title='HTPC manager', message=text, image=image)
+        return xbmc.GUI.ShowNotification(title='PyTunes', message=text, image=image)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()

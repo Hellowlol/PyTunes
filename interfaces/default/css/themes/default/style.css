@@ -57,6 +57,18 @@ h2{
 h3 a {
     color: #000;
 }
+a {
+    color: #193f11;
+}
+a:visited {
+    color: #193f11;
+}
+a:active {
+    color: #dac91b;
+}
+a:hover {
+    color: #398f28;
+}
 table th.tablesorter-header {
     cursor: pointer;
 }

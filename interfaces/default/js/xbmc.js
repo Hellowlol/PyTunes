@@ -391,7 +391,7 @@ function loadMovie(movie) {
     var stars = $('<p>').attr('id', 'modal-star-rating').addClass('modal-star-rating').append(rating);
     var stream = "<span class='pull-right'>" + sourceicon + spacerh10 + resolutionicon + spacerh10  + mpaaicon + spacerh10 + aspecticon + spacerh10 + videocodec + spacerh10 +  spacerh10 + "</span>";
     plot = $('<p>').html('<b>Plot:</b> ' + plot);
-    //path = $('<p>').html('<b>Path:</b> ' + path);
+    path = $('<div>').html('<b>Path:</b> ' + movie.file);
     director = $('<p>').addClass('modal-info-item').html('<b>Director:</b> ' + director);
     writer = $('<p>').addClass('modal-info-item').html('<b>Writer:</b> ' + writer);
     genre = $('<p>').addClass('modal-info-item').html('<b>Genre:</b> ' + genre);
@@ -406,9 +406,10 @@ function loadMovie(movie) {
     var bodymiddleleft = $('<div>').addClass('pull-left modal-body-middle-left').append(moviethumb, stars);
     var infocolumbleft = $('<div>').addClass('pull-left').append(director, genre, runtime);
     var infocolumbright = $('<div>').addClass('pull-right').append(writer, country, studio);
-    var bodymiddleright = $('<div>').addClass('modal-body-middle-right').append(plot, infocolumbleft, infocolumbright);
-    var bodymiddle = $('<div>').append(bodymiddleleft, bodymiddleright);
-    var bodybottom = $('<div>').addClass('pull-left').append(castshow);
+    var bodymiddlebottom = $('<div>').addClass('pull-left').append(path);
+    var bodymiddleright = $('<div>').addClass('modal-body-middle-right').append(plot, infocolumbleft, infocolumbright, bodymiddlebottom);
+    var bodymiddle = $('<div>').addClass('modal-body-middle').append(bodymiddleleft, bodymiddleright);
+    var bodybottom = $('<div>').addClass('modal-body-bottom pull-left').append(castshow);
     var bodycontent = $('<div>').append(bodymiddle, bodybottom);
 
 

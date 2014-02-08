@@ -4,6 +4,7 @@ from htpc.proxy import get_image
 from urllib2 import urlopen, quote
 from json import loads
 import logging
+import xml.etree.ElementTree as xml
 
 
 class Search:
@@ -68,9 +69,11 @@ class Search:
             apikey = settings.get('newznab_apikey', '')
 
             url = 'http' + ssl + '://' + host + '/api?o=json&apikey=' + apikey + '&t=' + cmd
+            #url = 'http' + ssl + '://' + host + '/api?o=xml&apikey=' + apikey + '&t=' + cmd
 
             self.logger.debug("Fetching information from: " + url)
             return loads(urlopen(url, timeout=10).read())
+            #return xml.parse(urlopen(url, timeout=10).read())
         except:
             self.logger.error("Unable to fetch information from: " + url)
             return

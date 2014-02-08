@@ -172,8 +172,17 @@ h6.title {
     width: 770px;
 }
 
+.modal .modal-body-middle-bottom {
+    margin-left: 180px;
+    width: 770px;
+}
+
 .modal .modal-body-middle-left {
     width: 150px;
+}
+
+.modal .modal-body-bottom {
+    margin-top: 15px;
 }
 
 .modal .modal-movie-poster {
