@@ -604,7 +604,7 @@ function loadArtists(options) {
     };
     $.extend(sendData, options);
 
-    $('.spinner').show();
+      $('.spinner').show();
     artistLoad.request = $.ajax({
         url: WEBDIR + 'xbmc/GetArtists',
         type: 'get',
@@ -631,13 +631,18 @@ function loadArtists(options) {
                         e.preventDefault();
                         queueItem(artist.artistid, 'artist');
                     })),
-                    $('<td>').append(
-                    $('<a>').attr('href', '#').addClass('artist-link').html(artist.label + artist.artistid).click(function (e) {
-                        e.preventDefault(e);
-                        $(this).parent().append(loadAlbums({
-                            'artistid': artist.artistid
-                        }));
-                    }))));
+                    $('<td>').append($('<a>').attr('href',WEBDIR  + 'xbmc/ViewArtist/' + artist.artistid).addClass('artist-link').text(artist.artist))
+                                            //var name = $('<a>')
+                                            //.attr('href',WEBDIR + 'xbmc/viewArtist/' + artist.ArtistID)
+                                            //.text(artist.ArtistName);
+                    
+                        //.click(function (e) {
+                        //e.preventDefault(e);
+                        //$(this).parent().append(loadAlbums({
+                        //    'artistid': artist.artistid
+                        //});
+                   // }
+                    ));
                 });
             }
             Holder.run();

@@ -192,6 +192,49 @@ class Xbmc:
                 return "No valid servers"
 
     @cherrypy.expose()
+    def ViewAlbum(self, album_id):
+        response = self.fetch('getAlbum&id=%s' % album_id)
+
+        tracks = response['tracks']
+        for t in tracks:
+            duration = t['TrackDuration']
+            total_seconds = duration / 1000
+            minutes = total_seconds / 60
+            seconds = total_seconds - (minutes * 60)
+            t['DurationText'] = '%d:%02d' % (minutes, seconds)
+            t['TrackStatus'] = _get_status_icon('Downloaded' if t['Location'] is not None else '')
+
+        template = htpc.LOOKUP.get_template('xbmc_album.html')
+        return template.render(
+            scriptname=None,
+            artist_id=response['album'][0]['ArtistID'],
+            album_id=album_id,
+            module_name=htpc.settings.get('xbmc_name') or 'XBMC',
+            album=response['album'][0],
+            tracks=response['tracks'],
+            description=response['description'][0],
+        )
+
+    @cherrypy.expose()
+    def ViewArtist(self, artist_id):
+        #response = self.fetch('GetArtist&id=%s' % artist_id)
+
+        #for a in response['albums']:
+        #    a['StatusText'] = _get_status_icon(a['Status'])
+        #    a['can_download'] = True if a['Status'] not in ('Downloaded', 'Snatched', 'Wanted') else False
+
+        template = htpc.LOOKUP.get_template('xbmc_artist.html')
+        return template.render(
+            scriptname='xbmc_artist',
+            artist_id=artist_id,
+            #artist=response['artist'][0],
+            #albums=response['albums'],
+            #description=response['description'][0],
+            module_name=htpc.settings.get('xbmc_name') or 'XBMC',
+        )
+
+
+    @cherrypy.expose()
     def GetThumb(self, thumb=None, h=None, w=None, o=100):
         """ Parse thumb to get the url and send to htpc.proxy.get_image """
         url = self.url('/images/DefaultVideo.png')
@@ -297,6 +340,23 @@ class Xbmc:
             self.logger.error("Unable to fetch albums!")
             return
 
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def GetArtist(self, start=0, end=0, sortmethod='artist', sortorder='ascending', filter=''):
+        """ Get a list of all artists """
+        self.logger.debug("Fetching all artists in the music database")
+        try:
+            xbmc = Server(self.url('/jsonrpc', True))
+            sort = {'order': sortorder, 'method': sortmethod, 'ignorearticle': True}
+            properties = ['musicbrainzartistid', 'thumbnail', 'fanart']
+            limits = {'start': int(start), 'end': int(end)}
+            filter = {'field': 'artist', 'operator': 'contains', 'value': filter}
+            return xbmc.AudioLibrary.GetArtists(properties=properties, limits=limits, sort=sort, filter=filter, albumartistsonly=True)
+        except Exception, e:
+            self.logger.debug("Exception: " + str(e))
+            self.logger.error("Unable to fetch artists!")
+            return
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def GetSongs(self, start=0, end=0, sortmethod='title', sortorder='ascending', albumid=None, artistid=None, filter='', *args, **kwargs):
@@ -525,17 +585,33 @@ class Xbmc:
     def System(self, action=''):
         """ Various system commands """
         xbmc = Server(self.url('/jsonrpc', True))
-        if action == 'Shutdown':
-            self.logger.info("Shutting down XBMC")
+        if action == 'shutdown-server':
+            self.logger.info("Shutting down Server")
             xbmc.System.Shutdown()
-            return 'Shutting down XBMC.'
-        elif action == 'Suspend':
-            self.logger.info("Suspending XBMC")
+            return 'Shutting down Server.'
+        elif action == 'suspend-server':
+            self.logger.info("Suspending Server")
             xbmc.System.Suspend()
-            return 'Suspending XBMC.'
-        elif action == 'Reboot':
-            self.logger.info("Rebooting XBMC")
+            return 'Suspending Server.'
+        elif action == 'reboot-server':
+            self.logger.info("Rebooting Server")
             xbmc.System.Reboot()
+            return 'Rebooting Server.'
+        elif action == 'wake-xbmc':
+            self.logger.info("Waking Up XBMC")
+            xbmc.System.OnWake()
+            return 'Waking UP XBMC.'
+        elif action == 'shutdown-xbmc':
+            self.logger.info("Shutting down XBMC")
+            xbmc.System.OnQuit()
+            return 'Shutting down XBMC.'
+        elif action == 'suspend-xbmc':
+            self.logger.info("Suspending XBMC")
+            xbmc.System.OnSleep()
+            return 'Suspending XBMC.'
+        elif action == 'reboot-xbmc':
+            self.logger.info("Rebooting XBMC")
+            xbmc.System.OnRestart()
             return 'Rebooting XBMC.'
 
     @cherrypy.expose()

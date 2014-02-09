@@ -1,0 +1,298 @@
+<div class="SearchPanel">
+
+    <form class="searchForm" method="post" accept-charset="utf-8" action="http://yts.re/browse-movie">
+        <label>
+
+            Search Term:
+
+        </label>
+        <input id="keywords" class="field" type="text" autocomplete="off" tabindex="1" maxlength="300" value="" name="Keywords"></input>
+        <br></br>
+        <div class="autoComplete" style="display: none;"> … </div>
+        <div class="ajax-loader"></div>
+        <label class="label">
+
+            Quality:
+
+        </label>
+        <select id="form_Quality" name="Quality">
+            <option selected="selected" style="text-indent: 0px;" value="All">
+
+                All
+
+            </option>
+            <option style="text-indent: 0px;" value="1080p">
+
+                1080p
+
+            </option>
+            <option style="text-indent: 0px;" value="3D">
+
+                3D
+
+            </option>
+            <option style="text-indent: 0px;" value="480p">
+
+                480p
+
+            </option>
+            <option style="text-indent: 0px;" value="720p">
+
+                720p
+
+            </option>
+            <option style="text-indent: 0px;" value="DVD">
+
+                DVD
+
+            </option>
+            <option style="text-indent: 0px;" value="HDRip">
+
+                HDRip
+
+            </option>
+        </select>
+        <label>
+
+            Genre:
+
+        </label>
+        <select id="form_Genre" name="Genre">
+            <option selected="selected" style="text-indent: 0px;" value="All">
+
+                All
+
+            </option>
+            <option style="text-indent: 0px;" value="Action">
+
+                Action
+
+            </option>
+            <option style="text-indent: 0px;" value="Adventure">
+
+                Adventure
+
+            </option>
+            <option style="text-indent: 0px;" value="Animation">
+
+                Animation
+
+            </option>
+            <option style="text-indent: 0px;" value="Biography">
+
+                Biography
+
+            </option>
+            <option style="text-indent: 0px;" value="Comedy">
+
+                Comedy
+
+            </option>
+            <option style="text-indent: 0px;" value="Crime">
+
+                Crime
+
+            </option>
+            <option style="text-indent: 0px;" value="Documentary">
+
+                Documentary
+
+            </option>
+            <option style="text-indent: 0px;" value="Drama">
+
+                Drama
+
+            </option>
+            <option style="text-indent: 0px;" value="Family">
+
+                Family
+
+            </option>
+            <option style="text-indent: 0px;" value="Fantasy">
+
+                Fantasy
+
+            </option>
+            <option style="text-indent: 0px;" value="Film-Noir">
+
+                Film-Noir
+
+            </option>
+            <option style="text-indent: 0px;" value="History">
+
+                History
+
+            </option>
+            <option style="text-indent: 0px;" value="Horror">
+
+                Horror
+
+            </option>
+            <option style="text-indent: 0px;" value="Music">
+
+                Music
+
+            </option>
+            <option style="text-indent: 0px;" value="Musical">
+
+                Musical
+
+            </option>
+            <option style="text-indent: 0px;" value="Mystery">
+
+                Mystery
+
+            </option>
+            <option style="text-indent: 0px;" value="Romance">
+
+                Romance
+
+            </option>
+            <option style="text-indent: 0px;" value="Sci-Fi">
+
+                Sci-Fi
+
+            </option>
+            <option style="text-indent: 0px;" value="Short">
+
+                Short
+
+            </option>
+            <option style="text-indent: 0px;" value="Sport">
+
+                Sport
+
+            </option>
+            <option style="text-indent: 0px;" value="Thriller">
+
+                Thriller
+
+            </option>
+            <option style="text-indent: 0px;" value="War">
+
+                War
+
+            </option>
+            <option style="text-indent: 0px;" value="Western">
+
+                Western
+
+            </option>
+        </select>
+        <label>
+
+            Rating:
+
+        </label>
+        <select id="form_Rating" name="Rating">
+            <option selected="selected" style="text-indent: 0px;" value="0">
+
+                All
+
+            </option>
+            <option style="text-indent: 0px;" value="9.9">
+
+                10
+
+            </option>
+            <option style="text-indent: 0px;" value="9">
+
+                9+
+
+            </option>
+            <option style="text-indent: 0px;" value="8">
+
+                8+
+
+            </option>
+            <option style="text-indent: 0px;" value="7">
+
+                7+
+
+            </option>
+            <option style="text-indent: 0px;" value="6">
+
+                6+
+
+            </option>
+            <option style="text-indent: 0px;" value="5">
+
+                5+
+
+            </option>
+            <option style="text-indent: 0px;" value="4">
+
+                4+
+
+            </option>
+            <option style="text-indent: 0px;" value="3">
+
+                3+
+
+            </option>
+            <option style="text-indent: 0px;" value="2">
+
+                2+
+
+            </option>
+            <option style="text-indent: 0px;" value="1">
+
+                1+
+
+            </option>
+        </select>
+        <label>
+
+            Order By:
+
+        </label>
+        <select id="form_orderBy" name="orderBy" style="margin-right:0;">
+            <option selected="selected" style="text-indent: 0px;" value="latest">
+
+                Latest
+
+            </option>
+            <option style="text-indent: 0px;" value="oldest">
+
+                Oldest
+
+            </option>
+            <option style="text-indent: 0px;" value="seeds">
+
+                Seeds
+
+            </option>
+            <option style="text-indent: 0px;" value="peers">
+
+                Peers
+
+            </option>
+            <option style="text-indent: 0px;" value="size">
+
+                Size
+
+            </option>
+            <option style="text-indent: 0px;" value="year">
+
+                Year
+
+            </option>
+            <option style="text-indent: 0px;" value="A-Z">
+
+                A-Z
+
+            </option>
+            <option style="text-indent: 0px;" value="rating">
+
+                Rating
+
+            </option>
+        </select>
+        <div class="std-btn">
+            <input type="submit" value="Search" name="search"></input>
+            <span></span>
+        </div>
+    </form>
+
+</div>
+
