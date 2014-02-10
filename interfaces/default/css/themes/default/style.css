@@ -81,7 +81,8 @@ table th.tablesorter-header {
 }
 .icon-black {
     color:black;
-}.navbar, .navbar-inner {
+}
+.navbar, .navbar-inner {
   background-color: #5eb95e;
   background-image: -moz-linear-gradient(top, #398f28, #193f11);
   background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#398f28), to(#193f11));

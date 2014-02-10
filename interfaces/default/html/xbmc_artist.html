@@ -1,36 +1,62 @@
 <%inherit file="base.html"/>
+<% settings = self.attr.settings %>
 <div class="container">
-    <div class="content maincontent xbmc_artist">
-        <h1 class="page-header page-title" data-artistid="artistid">
-            <span class="xbmc_artistname">'ArtistName'</span>
-            <div class="btn-group show-options-menu pull-right">
-                <a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
-                    <i class="icon-wrench"></i>&nbsp;<span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a href="#" class="full-update">Force full update</a></li>
-                    <li><a href="#" class="rescan-files">Rescan files</a></li>
-                </ul>
-            </div>
-        </h1>
+    <div class="content maincontent xbmc_show">
+        <div class="page-header page-title">
+            <img alt="PyTunes" src="../../img/pytuneslogoxs.png"/>
+                <div id="xbmc-well" class="well-small btn-toolbar pull-right form-inline" style="float:right; background:url(../../img/bodybg.jpg)">
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-primary btn-small dropdown-toggle" data-toggle="dropdown">
+                        <i class="icon-th-list"></i>
+                        Options <i class="caret"></i></a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="../ControlPlayer?action=party" class="ajax-link"><i class="icon-glass"></i> Party Mode</a></li>
+                            <li><a href="../ControlPlayer?action=audiotoggledigital" class="ajax-link"><i class="icon-headphones"></i> Toggle Audio Output</a></li>
+                            <li><a href="../Library/scan/video" class="ajax-link"><i class="icon-search"></i> Update Video Library</a></li>
+                            <li><a href="../Library/clean/video" class="ajax-link"><i class="icon-trash"></i> Clean Video Library</a></li>
+                            <li><a href="../Library/scan/audio" class="ajax-link"><i class="icon-search"></i> Update Music Library</a></li>
+                            <li><a href="../Library/clean/audio" class="ajax-link"><i class="icon-trash"></i> Clean Music Library</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-primary btn-small dropdown-toggle" data-toggle="dropdown"><i class="icon-off"></i>
+                        System <i class="caret"></i></a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="../System?action=wake-xbmc" class="ajax-link" title="Wake XBMC"><i class="icon-off"></i> Wake XBMC</a></li>
+                            <li><a href="../System?action=suspend-xbmc" class="ajax-confirm" title="Suspend XBMC"><i class="icon-eye-close"></i> Suspend XBMC</a></li>
+                            <li><a href="../System?action=reboot-xbmc" class="ajax-confirm" title="Restart XBMC"><i class="icon-refresh"></i> Restart XBMC</a></li>
+                            <li><a href="../System?action=shutdown-xbmc" class="ajax-confirm" title="Shutdown XBMC"><i class="icon-off"></i> Shutdown XBMC</a></li>
+                        </ul>
+                    </div>
+                </div>
+        </div>
 
         <ul class="breadcrumb">
             <li><a href="/">Home</a> <span class="divider">/</span></li>
-            <li><a href="/xbmc">module_name</a> <span class="divider">/</span></li>
-            <li class="active xbmc_showname">'ArtistName'</li>
+            <li><a href="/xbmc/#artists">Artists</a> <span class="divider">/</span></li>
+            <li class="active showname">${name}</li>
         </ul>
 
         <div id="banner" class="row-fluid banner">
             <div class="span8" style="min-height: 0px;"></div>
             <div class="show_details span4 pull-right">
                 <div id="show_details_top" class="span4"></div>
-                <strong>Show details</strong>
+                <strong>Artist Details</strong>
                 <table class="table table-condensed">
-                    <tr><td>Tracks</td><td class="xbmc_total_tracks">'HaveTracks' / 'TotalTracks'</td></tr>
-                    <tr><td>Status</td><td class="xbmc_status">'Status'</td></tr>
+                    <tr><td>Albums</td><td class="xbmc_xbmc_total_tracks">'HaveAlbums' / 'TotalAlbumss'</td></tr>
+                    <tr><td>Born</td><td class="xbmc_xbmc_total_tracks">${born}</td></tr>
+                    <tr><td>Formed</td><td class="xbmc_xbmc_total_tracks">${formed}</td></tr>
+                    <tr><td>Died</td><td class="xbmc_xbmc_total_tracks">${died}</td></tr>
+                    <tr><td>Style</td><td class="xbmc_xbmc_total_tracks">${style}</td></tr>
+                    <tr><td>Years Active</td><td class="xbmc_xbmc_total_tracks">${yearsactive}</td></tr>
+                    <tr><td>Mood</td><td class="xbmc_xbmc_total_tracks">${mood}</td></tr>
+                    <tr><td>Musicbrainz ID</td><td class="xbmc_xbmc_total_tracks">${musicbrainzartistid}</td></tr>
+                    <tr><td>Disbanded</td><td class="xbmc_xbmc_total_tracks">${disbanded}</td></tr>
+                    <tr><td>Description</td><td class="xbmc_xbmc_total_tracks">${description}</td></tr>
+                    <tr><td>Instrument</td><td class="xbmc_xbmc_total_tracks">${instrument}</td></tr>
                     <tr><td>Last Album</td><td class="xbmc_last_album">
-                        <a href="/xbmc/viewAlbum/artistAlbumID">
-                            Artist
+                        <a href="/xbmc/ViewAlbum?artistid=${artist_id}&albumid=${artist_id}">
+                            Last Album
                         </a>
                     </td></tr>
                 </table>
@@ -38,36 +64,8 @@
             </div>
         </div>
 
-        <ul class="nav nav-tabs">
-            <li class="active">
-                <a href="#info" data-toggle="tab">Info</a>
-            </li>
-            <li>
-                <a href="#albums" data-toggle="tab">Albums</a>
-            </li>
-        </ul>
-
-        <div class="tab-content">
-            <div id="info" class="tab-pane active">
-            </div>
             <div id="albums" class="tab-pane">
-                <table class="table table-striped table-condensed table-sortable">
-                    <thead>
-                    <tr>
-                        <th>Title</th>
-                        <th>Release Date</th>
-                        <th>Status</th>
-                        <th>Search</th>
-                    </tr>
-                    </thead>
-                    <tbody id="album-tracks">
-                    <tr data-albumid="albumAlbumID">
-                        <td class="artist"><a href="/xbmc/viewAlbum/AlbumID">
-                        </a></td>
-                    </tr>
-                    </tbody>
-                </table>
+                <ul id="album-grid" class="artist-albums thumbnails"></ul>
             </div>
-        </div>
     </div>
 </div>

@@ -1,18 +1,36 @@
 <%inherit file="base.html"/>
+<% settings = self.attr.settings %>
 <div class="container">
     <div class="content maincontent xbmc_album">
-        <h1 class="page-header page-title" data-artistid="${artist_id}" data-albumid="${album_id}">
-            <span class="xbmc_albumname">${album['AlbumTitle']}</span>
-            <div class="btn-group show-options-menu pull-right">
-                <a class="btn btn-small dropdown-toggle" data-toggle="dropdown" href="#">
-                    <i class="icon-wrench"></i>&nbsp;<span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li><a href="#" class="full-update">Force full update</a></li>
-                    <li><a href="#" class="rescan-files">Rescan files</a></li>
-                </ul>
-            </div>
-        </h1>
+        <div class="page-header page-title">
+            <img alt="PyTunes" src="../../img/pytuneslogoxs.png"/>
+                <div id="xbmc-well" class="well-small btn-toolbar pull-right form-inline" style="float:right; background:url(../../img/bodybg.jpg)">
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-primary btn-small dropdown-toggle" data-toggle="dropdown">
+                        <i class="icon-th-list"></i>
+                        Options <i class="caret"></i></a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="ControlPlayer?action=fullscreen" class="ajax-link"><i class="icon-fullscreen"></i> Toggle Fullscreen</a></li>
+                            <li><a href="ControlPlayer?action=party" class="ajax-link"><i class="icon-glass"></i> Party Mode</a></li>
+                            <li><a href="ControlPlayer?action=audiotoggledigital" class="ajax-link"><i class="icon-headphones"></i> Toggle Audio Output</a></li>
+                            <li><a href="Library/scan/video" class="ajax-link"><i class="icon-search"></i> Update Video Library</a></li>
+                            <li><a href="Library/clean/video" class="ajax-link"><i class="icon-trash"></i> Clean Video Library</a></li>
+                            <li><a href="Library/scan/audio" class="ajax-link"><i class="icon-search"></i> Update Music Library</a></li>
+                            <li><a href="Library/clean/audio" class="ajax-link"><i class="icon-trash"></i> Clean Music Library</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-primary btn-small dropdown-toggle" data-toggle="dropdown"><i class="icon-off"></i>
+                        System <i class="caret"></i></a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="System?action=wake-xbmc" class="ajax-link" title="Wake XBMC"><i class="icon-off"></i> Wake</a></li>
+                            <li><a href="System?action=suspend-xbmc" class="ajax-confirm" title="Suspend XBMC"><i class="icon-eye-close"></i> Suspend XBMC</a></li>
+                            <li><a href="System?action=reboot-xbmc" class="ajax-confirm" title="Restart XBMC"><i class="icon-refresh"></i> Restart XBMC</a></li>
+                            <li><a href="System?action=shutdown-xbmc" class="ajax-confirm" title="Shutdown XBMC"><i class="icon-off"></i> Shutdown XBMC</a></li>
+                        </ul>
+                    </div>
+                </div>
+        </div>
 
         <ul class="breadcrumb">
             <li><a href="/">Home</a> <span class="divider">/</span></li>

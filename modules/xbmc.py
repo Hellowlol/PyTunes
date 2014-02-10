@@ -4,6 +4,8 @@ import htpc
 import base64
 import socket
 import struct
+import json
+import simplejson
 from urllib2 import quote
 from jsonrpclib import Server
 from sqlobject import SQLObject, SQLObjectNotFound
@@ -216,23 +218,57 @@ class Xbmc:
         )
 
     @cherrypy.expose()
-    def ViewArtist(self, artist_id):
-        #response = self.fetch('GetArtist&id=%s' % artist_id)
+    def GetArtist(self, artist, artistid):
+        """ Get data of a specific artist """
+        self.logger.debug("Get data of a specific artist")
+        try:
+            xbmc = Server(self.url('/jsonrpc', True))
+            properties = ['musicbrainzartistid', 'thumbnail', 'fanart']
+            filter = {'field': 'artist', 'operator': 'contains', 'value': filter}
+            return xbmc.Audio.Details.Artist(artist=artist, artistid=artistid, properties=properties, filter=filter)
+        except Exception, e:
+            self.logger.debug("Exception: " + str(e))
+            self.logger.error("Unable to fetch artist info!")
+            return
+    @cherrypy.expose()
+    def ViewArtist(self, artist_id, artist):
+        """ Get data of a specific artist """
+        self.logger.debug("Get data of a specific artist")
+        try:
+            xbmc = Server(self.url('/jsonrpc', True))
+            properties = ['musicbrainzartistid', 'thumbnail', 'fanart', 'style', 'died', 'born', 'formed', 'mood', 'disbanded', 'instrument', 'yearsactive', 'description']
+            #filter = {'field': 'artist', 'operator': 'contains', 'value': filter}
+            #filter = {'artistid': int(artist_id)}
+            #data = xbmc.AudioLibrary.GetArtists(artistid=int(artist_id), properties=properties, filter=filter)
+            data = xbmc.AudioLibrary.GetArtistDetails(artistid=int(artist_id), properties=properties)
+            data = json.dumps(data)
+            data = simplejson.loads(data)
+            #data = data.replace('"', '\'')
+            #data = dict(data);
+            #artistinfo=data['artistsdetails'],
+        except Exception, e:
+            self.logger.debug("Exception: " + str(e))
+            self.logger.error("Unable to fetch artist info!")
+            return
 
-        #for a in response['albums']:
-        #    a['StatusText'] = _get_status_icon(a['Status'])
-        #    a['can_download'] = True if a['Status'] not in ('Downloaded', 'Snatched', 'Wanted') else False
 
         template = htpc.LOOKUP.get_template('xbmc_artist.html')
         return template.render(
             scriptname='xbmc_artist',
             artist_id=artist_id,
-            #artist=response['artist'][0],
-            #albums=response['albums'],
-            #description=response['description'][0],
+            name=artist,
+            musicbrainzartistid=data['artistdetails']['musicbrainzartistid'],
+            born=data['artistdetails']['born'],
+            formed=data['artistdetails']['formed'],
+            died=data['artistdetails']['died'],
+            style=data['artistdetails']['style'],
+            yearsactive=data['artistdetails']['yearsactive'],
+            mood=data['artistdetails']['mood'],
+            disbanded=data['artistdetails']['disbanded'],
+            description=data['artistdetails']['description'],
+            instrument=data['artistdetails']['instrument'],
             module_name=htpc.settings.get('xbmc_name') or 'XBMC',
         )
-
 
     @cherrypy.expose()
     def GetThumb(self, thumb=None, h=None, w=None, o=100):
@@ -339,27 +375,9 @@ class Xbmc:
             self.logger.debug("Exception: " + str(e))
             self.logger.error("Unable to fetch albums!")
             return
-
-
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def GetArtist(self, start=0, end=0, sortmethod='artist', sortorder='ascending', filter=''):
-        """ Get a list of all artists """
-        self.logger.debug("Fetching all artists in the music database")
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            sort = {'order': sortorder, 'method': sortmethod, 'ignorearticle': True}
-            properties = ['musicbrainzartistid', 'thumbnail', 'fanart']
-            limits = {'start': int(start), 'end': int(end)}
-            filter = {'field': 'artist', 'operator': 'contains', 'value': filter}
-            return xbmc.AudioLibrary.GetArtists(properties=properties, limits=limits, sort=sort, filter=filter, albumartistsonly=True)
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to fetch artists!")
-            return
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def GetSongs(self, start=0, end=0, sortmethod='title', sortorder='ascending', albumid=None, artistid=None, filter='', *args, **kwargs):
+    def GetSongs(self, start=0, end=0, albumid=None, artistid=None, filter='', *args, **kwargs):
         """ Get a list of all songs """
         self.logger.debug("Fetching all artists in the music database")
         try:

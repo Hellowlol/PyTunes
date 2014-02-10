@@ -631,17 +631,7 @@ function loadArtists(options) {
                         e.preventDefault();
                         queueItem(artist.artistid, 'artist');
                     })),
-                    $('<td>').append($('<a>').attr('href',WEBDIR  + 'xbmc/ViewArtist/' + artist.artistid).addClass('artist-link').text(artist.artist))
-                                            //var name = $('<a>')
-                                            //.attr('href',WEBDIR + 'xbmc/viewArtist/' + artist.ArtistID)
-                                            //.text(artist.ArtistName);
-                    
-                        //.click(function (e) {
-                        //e.preventDefault(e);
-                        //$(this).parent().append(loadAlbums({
-                        //    'artistid': artist.artistid
-                        //});
-                   // }
+                    $('<td>').append($('<a>').attr('href',WEBDIR  + 'xbmc/ViewArtist?artist_id=' + artist.artistid + '&artist=' + artist.artist).addClass('artist-link').text(artist.artist))
                     ));
                 });
             }
