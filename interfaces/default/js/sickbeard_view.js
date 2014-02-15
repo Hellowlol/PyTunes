@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    var showid = $('h1.page-title').attr('data-showid');
+    var showid = $('div.page-title').attr('data-showid');
     loadShowData(showid);
     $('#banner').css('background-image', 'url(' + WEBDIR + 'sickbeard/GetBanner/' + showid + ')');
 });
@@ -11,7 +11,7 @@ function loadShowData(showid){
     dataType: 'json',
     success: function(data){
       if (data.result != 'success') {
-        notify('Error', 'Show not found.', 'error');
+        notify('Error', 'Show not found: ' + showid, 'error');
         return;
       }
       data = data.data;

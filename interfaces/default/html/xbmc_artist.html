@@ -3,10 +3,10 @@
 <div class="container">
     <div class="content maincontent xbmc_show">
         <div class="page-header page-title">
-            <img alt="PyTunes" src="../../img/pytuneslogoxs.png"/>
-                <div id="xbmc-well" class="well-small btn-toolbar pull-right form-inline" style="float:right; background:url(../../img/bodybg.jpg)">
+            <img alt="PyTunes" src="../../img/pytuneslogosm.png"/>
+                <div id="xbmc-well" class="well btn-toolbar pull-right form-inline" style="float:right; background:url(../../img/bodybg.jpg)">
                     <div class="btn-group">
-                        <a href="#" class="btn btn-primary btn-small dropdown-toggle" data-toggle="dropdown">
+                        <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                         <i class="icon-th-list"></i>
                         Options <i class="caret"></i></a>
                         <ul class="dropdown-menu pull-right">
@@ -19,7 +19,7 @@
                         </ul>
                     </div>
                     <div class="btn-group">
-                        <a href="#" class="btn btn-primary btn-small dropdown-toggle" data-toggle="dropdown"><i class="icon-off"></i>
+                        <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="icon-off"></i>
                         System <i class="caret"></i></a>
                         <ul class="dropdown-menu pull-right">
                             <li><a href="../System?action=wake-xbmc" class="ajax-link" title="Wake XBMC"><i class="icon-off"></i> Wake XBMC</a></li>
@@ -37,28 +37,28 @@
             <li class="active showname">${name}</li>
         </ul>
 
-        <div id="banner" class="row-fluid banner">
-            <div class="span8" style="min-height: 0px;"></div>
+        <div id="banner" class="row-fluid banner" style="${fanart}">
+            <div class="span8" style="min-height: 0px;">${thumb}${description}</div>
             <div class="show_details span4 pull-right">
                 <div id="show_details_top" class="span4"></div>
-                <strong>Artist Details</strong>
+                <strong>Artist Details: ${name}</strong>
                 <table class="table table-condensed">
-                    <tr><td>Albums</td><td class="xbmc_xbmc_total_tracks">'HaveAlbums' / 'TotalAlbumss'</td></tr>
+                    <tr><td>Albums</td><td class="xbmc_xbmc_total_tracks">'HaveAlbums' / 'TotalAlbums'</td></tr>
                     <tr><td>Born</td><td class="xbmc_xbmc_total_tracks">${born}</td></tr>
                     <tr><td>Formed</td><td class="xbmc_xbmc_total_tracks">${formed}</td></tr>
                     <tr><td>Died</td><td class="xbmc_xbmc_total_tracks">${died}</td></tr>
+                    <tr><td>Fanart</td><td class="xbmc_xbmc_total_tracks">${fanart}</td></tr>
                     <tr><td>Style</td><td class="xbmc_xbmc_total_tracks">${style}</td></tr>
-                    <tr><td>Years Active</td><td class="xbmc_xbmc_total_tracks">${yearsactive}</td></tr>
+                    <tr><td>Years</td><td class="xbmc_xbmc_total_tracks">${yearsactive}</td></tr>
                     <tr><td>Mood</td><td class="xbmc_xbmc_total_tracks">${mood}</td></tr>
-                    <tr><td>Musicbrainz ID</td><td class="xbmc_xbmc_total_tracks">${musicbrainzartistid}</td></tr>
+                    <tr><td>MBID</td><td class="xbmc_xbmc_total_tracks">${musicbrainzartistid}</td></tr>
                     <tr><td>Disbanded</td><td class="xbmc_xbmc_total_tracks">${disbanded}</td></tr>
-                    <tr><td>Description</td><td class="xbmc_xbmc_total_tracks">${description}</td></tr>
                     <tr><td>Instrument</td><td class="xbmc_xbmc_total_tracks">${instrument}</td></tr>
-                    <tr><td>Last Album</td><td class="xbmc_last_album">
+                    <!--<tr><td>Last Album</td><td class="xbmc_last_album">
                         <a href="/xbmc/ViewAlbum?artistid=${artist_id}&albumid=${artist_id}">
                             Last Album
                         </a>
-                    </td></tr>
+                    </td></tr>-->
                 </table>
                 <div id="show_details_bottom" class="span4"></div>
             </div>

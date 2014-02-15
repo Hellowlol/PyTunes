@@ -6,7 +6,8 @@ import socket
 import struct
 import json
 import simplejson
-from urllib2 import quote
+from itertools import chain
+from urllib2 import quote, unquote
 from jsonrpclib import Server
 from sqlobject import SQLObject, SQLObjectNotFound
 from sqlobject.col import StringCol, IntCol
@@ -250,6 +251,46 @@ class Xbmc:
             self.logger.debug("Exception: " + str(e))
             self.logger.error("Unable to fetch artist info!")
             return
+        #string.join(sentence, " ")
+        mood = ""
+        for i in data['artistdetails']['mood'] :
+            mood += i + ', '
+        mood = mood[:-2]
+
+        style = ""
+        for i in data['artistdetails']['style'] :
+            style += i + ', '
+        style= style[:-2]
+
+        instrument = ""
+        for i in data['artistdetails']['instrument'] :
+            instrument += i + ', '
+        instrument= instrument[:-2]
+
+        yearsactive = ""
+        for i in data['artistdetails']['yearsactive'] :
+            yearsactive += i + ', '
+        yearsactive= yearsactive[:-2]
+
+        #thumbs = "http%3a%2f%2fassets.fanart.tv%2ffanart%2fmusic%2fbd13909f-1c29-4c27-a874-d4aaf27c5b1a%2fartistthumb%2ffleetwood-mac-4fd37e9a22e1f.jpg"
+        #for i in data['artistdetails']['thumbnail'] :
+        #    thumbs += i
+        #thumbs= thumbs[:-1]
+        #url = self.url('/image/' + quote(thumb))
+        #url = "http%3a%2f%2fassets.fanart.tv%2ffanart%2fmusic%2fbd13909f-1c29-4c27-a874-d4aaf27c5b1a%2fartistthumb%2ffleetwood-mac-4fd37e9a22e1f.jpg/"
+        imgtmpl = '<img src="/xbmc/GetThumb?w=250&h=250&thumb=%s" align="left"/>'
+        #src = WEBDIR + 'xbmc/GetThumb?w=150&h=150&thumb=' + encodeURIComponent(album.thumbnail);        
+        #thumb = self.GetThumb(data['artistdetails']['thumbnail'])
+        #img = imgtmpl % (data['artistdetails']['thumbnail'])
+        img = imgtmpl % ('')
+        h='200'
+        w='200'
+        o='100'
+        #url = self.url('../../img/DefaultArtistThumb.png')
+        #if thumbs:
+        #    url = self.url('/images/' + quote(thumbs))
+        #    self.logger.debug("Trying to fetch image via " + url)
+        #    thumb = get_image(url, h, w, o, self.auth())
 
 
         template = htpc.LOOKUP.get_template('xbmc_artist.html')
@@ -261,12 +302,15 @@ class Xbmc:
             born=data['artistdetails']['born'],
             formed=data['artistdetails']['formed'],
             died=data['artistdetails']['died'],
-            style=data['artistdetails']['style'],
-            yearsactive=data['artistdetails']['yearsactive'],
-            mood=data['artistdetails']['mood'],
+            #thumb=data['artistdetails']['thumbnail'],
+            thumb=img,
+            fanart=data['artistdetails']['fanart'],
+            style=style,
+            yearsactive=yearsactive,
+            mood=mood,
             disbanded=data['artistdetails']['disbanded'],
             description=data['artistdetails']['description'],
-            instrument=data['artistdetails']['instrument'],
+            instrument=instrument,
             module_name=htpc.settings.get('xbmc_name') or 'XBMC',
         )
 
