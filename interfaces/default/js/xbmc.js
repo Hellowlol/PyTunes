@@ -631,7 +631,7 @@ function loadArtists(options) {
                         e.preventDefault();
                         queueItem(artist.artistid, 'artist');
                     })),
-                    $('<td>').append($('<a>').attr('href',WEBDIR  + 'xbmc/ViewArtist?artist_id=' + artist.artistid + '&artist=' + artist.artist).addClass('artist-link').text(artist.artist))
+                    $('<td>').append($('<a>').attr('href',WEBDIR  + 'xbmc/ViewArtist?artist_id=' + artist.artistid + '&artist=' + encodeURIComponent(artist.artist)).addClass('artist-link').text(artist.artist))
                     ));
                 });
             }
