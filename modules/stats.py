@@ -71,6 +71,17 @@ class Stats:
                         l.append(dusage)
   
                         rr = json.dumps(l)
+                else:
+                    if 'cdrom' in disk.opts or disk.fstype == '':
+                        pass
+                    else:
+                        usage = psutil.disk_usage(disk.mountpoint)
+                        dusage = usage._asdict()
+                        dusage['mountpoint'] = disk.mountpoint
+                        #jusage = json.dumps(dusage)
+                        l.append(dusage)
+  
+                        rr = json.dumps(l)
                         
         except Exception as e:
             self.logger.error("Could not get disk info %s" % e)
