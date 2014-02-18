@@ -59,14 +59,64 @@ function get_diskinfo() {
 
                 row.append(
                 $('<td>').addClass('qbt_name').text(disk.mountpoint),
+                $('<td>').addClass('qbt_name').text(disk.device),
 		$('<td>').addClass('qbt_ratio').text(getReadableFileSizeStringHDD(disk.free)),
 		$('<td>').addClass('qbit_eta').text(getReadableFileSizeStringHDD(disk.used)),
 		$('<td>').addClass('qbt_state').text(getReadableFileSizeStringHDD(disk.total)),
-		$('<td>').addClass('span3 qbit_progress').html(progress2),
+		//$('<td>').addClass('span3 qbit_progress').html(progress2),
 		$('<td>').addClass('qbt_state').text(disk.percent));
                 $('#torrents-queue').append(row);
 		});
             $('.spinner').hide();
+        }
+    });
+}
+
+// Makes the harddisk bars
+function get_diskinfo2() {
+    $.ajax({
+        'url': WEBDIR + 'stats/disk_usage2',
+            'dataType': 'json' ,
+            'success': function (response) {
+            //$('#torrents-queue').html("");
+            $('#error_message').text("");
+            var bars = $('<span>');    
+            $.each(response, function (i, disk) {
+                //var row = $('<tr>');
+                var progressBar = $('<div>');
+                progressBar.addClass('bar');
+                progressBar.css('width', (disk.percent) + '%');
+		progressBar.text(getReadableFileSizeString(disk.used)); // added the text
+                var progress = $('<div>');
+                progress.addClass('progress');
+		//
+
+		//
+                if (disk.percent >= 90) {
+                    progress.addClass('progress-danger');
+                }
+                progress.append(progressBar);
+		//
+		//
+		var progress2 = 	"<div class='progress hddprog'><div class=bar style=width:" + disk.percent + "%><span class=sr-only>"+ getReadableFileSizeStringHDD(disk.used) +"</span></div><div class='bar bar-success' style=width:" + (100 - disk.percent) + "% ><span class=sr-only>" + getReadableFileSizeStringHDD(disk.free) +"</span></div>";
+		
+		if (disk.percent >=87) {
+			//progress2.addClass('progress-danger'); // need to check, does not work
+		}
+
+                bars.append("<div>" + disk.device + "<br>" + progress2 + "<br>" + disk.mountpoint  + "</div>");
+                //row.append(
+                //$('<td>').addClass('qbt_name').text(disk.mountpoint),
+                //$('<td>').addClass('qbt_name').text(disk.device),
+		//$('<td>').addClass('qbt_ratio').text(getReadableFileSizeStringHDD(disk.free)),
+		//$('<td>').addClass('qbit_eta').text(getReadableFileSizeStringHDD(disk.used)),
+		//$('<td>').addClass('qbt_state').text(getReadableFileSizeStringHDD(disk.total)),
+		//$('<td>').addClass('span3 qbit_progress').html(progress2),
+		//$('<td>').addClass('qbt_state').text(disk.percent));
+		});
+	        //bars.append("<div>" + disk.device + "</div>");
+                $(".diskbars").html(bars);
+            //$('.spinner').hide();
         }
     });
 }
@@ -409,6 +459,7 @@ function return_settings3() {
 $(document).ready(function () {
     $('.spinner').show();
     get_diskinfo();
+    get_diskinfo2();
     uptime();
     get_user();
     get_external_ip();
@@ -420,6 +471,7 @@ $(document).ready(function () {
 
 setInterval(function () {
     get_diskinfo();
+    get_diskinfo2();
     uptime();
     get_user();
     get_external_ip(); // dont want to spam a external service.

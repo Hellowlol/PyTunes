@@ -8,7 +8,6 @@ import os
 import socket
 import urllib2
 import platform
-import psutil
 import cherrypy
 import htpc
 import logging
@@ -77,8 +76,8 @@ class Stats:
                     
             if os.name == 'posix':
                 
-                for disk in psutil.disk_partitions(all=False):
-                    usage = psutil.disk_usage(disk.device)
+                for disk in psutil.disk_partitions(all=True):
+                    usage = psutil.disk_usage(disk.mountpoint)
                     dusage = usage._asdict()
                     dusage['mountpoint'] = disk.mountpoint
                     dusage['device'] = disk.device
@@ -95,18 +94,18 @@ class Stats:
         rr = None
         l = []
         try:
-            for disk in psutil.disk_partitions(all=True):
-                if os.name == 'nt':
-                    if 'cdrom' in disk.opts or disk.fstype == '':
-                        pass
-                    else:
-                        usage = psutil.disk_usage(disk.mountpoint)
-                        dusage = usage._asdict()
-                        dusage['mountpoint'] = disk.mountpoint
-                        #jusage = json.dumps(dusage)
-                        l.append(dusage)
+            for disk in psutil.disk_partitions(all=False):
+                #if os.name == 'nt':
+            	if 'cdrom' in disk.opts or disk.fstype == '':
+                    pass
+            	else:
+    		    usage = psutil.disk_usage(disk.mountpoint)
+                    dusage = usage._asdict()
+                    dusage['mountpoint'] = disk.mountpoint
+                    dusage['device'] = disk.device
+                    l.append(dusage)
   
-                        rr = json.dumps(l)
+                    rr = json.dumps(l)
                         
         except Exception as e:
             self.logger.error("Could not get disk info %s" % e)
