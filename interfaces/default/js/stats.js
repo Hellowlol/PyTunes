@@ -479,4 +479,4 @@ setInterval(function () {
     network_usage_table();
     sys_info();
     return_settings3();
-}, 8000);
+}, 60000);
