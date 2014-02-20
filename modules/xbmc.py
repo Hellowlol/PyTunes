@@ -518,6 +518,15 @@ class Xbmc:
         xbmc = Server(self.url('/jsonrpc', True))
         return xbmc.Playlist.Remove(playlistid=playlistid, position=int(item))
 
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def ExecuteAddon(self, addon):
+        """ Remove a file from the playlist """
+        self.logger.debug("Execute '" + addon + "' with command")
+        xbmc = Server(self.url('/jsonrpc', True))
+        return xbmc.Addons.ExecuteAddon(addon)
+
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def PlaylistMove(self, position1, position2, playlistid=0):
@@ -598,6 +607,20 @@ class Xbmc:
         except Exception, e:
             self.logger.debug("Exception: " + str(e))
             self.logger.error("Unable to control XBMC with action: " + action)
+            return 'error'
+
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def OpenPlayer(self, url):
+        """ Send URL to XBMC Player """
+        self.logger.debug("Sending control to XBMC: " + action)
+        try:
+            xbmc = Server(self.url('/jsonrpc', True))
+            return xbmc.Player.Open(item=url)
+        except Exception, e:
+            self.logger.debug("Exception: " + str(e))
+            self.logger.error("Unable to open XBMC player with: " + url)
             return 'error'
 
     @cherrypy.expose()

@@ -42,7 +42,6 @@ function get_diskinfo() {
                     //progress2.addClass('progress-danger'); // need to check, does not work
                 }
 
-
                 row.append(
                 $('<td>').addClass('qbt_name').text(disk.mountpoint),
                 $('<td>').addClass('qbt_name').text(disk.device),
