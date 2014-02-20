@@ -382,9 +382,8 @@ function loadMovie(movie) {
         $.extend(buttons, {
             'Trailer on XBMC': function () {
                 var trailerid = movie.trailer.substr(movie.trailer.length - 11);
-                var url = 'http://www.youtube.com/embed/' + trailerid + '?rel=0&autoplay=1';
-                openPlayer(url);
-                hideModal();
+                var url = encodeURIComponent('http://www.youtube.com/embed/' + trailerid + '?rel=0&autoplay=1');
+                playItem(item=url, type='');
             }
         });
     }
@@ -1051,11 +1050,6 @@ function loadPlaylist(type) {
 function playItem(item, type) {
     type = typeof type !== 'undefined' ? '&type=' + type : '';
     $.get(WEBDIR + 'xbmc/PlayItem?item=' + item + type);
-}
-
-function openPlayer(url) {
-    $.get(WEBDIR + 'xbmc/OpenPlayer?url=' + url);
-    nowPlayingId = null;
 }
 
 function queueItem(item, type) {

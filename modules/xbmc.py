@@ -474,7 +474,7 @@ class Xbmc:
     @cherrypy.tools.json_out()
     def PlayItem(self, item=None, type=None):
         """ Play a file in XBMC """
-        self.logger.debug("Playing '" + item + "' of the type " + type)
+        #self.logger.debug("Playing '" + item + "' of the type " + type)
         xbmc = Server(self.url('/jsonrpc', True))
         if type == 'movie':
             return xbmc.Player.Open(item={'movieid': int(item)}, options={'resume': True})
@@ -609,19 +609,6 @@ class Xbmc:
             self.logger.error("Unable to control XBMC with action: " + action)
             return 'error'
 
-
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def OpenPlayer(self, url):
-        """ Send URL to XBMC Player """
-        self.logger.debug("Sending control to XBMC: " + action)
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            return xbmc.Player.Open(item=url)
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to open XBMC player with: " + url)
-            return 'error'
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
