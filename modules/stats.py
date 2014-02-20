@@ -95,7 +95,7 @@ class Stats:
     def disk_usage2(self):
         rr = None
         l = []
-        fstypes = ['ext', 'ext2', 'ext3', 'ext4', 'nfs', 'nfs4', 'fuseblk']
+        fstypes = ['ext', 'ext2', 'ext3', 'ext4', 'nfs', 'nfs4', 'fuseblk', 'cifs', 'msdos', 'ntfs']
         try:
             for disk in psutil.disk_partitions(all=True):
                 #if os.name == 'nt':

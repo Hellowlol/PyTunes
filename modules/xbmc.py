@@ -474,7 +474,7 @@ class Xbmc:
     @cherrypy.tools.json_out()
     def PlayItem(self, item=None, type=None):
         """ Play a file in XBMC """
-        #self.logger.debug("Playing '" + item + "' of the type " + type)
+        self.logger.debug("Playing '" + item + "' of the type " + type)
         xbmc = Server(self.url('/jsonrpc', True))
         if type == 'movie':
             return xbmc.Player.Open(item={'movieid': int(item)}, options={'resume': True})
