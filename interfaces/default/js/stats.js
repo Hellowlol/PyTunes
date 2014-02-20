@@ -46,6 +46,7 @@ function get_diskinfo() {
                 row.append(
                 $('<td>').addClass('qbt_name').text(disk.mountpoint),
                 $('<td>').addClass('qbt_name').text(disk.device),
+                $('<td>').addClass('qbt_name').text(disk.fstype),
                 $('<td>').addClass('qbt_ratio').text(getReadableFileSizeStringHDD(disk.free)),
                 $('<td>').addClass('qbit_eta').text(getReadableFileSizeStringHDD(disk.used)),
                 $('<td>').addClass('qbt_state').text(getReadableFileSizeStringHDD(disk.total)),
@@ -78,6 +79,7 @@ function get_diskinfo2() {
                 row.append(
                 $('<td>').addClass('qbt_name').text(disk.mountpoint),
                 $('<td>').addClass('qbt_name').text(disk.device),
+                $('<td>').addClass('qbt_name').text(disk.fstype),
                 $('<td>').addClass('qbt_ratio').text(getReadableFileSizeStringHDD(disk.free)),
                 $('<td>').addClass('qbit_eta').text(getReadableFileSizeStringHDD(disk.used)),
                 $('<td>').addClass('qbt_state').text(getReadableFileSizeStringHDD(disk.total)),

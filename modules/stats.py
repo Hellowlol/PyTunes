@@ -71,6 +71,7 @@ class Stats:
                     dusage = usage._asdict()
                     dusage['mountpoint'] = disk.mountpoint
                     dusage['device'] = disk.device
+                    dusage['fstype'] = disk.fstype
                     l.append(dusage)
                     rr = json.dumps(l)
                     
@@ -81,6 +82,7 @@ class Stats:
                     dusage = usage._asdict()
                     dusage['mountpoint'] = disk.mountpoint
                     dusage['device'] = disk.device
+                    dusage['fstype'] = disk.fstype
                     l.append(dusage)
                     rr = json.dumps(l)
                     
@@ -103,6 +105,7 @@ class Stats:
                     dusage = usage._asdict()
                     dusage['mountpoint'] = disk.mountpoint
                     dusage['device'] = disk.device
+                    dusage['fstype'] = disk.fstype
                     l.append(dusage)
   
                     rr = json.dumps(l)
