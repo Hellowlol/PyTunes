@@ -97,7 +97,7 @@ class Stats:
         l = []
         fstypes = ['ext', 'ext2', 'ext3', 'ext4', 'nfs', 'nfs4', 'fuseblk']
         try:
-            for disk in psutil.disk_partitions(all=False):
+            for disk in psutil.disk_partitions(all=True):
                 #if os.name == 'nt':
             	if 'cdrom' in disk.opts or disk.fstype == '' or disk.fstype not in fstypes:
                     pass
