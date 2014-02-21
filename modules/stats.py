@@ -102,11 +102,14 @@ class Stats:
             	if 'cdrom' in disk.opts or disk.fstype == '' or disk.fstype not in fstypes:
                     pass
             	else:
-    		    usage = psutil.disk_usage(disk.mountpoint)
+                    usage = psutil.disk_usage(disk.mountpoint)
                     dusage = usage._asdict()
                     dusage['mountpoint'] = disk.mountpoint
                     dusage['device'] = disk.device
-                    dusage['fstype'] = disk.fstype
+                    if disk.fstype == 'fuseblk' :
+                        dusage['fstype'] = 'ntfs'
+                    else:
+                        dusage['fstype'] = disk.fstype
                     l.append(dusage)
   
                     rr = json.dumps(l)
