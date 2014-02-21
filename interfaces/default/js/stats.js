@@ -219,14 +219,14 @@ function virtual_memory_bar() {
 
 function virtual_memory_bar2() {
     $.getJSON(WEBDIR + "stats/virtual_memory", function (virtual) {
-        $(".virmem").html("<div>Physical memory</div><div class=progress><div class=bar style=width:" + virtual.percent + "%><span class=sr-only>Used: " + virtual.percent + "%</span></div><div class='bar bar-success' style=width:" + (100 - virtual.percent) + "%><span class=sr-only>Free: " + (100 - virtual.percent) + "%</span></div></div><div class=progress><div class=bar style=width:" + virtual.percent + "%><span class=sr-only>Used: " + getReadableFileSizeString(virtual.used) + "</span></div><div class='bar bar-success' style=width:" + (100 - virtual.percent) + "% ><span class=sr-only>Free: " + getReadableFileSizeString(virtual.free) + "</span></div>");
+        $(".virmem").html("<div>Physical memory</div><div class=progress><div class=bar style=width:" + virtual.percent + "%><span class=sr-only>Used: " + virtual.percent + "%</span></div><div class='bar bar-success' style=width:" + (100 - virtual.percent) + "%><span class=sr-only>Free: " + (100 - virtual.percent) + "%</span></div></div><div class=progress><div class=bar style=width:" + virtual.percent + "%><span class=sr-only>Used: " + getReadableFileSizeString(virtual.total - virtual.available) + "</span></div><div class='bar bar-success' style=width:" + (100 - virtual.percent) + "% ><span class=sr-only>Free: " + getReadableFileSizeString(virtual.available) + "</span></div>");
 
     });
 }
 
 function virtual_memory_table() {
     $.getJSON(WEBDIR + "stats/virtual_memory", function (virtual) {
-        $(".virmem").html("<table class='table nwtable'><tr><td class=span4>Physical Memory:</td><td class=span4>" + virtual.percent + "%</td></tr><tr><td>Total:</td><td>" + getReadableFileSizeString(virtual.total) + "</td></tr><tr><td>Used:</td><td>" + getReadableFileSizeString(virtual.used) + "</td></tr><tr><td>Free:</td><td>" + getReadableFileSizeString(virtual.free) + "</td></tr></tbody></table>");
+        $(".virmem").html("<table class='table nwtable'><tr><td class=span4>Physical Memory:</td><td class=span4>" + virtual.percent + "%</td></tr><tr><td>Total:</td><td>" + getReadableFileSizeString(virtual.total) + "</td></tr><tr><td>Used:</td><td>" + getReadableFileSizeString(virtual.total - virtual.available) + "</td></tr><tr><td>Free:</td><td>" + getReadableFileSizeString(virtual.available) + "</td></tr></tbody></table>");
     });
 }
 
