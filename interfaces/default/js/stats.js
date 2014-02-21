@@ -211,7 +211,7 @@ function virtual_memory_bar() {
         }
         progress.append(progressBar);
         //$(".virmem").append(progress);
-        $(".virmem").append("<div>Physical memory</div>");
+        $(".virmem").append("<div>Real Memory</div>");
         $(".virmem").append("<div class=progress><div class=bar style=width:" + virtual.percent + "%><span class=sr-only>Used: " + virtual.percent + "%</span></div><div class='bar bar-success' style=width:" + (100 - virtual.percent) + "% ><span class=sr-only>Free: " + (100 - virtual.percent) + "%</span></div>");
         $(".virmem").append("<div class=progress><div class=bar style=width:" + virtual.percent + "%><span class=sr-only>Used: " + getReadableFileSizeString(virtual.used) + "</span></div><div class='bar bar-success' style=width:" + (100 - virtual.percent) + "% ><span class=sr-only>Free: " + getReadableFileSizeString(virtual.available) + "</span></div>");
     });
@@ -219,14 +219,14 @@ function virtual_memory_bar() {
 
 function virtual_memory_bar2() {
     $.getJSON(WEBDIR + "stats/virtual_memory", function (virtual) {
-        $(".virmem").html("<div>Physical memory</div><div class=progress><div class=bar style=width:" + virtual.percent + "%><span class=sr-only>Used: " + virtual.percent + "%</span></div><div class='bar bar-success' style=width:" + (100 - virtual.percent) + "%><span class=sr-only>Free: " + (100 - virtual.percent) + "%</span></div></div><div class=progress><div class=bar style=width:" + virtual.percent + "%><span class=sr-only>Used: " + getReadableFileSizeString(virtual.total - virtual.available) + "</span></div><div class='bar bar-success' style=width:" + (100 - virtual.percent) + "% ><span class=sr-only>Free: " + getReadableFileSizeString(virtual.available) + "</span></div>");
+        $(".virmem").html("<div>Real Memory</div><div class=progress><div class=bar style=width:" + virtual.percent + "%><span class=sr-only>Used: " + virtual.percent + "%</span></div><div class='bar bar-success' style=width:" + (100 - virtual.percent) + "%><span class=sr-only>Free: " + (100 - virtual.percent) + "%</span></div></div><div class=progress><div class=bar style=width:" + virtual.percent + "%><span class=sr-only>Used: " + getReadableFileSizeString(virtual.total - virtual.available) + "</span></div><div class='bar bar-success' style=width:" + (100 - virtual.percent) + "% ><span class=sr-only>Free: " + getReadableFileSizeString(virtual.available) + "</span></div>");
 
     });
 }
 
 function virtual_memory_table() {
     $.getJSON(WEBDIR + "stats/virtual_memory", function (virtual) {
-        $(".virmem").html("<table class='table nwtable'><tr><td class=span4>Physical Memory:</td><td class=span4>" + virtual.percent + "%</td></tr><tr><td>Total:</td><td>" + getReadableFileSizeString(virtual.total) + "</td></tr><tr><td>Used:</td><td>" + getReadableFileSizeString(virtual.total - virtual.available) + "</td></tr><tr><td>Free:</td><td>" + getReadableFileSizeString(virtual.available) + "</td></tr></tbody></table>");
+        $(".virmem").html("<table class='table nwtable'><tr><td class=span4>Real Memory:</td><td class=span4>" + virtual.percent + "%</td></tr><tr><td>Total:</td><td>" + getReadableFileSizeString(virtual.total) + "</td></tr><tr><td>Used:</td><td>" + getReadableFileSizeString(virtual.total - virtual.available) + "</td></tr><tr><td>Free:</td><td>" + getReadableFileSizeString(virtual.available) + "</td></tr></tbody></table>");
     });
 }
 
@@ -243,14 +243,14 @@ function swap_memory_bar() {
         if (swap.percent >= 90) {
             progress.addClass('progress-danger');
         }
-        $(".swpmem").html("<div>Swap memory</div><div class=progress><div class=bar style=width:" + swap.percent + "%><span class=sr-only>Used: " + swap.percent + "%</span></div><div class='bar bar-success' style=width:" + (100 - swap.percent) + "%><span class=sr-only>Free: " + (100 - swap.percent) + "%</span></div></div><div class=progress><div class=bar style=width:" + swap.percent + "%><span class=sr-only>Used: " + getReadableFileSizeString(swap.used) + "</span></div><div class='bar bar-success' style=width:" + (100 - swap.percent) + "% ><span class=sr-only>Free: " + getReadableFileSizeString(swap.free) + "</span></div>");
+        $(".swpmem").html("<div>Swap Memory</div><div class=progress><div class=bar style=width:" + swap.percent + "%><span class=sr-only>Used: " + swap.percent + "%</span></div><div class='bar bar-success' style=width:" + (100 - swap.percent) + "%><span class=sr-only>Free: " + (100 - swap.percent) + "%</span></div></div><div class=progress><div class=bar style=width:" + swap.percent + "%><span class=sr-only>Used: " + getReadableFileSizeString(swap.used) + "</span></div><div class='bar bar-success' style=width:" + (100 - swap.percent) + "% ><span class=sr-only>Free: " + getReadableFileSizeString(swap.free) + "</span></div>");
     });
 }
 
 function swap_memory_bar2() {
     $.getJSON(WEBDIR + "stats/swap_memory", function (swap) {
         //alert(response.total);
-        $(".swpmem").html("<div>Swap memory</div><div class=progress><div class=bar style=width:" + swap.percent + "%><span class=sr-only>Used: " + swap.percent + "%</span></div><div class='bar bar-success' style=width:" + (100 - swap.percent) + "%><span class=sr-only>Free: " + (100 - swap.percent) + "%</span></div></div><div class=progress><div class=bar style=width:" + swap.percent + "%><span class=sr-only>Used: " + getReadableFileSizeString(swap.used) + "</span></div><div class='bar bar-success' style=width:" + (100 - swap.percent) + "% ><span class=sr-only>Free: " + getReadableFileSizeString(swap.free) + "</span></div>");
+        $(".swpmem").html("<div>Swap Memory</div><div class=progress><div class=bar style=width:" + swap.percent + "%><span class=sr-only>Used: " + swap.percent + "%</span></div><div class='bar bar-success' style=width:" + (100 - swap.percent) + "%><span class=sr-only>Free: " + (100 - swap.percent) + "%</span></div></div><div class=progress><div class=bar style=width:" + swap.percent + "%><span class=sr-only>Used: " + getReadableFileSizeString(swap.used) + "</span></div><div class='bar bar-success' style=width:" + (100 - swap.percent) + "% ><span class=sr-only>Free: " + getReadableFileSizeString(swap.free) + "</span></div>");
 
     });
 }
