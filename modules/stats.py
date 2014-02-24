@@ -30,12 +30,18 @@ class Stats:
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'stats_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'stats_name'},
-                {'type': 'bool', 'label': 'Bar', 'name': 'stats_use_bars'},
-                {'type': 'text', 'label': 'Polling', 'name': 'stats_polling'}
+                {'type': 'bool', 'label': 'Bar', 'name': 'stats_use_bars'}
+                #{'type': 'text', 'label': 'Polling', 'name': 'stats_polling'}
         ]})
 
     @cherrypy.expose()
     def index(self):
+        #Since many linux repos still have psutil version 0.5
+        if psutil.version_info >= (0, 7):
+            pass
+        else:
+            self.logger.error("Psutil is outdated, needs atleast version 0,7")
+
         return htpc.LOOKUP.get_template('stats.html').render(scriptname='stats')
 
     @cherrypy.expose()
@@ -95,10 +101,9 @@ class Stats:
     def disk_usage2(self):
         rr = None
         l = []
-        fstypes = ['ext', 'ext2', 'ext3', 'ext4', 'nfs', 'nfs4', 'fuseblk', 'cifs', 'msdos', 'ntfs']
+        fstypes = ['ext', 'ext2', 'ext3', 'ext4', 'nfs', 'nfs4', 'fuseblk', 'cifs', 'msdos', 'ntfs', 'fat', 'fat32']
         try:
             for disk in psutil.disk_partitions(all=True):
-                #if os.name == 'nt':
             	if 'cdrom' in disk.opts or disk.fstype == '' or disk.fstype not in fstypes:
                     pass
             	else:
@@ -241,7 +246,6 @@ class Stats:
         except Exception as e:
             self.logger.error("Pulling system info %s" % e )
 
-    #sys_info()
 
     #get network usage
     @cherrypy.expose()
@@ -256,9 +260,6 @@ class Stats:
         except Exception as e:
             self.logger.error("Pulling network info %s" % e)
             
-
-    #print network_uage()
-    
     @cherrypy.expose()
     def virtual_memory(self):
         d = {}

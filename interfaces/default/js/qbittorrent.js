@@ -33,7 +33,6 @@ function get_torrents() {
                 var progressBar = $('<div>');
                 progressBar.addClass('bar');
                 progressBar.css('width', (torrent.progress * 100) + '%');
-                progressBar.append(Math.round(torrent.progress * 100) + "%");
                 var progress = $('<div>');
                 progress.addClass('progress');
                 if (torrent.state === "uploading") {
@@ -55,6 +54,7 @@ function get_torrents() {
                     progress.addClass('progress-danger progress-striped active');
                 }
                 progress.append(progressBar);
+                progress.append("&nbsp;" + Math.round(torrent.progress * 100) + "%");
 
                 // Button group
                 buttons = $('<div>').addClass('btn-group');

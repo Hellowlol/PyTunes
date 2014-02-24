@@ -1,13 +1,13 @@
 #! /bin/sh
 
 ### BEGIN INIT INFO
-# Provides:          PyTunes-HTPC-Manager application instance
+# Provides:          PyTunes-Media-Server-Manager application instance
 # Required-Start:    $all
 # Required-Stop:     $all
 # Default-Start:     2 3 4 5
 # Default-Stop:      0 1 6
-# Short-Description: starts instance of PyTunes-HTPC-Manager
-# Description:       starts instance of PyTunes-HTPC-Manager using start-stop-daemon
+# Short-Description: starts instance of PyTunes
+# Description:       starts instance of PyTunes using start-stop-daemon
 ### END INIT INFO
 
 ############### EDIT ME ##################
@@ -24,7 +24,7 @@ DAEMON_OPTS=" Htpc.py"
 NAME=pytunes
 
 # app name
-DESC=PyTunes-HTPC-Manager
+DESC=PyTunes
 
 # user
 RUN_AS=nobody

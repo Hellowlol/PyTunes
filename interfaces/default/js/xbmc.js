@@ -355,7 +355,7 @@ function loadMovie(movie) {
         'Remove': function () {
             var confirmed = confirm('Are you sure? Remove: ' + movie.title + '? This will remove this entry forever!');
             if (confirmed === true) {
-                removeItem(movie.movieid, 'movie');
+                removeLibraryItem(movie.movieid, 'movie');
                 reloadTab();
                 hideModal();
             }
@@ -1060,6 +1060,11 @@ function queueItem(item, type) {
 
 function removeItem(item) {
     $.get(WEBDIR + 'xbmc/RemoveItem?item=' + item);
+    nowPlayingId = null;
+}
+
+function removeLibraryItem(id, type) {
+    $.get(WEBDIR + 'xbmc/LibraryRemoveItem?libraryid=' + id + '&media=' + type);
     nowPlayingId = null;
 }
 

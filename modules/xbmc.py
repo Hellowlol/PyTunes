@@ -518,6 +518,20 @@ class Xbmc:
         xbmc = Server(self.url('/jsonrpc', True))
         return xbmc.Playlist.Remove(playlistid=playlistid, position=int(item))
 
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def LibraryRemoveItem(self, libraryid, media):
+        """ Remove an entry from the database """
+        self.logger.debug("Removing '" + libraryid + "' from the database")
+        xbmc = Server(self.url('/jsonrpc', True))
+        if media == 'movie':
+            return xbmc.VideoLibrary.RemoveMovie(movieid=int(libraryid))
+        elif media == 'musicvideo':
+            return xbmc.VideoLibrary.RemoveMusicVideo(musicvideoid=int(libraryid))
+        elif media == 'tvshow':
+            return xbmc.VideoLibrary.RemoveTVShow(tvshowid=int(libraryid))
+        elif media == 'episode':
+            return xbmc.VideoLibrary.RemoveEpisode(episodeid=int(libraryid))
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -642,7 +656,7 @@ class Xbmc:
     @cherrypy.tools.json_out()
     def Audio(self, audio):
         """ Change the audio stream  """
-        self.logger.debug("Chaning audio stream to " + audio)
+        self.logger.debug("Changing audio stream to " + audio)
         try:
             xbmc = Server(self.url('/jsonrpc', True))
             playerid = xbmc.Player.GetActivePlayers()[0][u'playerid']

@@ -97,29 +97,6 @@ function uptime() {
     });
 }
 
-function cpu_percent() {
-    $.getJSON(WEBDIR + "stats/cpu_percent", function (cpu) {
-        //alert(typeof(response.idle));
-        var ccpu = (100 - cpu.idle).toFixed(1);
-        var progressBar = $('<div>');
-        progressBar.addClass('bar');
-        progressBar.css('width', (ccpu) + '%');
-        progressBar.text('CPU: ' + (ccpu) + ' %');
-        var progress = $('<div>');
-        progress.addClass('progress statsbar hide');
-
-
-        if (ccpu >= 90) {
-            progress.addClass('progress-danger');
-        }
-        progress.append(progressBar); //
-        $(".cpu").append(progress);
-        $(".cpu").append("<div class=ff nonbar>CPU: " + (100 - cpu.idle).toFixed(1) + "%</div>");
-        $(".cpu").append("<div>User: " + cpu.user + "%</div>");
-        $(".cpu").append("<div>System: " + cpu.system + "%</div>");
-        $(".cpu").append("<div>Idle: " + cpu.idle + "%</div>");
-    });
-}
 
 function get_external_ip() {
     $.getJSON(WEBDIR + "stats/get_external_ip", function (response) {
@@ -198,27 +175,6 @@ function virtual_memory_nobar() {
 
 function virtual_memory_bar() {
     $.getJSON(WEBDIR + "stats/virtual_memory", function (virtual) {
-        //alert(response);
-        var progressBar = $('<div>');
-        progressBar.addClass('bar');
-        progressBar.css('width', (virtual.percent) + '%');
-        progressBar.text('Memory: ' + virtual.percent + ' %');
-        var progress = $('<div>');
-        progress.addClass('progress');
-
-        if (virtual.percent >= 90) {
-            progress.addClass('progress-danger');
-        }
-        progress.append(progressBar);
-        //$(".virmem").append(progress);
-        $(".virmem").append("<div>Real Memory</div>");
-        $(".virmem").append("<div class=progress><div class=bar style=width:" + virtual.percent + "%><span class=sr-only>Used: " + virtual.percent + "%</span></div><div class='bar bar-success' style=width:" + (100 - virtual.percent) + "% ><span class=sr-only>Free: " + (100 - virtual.percent) + "%</span></div>");
-        $(".virmem").append("<div class=progress><div class=bar style=width:" + virtual.percent + "%><span class=sr-only>Used: " + getReadableFileSizeString(virtual.used) + "</span></div><div class='bar bar-success' style=width:" + (100 - virtual.percent) + "% ><span class=sr-only>Free: " + getReadableFileSizeString(virtual.available) + "</span></div>");
-    });
-}
-
-function virtual_memory_bar2() {
-    $.getJSON(WEBDIR + "stats/virtual_memory", function (virtual) {
         $(".virmem").html("<div>Real Memory</div><div class=progress><div class=bar style=width:" + virtual.percent + "%><span class=sr-only>Used: " + virtual.percent + "%</span></div><div class='bar bar-success' style=width:" + (100 - virtual.percent) + "%><span class=sr-only>Free: " + (100 - virtual.percent) + "%</span></div></div><div class=progress><div class=bar style=width:" + virtual.percent + "%><span class=sr-only>Used: " + getReadableFileSizeString(virtual.total - virtual.available) + "</span></div><div class='bar bar-success' style=width:" + (100 - virtual.percent) + "% ><span class=sr-only>Free: " + getReadableFileSizeString(virtual.available) + "</span></div>");
 
     });
@@ -233,64 +189,13 @@ function virtual_memory_table() {
 function swap_memory_bar() {
     $.getJSON(WEBDIR + "stats/swap_memory", function (swap) {
         //alert(response.total);
-        var progressBar = $('<div>');
-        progressBar.addClass('bar');
-        progressBar.css('width', (swap.percent) + '%');
-        progressBar.text('Memory: ' + swap.percent + ' %');
-        var progress = $('<div>');
-        progress.addClass('progress');
-
-        if (swap.percent >= 90) {
-            progress.addClass('progress-danger');
-        }
-        $(".swpmem").html("<div>Swap Memory</div><div class=progress><div class=bar style=width:" + swap.percent + "%><span class=sr-only>Used: " + swap.percent + "%</span></div><div class='bar bar-success' style=width:" + (100 - swap.percent) + "%><span class=sr-only>Free: " + (100 - swap.percent) + "%</span></div></div><div class=progress><div class=bar style=width:" + swap.percent + "%><span class=sr-only>Used: " + getReadableFileSizeString(swap.used) + "</span></div><div class='bar bar-success' style=width:" + (100 - swap.percent) + "% ><span class=sr-only>Free: " + getReadableFileSizeString(swap.free) + "</span></div>");
-    });
-}
-
-function swap_memory_bar2() {
-    $.getJSON(WEBDIR + "stats/swap_memory", function (swap) {
-        //alert(response.total);
         $(".swpmem").html("<div>Swap Memory</div><div class=progress><div class=bar style=width:" + swap.percent + "%><span class=sr-only>Used: " + swap.percent + "%</span></div><div class='bar bar-success' style=width:" + (100 - swap.percent) + "%><span class=sr-only>Free: " + (100 - swap.percent) + "%</span></div></div><div class=progress><div class=bar style=width:" + swap.percent + "%><span class=sr-only>Used: " + getReadableFileSizeString(swap.used) + "</span></div><div class='bar bar-success' style=width:" + (100 - swap.percent) + "% ><span class=sr-only>Free: " + getReadableFileSizeString(swap.free) + "</span></div>");
 
     });
 }
-
-function swap_memory_nobar() {
-    $.getJSON(WEBDIR + "stats/swap_memory", function (swap) {
-        //alert(response.total);
-        var progressBar = $('<div>');
-        progressBar.addClass('bar');
-        progressBar.css('width', (swap.percent) + '%');
-        progressBar.text('Memory: ' + swap.percent + ' %');
-        var progress = $('<div>');
-        progress.addClass('progress');
-
-        if (swap.percent >= 90) {
-            progress.addClass('progress-danger');
-        }
-        progress.append(progressBar);
-        //$(".swpmem").append(progress);
-        $(".swpmem").append("<div class=nonbar>Swap Memory: " + swap.percent + "%</div>");
-        $(".swpmem").append("<div>Total: " + getReadableFileSizeString(swap.total) + "</div>");
-        $(".swpmem").append("<div>Used: " + getReadableFileSizeString(swap.used) + "</div>");
-        $(".swpmem").append("<div>Free: " + getReadableFileSizeString(swap.free) + "</div>");
-    });
-}
-
 function swap_memory_table() {
     $.getJSON(WEBDIR + "stats/swap_memory", function (swap) {
         //alert(response.total);
-        var progressBar = $('<div>');
-        progressBar.addClass('bar');
-        progressBar.css('width', (swap.percent) + '%');
-        progressBar.text('Memory: ' + swap.percent + ' %');
-        var progress = $('<div>');
-        progress.addClass('progress');
-
-        if (swap.percent >= 90) {
-            progress.addClass('progress-danger');
-        }
-        progress.append(progressBar);
         $(".swpmem").html("<table class='table nwtable'><tr><td class=span4>Swap Memory:</td><td class=span4>" + swap.percent + "%</td></tr><tr><td>Total:</td><td>" + getReadableFileSizeString(swap.total) + "</td></tr><tr><td>Used:</td><td>" + getReadableFileSizeString(swap.used) + "</td></tr><tr><td>Free:</td><td>" + getReadableFileSizeString(swap.free) + "</td></tr></tbody></table>");
     });
 }
@@ -300,46 +205,10 @@ function swap_memory_table() {
 function cpu_percent_bar() {
     $.getJSON(WEBDIR + "stats/cpu_percent", function (cpu) {
         //alert(typeof(response.idle));
-        $(".cpu").append("<div class=hcpu>CPU</div>");
-        $(".cpu").append("<div class='progress pcpu'><div class=bar style=width:" + (cpu.user + cpu.system).toFixed(1) + "%><span class=sr-only>Used: " + (cpu.user + cpu.system).toFixed(1) + "%</span></div><div class='bar bar-success' style=width:" + (100 - (cpu.user + cpu.system)).toFixed(1) + "% ><span class=sr-only>Idle: " + cpu.idle + "%</span></div>");
-        $(".cpu").append("<div class=progress><div class=bar style=width:" + cpu.user.toFixed(1) + "%><span class=sr-only>User: " + cpu.user.toFixed(1) + "%</span></div><div class='bar bar-warning' style=width:" + cpu.system.toFixed(1) + "%><span class=sr-only>System: " + cpu.system.toFixed(1) + "%</span></div><div class='bar bar-success' style=width:" + (100 - (cpu.user + cpu.system)).toFixed(1) + "% ><span class=sr-only>Idle: " + cpu.idle + "%</span></div>");
-        if (cpu.idle <= 10) {
-            $('.pcpu').addClass('progress-danger');
-        }
-    });
-}
-
-function cpu_percent_bar2() {
-    $.getJSON(WEBDIR + "stats/cpu_percent", function (cpu) {
-        //alert(typeof(response.idle));
         $(".cpu").html("<div>CPU</div><div class=progress><div class=bar style=width:" + (cpu.user + cpu.system).toFixed(1) + "%><span class=sr-only>Used: " + (cpu.user + cpu.system).toFixed(1) + "%</span></div><div class='bar bar-success' style=width:" + (100 - (cpu.user + cpu.system)).toFixed(1) + "%><span class=sr-only>Idle: " + cpu.idle.toFixed(1) + "%</span></div></div><div class=progress><div class=bar style=width:" + cpu.user.toFixed(1) + "%><span class=sr-only>User: " + cpu.user.toFixed(1) + "%</span></div><div class='bar bar-warning' style=width:" + cpu.system.toFixed(1) + "%><span class=sr-only>System: " + cpu.system.toFixed(1) + "%</span></div><div class='bar bar-success' style=width:" + (100 - (cpu.user + cpu.system)).toFixed(1) + "%><span class=sr-only>Idle: " + cpu.idle.toFixed(1) + "%</span></div></div>");
     });
 }
 
-
-function cpu_percent_nobar() {
-    $.getJSON(WEBDIR + "stats/cpu_percent", function (cpu) {
-        //alert(typeof(response.idle));
-        var ccpu = (100 - cpu.idle).toFixed(1);
-        var progressBar = $('<div>');
-        progressBar.addClass('bar');
-        progressBar.css('width', (ccpu) + '%');
-        progressBar.text('CPU: ' + (ccpu) + ' %');
-        var progress = $('<div>');
-        progress.addClass('progress');
-
-        if (ccpu >= 90) {
-            progress.addClass('progress-danger');
-        }
-        progress.append(progressBar); //
-        //$(".cpu").append(progress); // Comment to make sure that the bar isnt added.
-        $(".cpu").append("<div class=ff nonbar>CPU: " + (100 - cpu.idle).toFixed(1) + "%</div>");
-        $(".cpu").append("<div>User: " + cpu.user + "%</div>");
-        $(".cpu").append("<div>System: " + cpu.system + "%</div>");
-        $(".cpu").append("<div>Idle: " + cpu.idle + "%</div>");
-
-    });
-}
 
 function cpu_percent_table() {
     $.getJSON(WEBDIR + "stats/cpu_percent", function (cpu) {
@@ -351,9 +220,9 @@ function cpu_percent_table() {
 function return_settings3() {
     $.getJSON(WEBDIR + "stats/return_settings", function (return_settings) {
         if (return_settings.stats_use_bars == 'true') {
-            cpu_percent_bar2();
-            swap_memory_bar2();
-            virtual_memory_bar2();
+            cpu_percent_bar();
+            swap_memory_bar();
+            virtual_memory_bar();
         } else if (return_settings.stats_use_bars == 'false') {
             //cpu_percent_nobar();
             cpu_percent_table();
@@ -365,9 +234,6 @@ function return_settings3() {
         } else {
             //pass 
         }
-
-
-
     });
 }
 
