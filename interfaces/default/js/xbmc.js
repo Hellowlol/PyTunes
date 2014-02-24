@@ -348,6 +348,10 @@ function loadMovie(movie) {
             playItem(movie.movieid, 'movie');
             hideModal();
         },
+        'Cinema-X': function () {
+            executeAddon('script.cinema.experience', movie.movieid);
+            hideModal();
+        },
         'Queue': function () {
            queueItem(movie.movieid, 'movie');
            hideModal();
@@ -380,7 +384,7 @@ function loadMovie(movie) {
     }
     if (movie.trailer) {
         $.extend(buttons, {
-            'Trailer on XBMC': function () {
+            'Trailer XBMC': function () {
                 var trailerid = movie.trailer.substr(movie.trailer.length - 11);
                 var url = encodeURIComponent('http://www.youtube.com/embed/' + trailerid + '?rel=0&autoplay=1');
                 playItem(item=url, type='youtube');
@@ -1050,6 +1054,12 @@ function loadPlaylist(type) {
 function playItem(item, type) {
     type = typeof type !== 'undefined' ? '&type=' + type : '';
     $.get(WEBDIR + 'xbmc/PlayItem?item=' + item + type);
+}
+
+function executeAddon(addon, cmd0, cmd1) {
+    cmd0 = typeof cmd0 !== 'undefined' ? '&cmd0=' + cmd0 : '';
+    cmd1 = typeof cmd1 !== 'undefined' ? '&cmd1=' + cmd1 : '';
+    $.get(WEBDIR + 'xbmc/ExecuteAddon?addon=' + addon + cmd0 + cmd1);
 }
 
 function queueItem(item, type) {

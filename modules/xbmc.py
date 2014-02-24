@@ -535,11 +535,15 @@ class Xbmc:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def ExecuteAddon(self, addon):
-        """ Remove a file from the playlist """
-        self.logger.debug("Execute '" + addon + "' with command")
+    def ExecuteAddon(self, addon, cmd0, cmd1):
+        """ Execute an XBMC addon """
+        self.logger.debug("Execute '" + addon + "' with commands '" + cmd0 + "' and '" + cmd1 +"'")
         xbmc = Server(self.url('/jsonrpc', True))
-        return xbmc.Addons.ExecuteAddon(addon)
+        if addon == 'script.artwork.downloader':
+            return xbmc.Addons.ExecuteAddon(addon)
+        elif addon == 'script.cinema.experience':
+            cmd = 'movieid=' + cmd0
+            return xbmc.Addons.ExecuteAddon(addon, cmd)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
