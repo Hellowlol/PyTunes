@@ -542,7 +542,7 @@ class Xbmc:
         if addon == 'script.artwork.downloader':
             return xbmc.Addons.ExecuteAddon(addon)
         elif addon == 'script.cinema.experience':
-            cmd = 'movieid=' + cmd0
+            cmd = 'movieid=' + int(cmd0)
             return xbmc.Addons.ExecuteAddon(addon, cmd)
 
     @cherrypy.expose()
@@ -792,11 +792,15 @@ class Xbmc:
         if lib == 'video':
             if do == 'clean':
                 return xbmc.VideoLibrary.Clean()
+            elif do == 'export':
+                return xbmc.VideoLibrary.Export()
             else:
                 return xbmc.VideoLibrary.Scan()
         else:
             if do == 'clean':
                 return xbmc.AudioLibrary.Clean()
+            elif do == 'export':
+                return xbmc.AudioLibrary.Export()
             else:
                 return xbmc.AudioLibrary.Scan()
 

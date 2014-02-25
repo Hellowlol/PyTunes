@@ -1057,6 +1057,7 @@ function playItem(item, type) {
 }
 
 function executeAddon(addon, cmd0, cmd1) {
+    confirm('Execute: ' + addon + ' with cmd0: ' + cmd0 + ' and cmd1: ' + cmd1);
     cmd0 = typeof cmd0 !== 'undefined' ? '&cmd0=' + cmd0 : '';
     cmd1 = typeof cmd1 !== 'undefined' ? '&cmd1=' + cmd1 : '';
     $.get(WEBDIR + 'xbmc/ExecuteAddon?addon=' + addon + cmd0 + cmd1);
