@@ -1,8 +1,8 @@
 <%inherit file="base.html"/>
 <% settings = self.attr.settings %>
 <div class="container">
-    <div class="content maincontent xbmc_show">
-        <div class="page-header page-title">
+    <div class="content maincontent xbmc_artist">
+        <div class="page-header page-title" data-artist-id="${artist_id}">
             <img alt="PyTunes" src="../../img/pytuneslogosm.png"/>
                 <div id="xbmc-well" class="well btn-toolbar pull-right form-inline" style="float:right; background:url(../../img/bodybg.jpg)">
                     <div class="btn-group">
@@ -32,40 +32,35 @@
         </div>
 
         <ul class="breadcrumb">
-            <li><a href="/">Home</a> <span class="divider">/</span></li>
+            <li><a href="/xbmc">Home</a> <span class="divider">/</span></li>
             <li><a href="/xbmc/#artists">Artists</a> <span class="divider">/</span></li>
-            <li class="active showname">${name}</li>
+            <li class="active artistname">${name}</li>
         </ul>
 
-        <div id="banner" class="row-fluid banner" style="${fanart}">
-            <div class="span8" style="min-height: 0px;">${thumb}${description}</div>
-            <div class="show_details span4 pull-right">
-                <div id="show_details_top" class="span4"></div>
+        <div id="fanart" class="row-fluid fanart">
+        <!--<div id="thumb" class="thumb pull-left"></div>-->
+            <img id="thumb" class="thumbnail" align="left" style="" src="../../img/default-artist.png"/>
+            <!--<p class="description span5" style="min-height: 0px;"></p>-->
+            <div class="description span5" style=""></div>
+            <div class="artist_details span4 pull-right" style="margin-left:10px">
+                <div id="artist_details_top" class="span4"></div>
                 <strong>Artist Details: ${name}</strong>
-                <table class="table table-condensed">
-                    <tr><td>Albums</td><td class="xbmc_xbmc_total_tracks">'HaveAlbums' / 'TotalAlbums'</td></tr>
-                    <tr><td>Born</td><td class="xbmc_xbmc_total_tracks">${born}</td></tr>
-                    <tr><td>Formed</td><td class="xbmc_xbmc_total_tracks">${formed}</td></tr>
-                    <tr><td>Died</td><td class="xbmc_xbmc_total_tracks">${died}</td></tr>
-                    <tr><td>Fanart</td><td class="xbmc_xbmc_total_tracks">${fanart}</td></tr>
-                    <tr><td>Style</td><td class="xbmc_xbmc_total_tracks">${style}</td></tr>
-                    <tr><td>Years</td><td class="xbmc_xbmc_total_tracks">${yearsactive}</td></tr>
-                    <tr><td>Mood</td><td class="xbmc_xbmc_total_tracks">${mood}</td></tr>
-                    <tr><td>MBID</td><td class="xbmc_xbmc_total_tracks">${musicbrainzartistid}</td></tr>
-                    <tr><td>Disbanded</td><td class="xbmc_xbmc_total_tracks">${disbanded}</td></tr>
-                    <tr><td>Instrument</td><td class="xbmc_xbmc_total_tracks">${instrument}</td></tr>
-                    <!--<tr><td>Last Album</td><td class="xbmc_last_album">
-                        <a href="/xbmc/ViewAlbum?artistid=${artist_id}&albumid=${artist_id}">
-                            Last Album
-                        </a>
-                    </td></tr>-->
+                <table class="table table-condensed artist-table">
+                    <tr><td>Albums</td><td class="xbmc_albums"></td></tr>
+                    <tr><td>Born</td><td class="xbmc_born"></td></tr>
+                    <tr><td>Formed</td><td class="xbmc_formed"></td></tr>
+                    <tr><td>Died</td><td class="xbmc_died"></td></tr>
+                    <tr><td>Style</td><td class="xbmc_style"></td></tr>
+                    <tr><td>Years</td><td class="xbmc_yearsactive"></td></tr>
+                    <tr><td>Mood</td><td class="xbmc_mood"></td></tr>
+                    <tr><td>MBID</td><td class="xbmc_mbid"></td></tr>
+                    <tr><td>Disbanded</td><td class="xbmc_disbanded"></td></tr>
+                    <tr><td>Instrument</td><td class="xbmc_instrument"></td></tr>
                 </table>
-                <div id="show_details_bottom" class="span4"></div>
+                <div id="artist_details_bottom" class="span4"></div>
             </div>
         </div>
-
-            <div id="albums" class="tab-pane">
                 <ul id="album-grid" class="artist-albums thumbnails"></ul>
-            </div>
+                <div class="spinner"></div>
     </div>
 </div>

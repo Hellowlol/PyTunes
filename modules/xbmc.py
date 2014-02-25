@@ -219,99 +219,29 @@ class Xbmc:
         )
 
     @cherrypy.expose()
-    def GetArtist(self, artist, artistid):
-        """ Get data of a specific artist """
-        self.logger.debug("Get data of a specific artist")
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            properties = ['musicbrainzartistid', 'thumbnail', 'fanart']
-            filter = {'field': 'artist', 'operator': 'contains', 'value': filter}
-            return xbmc.Audio.Details.Artist(artist=artist, artistid=artistid, properties=properties, filter=filter)
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to fetch artist info!")
-            return
-    @cherrypy.expose()
-    def ViewArtist(self, artist_id, artist):
+    @cherrypy.tools.json_out()
+    def GetArtist(self, artist_id):
         """ Get data of a specific artist """
         self.logger.debug("Get data of a specific artist")
         try:
             xbmc = Server(self.url('/jsonrpc', True))
             properties = ['musicbrainzartistid', 'thumbnail', 'fanart', 'style', 'died', 'born', 'formed', 'mood', 'disbanded', 'instrument', 'yearsactive', 'description']
-            #filter = {'field': 'artist', 'operator': 'contains', 'value': filter}
-            #filter = {'artistid': int(artist_id)}
-            #data = xbmc.AudioLibrary.GetArtists(artistid=int(artist_id), properties=properties, filter=filter)
-            data = xbmc.AudioLibrary.GetArtistDetails(artistid=int(artist_id), properties=properties)
-            data = json.dumps(data)
-            data = simplejson.loads(data)
-            #data = data.replace('"', '\'')
-            #data = dict(data);
-            #artistinfo=data['artistsdetails'],
+            return xbmc.AudioLibrary.GetArtistDetails(artistid=int(artist_id), properties=properties)
         except Exception, e:
             self.logger.debug("Exception: " + str(e))
             self.logger.error("Unable to fetch artist info!")
             return
-        #string.join(sentence, " ")
-        mood = ""
-        for i in data['artistdetails']['mood'] :
-            mood += i + ', '
-        mood = mood[:-2]
-
-        style = ""
-        for i in data['artistdetails']['style'] :
-            style += i + ', '
-        style= style[:-2]
-
-        instrument = ""
-        for i in data['artistdetails']['instrument'] :
-            instrument += i + ', '
-        instrument= instrument[:-2]
-
-        yearsactive = ""
-        for i in data['artistdetails']['yearsactive'] :
-            yearsactive += i + ', '
-        yearsactive= yearsactive[:-2]
-
-        #thumbs = "http%3a%2f%2fassets.fanart.tv%2ffanart%2fmusic%2fbd13909f-1c29-4c27-a874-d4aaf27c5b1a%2fartistthumb%2ffleetwood-mac-4fd37e9a22e1f.jpg"
-        #for i in data['artistdetails']['thumbnail'] :
-        #    thumbs += i
-        #thumbs= thumbs[:-1]
-        #url = self.url('/image/' + quote(thumb))
-        #url = "http%3a%2f%2fassets.fanart.tv%2ffanart%2fmusic%2fbd13909f-1c29-4c27-a874-d4aaf27c5b1a%2fartistthumb%2ffleetwood-mac-4fd37e9a22e1f.jpg/"
-        imgtmpl = '<img src="/xbmc/GetThumb?w=250&h=250&thumb=%s" align="left"/>'
-        #src = WEBDIR + 'xbmc/GetThumb?w=150&h=150&thumb=' + encodeURIComponent(album.thumbnail);        
-        #thumb = self.GetThumb(data['artistdetails']['thumbnail'])
-        #img = imgtmpl % (data['artistdetails']['thumbnail'])
-        img = imgtmpl % ('')
-        h='200'
-        w='200'
-        o='100'
-        #url = self.url('../../img/DefaultArtistThumb.png')
-        #if thumbs:
-        #    url = self.url('/images/' + quote(thumbs))
-        #    self.logger.debug("Trying to fetch image via " + url)
-        #    thumb = get_image(url, h, w, o, self.auth())
 
 
+    @cherrypy.expose()
+    def ViewArtist(self, artist_id, artist):
+        """ Load artist template """
+        self.logger.debug("Get data of a specific artist")
         template = htpc.LOOKUP.get_template('xbmc_artist.html')
         return template.render(
             scriptname='xbmc_artist',
             artist_id=artist_id,
-            name=artist,
-            musicbrainzartistid=data['artistdetails']['musicbrainzartistid'],
-            born=data['artistdetails']['born'],
-            formed=data['artistdetails']['formed'],
-            died=data['artistdetails']['died'],
-            #thumb=data['artistdetails']['thumbnail'],
-            thumb=img,
-            fanart=data['artistdetails']['fanart'],
-            style=style,
-            yearsactive=yearsactive,
-            mood=mood,
-            disbanded=data['artistdetails']['disbanded'],
-            description=data['artistdetails']['description'],
-            instrument=instrument,
-            module_name=htpc.settings.get('xbmc_name') or 'XBMC',
+            name=artist
         )
 
     @cherrypy.expose()
