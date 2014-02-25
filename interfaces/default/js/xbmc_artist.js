@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    $('.spinner').show();
     var artistid = $('div.page-title').attr('data-artist-id');
     loadArtist(artistid);
     loadAlbums(artistid);
@@ -15,6 +16,7 @@ function loadArtist(artistid) {
             //    notify('Error', 'Artist not found: ' + artistid, 'error');
             //    return;
             //}
+//elem.html('<li>loadArtist</li>');
             artistdata = data.artistdetails;
             //$('.xbmc_albums').append(xbmcStatusLabel(artistdata.status));
             if (artistdata.formed) {
@@ -65,7 +67,7 @@ function loadArtist(artistid) {
                 thumbsrc = WEBDIR + 'xbmc/GetThumb?w=256&h=256&thumb=' + encodeURIComponent(artistdata.thumbnail);
             }
             if (artistdata.fanart !== '') {
-                fansrc = WEBDIR + 'xbmc/GetThumb?w=1000&h=500&o=15&thumb=' + encodeURIComponent(artistdata.fanart);
+                fansrc = WEBDIR + 'xbmc/GetThumb?w=1000&h=500&o=20&thumb=' + encodeURIComponent(artistdata.fanart);
             }
             document.images["thumb"].src = thumbsrc;
             //$('.thumb').html($('<img>').attr('src', thumbsrc).addClass('thumbnail'));
@@ -99,14 +101,16 @@ function loadArtist(artistid) {
 }
 
 function loadAlbums(artistid) {
-    var elem = $('#album-grid');
     $('.spinner').show();
+    var elem = $('#album-grid');
+    //var albums = '';
     $.ajax({
         url: WEBDIR + 'xbmc/GetAlbums?artistid=' + artistid,
         type: 'get',
-        data: sendData,
+        //data: sendData,
         dataType: 'json',
         success: function (data) {
+            //$('.artist-albums').html('TEST');
             //if (data === null) return errorHandler();
             //if (data.albums !== undefined) {
                 $.each(data.albums, function (i, album) {
@@ -125,30 +129,32 @@ function loadAlbums(artistid) {
                     $('<h6>').html(album.title),
                     $('<h6>').html(album.artist).addClass('artist')).click(function (e) {
                         e.preventDefault();
-                        loadSongs({
+                        loadAlbum({
                             'albumid': album.albumid,
                             'search': album.title
                         });
                     }),
                     $('<div>').addClass('grid-control').append(
                     $('<a>').attr('href', '#').append(
-                    $('<img>').attr('src', WEBDIR + 'img/play.png').attr('title', 'Play')).click(function (e) {
+                    $('<img>').attr('src', WEBDIR + '../../img/play.png').attr('title', 'Play')).click(function (e) {
                         e.preventDefault();
                         playItem(album.albumid, 'album');
                     }),
                     $('<a>').attr('href', '#').append(
-                    $('<img>').attr('src', WEBDIR + 'img/add.png').attr('title', 'Queue')).click(function (e) {
+                    $('<img>').attr('src', WEBDIR + '../../img/add.png').attr('title', 'Queue')).click(function (e) {
                         e.preventDefault();
-                        queueItem(album.albumid, 'album');
+                        xbmc/queueItem(album.albumid, 'album');
                         notify('Added', 'Album has been added to the playlist.', 'info');
                     })));
                     albumItem.append(albumCaption);
                     elem.append(albumItem);
+                    //albums = albums + albumItem;
                 });
             //}
             Holder.run();
         },
         complete: function () {
+            //$('.artist-albums').append(albums);
             $('.spinner').hide();
         }
     });

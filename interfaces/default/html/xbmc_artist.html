@@ -6,26 +6,55 @@
             <img alt="PyTunes" src="../../img/pytuneslogosm.png"/>
                 <div id="xbmc-well" class="well btn-toolbar pull-right form-inline" style="float:right; background:url(../../img/bodybg.jpg)">
                     <div class="btn-group">
+                        <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" title="Sort by">
+                        <i class="icon-sort"></i> Sort 
+                        <i class="caret"></i></a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="#" class="active" data-sort-method="title" data-sort-order="ascending"><i class="icon-sort-by-alphabet"></i> Title</a></li>
+                            <li><a href="#" data-sort-method="title" data-sort-order="descending"><i class="icon-sort-by-alphabet-alt"></i> Title (descending)</a></li>
+                            <li><a href="#" data-sort-method="dateadded" data-sort-order="descending"><i class="icon-sort-by-attributes-alt"></i> Recently Added</a></li>
+                            <li><a href="#" data-sort-method="rating" data-sort-order="descending"><i class="icon-sort-by-attributes-alt"></i> Rating</a></li>
+                            <li><a href="#" data-sort-method="year" data-sort-order="descending"><i class="icon-sort-by-order-alt"></i> Year</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                        <i class="icon-th"></i>
+                        Library <i class="caret"></i></a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="Library/scan/video" class="ajax-link"><i class="icon-repeat"></i> Update Video Library</a></li>
+                            <li><a href="Library/clean/video" class="ajax-link"><i class="icon-trash"></i> Clean Video Library</a></li>
+                            <li><a href="Library/export/video" class="ajax-link"><i class="icon-archive"></i> Export Video Library</a></li>
+                            <li><a href="Library/scan/audio" class="ajax-link"><i class="icon-repeat"></i> Update Music Library</a></li>
+                            <li><a href="Library/clean/audio" class="ajax-link"><i class="icon-trash"></i> Clean Music Library</a></li>
+                            <li><a href="Library/export/audio" class="ajax-link"><i class="icon-archive"></i> Export Music Library</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
                         <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
                         <i class="icon-th-list"></i>
                         Options <i class="caret"></i></a>
                         <ul class="dropdown-menu pull-right">
-                            <li><a href="../ControlPlayer?action=party" class="ajax-link"><i class="icon-glass"></i> Party Mode</a></li>
-                            <li><a href="../ControlPlayer?action=audiotoggledigital" class="ajax-link"><i class="icon-headphones"></i> Toggle Audio Output</a></li>
-                            <li><a href="../Library/scan/video" class="ajax-link"><i class="icon-search"></i> Update Video Library</a></li>
-                            <li><a href="../Library/clean/video" class="ajax-link"><i class="icon-trash"></i> Clean Video Library</a></li>
-                            <li><a href="../Library/scan/audio" class="ajax-link"><i class="icon-search"></i> Update Music Library</a></li>
-                            <li><a href="../Library/clean/audio" class="ajax-link"><i class="icon-trash"></i> Clean Music Library</a></li>
+                            <li><a href="#" id="xbmc-notify" title="Send Message To Screen"><i class="icon-envelope"></i> Send Message</a></li>
+                            %if settings.get('xbmc_hide_watched', 0):
+                            <li><a href="#" id="hidewatched" class="active"><i class="icon-eye-open"></i> Show Watched</a></li>
+                            %else:
+                            <li><a href="#" id="hidewatched"><i class="icon-eye-open"></i> Hide Watched</a></li>
+                            %endif
+                            <li><a href="ControlPlayer?action=fullscreen" class="ajax-link"><i class="icon-fullscreen"></i> Toggle Fullscreen</a></li>
+                            <li><a href="ControlPlayer?action=party" class="ajax-link"><i class="icon-beer"></i> Party Mode</a></li>
+                            <li><a href="ExecuteAddon?addon=script.artwork.downloader" class="ajax-link"><i class="icon-picture"></i> Get Artwork</a></li>
+                            <li><a href="ControlPlayer?action=audiotoggledigital" class="ajax-link"><i class="icon-headphones"></i> Toggle Audio Output</a></li>
                         </ul>
                     </div>
                     <div class="btn-group">
                         <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="icon-off"></i>
                         System <i class="caret"></i></a>
                         <ul class="dropdown-menu pull-right">
-                            <li><a href="../System?action=wake-xbmc" class="ajax-link" title="Wake XBMC"><i class="icon-off"></i> Wake XBMC</a></li>
-                            <li><a href="../System?action=suspend-xbmc" class="ajax-confirm" title="Suspend XBMC"><i class="icon-eye-close"></i> Suspend XBMC</a></li>
-                            <li><a href="../System?action=reboot-xbmc" class="ajax-confirm" title="Restart XBMC"><i class="icon-refresh"></i> Restart XBMC</a></li>
-                            <li><a href="../System?action=shutdown-xbmc" class="ajax-confirm" title="Shutdown XBMC"><i class="icon-off"></i> Shutdown XBMC</a></li>
+                            <li><a href="System?action=wake-xbmc" class="ajax-link" title="Wake XBMC"><i class="icon-off"></i> Wake XBMC</a></li>
+                            <li><a href="System?action=suspend-xbmc" class="ajax-confirm" title="Suspend XBMC"><i class="icon-eye-close"></i> Suspend XBMC</a></li>
+                            <li><a href="System?action=reboot-xbmc" class="ajax-confirm" title="Restart XBMC"><i class="icon-refresh"></i> Restart XBMC</a></li>
+                            <li><a href="System?action=shutdown-xbmc" class="ajax-confirm" title="Shutdown XBMC"><i class="icon-off"></i> Shutdown XBMC</a></li>
                         </ul>
                     </div>
                 </div>
@@ -60,6 +89,8 @@
                 <div id="artist_details_bottom" class="span4"></div>
             </div>
         </div>
+                <!--<div class="artist-albums"></div>-->
+                <br><br>
                 <ul id="album-grid" class="artist-albums thumbnails"></ul>
                 <div class="spinner"></div>
     </div>
