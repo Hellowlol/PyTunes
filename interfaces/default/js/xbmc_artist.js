@@ -67,7 +67,7 @@ function loadArtist(artistid) {
                 thumbsrc = WEBDIR + 'xbmc/GetThumb?w=256&h=256&thumb=' + encodeURIComponent(artistdata.thumbnail);
             }
             if (artistdata.fanart !== '') {
-                fansrc = WEBDIR + 'xbmc/GetThumb?w=1000&h=500&o=20&thumb=' + encodeURIComponent(artistdata.fanart);
+                fansrc = WEBDIR + 'xbmc/GetThumb?w=800&h=300&o=20&thumb=' + encodeURIComponent(artistdata.fanart);
             }
             document.images["thumb"].src = thumbsrc;
             //$('.thumb').html($('<img>').attr('src', thumbsrc).addClass('thumbnail'));
@@ -76,13 +76,13 @@ function loadArtist(artistid) {
             $('#fanart').css('background-image', 'url(' + fansrc + ')');
 
             if (artistdata.mood) {
-                $('.xbmc_mood').html(shortenText(artistdata.mood.join(', '), 80));
+                $('.xbmc_mood').html(shortenText(artistdata.mood.join(', '), 100));
             }
             else {
                 $('.xbmc_mood').html('N/A');
             }
             if (artistdata.style) {
-                $('.xbmc_style').html(shortenText(artistdata.style.join(', '), 80));
+                $('.xbmc_style').html(shortenText(artistdata.style.join(', '), 100));
             }
             else {
                 $('.xbmc_style').html('N/A');
@@ -103,7 +103,7 @@ function loadArtist(artistid) {
 function loadAlbums(artistid) {
     $('.spinner').show();
     var elem = $('#album-grid');
-    //var albums = '';
+    var albums = 0;
     $.ajax({
         url: WEBDIR + 'xbmc/GetAlbums?artistid=' + artistid,
         type: 'get',
@@ -148,9 +148,10 @@ function loadAlbums(artistid) {
                     })));
                     albumItem.append(albumCaption);
                     elem.append(albumItem);
-                    //albums = albums + albumItem;
+                    albums = albums + 1;
                 });
             //}
+            $('.xbmc_albums').html(albums)
             Holder.run();
         },
         complete: function () {

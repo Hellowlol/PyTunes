@@ -1,4 +1,34 @@
-.xbmc_artist .fanart{
+#album-grid img.thumbnail,
+#artist-grid img.thumbnail {
+    height: 150px;
+    width: 150px;
+}
+.grid-caption {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    background: rgba(0,0,0,0.75);
+    padding: 10px;
+    width: 130px;
+    height: 130px;
+}
+.grid-caption h6 {
+    color: #fff;
+    font-family: inherit;
+    margin: 0;
+}
+.grid-caption h6.artist {
+    font-weight: normal;
+}
+.grid-control {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}
+.grid-control a:first-child {
+    margin-right: 35px;
+}
+.xbmc_artist .fanart {
   position: relative;
   border-radius: 6px 0px 0px 6px;
   background:  center left no-repeat ;
