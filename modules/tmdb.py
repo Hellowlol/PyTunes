@@ -15,7 +15,7 @@ class Search:
             'id': 'tmdbsearch',
             'fields': [
                 {'type':'bool', 'label':'Enable', 'name':'tmdb_enable'},
-                {'type':'text', 'label':'Host', 'name':'tmdb_host', 'placeholder':'api.themoviedb.com'},
+                {'type':'text', 'label':'Host', 'name':'tmdb_host', 'placeholder':'api.themoviedb.org/3'},
                 {'type':'text', 'label':'Apikey', 'name':'tmdb_apikey'},
                 {'type': 'bool', 'label': 'Use SSL', 'name': 'tmdb_ssl'}
         ]})
