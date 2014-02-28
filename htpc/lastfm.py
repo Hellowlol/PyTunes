@@ -1,30 +1,15 @@
-#  This file is part of Headphones.
-#
-#  Headphones is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 3 of the License, or
-#  (at your option) any later version.
-#
-#  Headphones is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with Headphones.  If not, see <http://www.gnu.org/licenses/>.
-
-import urllib, urllib2
 from xml.dom import minidom
 from collections import defaultdict
 import random
 import time
+import cherrypy
+import htpc
+from htpc.proxy import get_image
+from urllib2 import urlopen, quote
+from json import loads
+import logging
+import xml.etree.ElementTree as xml
 
-import headphones
-from headphones import db, logger
-
-api_key = '395e6ec6bb557382fc41fde867bce66f'
-
-  
 def getSimilar():
     
     myDB = db.DBConnection()

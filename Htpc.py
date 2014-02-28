@@ -71,6 +71,8 @@ def load_modules():
     htpc.ROOT.qbittorrent = qbittorrent()
     from modules.stats import Stats
     htpc.ROOT.stats = Stats()
+    from modules.manager import Manager
+    htpc.ROOT.manager = Manager()
 
 
 def main():
