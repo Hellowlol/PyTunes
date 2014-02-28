@@ -36,11 +36,10 @@
                     <div class="nav-collapse">
                         <ul class="nav">
                             % for m in htpc.MODULES:
-                            % if s.get(m.get('id')+'_enable') and m.get('id') != 'nzbsearch':
+                            % if s.get(m.get('id')+'_enable'):
                             <li id="nav-${m.get('id')}"><a href="${htpc.WEBDIR}${m.get('id')}/">${s.get(m.get('id')+'_name')}</a></li>
                             %endif
                             % endfor
-                            <li id="search-nzb"><a href="${htpc.WEBDIR}search/">Search</a></li>
                         </ul>
                         <div class="pull-right visible-desktop">
                             <div class="btn-group">

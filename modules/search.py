@@ -11,13 +11,14 @@ class Search:
     def __init__(self):
         self.logger = logging.getLogger('modules.search')
         htpc.MODULES.append({
-            'name': 'Newznab',
-            'id': 'nzbsearch',
+            'name': 'NZB Search',
+            'id': 'search',
             'fields': [
-                {'type':'bool', 'label':'Enable', 'name':'nzbsearch_enable'},
+                {'type':'bool', 'label':'Enable', 'name':'search_enable'},
+                {'type':'text', 'label':'Menu name', 'name':'search_name'},
                 {'type':'text', 'label':'Host', 'name':'newznab_host'},
                 {'type':'text', 'label':'Apikey', 'name':'newznab_apikey'},
-                {'type': 'bool', 'label': 'Use SSL', 'name': 'newznab_ssl'}
+                {'type':'bool', 'label':'Use SSL', 'name':'newznab_ssl'}
         ]})
 
     @cherrypy.expose()
