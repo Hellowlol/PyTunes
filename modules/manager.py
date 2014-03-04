@@ -6,7 +6,7 @@ import socket
 import struct
 import json
 import simplejson
-from htpc.xdb import table_dump
+from htpc.xdb import *
 from itertools import chain
 from urllib2 import quote, unquote
 from jsonrpclib import Server
@@ -14,6 +14,147 @@ from sqlobject import SQLObject, SQLObjectNotFound
 from sqlobject.col import StringCol, IntCol
 from htpc.proxy import get_image
 import logging
+
+musicvideo_schema_map = {
+'c00': 'strTitle',
+'c01': 'strThumb',
+'c02': 'strUnknown',
+'c03': 'strPlayCount',
+'c04': 'strRuntime',
+'c05': 'strDirector',
+'c06': 'strStudios',
+'c07': 'strYear',
+'c08': 'strPlot',
+'c09': 'strAlbum',
+'c10': 'strArtist',
+'c11': 'strGenre',
+'c12': 'strTrack',
+'c13': 'strUnknown1',
+'c14': 'strUnknown2',
+'c15': 'strUnknown3',
+'c16': 'strUnknown4',
+'c17': 'strUnknown5',
+'c18': 'strUnknown6',
+'c19': 'strUnknown7',
+'c20': 'strUnknown8',
+'c21': 'strUnknown9',
+'c22': 'strUnknown10',
+'c23': 'strUnknown11',
+}
+episode_schema_map = {
+'c00': 'strTitle',
+'c01': 'strPlot',
+'c02': 'strRatingVotes',
+'c03': 'strRating',
+'c04': 'strRatingVotes',
+'c05': 'strFirstAired',
+'c06': 'strThumb',
+'c07': 'strUnknown1',
+'c08': 'strWatched',
+'c09': 'strRuntime',
+'c10': 'strDirector',
+'c11': 'strUnknown2',
+'c12': 'strSeasonNum',
+'c13': 'strEpisodeNum',
+'c14': 'strOriginalTitle',
+'c15': 'strSortSeason',
+'c16': 'strSortEpisode',
+'c17': 'strBookmark',
+'c18': 'strUnused1',
+'c19': 'strUnused2',
+'c20': 'strUnused3'
+}
+
+movie_schema_map = {
+'c00': 'strTitle',
+'c01': 'strPlot',
+'c02': 'strPlotOutline',
+'c03': 'strTagline',
+'c04': 'strRatingVotes',
+'c05': 'strRating',
+'c06': 'strWriters',
+'c07': 'strYear',
+'c08': 'strThumbs',
+'c09': 'strIMDBID',
+'c10': 'strSortTitle',
+'c11': 'strRuntime',
+'c12': 'strMPAA',
+'c13': 'strTop250',
+'c14': 'strGenre',
+'c15': 'strDirector',
+'c16': 'strOriginalTitle',
+'c17': 'strUnknown',
+'c18': 'strStudio',
+'c19': 'strTrailer',
+'c20': 'strFanart',
+'c21': 'strCountry',
+'c22': 'strFileName',
+'c23': 'idPath'
+}
+
+tvshow_schema_map = {
+'c00': 'strTitle',
+'c01': 'strPlot',
+'co2': 'strStatus',
+'c03': 'strVotes',
+'c04': 'strRating',
+'c05': 'strFirstAired',
+'c06': 'strThumb',
+'c07': 'strUnknown1',
+'c08': 'strGenre',
+'c09': 'strOriginalTitle',
+'c10': 'strEpisodeGuide',
+'c11': 'strFanart',
+'c12': 'strSeriesID',
+'c13': 'strContentRating',
+'c14': 'strNetwork',
+'c15': 'strSortTitle',
+'c16': 'strPath2',
+'c17': 'idPath',
+'c18': 'strUnknown4',
+'c19': 'strUnknown5',
+'c20': 'strUnknown6',
+'c21': 'strUnknown7',
+'c23': 'strUnknown8'
+}
+
+""" SQLObject class for movie table """
+class Movie(SQLObject):
+    strLastPlayed = StringCol()
+    idSet = IntCol()
+    idMovie = IntCol()
+    idFile = IntCol()
+    playCount = IntCol()
+    totalTimeInSeconds = StringCol()
+    strSet = StringCol()
+    strTrailer = StringCol()
+    strStudio = StringCol()
+    strTop250 = StringCol()
+    strMPAA = StringCol()
+    strRuntime = StringCol()
+    strSortTitle = StringCol()
+    strRuntime = StringCol()
+    strUnknown = StringCol()
+    strOriginalTitle = StringCol()
+    strDirector = StringCol()
+    strGenre = StringCol()
+    dateAdded = StringCol()
+    strFileName = StringCol()
+    strPath = StringCol()
+    strFileName = StringCol()
+    idPath = StringCol()
+    strFanart = StringCol()
+    strCountry = StringCol()
+    strThumb = StringCol()
+    strIMDBID = StringCol()
+    strTitle = StringCol()
+    strPlot = StringCol()
+    strPlotOutline = StringCol()
+    strTagline = StringCol()
+    strRatingVotes = StringCol()
+    strRating = StringCol()
+    strWriters = StringCol()
+    strYear = StringCol()    
 
 """ SQLObject class for album table """
 class Album(SQLObject):
@@ -63,6 +204,8 @@ class Artist(SQLObject):
     strYearsActive = StringCol()
     strImage = StringCol()
     strFanart = StringCol()
+    iImage = IntCol()
+    iFanart = IntCol()
     MusicBrainzArtistID = StringCol()
 
 """ SQLObject class for song table """
@@ -103,6 +246,43 @@ class MusicArt(SQLObject):
     type = StringCol()
     url = StringCol()   
 
+""" SQLObject class for video_art table """
+class VideoArt(SQLObject): 
+    media_id = IntCol()
+    media_type = StringCol()
+    type = StringCol()
+    url = StringCol()   
+
+""" SQLObject class for tv_show table """
+class TvShow(SQLObject): 
+     idShow = IntCol()
+     strContentRating = StringCol()
+     totalSeasons = IntCol()
+     watchedcount = IntCol()
+     lastPlayed = StringCol()
+     strTitle = StringCol()
+     strSeriesID= StringCol()   
+     strFanart = StringCol()
+     strEpisodeGuide = StringCol()
+     strPath = StringCol()   
+     strPath2 = StringCol()   
+     idPath= StringCol()   
+     strUnknown1 = StringCol()
+     strUnknown4 = StringCol()
+     strUnknown5 = StringCol()
+     strUnknown6 = StringCol()
+     strUnknown7 = StringCol()
+     strUnknown8 = StringCol()
+     strSortTitle = StringCol()
+     strNetwork = StringCol()   
+     strGenre = StringCol()
+     strOriginalTitle = StringCol()
+     strPlot= StringCol()   
+     strStatus = StringCol()
+     strVotes = StringCol()
+     strRating = StringCol()   
+     strFirstAired = StringCol()
+     strThumb = StringCol()
     
 class Manager:
     def __init__(self):
@@ -114,6 +294,9 @@ class Manager:
         Artist.createTable(ifNotExists=True)
         Song.createTable(ifNotExists=True)
         MusicArt.createTable(ifNotExists=True)
+        VideoArt.createTable(ifNotExists=True)
+        Movie.createTable(ifNotExists=True)
+        TvShow.createTable(ifNotExists=True)
         htpc.MODULES.append({
             'name': 'Media Manager',
             'id': 'manager',
@@ -131,8 +314,8 @@ class Manager:
     @cherrypy.expose()
     def index(self):
         """ Generate page from template """
-        #data = table_dump('music.db', 'artistview')
-        return htpc.LOOKUP.get_template('manager.html').render(scriptname='manager')
+        data = table_dump('video.db', 'episodeview', '', '')
+        return htpc.LOOKUP.get_template('manager.html').render(scriptname='manager', data=data)
 
 
     @cherrypy.expose()

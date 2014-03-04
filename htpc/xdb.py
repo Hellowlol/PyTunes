@@ -13,9 +13,9 @@ def dict_factory(cursor, row):
         d[col[0]] = row[idx]
     return d
 
-def table_dump(db, table):
+def table_dump(db, table, start, end):
     db = htpc.DATADIR + db
-    print db
+    #print db
     con = lite.connect(db)
 
     con.row_factory = dict_factory
@@ -31,3 +31,13 @@ def table_dump(db, table):
 
     return data
 
+def art_count(db, media_type, media_id, type):
+    db = htpc.DATADIR + db
+    #print db
+    con = lite.connect(db)
+    with con:
+        cur = con.cursor()    
+        count = cur.execute("SELECT COUNT FROM art WHERE media_type = " + media_type + " AND media_id = " + media_id + " AND type = " + type)
+    return count
+
+    
