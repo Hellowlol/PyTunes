@@ -232,7 +232,7 @@ function loadQueue(once) {
                 row.append($('<td>').html(job.filename));
 
                 var categories = $('<select>');
-                categories.addClass('span1');
+                categories.addClass('span1 sab-select');
                 categories.change(function () {
                     changeCategory(job.nzo_id, $(this).val());
                 });

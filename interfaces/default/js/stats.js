@@ -253,13 +253,13 @@ $(document).ready(function () {
 });
 
 setInterval(function () {
-    get_diskinfo();
-    get_diskinfo2();
-    uptime();
-    get_user();
-    get_external_ip(); // dont want to spam a external service.
-    get_local_ip();
-    network_usage_table();
-    sys_info();
+//    get_diskinfo();
+//    get_diskinfo2();
+//    uptime();
+//    get_user();
+//    get_external_ip(); // dont want to spam a external service.
+//    get_local_ip();
+//    network_usage_table();
+//    sys_info();
     return_settings3();
-}, 60000);
+}, 2000);

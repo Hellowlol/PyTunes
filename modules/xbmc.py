@@ -474,6 +474,12 @@ class Xbmc:
         elif addon == 'script.cinema.experience':
             cmd = 'movieid=' + int(cmd0)
             return xbmc.Addons.ExecuteAddon(addon, cmd)
+        elif addon == 'script.manager.pytunes':
+            cmd = 'movieid=' + int(cmd0)
+            return xbmc.Addons.ExecuteAddon(addon, cmd)
+        elif addon == 'plugin.video.youtube':
+            cmd = 'action=play_video&videoid=' + cmd0
+            return xbmc.Addons.ExecuteAddon(addon, cmd)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()

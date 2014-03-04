@@ -58,7 +58,7 @@ class Sickbeard:
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def GetShowList(self):
-        self.logger.debug("Fetching Show list")
+        self.logger.debug("Fetching Shows list")
         return self.fetch('shows&sort=name')
 
     @cherrypy.expose()

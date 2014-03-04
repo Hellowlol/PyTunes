@@ -16,8 +16,7 @@ import logging
 try: 
     import psutil
 except:
-    if platform.system() == 'Windows':
-        print 'Have you installed psutil correctly? Use the installer on pypi, make sure you get the right processor and architecture. See http://psutil.googlecode.com/hg/INSTALL'
+    logger.error("Could'nt import psutil. See http://psutil.googlecode.com/hg/INSTALL")
 
  
 class Stats:
@@ -26,7 +25,7 @@ class Stats:
         htpc.MODULES.append({
             'name': 'System',
             'id': 'stats',
-            #'test': htpc.WEBDIR + 'stats/ping',
+            'test': htpc.WEBDIR + 'stats/ping',
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'stats_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'stats_name'},
@@ -43,6 +42,20 @@ class Stats:
             self.logger.error("Psutil is outdated, needs atleast version 0,7")
 
         return htpc.LOOKUP.get_template('stats.html').render(scriptname='stats')
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def ping(self):
+        """ Tests For Installation of psutil """
+        self.logger.debug("Testing XBMC connectivity")
+        try:
+            import psutil
+            #psutil.version_info >= (0, 7)
+            return 'happy'
+        except Exception, e:
+            self.logger.debug("Exception: " + str(e))
+            self.logger.error("psutil not installed or version too low ")
+            return
 
     @cherrypy.expose()
     def uptime2(self):

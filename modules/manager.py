@@ -6,6 +6,7 @@ import socket
 import struct
 import json
 import simplejson
+from htpc.xdb import table_dump
 from itertools import chain
 from urllib2 import quote, unquote
 from jsonrpclib import Server
@@ -14,65 +15,105 @@ from sqlobject.col import StringCol, IntCol
 from htpc.proxy import get_image
 import logging
 
-""" SQLObject class for albums table """
-class Albums(SQLObject):
-    Mbid = StringCol()
-    GroupMbid = StringCol()
-    LibId = IntCol()
-    ArtistMbid = StringCol()
-    Title = StringCol()
-    Name = StringCol()
-    ReleaseDate = StringCol()
-    AddDate = StringCol()
-    Fanart = StringCol()
-    Thumb = StringCol()
-    Country = StringCol()
-    Format = StringCol()
-    Type = StringCol()
-    Mood = StringCol()
-    Artist = StringCol()
-    DisplayArtist = StringCol()
-    Have = IntCol()
-    PlayCount = IntCol()
-    Tracks = IntCol()
-    TracksHave = IntCol()
-    Rating = IntCol()
+""" SQLObject class for album table """
+class Album(SQLObject):
+    idAlbum = IntCol()
+    strAlbum = StringCol()
+    strArtists = StringCol()
+    strGenres = StringCol()
+    iYear = IntCol()
+    idAlbumInfo = IntCol()
+    strMoods = StringCol()
+    strStyles = StringCol()
+    strThemes = StringCol()
+    strReview = StringCol()
+    strLabel = StringCol()
+    strType = StringCol()
+    strImage = StringCol()
+    iRating = IntCol()
+    iTimesPlayed = IntCol()
+    bCompilation = IntCol()
+    MusicBrainzArtistID = StringCol()
+    MusicBrainzAlbumID = StringCol()
+    MusicBrainzGroupID = StringCol()
 
 """ SQLObject class for discography table """
 class Discography(SQLObject):
-    ArtistName = StringCol()
-    AlbumName = StringCol()
-    XbmcId = StringCol()
-    ArtistMbid = StringCol()
-    GroupMbid = StringCol()
-    AlbumMbid = StringCol()
-    Year = StringCol()
+    idArtist = IntCol()
+    strArtist = StringCol()
+    strYear = StringCol()
+    strAlbum = StringCol()
+    MusicBrainzArtistID = StringCol()
+    MusicBrainzAlbumID = StringCol()
+    MusicBrainzGroupID = StringCol()
     
+""" SQLObject class for artist table """
+class Artist(SQLObject):
+    idArtist = IntCol()
+    strArtist = StringCol()
+    strBorn = StringCol()
+    strFormed = StringCol()
+    strGenres = StringCol()
+    strMoods = StringCol()
+    strStyles = StringCol()
+    strInstruments = StringCol()
+    strBiography = StringCol()
+    strDied = StringCol()
+    strDisbanded = StringCol()
+    strYearsActive = StringCol()
+    strImage = StringCol()
+    strFanart = StringCol()
+    MusicBrainzArtistID = StringCol()
 
-""" SQLObject class for artists table """
-class Artists(SQLObject):
-    Name = StringCol()
-    Country = StringCol()
-    Born = StringCol()
-    Died = StringCol()
-    Instrument = StringCol()
-    Mood = StringCol()
-    Style = StringCol()
-    Formed = StringCol()
-    Description = StringCol()
-    YearsActive = StringCol()
-    Mbid = StringCol()
-    Fanart = StringCol()
-    Thumb = StringCol()
+""" SQLObject class for song table """
+class Song(SQLObject):
+    idSong = IntCol()
+    strArtists = StringCol()
+    strGenres = StringCol()
+    strTitle = StringCol()
+    iTrack = IntCol()
+    iStartOffset = IntCol()
+    iEndOffset = IntCol()
+    iTimesPlayed = IntCol()
+    iDuration = IntCol()
+    iYear = IntCol()
+    dwFileNameCRC = StringCol()
+    strFileName = StringCol()
+    MusicBrainzTrackID = StringCol()
+    MusicBrainzArtistID = StringCol()
+    MusicBrainzAlbumID = StringCol()
+    MusicBrainzAlbumArtisID = StringCol()
+    MusicBrainzTRMID = StringCol()
+    rating = IntCol()
+    lastplayed = IntCol()
+    idAlbum = IntCol()
+    iKaraNumber = IntCol()
+    iKaraDelay = IntCol()
+    strKaraEncoding = StringCol()
+    bCompilation = IntCol()
+    strAlbumArtists = StringCol()
+    strAlbum = StringCol()
+    strPath = StringCol()
+    comment = StringCol()
+
+""" SQLObject class for music_art table """
+class MusicArt(SQLObject): 
+    media_id = IntCol()
+    media_type = StringCol()
+    type = StringCol()
+    url = StringCol()   
+
     
 class Manager:
     def __init__(self):
         """ Add module to list of modules on load and set required settings """
         self.logger = logging.getLogger('modules.manager')
 
-        Albums.createTable(ifNotExists=True)
+        Album.createTable(ifNotExists=True)
         Discography.createTable(ifNotExists=True)
-        Artists.createTable(ifNotExists=True)
+        Artist.createTable(ifNotExists=True)
+        Song.createTable(ifNotExists=True)
+        MusicArt.createTable(ifNotExists=True)
         htpc.MODULES.append({
             'name': 'Media Manager',
             'id': 'manager',
@@ -90,6 +131,7 @@ class Manager:
     @cherrypy.expose()
     def index(self):
         """ Generate page from template """
+        #data = table_dump('music.db', 'artistview')
         return htpc.LOOKUP.get_template('manager.html').render(scriptname='manager')
 
 

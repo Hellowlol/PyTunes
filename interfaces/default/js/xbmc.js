@@ -386,8 +386,8 @@ function loadMovie(movie) {
         $.extend(buttons, {
             'Trailer XBMC': function () {
                 var trailerid = movie.trailer.substr(movie.trailer.length - 11);
-                var url = encodeURIComponent('http://www.youtube.com/embed/' + trailerid + '?rel=0&autoplay=1');
-                playItem(item=url, type='youtube');
+                //var url = encodeURIComponent('http://www.youtube.com/embed/' + trailerid + '?rel=0&autoplay=1');
+                ExecuteAddon(addon='plugin.video.youtube', cmd0=trailerid);
             }
         });
     }

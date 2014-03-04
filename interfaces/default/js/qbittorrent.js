@@ -175,7 +175,9 @@ $(document).ready(function () {
     get_torrents();
     get_speed();
     setInterval(function () {
-        get_torrents();
         get_speed();
-    }, 5000);
+    }, 1000);
+    setInterval(function () {
+        get_torrents();
+    }, 15000);
 });

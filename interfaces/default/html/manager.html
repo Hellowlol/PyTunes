@@ -6,10 +6,6 @@
             <img alt="PyTunes" src="../img/pytuneslogosm.png"/><img alt="PyTunes" class="pull-right" src="../img/manager.png"/>
         </div>
 
-
-
-
-
        <ul class="nav nav-tabs">
             <li><a class="active" href="#movies" data-toggle="tab">Movies</a></li>
             <li><a href="#shows" data-toggle="tab">TV Shows</a></li>
@@ -28,19 +24,73 @@
             <li><a href="#playlist" data-toggle="tab">More</a></li>
         </ul>
         <div class="tab-content">
-            <div id="movies" class="tab-pane">
+            <div id="movies" class="active tab-pane">
+                <table id="songs-grid" class="table table-striped  table-hover table-condensed table-responsive table-bordered">
+                    <thead class="pt-thead">
+                        <tr>
+                            <th class="span2">Title</th>
+                            <th>Year</th>
+                            <th>Codec</th>
+                            <th>Quality</th>
+                            <th>Fanart</th>
+                            <th>Thumbs</th>
+                            <th>MPAA</th>
+                            <th>Trailer</th>
+                            <th>Genre</th>
+                            <th>Rating</th>
+                            <th>IMDB</th>
+                            <th>Plot</th>
+                            <th>Duration</th>
+                            <th>Edit</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
                 <ul id="movie-grid" class="thumbnails"></ul>
             </div>
             <div id="shows" class="tab-pane">
+                <table id="songs-grid" class="table table-striped table-hover">
+                    <thead class="pt-thead">
+                        <tr>
+                            <th>Title</th>
+                            <th>Artist</th>
+                            <th>Album</th>
+                            <th>Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
                 <ul id="show-grid" class="thumbnails"></ul>
             </div>
             <div id="episodes" class="tab-pane">
                 <ul id="episode-grid" class="thumbnails"></ul>
             </div>
             <div id="artists" class="tab-pane">
+                <table id="songs-grid" class="table table-striped table-hover">
+                    <thead class="pt-thead">
+                        <tr>
+                            <th>Title</th>
+                            <th>Artist</th>
+                            <th>Album</th>
+                            <th>Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
                 <table id="artist-grid" class="table table-striped table-hover table-condensed"></table>
             </div>
             <div id="albums" class="tab-pane">
+                <table id="songs-grid" class="table table-striped table-hover">
+                    <thead class="pt-thead">
+                        <tr>
+                            <th>Title</th>
+                            <th>Artist</th>
+                            <th>Album</th>
+                            <th>Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
                 <ul id="album-grid" class="artist-albums thumbnails"></ul>
             </div>
             <div id="songs" class="tab-pane">
