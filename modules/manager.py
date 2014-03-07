@@ -11,7 +11,7 @@ from itertools import chain
 from urllib2 import quote, unquote
 from jsonrpclib import Server
 from sqlobject import SQLObject, SQLObjectNotFound
-from sqlobject.col import StringCol, IntCol
+from sqlobject.col import StringCol, IntCol, FloatCol
 from htpc.proxy import get_image
 import logging
 
@@ -246,6 +246,19 @@ class MusicArt(SQLObject):
     type = StringCol()
     url = StringCol()   
 
+""" SQLObject class for stream_details table """
+class StreamDetails(SQLObject): 
+    iStreamType = IntCol()
+    iVideoWidth = IntCol()
+    iVideoHeight = IntCol()
+    iAudioChannels = IntCol()
+    iVideoDuration = IntCol()
+    fVideoAspect = FloatCol()
+    strVideoCodec = StringCol()
+    strAudioCodec = StringCol()
+    strAudioLanguage = StringCol()
+    strSubtitleLanguage = StringCol()
+
 """ SQLObject class for video_art table """
 class VideoArt(SQLObject): 
     media_id = IntCol()
@@ -311,11 +324,92 @@ class Manager:
                 {'type':'bool', 'label':'TMDB Use SSL', 'name':'tmdb_ssl'}
         ]})
 
+
     @cherrypy.expose()
     def index(self):
         """ Generate page from template """
-        data = table_dump('video.db', 'episodeview', '', '')
+        table = ''
+        #data = json.dumps(table_dump('video.db', 'episodeview', '10', '0'))
+        data = table_dump('video.db', 'movieview', '100', '0', 'c00')
+        for episode in data:
+            if episode['c19']:
+                trailer = "<img src='../img/yes16.png'>"
+            else:
+                trailer = "<img src='../img/no16.png'>"
+            if episode['c03']:
+                tagline = "<img src='../img/yes16.png'>"
+            else:
+                tagline = "<img src='../img/no16.png'>"
+            if episode['c05']:
+                rating = episode['c05'][:4]
+            else:
+                rating = "<img src='../img/no16.png'>"
+            if episode['c12']:
+                mpaa = episode['c12'].replace('Rated', '')
+                
+                mpaa.replace(' ', '')
+                if not rating:
+                    mpaa = "<img src='../img/no16.png'>"
+            else:
+                mpaa = "<img src='../img/no16.png'>"
+            if episode['c01']:
+                plot = "<img src='../img/yes16.png'>"
+            else:
+                plot = "<img src='../img/no16.png'>"
+            if episode['c15']:
+                director = "<img src='../img/yes16.png'>"
+            else:
+                director = "<img src='../img/no16.png'>"
+            if episode['c06']:
+                writers = "<img src='../img/yes16.png'>"
+            else:
+                writers = "<img src='../img/no16.png'>"
+            if episode['c14']:
+                genre = "<img src='../img/yes16.png'>"
+            else:
+                genre = "<img src='../img/no16.png'>"
+            if episode['c08']:
+                thumb = "<img src='../img/yes16.png'>"
+            else:
+                thumb = "<img src='../img/no16.png'>"
+            if episode['c20']:
+                fanart = "<img src='../img/yes16.png'>"
+            else:
+                fanart = "<img src='../img/no16.png'>"
+            table = table + "<tr><td>" + episode['c00'] + "<td>" + episode['c07'] + "</td>" + "</td><td>vcodec</td>" + "<td>quality</td>" + "<td>acodec</td>" + "<td>channels</td>" + "<td>subT</td>" + "<td>" + fanart + "</td>" + "<td>" + thumb + "</td><td>" + mpaa + "</td>" + "<td>" + trailer + "</td>" + "<td>" + genre + "</td>" + "</td><td>" + rating + "</td><td>" + episode['c09'] + "</td><td>"  + plot + "</td><td>"  + tagline + "</td><td>"  + director + "</td><td>"  + writers + "</td><td>" + episode['c11'] + "</td></tr>"
+        return htpc.LOOKUP.get_template('manager.html').render(scriptname='manager', table=table)
+
+
+    @cherrypy.expose()
+    def GetData(self):
+        """ Generate page from template """
+        #data = json.dumps(table_dump('video.db', 'episodeview', '10', '0'))
+        return table_dump('video.db', 'episodeview', '10', '0')
+
+    @cherrypy.expose()
+    def RebuildDB(self, action):
+        """ Generate page from template """
+        if action == "movies":
+            data = table_dump('video.db', 'movieview', '10', '0')
+            return htpc.LOOKUP.get_template('manager.html').render(scriptname='manager', data=data)
+        if action == "tv":
+            data = table_dump('video.db', 'tvshowview', '10', '0')
+            data2 = table_dump('video.db', 'episodeview', '10', '0')
+        if action == "music":
+            data = table_dump('music.db', 'artistview', '10', '0')
+            data2 = table_dump('music.db', 'albumview', '10', '0')
+            data3 = table_dump('music.db', 'artistview', '10', '0')
+            data4 = table_dump('music.db', 'discography', '10', '0')
+        if action == "episode":
+            data = table_dump('video.db', 'episodeview', '10', '0')
+        if action == "musicvideo":
+            data = table_dump('video.db', 'musicvideoview', '10', '0')
+        if action == "art":
+            data = table_dump('video.db', 'art', '10', '0')
+            data2 = table_dump('music.db', 'art', '10', '0')
         return htpc.LOOKUP.get_template('manager.html').render(scriptname='manager', data=data)
+
+
 
 
     @cherrypy.expose()

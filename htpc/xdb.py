@@ -5,7 +5,6 @@ import htpc
 import os
 import sqlite3 as lite
 import sys
-data = []
 
 def dict_factory(cursor, row):
     d = {}
@@ -13,7 +12,10 @@ def dict_factory(cursor, row):
         d[col[0]] = row[idx]
     return d
 
-def table_dump(db, table, start, end):
+def table_dump(db, table, limit, offset, sort):
+    query = "SELECT * FROM %s ORDER BY %s ASC LIMIT %s OFFSET %s"
+    data = []
+    i = 0
     db = htpc.DATADIR + db
     #print db
     con = lite.connect(db)
@@ -21,13 +23,14 @@ def table_dump(db, table, start, end):
     con.row_factory = dict_factory
     with con:
         cur = con.cursor()    
-        cur.execute("SELECT * FROM " + table)
+        cur.execute(query % (table, sort, limit, offset))
 
     while True:
         row = cur.fetchone()
         if row == None:
             break
-        data.append(row)    
+        data.append(row)
+        i += 1
 
     return data
 
