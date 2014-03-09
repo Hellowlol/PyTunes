@@ -9,62 +9,12 @@ var movieLoad = {
 function loadMovies() {
    $('#movie-table').empty();
     var sendData = {
-        //offset: (movieLoad.offset + movieLoad.limit),
-        //limit: movieLoad.limit,
         offset: movieLoad.offset,
         limit: movieLoad.limit
     };
     $.extend(sendData);
-     //var start = 50;
-    //$.get(WEBDIR + "manager/GetData?offset=" + offset + "&limit=" + limit, function (response) {
     movieLoad.request = $.ajax({
-        //url: WEBDIR + "manager/GetData?offset=" + offset + "&limit=" + limit,
-        url: WEBDIR + "manager/GetData",
-        type: 'get',
-        data: sendData,
-        dataType: 'text',
-        success: function (data) {
-            //if (data === null) return errorHandler();
-            $('#movie-table').append(data);
-        },
-        complete: function () {
-            $('.spinner').hide();
-        }
-    });
-        //alert(response);
-        //$("#movie-table").append(response);
-        //$('#pages').bootstrapPaginator(pageoptions);
-        //$('#pages').append('pageoptions');
-}
-
-//var movieLoad = {
-//    last: 0,
-//    request: null,
-//    limit: 50,
-//    options: null
-//};
-
-
-function loadMovies2(options) {
-    var optionstr = JSON.stringify(options) + hideWatched + JSON.stringify(sorting);
-    if (movieLoad.options != optionstr) {
-        movieLoad.last = 0;
-        $('#movie-grid').empty();
-    }
-    movieLoad.options = optionstr;
-
-    var active = (movieLoad.request !== null && movieLoad.request.readyState !== 4);
-    if (active || movieLoad.last == -1) return;
-
-    var sendData = {
-        start: movieLoad.last,
-        end: (movieLoad.last + movieLoad.limit)
-    };
-    $.extend(sendData, options);
-
-    $('.spinner').show();
-    movieLoad.request = $.ajax({
-        url: WEBDIR + 'manager/GetMovies',
+        url: WEBDIR + "manager/GetMovies",
         type: 'get',
         data: sendData,
         dataType: 'text',
@@ -78,18 +28,43 @@ function loadMovies2(options) {
     });
 }
 
+var showLoad = {
+    offset: 0,
+    request: null,
+    limit: 15,
+    options: null
+};
+
+function loadShows() {
+   $('#show-table').empty();
+    var sendData = {
+        offset: showLoad.offset,
+        limit: showLoad.limit
+    };
+    $.extend(sendData);
+    showLoad.request = $.ajax({
+        url: WEBDIR + "manager/GetShows",
+        type: 'get',
+        data: sendData,
+        dataType: 'text',
+        success: function (data) {
+            if (data === null) return errorHandler();
+            $('#show-table').append(data);
+        },
+        complete: function () {
+            $('.spinner').hide();
+        }
+    });
+}
+
 
 function reloadTab() {
-    options = {
-        'filter': searchString
-    };
-
-    //if ($('#movies').is(':visible')) {
-    //    loadMovies(options);
-    //} 
-    //else if ($('#shows').is(':visible')) {
-    //    loadShows(options);
-    //} 
+    if ($('#movies').is(':visible')) {
+        loadMovies();
+    } 
+    else if ($('#shows').is(':visible')) {
+        loadShows();
+    } 
     //else if ($('#episodes').is(':visible')) {
     //    options = $.extend(options, {
     //        'tvshowid': currentShow
@@ -110,22 +85,34 @@ function reloadTab() {
     //}
 }
 $('#pmovie').click(function () {
-    movieLoad.offset = movieLoad.offset - movieLoad.limit;
+    movieLoad.offset -= movieLoad.limit;
     loadMovies();
 });
     
 $('#nmovie').click(function () {
-    movieLoad.offset = movieLoad.offset + movieLoad.limit;
+    movieLoad.offset += movieLoad.limit;
     loadMovies();
 });
+
+$('#pshow').click(function () {
+    showLoad.offset -= showLoad.limit;
+    loadShows();
+});
+    
+$('#nshow').click(function () {
+    showLoad.offset += showLoad.limit;
+    loadShows();
+});
+
+var pageoptions = {
+    limit: 30,
+    offset: 0
+};
     
 $(document).ready(function () {
-    var pageoptions = {
-        limit: 30,
-        offset: 0
-    };
     $('.spinner').show();
     loadMovies();
+    loadShows();
     $('.spinner').hide();
 });
 

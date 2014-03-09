@@ -1,6 +1,8 @@
 """ Module for Media Management  """
 import cherrypy
 import htpc
+import time
+import threading
 import base64
 import socket
 import struct
@@ -316,6 +318,8 @@ class Manager:
             'fields': [
                 {'type':'bool', 'label':'Enable', 'name':'manager_enable'},
                 {'type':'text', 'label':'Menu name', 'name':'manager_name'},
+                {'type':'text', 'label':'Movie Source Folder', 'name':'movie_in'},
+                {'type':'text', 'label':'Movie Destination Folder', 'name':'movie_out'},
                 {'type':'text', 'label':'Fanart.tv Apikey', 'name':'fatv_apikey'},
                 {'type':'bool', 'label':'Fanart.tv Use SSL', 'name':'fatv_ssl'},
                 {'type':'text', 'label':'Last.fm Apikey', 'name':'lastfm_apikey'},
@@ -330,68 +334,79 @@ class Manager:
         """ Generate page from template """
         return htpc.LOOKUP.get_template('manager.html').render(scriptname='manager')
 
+    def schedule(self):
+        # stuff to do
+        threading.Timer(600, schedule).start()
+
 
     @cherrypy.expose()
-    def GetData(self, offset, limit):
+    def GetMovies(self, offset, limit):
         """ Generate page from template """
         table = ''
-        #data = json.dumps(table_dump('video.db', 'episodeview', '10', '0'))
+        row19 =  "<tr><td>%s<td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
         data = table_dump('video.db', 'movieview', limit, offset, 'c00')
-        for episode in data:
-            if episode['c19']:
+        for movie in data:
+            if movie['c19']:
                 trailer = "<img src='../img/yes16.png'>"
             else:
                 trailer = "<img src='../img/no16.png'>"
-            if episode['c03']:
+            if movie['c03']:
                 tagline = "<img src='../img/yes16.png'>"
             else:
                 tagline = "<img src='../img/no16.png'>"
-            if episode['c05']:
-                rating = episode['c05'][:4]
+            if movie['c05']:
+                rating = movie['c05'][:4]
             else:
                 rating = "<img src='../img/no16.png'>"
-            if episode['c12']:
-                mpaa = episode['c12'].replace('Rated', '')
+            if movie['c12']:
+                mpaa = movie['c12'].replace('Rated', '')
                 mpaa.strip()
                 if mpaa == '':
                     mpaa = "<img src='../img/no16.png'>"
             else:
                 mpaa = "<img src='../img/no16.png'>"
-            if episode['c01']:
+            if movie['c01']:
                 plot = "<img src='../img/yes16.png'>"
             else:
                 plot = "<img src='../img/no16.png'>"
-            if episode['c15']:
+            if movie['c15']:
                 director = "<img src='../img/yes16.png'>"
             else:
                 director = "<img src='../img/no16.png'>"
-            if episode['c06']:
+            if movie['c06']:
                 writers = "<img src='../img/yes16.png'>"
             else:
                 writers = "<img src='../img/no16.png'>"
-            if episode['c14']:
+            if movie['c14']:
                 genre = "<img src='../img/yes16.png'>"
             else:
                 genre = "<img src='../img/no16.png'>"
-            if episode['c08']:
+            if movie['c08']:
                 thumb = "<img src='../img/yes16.png'>"
             else:
                 thumb = "<img src='../img/no16.png'>"
-            if episode['c20']:
+            if movie['c20']:
                 fanart = "<img src='../img/yes16.png'>"
             else:
                 fanart = "<img src='../img/no16.png'>"
-            table = table + "<tr><td>" + episode['c00'] + "<td>" + episode['c07'] + "</td>" + "</td><td>vcodec</td>" + "<td>quality</td>" + "<td>acodec</td>" + "<td>channels</td>" + "<td>subT</td>" + "<td>" + fanart + "</td>" + "<td>" + thumb + "</td><td>" + mpaa + "</td>" + "<td>" + trailer + "</td>" + "<td>" + genre + "</td>" + "</td><td>" + rating + "</td><td>" + episode['c09'] + "</td><td>"  + plot + "</td><td>"  + tagline + "</td><td>"  + director + "</td><td>"  + writers + "</td><td>" + episode['c11'] + "</td></tr>"
-        #data = json.dumps(table_dump('video.db', 'episodeview', '10', '0'))
+            title = movie['c00']
+            year = movie['c07']
+            imdb = movie['c09']
+            duration = movie['c11']
+            vcodec = "vcodec"
+            quality = "quality"
+            acodec = "acodec"
+            channels = "channels"
+            subt = "subt"
+            table += row19 %  (title, year, vcodec, quality, acodec, channels, subt, fanart, thumb, mpaa, trailer, genre, rating, imdb, plot, tagline, director, writers, duration) 
         return table
-        #return 'TEST'
 
     @cherrypy.expose()
     def RebuildDB(self, action):
         """ Generate page from template """
         if action == "movies":
             data = table_dump('video.db', 'movieview', '10', '0')
-            return htpc.LOOKUP.get_template('manager.html').render(scriptname='manager', data=data)
+            return htpc.LOOKUP.get_template('manager.html').render(scriptname='manager')
         if action == "tv":
             data = table_dump('video.db', 'tvshowview', '10', '0')
             data2 = table_dump('video.db', 'episodeview', '10', '0')
@@ -407,7 +422,7 @@ class Manager:
         if action == "art":
             data = table_dump('video.db', 'art', '10', '0')
             data2 = table_dump('music.db', 'art', '10', '0')
-        return htpc.LOOKUP.get_template('manager.html').render(scriptname='manager', data=data)
+        return htpc.LOOKUP.get_template('manager.html').render(scriptname='manager')
 
 
 
@@ -472,46 +487,38 @@ class Manager:
         self.logger.debug("Trying to fetch image via " + url)
         return get_image(url, h, w, o, self.auth())
 
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def GetMovies(self, start=0, end=0, sortmethod='title', sortorder='ascending', hidewatched=0, filter=''):
-        """ Get a list of all movies """
-        self.logger.debug("Fetching Movies")
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            sort = {'order': sortorder, 'method': sortmethod, 'ignorearticle': True}
-            properties = ['title', 'year', 'plot', 'thumbnail', 'file', 'fanart', 'studio', 'trailer',
-                    'imdbnumber', 'genre', 'rating', 'playcount', 'cast', 'writer', 'director', 'country', 'runtime', 'mpaa', 'streamdetails']
-            limits = {'start': int(start), 'end': int(end)}
-            filter = {'field': 'title', 'operator': 'contains', 'value': filter}
-            if hidewatched == "1":
-                filter = {"and": [filter, {'field': 'playcount', 'operator': 'is', 'value': '0'}]}
-            return xbmc.VideoLibrary.GetMovies(sort=sort, properties=properties, limits=limits, filter=filter)
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to fetch movies!")
-            return
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def GetShows(self, start=0, end=0, sortmethod='title', sortorder='ascending', hidewatched=0, filter=''):
+    def GetShows(self, offset, limit):
         """ Get a list of all the TV Shows """
         self.logger.debug("Fetching TV Shows")
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            sort = {'order': sortorder, 'method': sortmethod, 'ignorearticle': True}
-            properties = ['title', 'year', 'plot', 'thumbnail', 'playcount']
-            limits = {'start': int(start), 'end': int(end)}
-            filter = {'field': 'title', 'operator': 'contains', 'value': filter}
-            if hidewatched == "1":
-                filter = {"and": [filter, {'field': 'playcount', 'operator': 'is', 'value': '0'}]}
-            shows = xbmc.VideoLibrary.GetTVShows(sort=sort, properties=properties, limits=limits, filter=filter)
-            return shows
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to fetch TV Shows")
-            return
-
+        table = ''
+        row19 =  "<tr><td>%s<td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
+        data = table_dump('video.db', 'tvshowview', limit, offset, 'c00')
+        for show in data:
+            title = show['c00']
+            year = show['c05']
+            seasons = show['totalSeasons']
+            #duration = show['c11']
+            vcodec = "vcodec"
+            quality = "quality"
+            acodec = "acodec"
+            channels = "channels"
+            subt = "subt"
+            #table += row19 %  (title, year, vcodec, quality, acodec, channels, subt, fanart, thumb, mpaa, trailer, genre, rating, imdb, plot, tagline, director, writers, duration) 
+            table += row19 %  (title, year, seasons, channels, subt, vcodec, quality, acodec, channels, subt, vcodec, quality, acodec, channels, subt, vcodec, quality, acodec, channels) 
+        return table
+        #for movie in data:
+        #    if movie['c19']:
+        #        trailer = "<img src='../img/yes16.png'>"
+        #    else:
+        #        trailer = "<img src='../img/no16.png'>"
+        #    if movie['c03']:
+        #        tagline = "<img src='../img/yes16.png'>"
+        #    else:
+        #        tagline = "<img src='../img/no16.png'>"
+ 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def GetEpisodes(self, start=0, end=0, sortmethod='episode', sortorder='ascending', tvshowid=None, hidewatched=False, filter=''):
