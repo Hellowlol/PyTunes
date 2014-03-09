@@ -328,9 +328,15 @@ class Manager:
     @cherrypy.expose()
     def index(self):
         """ Generate page from template """
+        return htpc.LOOKUP.get_template('manager.html').render(scriptname='manager')
+
+
+    @cherrypy.expose()
+    def GetData(self, offset, limit):
+        """ Generate page from template """
         table = ''
         #data = json.dumps(table_dump('video.db', 'episodeview', '10', '0'))
-        data = table_dump('video.db', 'movieview', '100', '0', 'c00')
+        data = table_dump('video.db', 'movieview', limit, offset, 'c00')
         for episode in data:
             if episode['c19']:
                 trailer = "<img src='../img/yes16.png'>"
@@ -346,9 +352,8 @@ class Manager:
                 rating = "<img src='../img/no16.png'>"
             if episode['c12']:
                 mpaa = episode['c12'].replace('Rated', '')
-                
-                mpaa.replace(' ', '')
-                if not rating:
+                mpaa.strip()
+                if mpaa == '':
                     mpaa = "<img src='../img/no16.png'>"
             else:
                 mpaa = "<img src='../img/no16.png'>"
@@ -377,14 +382,9 @@ class Manager:
             else:
                 fanart = "<img src='../img/no16.png'>"
             table = table + "<tr><td>" + episode['c00'] + "<td>" + episode['c07'] + "</td>" + "</td><td>vcodec</td>" + "<td>quality</td>" + "<td>acodec</td>" + "<td>channels</td>" + "<td>subT</td>" + "<td>" + fanart + "</td>" + "<td>" + thumb + "</td><td>" + mpaa + "</td>" + "<td>" + trailer + "</td>" + "<td>" + genre + "</td>" + "</td><td>" + rating + "</td><td>" + episode['c09'] + "</td><td>"  + plot + "</td><td>"  + tagline + "</td><td>"  + director + "</td><td>"  + writers + "</td><td>" + episode['c11'] + "</td></tr>"
-        return htpc.LOOKUP.get_template('manager.html').render(scriptname='manager', table=table)
-
-
-    @cherrypy.expose()
-    def GetData(self):
-        """ Generate page from template """
         #data = json.dumps(table_dump('video.db', 'episodeview', '10', '0'))
-        return table_dump('video.db', 'episodeview', '10', '0')
+        return table
+        #return 'TEST'
 
     @cherrypy.expose()
     def RebuildDB(self, action):

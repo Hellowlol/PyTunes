@@ -40,7 +40,7 @@
         </ul>
         <div class="tab-content">
             <div id="movies" class="active tab-pane">
-                <table id="movie-table" class="table table-striped  table-hover table-condensed table-responsive table-bordered">
+                <table class="table table-striped  table-hover table-condensed table-responsive table-bordered">
                     <thead class="pt-thead">
                         <tr>
                             <th class="span3">Title</th>
@@ -64,9 +64,14 @@
                             <th>Duration</th>
                         </tr>
                     </thead>
-                    <tbody>${table}</tbody>
+                    <tbody id="movie-table"></tbody>
                 </table>
-                <div id="data" class="data"></div>
+                <ul class="pager">
+                    <li><a href="#" id="pmovie">Previous</a></li>
+                    <li><a href="#" id="nmovie">Next</a></li>
+                </ul>
+                <div id="pages"></div>
+                <div class="spinner"><img alt="Spinner" src="../img/loader.gif"/></div>
             </div>
             <div id="shows" class="tab-pane">
                 <table id="show-table" class="table table-striped table-hover">

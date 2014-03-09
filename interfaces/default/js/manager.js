@@ -1,19 +1,51 @@
-function show_data() {
-    $.getJSON(WEBDIR + "manager/GetData", function (response) {
-        alert(response);
-        $("#data").html('response');
-    });
-}
 
 var movieLoad = {
-    last: 0,
+    offset: 0,
     request: null,
-    limit: 50,
+    limit: 15,
     options: null
 };
 
+function loadMovies() {
+   $('#movie-table').empty();
+    var sendData = {
+        //offset: (movieLoad.offset + movieLoad.limit),
+        //limit: movieLoad.limit,
+        offset: movieLoad.offset,
+        limit: movieLoad.limit
+    };
+    $.extend(sendData);
+     //var start = 50;
+    //$.get(WEBDIR + "manager/GetData?offset=" + offset + "&limit=" + limit, function (response) {
+    movieLoad.request = $.ajax({
+        //url: WEBDIR + "manager/GetData?offset=" + offset + "&limit=" + limit,
+        url: WEBDIR + "manager/GetData",
+        type: 'get',
+        data: sendData,
+        dataType: 'text',
+        success: function (data) {
+            //if (data === null) return errorHandler();
+            $('#movie-table').append(data);
+        },
+        complete: function () {
+            $('.spinner').hide();
+        }
+    });
+        //alert(response);
+        //$("#movie-table").append(response);
+        //$('#pages').bootstrapPaginator(pageoptions);
+        //$('#pages').append('pageoptions');
+}
 
-function loadMovies(options) {
+//var movieLoad = {
+//    last: 0,
+//    request: null,
+//    limit: 50,
+//    options: null
+//};
+
+
+function loadMovies2(options) {
     var optionstr = JSON.stringify(options) + hideWatched + JSON.stringify(sorting);
     if (movieLoad.options != optionstr) {
         movieLoad.last = 0;
@@ -26,10 +58,7 @@ function loadMovies(options) {
 
     var sendData = {
         start: movieLoad.last,
-        end: (movieLoad.last + movieLoad.limit),
-        hidewatched: hideWatched,
-        sortmethod: sorting.method,
-        sortorder: sorting.order
+        end: (movieLoad.last + movieLoad.limit)
     };
     $.extend(sendData, options);
 
@@ -38,43 +67,10 @@ function loadMovies(options) {
         url: WEBDIR + 'manager/GetMovies',
         type: 'get',
         data: sendData,
-        dataType: 'json',
+        dataType: 'text',
         success: function (data) {
             if (data === null) return errorHandler();
-
-            if (data.limits.end == data.limits.total) {
-                movieLoad.last = -1;
-            } else {
-                movieLoad.last += movieLoad.limit;
-            }
-
-            if (data.movies !== undefined) {
-                $.each(data.movies, function (i, movie) {
-                    var movieItem = $('<li>').attr('title', movie.title);
-
-                    var movieAnchor = $('<a>').attr('href', '#').click(function (e) {
-                        e.preventDefault();
-                        loadMovie(movie);
-                    });
-
-                    var src = 'holder.js/100x150/text:No artwork';
-                    if (movie.thumbnail !== '') {
-                        src = WEBDIR + 'xbmc/GetThumb?w=100&h=150&thumb=' + encodeURIComponent(movie.thumbnail);
-                    }
-                    movieAnchor.append($('<img>').attr('src', src).addClass('thumbnail'));
-
-                    if (movie.playcount >= 1) {
-                        movieAnchor.append($('<i>').attr('title', 'Watched').addClass('icon-white icon-ok-sign watched'));
-                    }
-
-                    movieAnchor.append($('<h6>').addClass('title').html(shortenText(movie.title, 12)));
-
-                    movieItem.append(movieAnchor);
-
-                    $('#movie-grid').append(movieItem);
-                });
-            }
-            Holder.run();
+            $('#movie-table').append(data);
         },
         complete: function () {
             $('.spinner').hide();
@@ -113,9 +109,23 @@ function reloadTab() {
     //    loadChannels();
     //}
 }
+$('#pmovie').click(function () {
+    movieLoad.offset = movieLoad.offset - movieLoad.limit;
+    loadMovies();
+});
+    
+$('#nmovie').click(function () {
+    movieLoad.offset = movieLoad.offset + movieLoad.limit;
+    loadMovies();
+});
+    
 $(document).ready(function () {
+    var pageoptions = {
+        limit: 30,
+        offset: 0
+    };
     $('.spinner').show();
-    show_data();
+    loadMovies();
     $('.spinner').hide();
 });
 
