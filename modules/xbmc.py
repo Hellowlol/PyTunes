@@ -470,7 +470,7 @@ class Xbmc:
         self.logger.debug("Execute '" + addon + "' with commands '" + cmd0 + "' and '" + cmd1 +"'")
         xbmc = Server(self.url('/jsonrpc', True))
         if addon == 'script.artwork.downloader':
-            return xbmc.Addons.ExecuteAddon(addon)
+            return xbmc.Addons.ExecuteAddon('addonid=' + addon)
         elif addon == 'script.cinema.experience':
             cmd = 'movieid=' + int(cmd0)
             return xbmc.Addons.ExecuteAddon(addon, cmd)
@@ -480,6 +480,8 @@ class Xbmc:
         elif addon == 'plugin.video.youtube':
             cmd = 'action=play_video&videoid=' + cmd0
             return xbmc.Addons.ExecuteAddon(addon, cmd)
+        elif addon == 'script.cdartmanager':
+            return xbmc.Addons.ExecuteAddon('addonid=' + addon, cmd0)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -520,7 +522,7 @@ class Xbmc:
                 playerprop = ['speed', 'position', 'time', 'totaltime',
                               'percentage', 'subtitleenabled', 'currentsubtitle',
                               'subtitles', 'currentaudiostream', 'audiostreams']
-                itemprop = ['thumbnail', 'showtitle', 'season', 'episode', 'year', 'fanart']
+                itemprop = ['thumbnail', 'showtitle', 'season', 'episode', 'year', 'fanart', 'mpaa', 'cast', 'studio', 'country', 'genre', 'streamdetails', 'director', 'writer', 'tagline', 'plotoutline', 'rating', 'description', 'plot']
 
             elif player['type'] == 'audio':
                 playerprop = ['speed', 'position', 'time', 'totaltime', 'percentage']
@@ -529,6 +531,7 @@ class Xbmc:
             app = xbmc.Application.GetProperties(properties=['muted', 'volume'])
             player = xbmc.Player.GetProperties(playerid=playerid, properties=playerprop)
             item = xbmc.Player.GetItem(playerid=playerid, properties=itemprop)
+            self.logger.debug("Fetched currently playing.")
 
             return {'playerInfo': player, 'itemInfo': item, 'app': app}
         except IndexError:
