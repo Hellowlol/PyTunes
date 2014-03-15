@@ -904,7 +904,7 @@ function loadNowPlaying() {
                             break;
                         case 'song':
                             thumbnail.attr('src', WEBDIR + 'xbmc/GetThumb?w=180&h=180&thumb=' + nowPlayingThumb);
-                            thumbnail.attr('width', '180').attr('height', '180');
+                            thumbnail.attr('width', '250').attr('height', '250');
                             break;
                         default:
                             thumbnail.attr('src', WEBDIR + 'xbmc/GetThumb?w=140&h=140&thumb=' + nowPlayingThumb);
