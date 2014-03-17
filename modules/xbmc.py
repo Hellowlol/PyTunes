@@ -679,7 +679,7 @@ class Xbmc:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def GetRecentMovies(self, limit=5):
+    def GetRecentMovies(self, limit=20):
         """ Get a list of recently added movies """
         self.logger.debug("Fetching recently added movies")
         try:
@@ -695,7 +695,7 @@ class Xbmc:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def GetRecentShows(self, limit=5):
+    def GetRecentShows(self, limit=10):
         """ Get a list of recently added TV Shows """
         self.logger.debug("Fetching recently added TV Shows")
         try:

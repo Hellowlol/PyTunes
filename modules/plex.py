@@ -191,24 +191,19 @@ class Plex:
             print ("Unable to fetch albums!")
             return
 
-
     @cherrypy.expose()
     def GetThumb(self, thumb=None, h=None, w=None, o=100):
         """ Parse thumb to get the url and send to htpc.proxy.get_image """
         #url = self.url('/images/DefaultVideo.png')
         if thumb:
-            if o > 100:
-                url = "http://%s:%s%s" % (htpc.settings.get('plex_host', 'localhost'), htpc.settings.get('plex_port', '32400'), thumb)
-            else:
-                # If o < 100 transcode on Plex server to widen format support
-                url = "http://%s:%s/photo/:/transcode?height=%s&width=%s&url=%s" % (htpc.settings.get('plex_host', 'localhost'), htpc.settings.get('plex_port', '32400'), h, w, urllib.quote_plus("http://%s:%s%s" % (htpc.settings.get('plex_host', 'localhost'), htpc.settings.get('plex_port', '32400'), thumb)))
-                h=None
-                w=None
+            url = "http://%s:%s%s.jpg" % (htpc.settings.get('plex_host', 'localhost'), htpc.settings.get('plex_port', '32400'), thumb)
+            
         else:
             url = "/images/DefaultVideo.png"
 
         self.logger.debug("Trying to fetch image via " + url)
         return get_image(url, h, w, o, "")
+
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()

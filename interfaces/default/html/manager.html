@@ -1,6 +1,6 @@
 <%inherit file="base.html"/>
 <% settings = self.attr.settings %>
-<div class="container">
+<div class="container-fluid">
     <div class="content vertical-align: top">
         <div class="page-header page-title">
             <img alt="PyTunes" src="../img/pytuneslogosm.png"/><img alt="PyTunes" class="pull-right" src="../img/manager.png"/>
@@ -67,8 +67,8 @@
                     <tbody id="movie-table"></tbody>
                 </table>
                 <ul class="pager">
-                    <li><a href="#" id="pmovie">Previous</a></li>
-                    <li><a href="#" id="nmovie">Next</a></li>
+                    <li><a href="#movies" id="pmovie">Previous</a></li>
+                    <li><a href="#movies" id="nmovie">Next</a></li>
                 </ul>
                 <div id="pages"></div>
                 <div class="spinner"><img alt="Spinner" src="../img/loader.gif"/></div>
@@ -101,8 +101,8 @@
                     <tbody  id="show-table"></tbody>
                 </table>
                 <ul class="pager">
-                    <li><a href="#" id="pshow">Previous</a></li>
-                    <li><a href="#" id="nshow">Next</a></li>
+                    <li><a href="#shows" id="pshow">Previous</a></li>
+                    <li><a href="#shows" id="nshow">Next</a></li>
                 </ul>
             </div>
             <div id="episodes" class="tab-pane">
