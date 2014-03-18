@@ -625,10 +625,6 @@ function loadArtists(options) {
             if (data.artists !== undefined) {
                 $.each(data.artists, function (i, artist) {
                     var artistAnchor = $('<a>').attr('href',WEBDIR  + 'xbmc/ViewArtist?artist_id=' + artist.artistid + '&artist=' + encodeURIComponent(artist.artist)).attr('title', artist.artist);
-
-                    //$('<td>').append($('<a>').attr('href',WEBDIR  + 'xbmc/ViewArtist?artist_id=' + artist.artistid + '&artist=' + encodeURIComponent(artist.artist)).addClass('artist-link').text(artist.artist))
-                    //));
-
                     var artistItem = $('<li>').hover(function () {
                         $(this).children('div').fadeToggle();
                     });
@@ -719,10 +715,7 @@ function loadAlbums(options) {
                     $('<h6>').html(album.title),
                     $('<h6>').html(album.artist).addClass('artist')).click(function (e) {
                         e.preventDefault();
-                        loadSongs({
-                            'albumid': album.albumid,
-                            'search': album.title
-                        });
+                        xbmc/ViewAlbum(album.albumid,'search');
                     }),
                     $('<div>').addClass('grid-control').append(
                     $('<a>').attr('href', '#').append(
@@ -744,6 +737,7 @@ function loadAlbums(options) {
             elem.slideDown();
         },
         complete: function () {
+            $('a[href=#albums]').tab('show');
             $('.spinner').hide();
         }
     });
@@ -756,34 +750,34 @@ var songsLoad = {
     limit: 50,
     options: {},
     filter: ''
-};
+}
 
 function loadSongs(options) {
-    searchString = $('#search').val();
-    if (options !== undefined || searchString !== songsLoad.filter) {
-        songsLoad.last = 0;
-        $('#songs-grid tbody').empty();
-        if (options !== undefined) {
-            songsLoad.options = options;
+    searchString = $('#search').val()
+    if (options != undefined || searchString != songsLoad.filter) {
+        songsLoad.last = 0
+        $('#songs-grid tbody').empty()
+        if (options != undefined) {
+            songsLoad.options = options
             if (options.search) {
                 $("#search").val(options.search);
-                songsLoad.filter = options.search;
+                songsLoad.filter = options.search
             }
         } else {
-            songsLoad.options = {};
-            songsLoad.filter = searchString;
+            songsLoad.options = {}
+            songsLoad.filter = searchString
         }
     }
 
-    var active = (songsLoad.request !== null && songsLoad.request.readyState !== 4);
-    if (active || songsLoad.last == -1) return;
+    var active = (songsLoad.request!=null && songsLoad.request.readyState!=4)
+    if (active || songsLoad.last == -1) return
 
     var sendData = {
         start: songsLoad.last,
         end: (songsLoad.last + songsLoad.limit),
         filter: (options && options.search ? '' : songsLoad.filter)
-    };
-    $.extend(sendData, songsLoad.options);
+    }
+    $.extend(sendData, songsLoad.options)
 
     $('.spinner').show();
     songsLoad.request = $.ajax({
@@ -792,48 +786,46 @@ function loadSongs(options) {
         data: sendData,
         dataType: 'json',
         success: function (data) {
-            if (data === null || data.limits.total === 0) return;
+            if (data==null || data.limits.total==0) return;
 
             if (data.limits.end == data.limits.total) {
                 songsLoad.last = -1;
             } else {
                 songsLoad.last += songsLoad.limit;
             }
-            if (data.songs !== undefined) {
+            if (data.songs != undefined) {
                 $.each(data.songs, function (i, song) {
                     var row = $('<tr>');
                     row.append(
-                    $('<td>').append(
-                    $('<a>').attr('href', '#').append($('<i>').addClass('icon-plus')).click(function (e) {
-                        e.preventDefault();
-                        queueItem(song.songid, 'song');
-                    }),
-                    $('<a>').attr('href', '#').text(' ' + song.label).click(function (e) {
-                        e.preventDefault();
-                        playItem(song.songid, 'song');
-                    })),
-                    $('<td>').append(
-                    $('<a>').attr('href', '#').text(song.artist).click(function (e) {
-                        e.preventDefault();
-                        loadSongs({
-                            'artistid': song.artistid[0],
-                            'search': song.artist
-                        });
-                    })),
-                    $('<td>').append(
-                    $('<a>').attr('href', '#').text(song.album).click(function (e) {
-                        e.preventDefault();
-                        loadSongs({
-                            'albumid': song.albumid,
-                            'search': song.album
-                        });
-                    })),
-                    $('<td>').append(parseSec(song.duration)));
+                        $('<td>').append(
+                            $('<a>').attr('href','#').append($('<i>').addClass('icon-plus')).click(function(e) {
+                                e.preventDefault();
+                                queueItem(song.songid, 'song')
+                            }),
+                            $('<a>').attr('href','#').text(' ' + song.label).click(function(e) {
+                                e.preventDefault();
+                                playItem(song.songid, 'song')
+                            })
+                        ),
+                        $('<td>').append(
+                            $('<a>').attr('href','#').text(song.artist).click(function(e) {
+                                e.preventDefault();
+                                loadSongs({'artistid': song.artistid[0], 'search': song.artist})
+                            })
+                        ),
+                        $('<td>').append(
+                            $('<a>').attr('href','#').text(song.album).click(function(e) {
+                                e.preventDefault();
+                                loadSongs({'albumid': song.albumid, 'search': song.album})
+                            })
+                        ),
+                        $('<td>').append(parseSec(song.duration))
+                    )
                     $('#songs-grid tbody').append(row);
                 });
             }
         },
-        complete: function () {
+        complete: function() {
             $('a[href=#songs]').tab('show');
             $('.spinner').hide();
         }

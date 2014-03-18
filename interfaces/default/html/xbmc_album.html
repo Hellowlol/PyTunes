@@ -34,9 +34,9 @@
 
         <ul class="breadcrumb">
             <li><a href="/">Home</a> <span class="divider">/</span></li>
-            <li><a href="/xbmc">${module_name}</a> <span class="divider">/</span></li>
-            <li class="xbmc_artistname"><a href="/xbmc/viewArtist/${artist_id}">${album['ArtistName']}</a> <span class="divider">/</span></li>
-            <li class="xbmc_albumname">${album['AlbumTitle']}</li>
+            <li><a href="/xbmc">XBMC</a> <span class="divider">/</span></li>
+            <li class="xbmc_artistname"><a href="/xbmc/viewArtist/${artist_id}">artist</a> <span class="divider">/</span></li>
+            <li class="xbmc_albumname">album</li>
         </ul>
 
         <div id="banner" class="row-fluid banner">
@@ -46,15 +46,15 @@
                 <table class="table table-condensed">
                     <tr>
                         <td>Status</td>
-                        <td class="xbmc_album_status">${album['Status']}</td>
+                        <td class="xbmc_album_status">Status</td>
                     </tr>
                     <tr>
                         <td>Tracks</td>
-                        <td class="xbmc_album_tracks">${len(tracks)}</td>
+                        <td class="xbmc_album_tracks">tracks</td>
                     </tr>
                     <tr>
                         <td>Release Date</td>
-                        <td class="xbmc_release_date">${album['ReleaseDate']}</td>
+                        <td class="xbmc_release_date">ReleaseDate</td>
                     </tr>
                 </table>
             </div>
@@ -71,14 +71,6 @@
                 </tr>
                 </thead>
                 <tbody>
-                % for track in tracks:
-                <tr>
-                    <td>${track['TrackNumber']}</td>
-                    <td>${track['TrackTitle']}</td>
-                    <td>${track['DurationText']}</td>
-                    <td>${track['TrackStatus']}</td>
-                </tr>
-                % endfor
                 </tbody>
             </table>
         </div>

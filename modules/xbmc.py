@@ -195,27 +195,15 @@ class Xbmc:
                 return "No valid servers"
 
     @cherrypy.expose()
-    def ViewAlbum(self, album_id):
-        response = self.fetch('getAlbum&id=%s' % album_id)
-
-        tracks = response['tracks']
-        for t in tracks:
-            duration = t['TrackDuration']
-            total_seconds = duration / 1000
-            minutes = total_seconds / 60
-            seconds = total_seconds - (minutes * 60)
-            t['DurationText'] = '%d:%02d' % (minutes, seconds)
-            t['TrackStatus'] = _get_status_icon('Downloaded' if t['Location'] is not None else '')
+    def ViewAlbum(self, album_id, source):
+        #try:
+        #    xbmc = Server(self.url('/jsonrpc', True))
 
         template = htpc.LOOKUP.get_template('xbmc_album.html')
         return template.render(
-            scriptname=None,
-            artist_id=response['album'][0]['ArtistID'],
-            album_id=album_id,
-            module_name=htpc.settings.get('xbmc_name') or 'XBMC',
-            album=response['album'][0],
-            tracks=response['tracks'],
-            description=response['description'][0],
+            scriptname='xbmc',
+            #artist_id=artist_id,
+            #name=artist
         )
 
     @cherrypy.expose()
@@ -349,11 +337,12 @@ class Xbmc:
             self.logger.debug("Exception: " + str(e))
             self.logger.error("Unable to fetch albums!")
             return
+
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def GetSongs(self, start=0, end=0, albumid=None, artistid=None, filter='', *args, **kwargs):
+    def GetSongs(self, start=0, end=0, sortmethod='title', sortorder='ascending', albumid=None, artistid=None, filter='', *args, **kwargs):
         """ Get a list of all songs """
-        self.logger.debug("Fetching all artists in the music database")
+        self.logger.debug("Songs in the music database")
         try:
             xbmc = Server(self.url('/jsonrpc', True))
             sort = {'order': sortorder, 'method': sortmethod, 'ignorearticle': True}
@@ -371,7 +360,7 @@ class Xbmc:
             return xbmc.AudioLibrary.GetSongs(properties=properties, limits=limits, sort=sort, filter=filter)
         except Exception, e:
             self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to fetch artists!")
+            self.logger.error("Unable to fetch Songs!")
             return
 
     @cherrypy.expose()
