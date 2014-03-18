@@ -590,6 +590,7 @@ var artistLoad = {
 };
 
 function loadArtists(options) {
+    var elem = $('#artist-grid');
     var optionstr = JSON.stringify(options);
     if (artistLoad.options != optionstr) {
         artistLoad.last = 0;
@@ -606,7 +607,7 @@ function loadArtists(options) {
     };
     $.extend(sendData, options);
 
-      $('.spinner').show();
+    $('.spinner').show();
     artistLoad.request = $.ajax({
         url: WEBDIR + 'xbmc/GetArtists',
         type: 'get',
@@ -623,18 +624,22 @@ function loadArtists(options) {
 
             if (data.artists !== undefined) {
                 $.each(data.artists, function (i, artist) {
-                    $('#artist-grid').append($('<tr>').append(
-                    $('<td>').append(
-                    $('<a>').attr('href', '#').attr('title', 'Play all').html('<i class="icon-play">').click(function (e) {
-                        e.preventDefault();
-                        playItem(artist.artistid, 'artist');
-                    }),
-                    $('<a>').attr('href', '#').attr('title', 'Enqueue all').html('<i class="icon-plus">').click(function (e) {
-                        e.preventDefault();
-                        queueItem(artist.artistid, 'artist');
-                    })),
-                    $('<td>').append($('<a>').attr('href',WEBDIR  + 'xbmc/ViewArtist?artist_id=' + artist.artistid + '&artist=' + encodeURIComponent(artist.artist)).addClass('artist-link').text(artist.artist))
-                    ));
+                    var artistAnchor = $('<a>').attr('href',WEBDIR  + 'xbmc/ViewArtist?artist_id=' + artist.artistid + '&artist=' + encodeURIComponent(artist.artist)).attr('title', artist.artist);
+
+                    //$('<td>').append($('<a>').attr('href',WEBDIR  + 'xbmc/ViewArtist?artist_id=' + artist.artistid + '&artist=' + encodeURIComponent(artist.artist)).addClass('artist-link').text(artist.artist))
+                    //));
+
+                    var artistItem = $('<li>').hover(function () {
+                        $(this).children('div').fadeToggle();
+                    });
+                    var src = 'holder.js/150x150/text:No Artwork';
+                    if (artist.thumbnail !== '') {
+                        src = WEBDIR + 'xbmc/GetThumb?w=150&h=150&thumb=' + encodeURIComponent(artist.thumbnail);
+                    }
+                    artistAnchor.append($('<img>').attr('src', src).addClass('thumbnail'));
+                    artistAnchor.append($('<h6>').addClass('title').html(shortenText(artist.artist, 24)));
+                    artistItem.append(artistAnchor);
+                    elem.append(artistItem);
                 });
             }
             Holder.run();
