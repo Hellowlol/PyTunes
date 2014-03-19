@@ -1,15 +1,16 @@
 <%inherit file="base.html"/>
 <% settings = self.attr.settings %>
-<div class="container">
+<div class="container-fluid">
     <div class="content maincontent">
         <div class="page-header page-title">
-            <img src="../img/pytuneslogoxs.png">
-                <form id="searchform" class="well-small form-inline" style="float:right; background:url(../img/bodybg.jpg)">
+            <img src="../img/pytuneslogosm.png">
+            <img src="../img/Cpotato-logo_sm.png" class="pull-right">
+        </div>
+               <div id="searchform" class="form-inline" style="float:right">
                     <input type="text" id="moviename" class="span2" placeholder="Add Movie"/>
                     <button type="submit" class="btn btn-primary"><i class="icon-search"></i> Search</button>
-                </form>
-        </div>
-        <ul class="nav nav-tabs">
+                </div>
+         <ul class="nav nav-tabs">
             <li><a href="#wanted" data-toggle="tab">Wanted</a></li>
             <li><a href="#history" data-toggle="tab">History</a></li>
             <li class="hidden"><a href="#result" data-toggle="tab">Search</a></li>
