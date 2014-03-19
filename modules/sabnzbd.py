@@ -15,9 +15,9 @@ class Sabnzbd:
             'test': htpc.WEBDIR + 'sabnzbd/version',
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'sabnzbd_enable'},
-                {'type': 'text', 'label': 'Menu name', 'name': 'sabnzbd_name'},
-                {'type': 'text', 'label': 'IP / Host *', 'name': 'sabnzbd_host'},
-                {'type': 'text', 'label': 'Port *', 'name': 'sabnzbd_port'},
+                {'type': 'text', 'label': 'Menu name', 'name': 'sabnzbd_name', 'placeholder':'Sabnzb+'},
+                {'type': 'text', 'label': 'IP / Host *', 'name': 'sabnzbd_host', 'placeholder':'localhost'},
+                {'type': 'text', 'label': 'Port *', 'name': 'sabnzbd_port', 'placeholder':'8080', 'desc':'Deault is 8080'},
                 {'type': 'text', 'label': 'Basepath', 'name': 'sabnzbd_basepath'},
                 {'type': 'text', 'label': 'API key', 'name': 'sabnzbd_apikey'},
                 {'type': 'bool', 'label': 'Use SSL', 'name': 'sabnzbd_ssl'}

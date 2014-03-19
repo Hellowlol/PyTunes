@@ -15,9 +15,9 @@ class Couchpotato:
             'test': htpc.WEBDIR + 'couchpotato/ping',
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'couchpotato_enable'},
-                {'type': 'text', 'label': 'Menu name', 'name': 'couchpotato_name'},
-                {'type': 'text', 'label': 'IP / Host *', 'name': 'couchpotato_host'},
-                {'type': 'text', 'label': 'Port *', 'name': 'couchpotato_port'},
+                {'type': 'text', 'label': 'Menu name', 'name': 'couchpotato_name', 'placeholder':'CouchPotato'},
+                {'type': 'text', 'label': 'IP / Host *', 'name': 'couchpotato_host', 'placeholder':'localhost'},
+                {'type': 'text', 'label': 'Port *', 'name': 'couchpotato_port', 'placeholder':'5050', 'desc':'Default is 5050'},
                 {'type': 'text', 'label': 'Basepath', 'name': 'couchpotato_basepath'},
                 {'type': 'text', 'label': 'API key', 'name': 'couchpotato_apikey'},
                 {'type': 'bool', 'label': 'Use SSL', 'name': 'couchpotato_ssl'}

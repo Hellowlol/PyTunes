@@ -16,9 +16,9 @@ class qbittorrent:
             'test': htpc.WEBDIR + 'qbittorrent/ping',
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'qbittorrent_enable'},
-                {'type': 'text', 'label': 'Menu name', 'name': 'qbittorrent_name'},
-                {'type': 'text', 'label': 'IP / Host *', 'name': 'qbittorrent_host'},
-                {'type': 'text', 'label': 'Port *', 'name': 'qbittorrent_port'},
+                {'type': 'text', 'label': 'Menu name', 'name': 'qbittorrent_name', 'placeholder':'qBittorrent'},
+                {'type': 'text', 'label': 'IP / Host *', 'name': 'qbittorrent_host', 'placeholder':'localhost'},
+                {'type': 'text', 'label': 'Port *', 'name': 'qbittorrent_port', 'placeholder':'8080', 'desc':'Default is 8080'},
                 {'type': 'text', 'label': 'Username', 'name': 'qbittorrent_username'},
                 {'type': 'password', 'label': 'Password', 'name': 'qbittorrent_password'},
                 {'type': 'bool', 'label': 'Use SSL', 'name': 'qbittorrent_ssl'}

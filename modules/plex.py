@@ -20,9 +20,9 @@ class Plex:
             'test': htpc.WEBDIR + 'plex/ping',
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'plex_enable'},
-                {'type': 'text', 'label': 'Menu name', 'name': 'plex_name'},
-                {'type': 'text', 'label': 'IP / Host *', 'name': 'plex_host'},
-                {'type': 'text', 'label': 'Port *', 'name': 'plex_port'},
+                {'type': 'text', 'label': 'Menu name', 'name': 'plex_name', 'placeholder':'Plex'},
+                {'type': 'text', 'label': 'IP / Host *', 'name': 'plex_host', 'placeholder':'localhost'},
+                {'type': 'text', 'label': 'Port *', 'name': 'plex_port', 'placeholder':'32400', 'desc':'Default is 32400'},
                 {'type': 'text', 'label': 'Mac addr.', 'name':'plex_mac'},
                 {'type':'bool', 'label':'Hide watched', 'name':'plex_hide_watched'}]})
 

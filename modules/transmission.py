@@ -17,9 +17,9 @@ class Transmission:
             'test': htpc.WEBDIR + 'transmission/ping',
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'transmission_enable'},
-                {'type': 'text', 'label': 'Menu name', 'name': 'transmission_name'},
-                {'type': 'text', 'label': 'IP / Host *', 'name': 'transmission_host'},
-                {'type': 'text', 'label': 'Port *', 'name': 'transmission_port'},
+                {'type': 'text', 'label': 'Menu name', 'name': 'transmission_name', 'placeholder':'Transmission'},
+                {'type': 'text', 'label': 'IP / Host *', 'name': 'transmission_host', 'placeholder':'localhost'},
+                {'type': 'text', 'label': 'Port *', 'name': 'transmission_port', 'placeholder':'9091', 'desc':'Default is 9091'},
                 {'type': 'text', 'label': 'Username', 'name': 'transmission_username'},
                 {'type': 'password', 'label': 'Password', 'name': 'transmission_password'}
         ]})
