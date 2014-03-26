@@ -98,6 +98,17 @@ function uptime() {
 }
 
 
+$(document).on('click', '.cmd', function () {
+    var x = $(this).attr('data-pid');
+    //alert(x);
+    if (confirm('Are you sure?')) {
+        $.getJSON(WEBDIR + "stats/command/" + $(this).attr('data-cmd') + "/" + $(this).attr('data-pid'), function (response) {
+            alert('click');
+        });
+    }
+});
+
+
 function get_external_ip() {
     $.getJSON(WEBDIR + "stats/get_external_ip", function (response) {
         //$(".externalip").append("External ip : "+ response.externalip);
@@ -237,14 +248,91 @@ function return_settings3() {
     });
 }
 
+function processes() {
+    $.ajax({
+        'url': WEBDIR + 'stats/processes',
+        'dataType': 'json',
+        'success': function (response) {
+            $('#proc-table').html("");
+            $('#error_message').text("");
+            $.each(response, function (i, proc) {
+                var row = $('<tr>');
+                //Pid might be used for popen stuff later
+                var pidAnchor = $('<a>').attr('href', '#').click(function (e) {
+                    e.preventDefault();
+                    loadProcess({
+                        'pid': proc.pid
+                    });
+                });
+                pidAnchor.append(proc.pid);
+                row.attr('data-pid', proc.pid);
+                row.append(
+                //pidAnchor,
+                $('<td>').addClass('processes-pid').html(pidAnchor),
+                //$('<td>').addClass('').text(proc.pid),
+                $('<td>').addClass('processes-name span2').text(proc.name),
+                $('<td>').addClass('processes-owner').text(proc.username),
+                $('<td>').addClass('processes-percent span1').text(proc.cpu_percent+ ' %'),
+                $('<td>').addClass('processes-command span3').text(proc.cmdline),
+                $('<td>').addClass('processes-name').text(proc.status),
+                $('<td>').addClass('processes-memory-info span2').text(proc.memory_percent.toFixed(2) + ' %  / ' + getReadableFileSizeString(proc.memory_info[0])),
+                $('<td>').addClass('processes-runningtime').text(proc.r_time));
+                $('#proc-table').append(row);
+            });
+            $('.spinner').hide();
+        }
+    });
+}
+
+
+function reloadtab() {
+    if ($('#diskt').is(':visible')) {
+        get_diskinfo();
+    } else if ($('#proc').is(':visible')) {
+        processes();
+    }
+}
+
+   $('#diskt').click(function () {
+       get_diskinfo();
+   });
+    $('#proc').click(function () {
+       processes();
+   });
+   
+   //Used for kill and signal command
+   $(document).on('click', '.cmd', function(){
+       var x = $(this).attr('data-pid');
+       if (confirm('Are you sure?')) {
+       $.getJSON(WEBDIR + "stats/command/"+ $(this).attr('data-cmd')+"/" + $(this).attr('data-pid'), function (response) {
+            alert(response.msg);
+       
+       });
+   }
+   });
+   
+   // Used for popen
+    $(document).on('click', '#sendcmd', function(){
+       var i = $('#cmdinput').val()
+       if (confirm('Are you sure?')) {
+       $.getJSON(WEBDIR + "stats/cmdpopen/"+ $(this).attr('data-cmd')+"/" + i, function (response) {
+            alert(response.msg);
+       
+       });
+   }
+   });
+
+
 
 // Loads the moduleinfo
 $(document).ready(function () {
     $('.spinner').show();
     get_diskinfo();
     get_diskinfo2();
+    reloadtab();
     uptime();
     get_user();
+    processes();
     get_external_ip();
     get_local_ip();
     network_usage_table();
@@ -263,3 +351,5 @@ setInterval(function () {
 //    sys_info();
     return_settings3();
 }, 2000);
+
+

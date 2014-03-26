@@ -3,9 +3,11 @@
 import time
 import json
 from datetime import datetime, timedelta
+from subprocess import PIPE
 import sys
 import os
 import socket
+import ConfigParser
 import urllib2
 import platform
 import cherrypy
@@ -13,10 +15,13 @@ import htpc
 import logging
 
 
-try: 
+try:
     import psutil
-except:
-    logger.error("Could'nt import psutil. See http://psutil.googlecode.com/hg/INSTALL")
+    importPsutil = True
+
+except ImportError:
+    logger.error("Could't import psutil. See http://psutil.googlecode.com/hg/INSTALL")
+    importPsutil = False
 
  
 class Stats:
@@ -60,15 +65,17 @@ class Stats:
     @cherrypy.expose()
     def uptime2(self):
         try:
+            if psutil.version_info >= (2, 0, 0):
+                b = psutil.boot_time()
+            else:
+                b = psutil.get_boot_time()
             
             d = {}
-            boot = datetime.now() - datetime.fromtimestamp(psutil.get_boot_time())
+            boot = datetime.now() - datetime.fromtimestamp(b)
             boot = str(boot)
             uptime = boot[:-7]
             d['uptime'] = uptime
-    
             return json.dumps(d)
-            
         except Exception as e:
             self.logger.error("Could not get uptime %s" % e)
             
@@ -136,6 +143,37 @@ class Stats:
             self.logger.error("Could not get disk info %s" % e)
         
         return rr
+
+
+
+    @cherrypy.expose()
+    def processes(self):
+        procs = []
+        procs_status = {}
+        for p in psutil.process_iter():
+            
+            try:
+                p.dict = p.as_dict(['username', 'get_memory_percent', 
+                                    'get_cpu_percent', 'name', 'status', 'pid', 'get_memory_info', 'create_time', 'cmdline'])
+                #Create a readable time
+                r_time = datetime.now() - datetime.fromtimestamp(p.dict['create_time'])
+                r_time = str(r_time)[:-7]
+                p.dict['r_time'] = r_time
+                try:
+                    procs_status[p.dict['status']] += 1
+                except KeyError:
+                    procs_status[p.dict['status']] = 1
+            except psutil.NoSuchProcess:
+                self.logger.error("No Such Process")
+                pass
+            else:
+                procs.append(p.dict)
+
+        # return processes sorted by CPU percent usage
+        processes = sorted(procs, key=lambda p: p['cpu_percent'], reverse=True)
+        return json.dumps(processes)
+ 
+
 
     @cherrypy.expose()
     def cpu_percent(self):
@@ -315,10 +353,38 @@ class Stats:
             else:
                 d['stats_use_bars'] = 'true'
             
-            d['polling'] = htpc.settings.get('stats_polling')
-        
         except Exception as e:
             self.logger.error("Getting stats settings %s" % e)
             
         return json.dumps(d)
+    
+
+    @cherrypy.expose()
+    def command(self, cmd=None, pid=None, signal=None, popen=None):
+        msg = None
+        dmsg = {}
+        try:
+            if pid:
+                p = psutil.Process(pid=int(pid))
+                name = p.name()
+            else:
+                pass
+            
+            if cmd == 'kill':
+                #Try to terminate the process gracefully
+                p.terminate()
+                # Wait for the process to terminate, if it hasnt within the timeout
+                p.wait(timeout=5)
+                # PEW kill process with laz0rbeams
+                p.kill()
+                msg = 'Killed %s pid %s successfully'% (name, pid)
+            elif cmd == 'signal':
+                psutil.send_signal(signal)
+            elif cmd == 'popen':
+                r = psutil.Popen([popen], stdout=PIPE)
+                msg = r.communicate()               
+            dmsg['msg'] = msg
+            return json.dumps(dmsg)
+        except Exception as e:
+            print 'error system command function :', e
 

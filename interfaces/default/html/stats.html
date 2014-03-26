@@ -1,6 +1,6 @@
 <%inherit file="base.html"/>
 <% settings = self.attr.settings %>
-<div class="container">
+<div class="container-fluid">
 <div class="content maincontent">
     <div class="page-header page-title">
         <img alt="PyTunes" src="../img/pytuneslogosm.png"/><img class="pull-right" alt="System" src="../img/system.png"/>
@@ -9,10 +9,11 @@
         <ul class="nav nav-tabs">
             <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
             <li><a href="#filesystems" data-toggle="tab">File Systems</a></li>
-            <li><a href="#processes" data-toggle="tab">Running Processes</a></li>
+            <li><a href="#processes" data-toggle="tab">Processes</a></li>
             <li><a href="#users" data-toggle="tab">Users and Groups</a></li>
             <li><a href="#files" data-toggle="tab">File Manager</a></li>
             <li><a href="#start" data-toggle="tab">Bootup and Shutdown</a></li>
+            <li><a href="#shell" data-toggle="tab">Shell</a></li>
         </ul>
         <div class="tab-content">
             <div class="tab-pane active" id="summary">
@@ -74,10 +75,14 @@
                     <table class="table table-striped table-condensed table-hover table-responsive table-bordered">
                         <thead class="pt-thead">
                             <tr>
-                                <th>ID</th>
+                                <th>PID</th>
+                                <th>Name</th>
                                 <th>Owner</th>
-                                <th class="">Started</th>
+                                <th class="">CPU</th>
                                 <th class="">Command</th>
+                                <th class="">Status</th>
+                                <th class="">Memory</th>
+                                <th class="">Runnung Time</th>
                             </tr>
                         </thead>
                         <tbody id="proc-table">
@@ -86,7 +91,28 @@
             </div>
             <div class="tab-pane" id="users">U</div>
             <div class="tab-pane" id="files">F</div>
-            <div class="tab-pane" id="start">S</div>
+            <div class="tab-pane" id="start">
+                    <table class="table table-striped table-condensed table-hover table-responsive table-bordered">
+                        <thead class="pt-thead">
+                            <tr>
+                                <th>Service Name</th>
+                                <th>Service Description</th>
+                                <th class="">Start at Boot?</th>
+                                <th class="">Running Now?</th>
+                            </tr>
+                        </thead>
+                        <tbody id="boot-table">
+                        </tbody>
+                    </table>
+            </div>
+            <div class="tab-pane" id="shell">
+               <div class="input-append pull-left">
+                   <input id="cmdinput" class="span4" type="text" placeholder="mkdir, dir1"></input>
+                   <button id="sendcmd" data-cmd="popen" class="btn" type="button">Go!</button>
+                </div>
+                <div class="span4">WARNING! What is written here is passed to the shell! Dont come crying if you delete your hardrive</div>
+                <span id="error_message"><i class="icon-spinner icon-spin spinner"></i></span>
+            </div>
         </div>
     </div>
 </div>

@@ -1,0 +1,11 @@
+import:
+    move: yes
+plugins: fetchart embedart
+art_filename: folder
+id3v23: yes
+match:
+    strong_rec_thresh: 0.2
+    ignored: missing_tracks unmatched_tracks
+paths:
+    default: $albumartist/$album%aunique{}/$track $title
+    comp: Various Artists/$album%aunique{}/$track $title

@@ -1,6 +1,7 @@
 """ Module for Media Management  """
 import cherrypy
 import htpc
+from htpc import scheduler
 import time
 import threading
 import base64
@@ -8,6 +9,7 @@ import socket
 import struct
 import json
 import simplejson
+from cherrypy.process.plugins import Monitor
 from htpc.xdb import *
 from itertools import chain
 from urllib2 import quote, unquote
@@ -298,12 +300,13 @@ class TvShow(SQLObject):
      strRating = StringCol()   
      strFirstAired = StringCol()
      strThumb = StringCol()
+
     
 class Manager:
     def __init__(self):
         """ Add module to list of modules on load and set required settings """
         self.logger = logging.getLogger('modules.manager')
-
+        Monitor(cherrypy.engine, scheduler.schedule, frequency=30).subscribe()
         Album.createTable(ifNotExists=True)
         Discography.createTable(ifNotExists=True)
         Artist.createTable(ifNotExists=True)
@@ -316,16 +319,54 @@ class Manager:
             'name': 'Media Manager',
             'id': 'manager',
             'fields': [
-                {'type':'bool', 'label':'Enable', 'name':'manager_enable'},
-                {'type':'text', 'label':'Menu name', 'name':'manager_name'},
-                {'type':'text', 'label':'Movie Source Folder', 'name':'movie_in'},
-                {'type':'text', 'label':'Movie Destination Folder', 'name':'movie_out'},
-                {'type':'text', 'label':'Fanart.tv Apikey', 'name':'fatv_apikey'},
-                {'type':'bool', 'label':'Fanart.tv Use SSL', 'name':'fatv_ssl'},
-                {'type':'text', 'label':'Last.fm Apikey', 'name':'lastfm_apikey'},
-                {'type':'bool', 'label':'Last.fm Use SSL', 'name':'lastfm_ssl'},
-                {'type':'text', 'label':'TMDB Apikey', 'name':'tmdb_apikey'},
-                {'type':'bool', 'label':'TMDB Use SSL', 'name':'tmdb_ssl'}
+                {'type':'bool', 
+                    'label':'Enable', 
+                    'name':'manager_enable'},
+                {'type':'text', 
+                    'label':'Menu name', 
+                    'name':'manager_name'},
+                {'type':'text', 
+                    'label':'Movie Source Folder', 
+                    'name':'movie_in',
+                    'desc':'No Trailing "/"'},
+                {'type':'text', 
+                    'label':'Movie Destination Folder', 
+                    'name':'movie_out',
+                    'desc':'No Trailing "/"'},
+                {'type':'text', 
+                    'label':'TV Source Folder', 
+                    'name':'tv_in',
+                    'desc':'No Trailing "/"'},
+                {'type':'text', 
+                    'label':'TV Destination Folder', 
+                    'name':'tv_out',
+                    'desc':'No Trailing "/"'},
+                {'type':'text', 
+                    'label':'Music Source Folder', 
+                    'name':'music_in',
+                    'desc':'No Trailing "/"'},
+                {'type':'text', 
+                    'label':'Music Destination Folder', 
+                    'name':'music_out',
+                    'desc':'No Trailing "/"'},
+                {'type':'text', 
+                    'label':'Fanart.tv Apikey', 
+                    'name':'fatv_apikey'},
+                {'type':'bool', 
+                    'label':'Fanart.tv Use SSL', 
+                    'name':'fatv_ssl'},
+                {'type':'text', 
+                    'label':'Last.fm Apikey', 
+                    'name':'lastfm_apikey'},
+                {'type':'bool', 
+                    'label':'Last.fm Use SSL', 
+                    'name':'lastfm_ssl'},
+                {'type':'text', 
+                    'label':'TMDB Apikey', 
+                    'name':'tmdb_apikey'},
+                {'type':'bool', 
+                    'label':'TMDB Use SSL', 
+                    'name':'tmdb_ssl'}
         ]})
 
 
@@ -333,11 +374,6 @@ class Manager:
     def index(self):
         """ Generate page from template """
         return htpc.LOOKUP.get_template('manager.html').render(scriptname='manager')
-
-    def schedule(self):
-        # stuff to do
-        threading.Timer(600, schedule).start()
-
 
     @cherrypy.expose()
     def GetMovies(self, offset, limit):
