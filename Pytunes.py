@@ -23,8 +23,8 @@ def parse_arguments():
                         help='Use a specific host/IP')
     parser.add_argument('--port', type=int,
                         help='Use a specific port')
-    parser.add_argument('--shell', default=False,
-                        help='WARNING! DO NOT USE UNLESS YOU KNOW WHAT .POPEN CAN BE USED FOR (LIKE WIPEING YOUR HARDDRIVE). If you activate you can send signals to the server')
+    parser.add_argument('--noshell', default=False,
+                        help='Set this if you want to disable shell access. Useful if you open the port to the world.')
     parser.add_argument('--daemon', action='store_true', default=False,
                         help='Daemonize process')
     parser.add_argument('--pid', default=False,
@@ -62,7 +62,7 @@ def main():
     # Parse runtime arguments
     args = parse_arguments()
 
-    # Set root and insert bundled libraies into path
+    # Set root and insert bundled libraries into path
     htpc.RUNDIR = os.path.dirname(os.path.abspath(sys.argv[0]))
     sys.path.insert(0, os.path.join(htpc.RUNDIR, 'libs'))
 
@@ -122,8 +122,8 @@ def main():
     htpc.USERNAME = htpc.settings.get('app_username')
     htpc.PASSWORD = htpc.settings.get('app_password')    
 
-    #Select if you want to send shell commands from PyTunes
-    htpc.SHELLCMD = args.shell
+    #Select if you want to disable shell commands from PyTunes
+    htpc.SHELLCMD = args.noshell
     
     # Select whether to run as daemon
     htpc.DAEMON = args.daemon

@@ -22,21 +22,21 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 # POSSIBILITY OF SUCH DAMAGE.
 
-#VERSION: 1.33
+#VERSION: 1.32
 
 # Author:
 #  Christophe DUMEZ (chris@qbittorrent.org)
 
-import re, html.entities
+import re, htmlentitydefs
 import tempfile
 import os
-import io, gzip, urllib.request, urllib.error, urllib.parse
+import StringIO, gzip, urllib2
 import socket
 import socks
 import re
 
 # SOCKS5 Proxy support
-if "sock_proxy" in os.environ and len(os.environ["sock_proxy"].strip()) > 0:
+if os.environ.has_key("sock_proxy") and len(os.environ["sock_proxy"].strip()) > 0:
     proxy_str = os.environ["sock_proxy"].strip()
     m=re.match(r"^(?:(?P<username>[^:]+):(?P<password>[^@]+)@)?(?P<host>[^:]+):(?P<port>\w+)$", proxy_str)
     if m is not None:
@@ -48,25 +48,26 @@ def htmlentitydecode(s):
     # (Inspired from http://mail.python.org/pipermail/python-list/2007-June/443813.html)
     def entity2char(m):
         entity = m.group(1)
-        if entity in html.entities.name2codepoint:
-            return chr(html.entities.name2codepoint[entity])
-        return " "  # Unknown entity: We replace with a space.
-    t = re.sub('&(%s);' % '|'.join(html.entities.name2codepoint), entity2char, s)
+        if entity in htmlentitydefs.name2codepoint:
+            return unichr(htmlentitydefs.name2codepoint[entity])
+        return u" "  # Unknown entity: We replace with a space.
+    t = re.sub(u'&(%s);' % u'|'.join(htmlentitydefs.name2codepoint), entity2char, s)
   
     # Then convert numerical entities (such as &#233;)
-    t = re.sub('&#(\d+);', lambda x: chr(int(x.group(1))), t)
+    t = re.sub(u'&#(\d+);', lambda x: unichr(int(x.group(1))), t)
    
     # Then convert hexa entities (such as &#x00E9;)
-    return re.sub('&#x(\w+);', lambda x: chr(int(x.group(1),16)), t)
+    return re.sub(u'&#x(\w+);', lambda x: unichr(int(x.group(1),16)), t)
     
 def retrieve_url(url):
     """ Return the content of the url page as a string """
-    response = urllib.request.urlopen(url)
+    req = urllib2.Request(url)
+    response = urllib2.urlopen(req)
     dat = response.read()
     # Check if it is gzipped
-    if dat[:2] == b'\x1f\x8b':
+    if dat[:2] == '\037\213':
         # Data is gzip encoded, decode it
-        compressedstream = io.BytesIO(dat)
+        compressedstream = StringIO.StringIO(dat)
         gzipper = gzip.GzipFile(fileobj=compressedstream)
         extracted_data = gzipper.read()
         dat = extracted_data
@@ -78,23 +79,22 @@ def retrieve_url(url):
         pass
     dat = dat.decode(charset, 'replace')
     dat = htmlentitydecode(dat)
-    #return dat.encode('utf-8', 'replace')
-    return dat
+    return dat.encode('utf-8', 'replace')
 
 def download_file(url, referer=None):
     """ Download file at url and write it to a file, return the path to the file and the url """
     file, path = tempfile.mkstemp()
-    file = os.fdopen(file, "wb")
+    file = os.fdopen(file, "w")
     # Download url
-    req = urllib.request.Request(url)
+    req = urllib2.Request(url)
     if referer is not None:
         req.add_header('referer', referer)
-    response = urllib.request.urlopen(req)
+    response = urllib2.urlopen(req)
     dat = response.read()
     # Check if it is gzipped
-    if dat[:2] == b'\x1f\x8b':
+    if dat[:2] == '\037\213':
         # Data is gzip encoded, decode it
-        compressedstream = io.BytesIO(dat)
+        compressedstream = StringIO.StringIO(dat)
         gzipper = gzip.GzipFile(fileobj=compressedstream)
         extracted_data = gzipper.read()
         dat = extracted_data

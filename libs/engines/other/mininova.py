@@ -27,7 +27,7 @@
 
 from novaprinter import prettyPrinter
 from helpers import retrieve_url, download_file
-import sgmllib3
+import sgmllib
 import re
 
 class mininova(object):
@@ -41,11 +41,11 @@ class mininova(object):
     self.parser = self.SimpleSGMLParser(self.results, self.url)
 
   def download_torrent(self, info):
-    print(download_file(info))
+    print download_file(info)
 
-  class SimpleSGMLParser(sgmllib3.SGMLParser):
+  class SimpleSGMLParser(sgmllib.SGMLParser):
     def __init__(self, results, url, *args):
-      sgmllib3.SGMLParser.__init__(self)
+      sgmllib.SGMLParser.__init__(self)
       self.url = url
       self.td_counter = None
       self.current_item = None
@@ -54,7 +54,7 @@ class mininova(object):
     def start_a(self, attr):
       params = dict(attr)
       #print params
-      if 'href' in params:
+      if params.has_key('href'):
         if params['href'].startswith("/get/"):
           self.current_item = {}
           self.td_counter = 0
@@ -64,19 +64,19 @@ class mininova(object):
     
     def handle_data(self, data):
       if self.td_counter == 0:
-        if 'name' not in self.current_item:
+        if not self.current_item.has_key('name'):
           self.current_item['name'] = ''
         self.current_item['name']+= data
       elif self.td_counter == 1:
-        if 'size' not in self.current_item:
+        if not self.current_item.has_key('size'):
           self.current_item['size'] = ''
         self.current_item['size']+= data.strip()
       elif self.td_counter == 2:
-        if 'seeds' not in self.current_item:
+        if not self.current_item.has_key('seeds'):
           self.current_item['seeds'] = ''
         self.current_item['seeds']+= data.strip()
       elif self.td_counter == 3:
-        if 'leech' not in self.current_item:
+        if not self.current_item.has_key('leech'):
           self.current_item['leech'] = ''
         self.current_item['leech']+= data.strip()
       

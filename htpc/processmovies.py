@@ -5,6 +5,7 @@ import urllib
 import os
 import string
 import htpc
+import staticvars
 import enzyme
 import tmdb
 import fanarttv
@@ -15,6 +16,14 @@ def stripall(str):
     str = str.lower()
     str = str.replace(' ', '')
     return str
+
+def buildnfo(destdir, tmdb_info):
+    #temp = staticvars.get_var('movienfo')
+    #print temp
+    return
+
+def procpics(destdir, tmdb_info):
+    return
 
 def streaminfo(file):
     try:
@@ -72,7 +81,6 @@ def process():
     if not os.path.exists(destdir):
         os.makedirs(destdir)
     paths = glob.glob(moviedir + '/*')
-    print paths
     for path in paths:
         match = 0
         matches = {}
@@ -80,10 +88,7 @@ def process():
               continue
         moviepath = path    
         file = os.path.basename(path)
-        #print file
         guess = guessit.guess_movie_info(file, info = ['filename'])
-        #print guess
-        #print 'guess.title: ' + guess['title']
         mimetype, container, screenSize, videoCodec, format = '', '', '', '', ''
         if 'mimetype' in guess:
             mimetype = guess['mimetype']
@@ -98,7 +103,6 @@ def process():
         search = tmdb.Search(guess['title'], 'movie')
         total += 1
         for s in search['results']:
-            #print s
             if  'year' in guess:
                 if str(guess['year']) in s['release_date']:
                     match += 1
@@ -119,35 +123,25 @@ def process():
                 stripsearch = stripall(s['title'])
                 if stripguess == stripsearch:
                     match += 1
-                    matches[match] = [s['title'], s['id'], s['release_date']]
+                    matches[match] = [s['title'], s['id'], s['release_date'], mimetype, container, screenSize, videoCodec, format]
 
-        #print 'Matches=' + str(match)
         if not matches and search.results:
             unmatched.append(guess['title'])
-            #print 'No Matches For: ' + guess['title']
         if len(matches) == 1:
             dt = datetime.strptime(matches[1][2], '%Y-%m-%d')
             matched.append({'title':matches[1][0], 'tmdbid':matches[1][1], 'path':moviepath, 'year':dt.year, 'mimetype':matches[1][3], 'container':matches[1][4], 'screenSize':matches[1][5], 'videoCodec':matches[1][6], 'format':matches[1][7]})
             hits += 1
-            #print 'Match: ' 
-            #print matches[1][0]
         if len(matches) > 1:
             testguess = stripall(guess['title'])
-            #print testguess
             for each in matches:
                 testeach = stripall(matches[each][0])
                 if testeach == testguess:
                     dt = datetime.strptime(matches[each][2], '%Y-%m-%d')
                     matched.append({'title':matches[each][0], 'tmdbid':matches[each][1], 'path':moviepath, 'year':dt.year, 'mimetype':matches[each][3], 'container':matches[each][4], 'screenSize':matches[each][5], 'videoCodec':matches[each][6], 'format':matches[each][7]})
                     hits += 1
-                    #print 'Match: ' + matches[each][0]
                     break
                 else:
-                    #print 'No Matches For: ' + guess['title']
                     unmatched.append(guess['title'])
-    print 'total: ' + str(total) + ' hits: ' + str(hits) 
-    #print 'matched: '
-    #print matched 
     for movie in matched:
         filename = []
         dirname = movie['title']
@@ -167,18 +161,11 @@ def process():
                 filename.append('.' + 'BluRay')
         filename.append('.' + movie['container'])
         filename = ''.join(filename)
-        print filename
-        print dirname
-        if not os.path.exists(destdir + dirname):
-            os.makedirs(destdir + dirname)
+        if not os.path.exists(destdir + '/' + dirname):
+            os.makedirs(destdir + '/' + dirname)
+        info = tmdb.MovieInfo(movie['tmdbid'])
         fanart, arts, discs, banners, logos, hdlogos, posters, thumbs = fanarttv.GetArt(movie['tmdbid'], 'movie')
-        print thumbs
-        info, images, trailers, people = tmdb.MovieInfo(movie['tmdbid'])
-        #print info, images, trailers
-        print info
         stream = streaminfo(movie['path'])
-        print stream
-    print 'unmatched: '
-    print unmatched 
-     
+        buildnfo(destdir, info)
+        procpics(destdir, info) 
 

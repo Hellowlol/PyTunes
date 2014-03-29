@@ -28,7 +28,7 @@
 
 from novaprinter import prettyPrinter
 from helpers import retrieve_url, download_file
-import sgmllib3
+import sgmllib
 import re
 
 class vertor(object):
@@ -41,11 +41,11 @@ class vertor(object):
     self.parser = self.SimpleSGMLParser(self.results, self.url)
 
   def download_torrent(self, info):
-    print(download_file(info))
+    print download_file(info)
 
-  class SimpleSGMLParser(sgmllib3.SGMLParser):
+  class SimpleSGMLParser(sgmllib.SGMLParser):
     def __init__(self, results, url, *args):
-      sgmllib3.SGMLParser.__init__(self)
+      sgmllib.SGMLParser.__init__(self)
       self.url = url
       self.td_counter = None
       self.current_item = None
@@ -61,7 +61,7 @@ class vertor(object):
       if self.td_counter == 5:
         self.td_counter = None
         # Display item
-        if self.current_item and 'link' in self.current_item:
+        if self.current_item and self.current_item.has_key('link'):
           self.current_item['engine_url'] = self.url
           if not self.current_item['seeds'].isdigit():
             self.current_item['seeds'] = 0
@@ -73,32 +73,32 @@ class vertor(object):
     def start_a(self, attr):
       #if self.td_counter is None or self.td_counter < 0: return
       params = dict(attr)
-      if 'href' in params and params['href'].startswith("http://www.vertor.com/index.php?mod=download"):
+      if params.has_key('href') and params['href'].startswith("http://www.vertor.com/index.php?mod=download"):
         self.current_item['link']=params['href'].strip()
-      elif self.td_counter == 0 and 'href' in params and params['href'].startswith("/torrents/") \
-      and 'name' not in self.current_item:
+      elif self.td_counter == 0 and params.has_key('href') and params['href'].startswith("/torrents/") \
+      and not self.current_item.has_key('name'):
         self.current_item['desc_link']='http://www.vertor.com'+params['href'].strip()
-        self.in_name = True
+	self.in_name = True
         
     def end_a(self):
       if self.in_name:
-        self.in_name = False
+	self.in_name = False
     
     def handle_data(self, data):
       if self.in_name:
-        if 'name' not in self.current_item:
+        if not self.current_item.has_key('name'):
           self.current_item['name'] = ''
         self.current_item['name']+= data.strip()
       elif self.td_counter == 2 and not self.outside_td:
-        if 'size' not in self.current_item:
+        if not self.current_item.has_key('size'):
           self.current_item['size'] = ''
         self.current_item['size']+= data.strip()
       elif self.td_counter == 4 and not self.outside_td:
-        if 'seeds' not in self.current_item:
+        if not self.current_item.has_key('seeds'):
           self.current_item['seeds'] = ''
         self.current_item['seeds']+= data.strip()
       elif self.td_counter == 5 and not self.outside_td:
-        if 'leech' not in self.current_item:
+        if not self.current_item.has_key('leech'):
           self.current_item['leech'] = ''
         self.current_item['leech']+= data.strip()
         
@@ -107,7 +107,7 @@ class vertor(object):
       
     def start_td(self,attr):
         if isinstance(self.td_counter,int):
-          self.outside_td = False
+	  self.outside_td = False
           self.td_counter += 1
 
   def search(self, what, cat='all'):

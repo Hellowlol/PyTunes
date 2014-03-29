@@ -306,7 +306,7 @@ class Manager:
     def __init__(self):
         """ Add module to list of modules on load and set required settings """
         self.logger = logging.getLogger('modules.manager')
-        Monitor(cherrypy.engine, scheduler.schedule, frequency=30).subscribe()
+        #Monitor(cherrypy.engine, scheduler.schedule, frequency=30).subscribe()
         Album.createTable(ifNotExists=True)
         Discography.createTable(ifNotExists=True)
         Artist.createTable(ifNotExists=True)

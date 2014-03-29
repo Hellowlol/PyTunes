@@ -1,4 +1,4 @@
-#VERSION: 1.1
+#VERSION: 1.2
 #AUTHORS: Christophe Dumez (chris@qbittorrent.org)
 
 # Redistribution and use in source and binary forms, with or without
@@ -28,11 +28,11 @@
 
 from novaprinter import prettyPrinter
 from helpers import retrieve_url, download_file
-import sgmllib3
+import sgmllib
 import re
 
 class extratorrent(object):
-  url = 'http://extratorrent.com'
+  url = 'http://extratorrent.cc'
   name = 'extratorrent'
   supported_categories = {'all': '', 'movies': '4', 'tv': '8', 'music': '5', 'games': '3', 'anime': '1', 'software': '7', 'books': '2', 'pictures': '6'}
 
@@ -41,11 +41,11 @@ class extratorrent(object):
     self.parser = self.SimpleSGMLParser(self.results, self.url)
 
   def download_torrent(self, info):
-    print(download_file(info))
+    print download_file(info)
 
-  class SimpleSGMLParser(sgmllib3.SGMLParser):
+  class SimpleSGMLParser(sgmllib.SGMLParser):
     def __init__(self, results, url, *args):
-      sgmllib3.SGMLParser.__init__(self)
+      sgmllib.SGMLParser.__init__(self)
       self.url = url
       self.td_counter = None
       self.current_item = None
@@ -55,30 +55,30 @@ class extratorrent(object):
     def start_a(self, attr):
       params = dict(attr)
       #print params
-      if 'href' in params and params['href'].startswith("/torrent_download/"):
+      if params.has_key('href') and params['href'].startswith("/torrent_download/"):
         self.current_item = {}
         self.td_counter = 0
         self.start_name = False
         torrent_id = '/'.join(params['href'].split('/')[2:])
         self.current_item['link']=self.url+'/download/'+torrent_id
-      elif 'href' in params and params['href'].startswith("/torrent/") and params['href'].endswith(".html"):
+      elif params.has_key('href') and params['href'].startswith("/torrent/") and params['href'].endswith(".html"):
         self.current_item['desc_link'] = self.url + params['href'].strip()
         self.start_name = True
     
     def handle_data(self, data):
       if self.td_counter == 2:
-        if 'name' not in self.current_item and self.start_name:
+        if not self.current_item.has_key('name') and self.start_name:
           self.current_item['name'] = data.strip()
       elif self.td_counter == 3:
-        if 'size' not in self.current_item:
+        if not self.current_item.has_key('size'):
           self.current_item['size'] = ''
         self.current_item['size']+= data.replace("&nbsp;", " ").strip()
       elif self.td_counter == 4:
-        if 'seeds' not in self.current_item:
+        if not self.current_item.has_key('seeds'):
           self.current_item['seeds'] = ''
         self.current_item['seeds']+= data.strip()
       elif self.td_counter == 5:
-        if 'leech' not in self.current_item:
+        if not self.current_item.has_key('leech'):
           self.current_item['leech'] = ''
         self.current_item['leech']+= data.strip()
       

@@ -12,6 +12,12 @@ $(document).ready(function () {
     playerLoader = setInterval('loadNowPlaying()', 1000);
     hideWatched = $('#hidewatched').hasClass('active') ? 1 : 0;
 
+    $('#ex1').slider({
+	    formater: function(value) {
+		    return 'Current value: ' + value;
+	    }
+    });
+
     // Load data on tab display
     $('a[data-toggle="tab"]').click(function (e) {
         $('#search').val('');
@@ -885,7 +891,7 @@ function loadNowPlaying() {
             if (nowPlayingId != data.itemInfo.item.id) {
                 var nowPlayingThumb = encodeURIComponent(data.itemInfo.item.thumbnail);
                 var thumbnail = $('#nowplaying .thumb img').attr('alt', data.itemInfo.item.label);
-                if (nowPlayingThumb === '') {
+                if (nowPlayingThumb == '') {
                     thumbnail.attr('src', 'holder.js/140x140/text:No artwork');
                     thumbnail.attr('width', '140').attr('height', '140');
                     Holder.run();

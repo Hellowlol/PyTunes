@@ -7,15 +7,15 @@ import logging
 import xml.etree.ElementTree as xml
 
 
-class Search:
+class Newznab:
     def __init__(self):
-        self.logger = logging.getLogger('modules.search')
+        self.logger = logging.getLogger('modules.newznab')
         htpc.MODULES.append({
             'name': 'NZB Search',
-            'id': 'search',
+            'id': 'newznab',
             'fields': [
-                {'type':'bool', 'label':'Enable', 'name':'search_enable'},
-                {'type':'text', 'label':'Menu name', 'name':'search_name'},
+                {'type':'bool', 'label':'Enable', 'name':'newznab_enable'},
+                {'type':'text', 'label':'Menu name', 'name':'newznab_name', 'placeholder':'NZB Search'},
                 {'type':'text', 'label':'Host', 'name':'newznab_host'},
                 {'type':'text', 'label':'Apikey', 'name':'newznab_apikey'},
                 {'type':'bool', 'label':'Use SSL', 'name':'newznab_ssl'}
@@ -23,7 +23,7 @@ class Search:
 
     @cherrypy.expose()
     def index(self, query='', **kwargs):
-        return htpc.LOOKUP.get_template('search.html').render(query=query, scriptname='search')
+        return htpc.LOOKUP.get_template('newznab.html').render(query=query, scriptname='newznab')
 
     """
     NOT IMPLEMENTET

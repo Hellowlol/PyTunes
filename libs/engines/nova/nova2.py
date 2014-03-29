@@ -26,7 +26,7 @@
 # POSSIBILITY OF SUCH DAMAGE.
 
 
-#VERSION: 1.23
+#VERSION: 1.31
 
 # Author:
 #  Fabien Devaux <fab AT gnux DOT info>
@@ -41,7 +41,8 @@ import sys
 import threading
 import os
 import glob
-import urllib.parse
+
+import fix_encoding
 
 THREADED = True
 CATEGORIES = ('all', 'movies', 'tv', 'music', 'games', 'anime', 'software', 'pictures', 'books')
@@ -62,19 +63,19 @@ for engine in engines:
 	if len(e.strip()) == 0: continue
 	if e.startswith('_'): continue
 	try:
-		exec("from engines.%s import %s"%(e,e))
+		exec "from engines.%s import %s"%(e,e)
 		supported_engines.append(e)
 	except:
 		pass
 
 def engineToXml(short_name):
 	xml = "<%s>\n"%short_name
-	exec("search_engine = %s()"%short_name, globals())
-	xml += "<name>%s</name>\n"%search_engine.name
-	xml += "<url>%s</url>\n"%search_engine.url
+	exec "engine = %s()"%short_name
+	xml += "<name>%s</name>\n"%engine.name
+	xml += "<url>%s</url>\n"%engine.url
 	xml += "<categories>"
-	if hasattr(search_engine, 'supported_categories'):
-		supported_categories = list(search_engine.supported_categories.keys())
+	if hasattr(engine, 'supported_categories'):
+		supported_categories = engine.supported_categories.keys()
 		supported_categories.remove('all')
 		xml += " ".join(supported_categories)
 	xml += "</categories>\n"
@@ -96,7 +97,7 @@ def displayCapabilities():
 	for short_name in supported_engines:
 		xml += engineToXml(short_name)
 	xml += "</capabilities>"
-	print(xml)
+	print xml
 
 class EngineLauncher(threading.Thread):
 	def __init__(self, engine, what, cat='all'):
@@ -106,12 +107,15 @@ class EngineLauncher(threading.Thread):
 		self.cat = cat
 	def run(self):
 		if hasattr(self.engine, 'supported_categories'):
-			if self.cat == 'all' or self.cat in list(self.engine.supported_categories.keys()):
+			if self.cat == 'all' or self.cat in self.engine.supported_categories.keys():
 				self.engine.search(self.what, self.cat)
 		elif self.cat == 'all':
 				self.engine.search(self.what)
 
 if __name__ == '__main__':
+	# Make sure we enforce utf-8 encoding
+	fix_encoding.fix_encoding()
+
 	if len(sys.argv) < 2:
 		raise SystemExit('./nova2.py [all|engine1[,engine2]*] <category> <keywords>\navailable engines: %s'%
 				(','.join(supported_engines)))
@@ -134,19 +138,19 @@ if __name__ == '__main__':
 	if cat not in CATEGORIES:
 		raise SystemExit('Invalid category!')
 	
-	what = urllib.parse.quote('+'.join(sys.argv[3:]))
+	what = '+'.join(sys.argv[3:])
 	
 	threads = []
 	for engine in engines_list:
 		try:
 			if THREADED:
-				exec("l = EngineLauncher(%s(), what, cat)"%engine)
+				exec "l = EngineLauncher(%s(), what, cat)"%engine
 				threads.append(l)
 				l.start()
 			else:
-				exec("e = %s()"%engine)
+				exec "e = %s()"%engine
 				if hasattr(engine, 'supported_categories'):
-					if cat == 'all' or cat in list(e.supported_categories.keys()):
+					if cat == 'all' or cat in e.supported_categories.keys():
 						e.search(what, cat)
 				elif self.cat == 'all':
 						e.search(what)

@@ -41,7 +41,7 @@ class legittorrents(object):
     self.parser = self.SimpleSGMLParser(self.results, self.url)
 
   def download_torrent(self, info):
-    print(download_file(info))
+    print download_file(info)
 
   class SimpleSGMLParser(sgmllib.SGMLParser):
     def __init__(self, results, url, *args):
@@ -54,23 +54,23 @@ class legittorrents(object):
 
     def start_a(self, attr):
       params = dict(attr)
-      if 'href' in params and params['href'].startswith('download.php?'):
+      if params.has_key('href') and params['href'].startswith('download.php?'):
         self.current_item['link'] = self.url + '/' + params['href'].strip()
-      elif 'href' in params and params['href'].startswith('index.php?page=torrent-details'):
+      elif params.has_key('href') and params['href'].startswith('index.php?page=torrent-details'):
         self.current_item = {}
         self.td_counter = 0
         self.current_item['desc_link'] = self.url + '/' + params['href'].strip()
 
     def handle_data(self, data):
       if self.td_counter == 0:
-        if 'name' not in self.current_item:
+        if not self.current_item.has_key('name'):
           self.current_item['name'] = data.strip()
       elif self.td_counter == 3:
-        if 'seeds' not in self.current_item:
+        if not self.current_item.has_key('seeds'):
           self.current_item['seeds'] = ''
         self.current_item['seeds']+= data.strip()
       elif self.td_counter == 4:
-        if 'leech' not in self.current_item:
+        if not self.current_item.has_key('leech'):
           self.current_item['leech'] = ''
         self.current_item['leech']+= data.strip()
 
