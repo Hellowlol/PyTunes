@@ -19,7 +19,7 @@ class Torrents:
             'id': 'torrents',
             'fields': [
                 {'type':'bool', 'label':'Enable', 'name':'torrents_enable'},
-                {'type':'text', 'label':'Menu name', 'name':'torrents_name', 'value':'Torrent Search'},
+                {'type':'text', 'label':'Menu name', 'name':'torrents_name'},
                 {'type':'text', 'label':'Seeds', 'name':'torrents_seeds', 'value':'5', 'desc':'Minimum Number of Seeders'},
         ]})
 
@@ -34,12 +34,6 @@ class Torrents:
                 return "%3.1f%s" % (num, x)
             num /= 1024.0
         return "%3.1f%s" % (num, 'TB')
-
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def getcategories(self, **kwargs):
-        self.logger.debug("Fetching available categories")
-        return self.fetch('caps')['categories']
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()

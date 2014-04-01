@@ -32,7 +32,7 @@ function loadArtist(artistid) {
                 $('.xbmc_mbid').html('N/A');
             }
             if (artistdata.description) {
-                $('.description').html(shortenText(artistdata.description, 1000));
+                $('.description').html(shortenText(artistdata.description, 1500));
             }
             else {
                 $('.description').html('No Description');

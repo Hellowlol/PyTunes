@@ -94,7 +94,7 @@ class qbittorrent:
             
         return rr
     
-    # Handles pause, resume, delete singel torrents
+    # Handles pause, resume, delete single torrents
     @cherrypy.expose
     def command(self, cmd=None, hash=None, name=None):
         try:
