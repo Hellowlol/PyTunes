@@ -17,6 +17,7 @@ function getCategories() {
     });
 }
 
+
 function search(query, catid) {
     if (query === undefined) return;
     $.ajax({
@@ -31,9 +32,17 @@ function search(query, catid) {
             $('.spinner').hide();
             if (data === null) return;
             $('#results_table_body').append(data);
+            $('a.ajax-link').click(function (e) {
+                e.preventDefault();
+                var link = $(this);
+                 $.getJSON(link.attr('href'), function () {
+                    notify('', 'Sent to Sabnzbd+  Category: ' + link.attr('cat'), 'success');
+                });
+            });
         }
     });
 }
+
 
 $(document).ready(function () {
     $('#searchform').submit(function () {
@@ -41,7 +50,6 @@ $(document).ready(function () {
         return false;
     });
     if ($('#query').val()) $('#searchform').submit();
-
     getCategories();
 });
 

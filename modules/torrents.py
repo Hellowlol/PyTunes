@@ -41,11 +41,11 @@ class Torrents:
         ret = ''
         row = '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'
         supported_engines = ['kickasstorrents']
-
         results =  ka.search(q, cat)
         for r in results:
             icon = "<img alt='icon' src='../img/kickasstorrents.png'/>"
-            dl = "<a href='" + r['link'] + "' target='_blank'>" + "<i class='icon-download-alt'>" + "</a>"
+            link = r['link'].split('?')[0]
+            dl = "<a href='/qbittorrent/command?cmd=download&hash=" + link + "' class='ajax-link'><i class='icon-download-alt'></a>"
             name = "<a href='" + r['desc_link'] + "' target='_blank'>" + r['name'] + "</a>"
             num = int(r['size'])
             for x in [' bytes',' KB',' MB',' GB']:

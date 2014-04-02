@@ -35,66 +35,48 @@ class qbittorrent:
         port = htpc.settings.get('qbittorrent_port',  '')
         username = htpc.settings.get('qbittorrent_username', '')
         password = htpc.settings.get('qbittorrent_password', '')
-        ssl = 's' if htpc.settings.get('qbittorret_ssl', 0) else ''
-    
-        url = 'http' + ssl +'://' + host + ':' + port + '/'
-        
+        ssl = 's' if htpc.settings.get('qbittorret_ssl', 0) else ''    
+        url = 'http' + ssl +'://' + host + ':' + port + '/'        
         realm = 'Web UI Access'
         authhandler = urllib2.HTTPDigestAuthHandler()
         authhandler.add_password(realm, url, username, password)
         opener = urllib2.build_opener(authhandler)
-        urllib2.install_opener(opener)
-        
+        urllib2.install_opener(opener)        
         return url
         
     #Fetches torrentlist from the client
     @cherrypy.expose()
     def fetch(self):
-        result = None
-        self.logger.debug("Trying to get torrents")
-       
+        self.logger.debug("Trying to get torrents")       
         try:
             url = self.qbturl()
-            result = urllib2.urlopen(url + 'json/torrents/').read()
-        
+            return urllib2.urlopen(url + 'json/torrents/').read()        
         except Exception as e:
             self.logger.error("Couldn't get torrents %s" % e)
-        
-        return result
     
     # Gets total download and upload speed
     @cherrypy.expose()
     def get_speed(self):
-        rr = None
         try:
             url = self.qbturl()
             result = urllib2.urlopen(url + 'json/transferInfo/').read()
-            result = json.JSONDecoder('UTF-8').decode(result)
-        
+            result = json.JSONDecoder('UTF-8').decode(result)        
             speeddown = result['dl_info']
-            speedup = result['up_info']
-        
+            speedup = result['up_info']        
             list_of_down = speeddown.split()
-            list_of_up = speedup.split()
-        
+            list_of_up = speedup.split()        
             ds = list_of_down[1] + " " + list_of_down[2]
-            us = list_of_up[1] + " " + list_of_up[2]
-        
+            us = list_of_up[1] + " " + list_of_up[2]        
             d = dict()
             d["qbittorrent_speed_down"] = ds
-            d["qbittorrent_speed_up"] = us
-        
+            d["qbittorrent_speed_up"] = us        
             l = []
-            l.append(d)
-        
-            rr = json.dumps(l)
-        
+            l.append(d)        
+            return json.dumps(l)        
         except Exception as e:
             self.logger.error("Couldn't get total download and uploads speed %s" % e)
-            
-        return rr
     
-    # Handles pause, resume, delete single torrents
+    # Handles pause, resume, delete, download single torrents
     @cherrypy.expose
     def command(self, cmd=None, hash=None, name=None):
         try:
@@ -105,16 +87,15 @@ class qbittorrent:
         
             if cmd == 'delete':
                 data['hashes'] = hash
+            elif cmd == 'download':
+                data['urls'] = hash
             else:
-                data['hash'] = hash
-        
+                data['hash'] = hash        
             if cmd == 'resumeall' or 'pauseall':
-                r = urllib2.urlopen(url + cmd)
-   
-            data = urllib.urlencode(data)
-        
+                r = urllib2.urlopen(url + cmd)   
+            data = urllib.urlencode(data)        
             result = urllib2.urlopen(url, data).read()
-        
+            return result       
         except Exception as e:
             self.logger.error("Failed at %s %s %s %s" % (cmd, name, hash ,e))
     
@@ -123,22 +104,16 @@ class qbittorrent:
     def set_speedlimit(self, type=None, speed=None):
         try:
             self.logger.debug("Setting %s to %s"% (type, speed))
-            speed = int(speed)
-        
+            speed = int(speed)        
             if speed == 0:
-                speed = 0
-            
+                speed = 0            
             else:
                 speed = speed * 1024
-
             url = self.qbturl()
             url += 'command/' + type + '/'
-
             data = {}
             data['limit'] = speed
-            data = urllib.urlencode(data)
-        
-            result = urllib2.urlopen(url, data)
-         
+            data = urllib.urlencode(data)        
+            result = urllib2.urlopen(url, data)         
         except Exception as e:
             self.logger.error("Failed to set %s to %s %s"% (type, speed, e))
