@@ -267,16 +267,19 @@ function processes() {
                 pidAnchor.append(proc.pid);
                 row.attr('data-pid', proc.pid);
                 row.append(
-                //pidAnchor,
-                $('<td>').addClass('processes-pid').html(pidAnchor),
-                //$('<td>').addClass('').text(proc.pid),
-                $('<td>').addClass('processes-name span2').text(proc.name),
-                $('<td>').addClass('processes-owner').text(proc.username),
-                $('<td>').addClass('processes-percent span1').text(proc.cpu_percent+ ' %'),
-                $('<td>').addClass('processes-command span3').text(proc.cmdline),
-                $('<td>').addClass('processes-name').text(proc.status),
-                $('<td>').addClass('processes-memory-info span2').text(proc.memory_percent.toFixed(2) + ' %  / ' + getReadableFileSizeString(proc.memory_info[0])),
-                $('<td>').addClass('processes-runningtime').text(proc.r_time));
+                    //pidAnchor,
+                    $('<td>').addClass('processes-pid').html(pidAnchor),
+                    //$('<td>').addClass('').text(proc.pid),
+                    $('<td>').addClass('processes-name span2').text(proc.name),
+                    $('<td>').addClass('processes-owner').text(proc.username),
+                    $('<td>').addClass('processes-percent span1').text(proc.cpu_percent+ ' %'),
+                    $('<td>').addClass('processes-command span3').text(proc.cmdline),
+                    $('<td>').addClass('processes-name').text(proc.status),
+                    //$('<td>').addClass('processes-memory-info span2').text(proc.memory_percent.toFixed(2) + ' %  / ' + getReadableFileSizeString(proc.memory_info[0])),
+                    $('<td>').addClass('processes-memory-info').text(proc.memory_percent.toFixed(2) + '%'),
+                    $('<td>').addClass('processes-runningtime').text(proc.r_time),
+                    $('<td>').append('<button class="btn btn-mini btn-danger"><i class="icon-remove cmd" data-cmd="kill" data-pid=' + proc.pid + '></i></button>')
+                );
                 $('#proc-table').append(row);
             });
             $('.spinner').hide();
@@ -288,7 +291,7 @@ function processes() {
 function reloadtab() {
     if ($('#diskt').is(':visible')) {
         get_diskinfo();
-    } else if ($('#proc').is(':visible')) {
+    } else if ($('#processes').is(':visible')) {
         processes();
     }
 }
@@ -296,30 +299,36 @@ function reloadtab() {
    $('#diskt').click(function () {
        get_diskinfo();
    });
-    $('#proc').click(function () {
+    $('#processes').click(function () {
        processes();
    });
-   
+    //Can't get the kill to work!
+    //Hellow? Hellow? ANYBODY THERE?   
    //Used for kill and signal command
    $(document).on('click', '.cmd', function(){
        var x = $(this).attr('data-pid');
+       alert(x);
        if (confirm('Are you sure?')) {
        $.getJSON(WEBDIR + "stats/command/"+ $(this).attr('data-cmd')+"/" + $(this).attr('data-pid'), function (response) {
-            alert(response.msg);
+            alert(response);
        
        });
-   }
+        }
    });
    
    // Used for popen
     $(document).on('click', '#sendcmd', function(){
-       var i = $('#cmdinput').val()
-       if (confirm('Are you sure?')) {
-       $.getJSON(WEBDIR + "stats/cmdpopen/"+ $(this).attr('data-cmd')+"/" + i, function (response) {
-            alert(response.msg);
+        var i = $('#cmdinput').val()
+        $('#shellres').append('<b>' + i + '</b>\n')
+       $.get(WEBDIR + "stats/cmdpopen/"+ $(this).attr('data-cmd')+"/" + i, function (response) {
+            //alert(response);
+            $('#shellres').append(response)
        
        });
-   }
+   });
+
+    $(document).on('click', '#clearhistory', function(){
+            $('#shellres').empty()
    });
 
 
@@ -340,6 +349,9 @@ $(document).ready(function () {
     return_settings3();
 });
 
+setInterval(function () {
+    processes();
+}, 10000);
 setInterval(function () {
 //    get_diskinfo();
 //    get_diskinfo2();

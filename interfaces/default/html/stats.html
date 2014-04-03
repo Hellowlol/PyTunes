@@ -9,7 +9,7 @@
         <ul class="nav nav-tabs">
             <li class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
             <li><a href="#filesystems" data-toggle="tab">File Systems</a></li>
-            <li><a href="#processes" data-toggle="tab">Processes</a></li>
+            <li><a href="#processes" data-toggle="tab">Running Processes</a></li>
             <li><a href="#users" data-toggle="tab">Users and Groups</a></li>
             <li><a href="#files" data-toggle="tab">File Manager</a></li>
             <li><a href="#start" data-toggle="tab">Bootup and Shutdown</a></li>
@@ -83,6 +83,7 @@
                                 <th class="">Status</th>
                                 <th class="">Memory</th>
                                 <th class="">Runnung Time</th>
+                                <th class="">Kill</th>
                             </tr>
                         </thead>
                         <tbody id="proc-table">
@@ -106,11 +107,12 @@
                     </table>
             </div>
             <div class="tab-pane" id="shell">
+                <div><pre id='shellres'></pre></div><br>
                <div class="input-append pull-left">
-                   <input id="cmdinput" class="span4" type="text" placeholder="mkdir, dir1"></input>
-                   <button id="sendcmd" data-cmd="popen" class="btn" type="button">Go!</button>
+                   <input id="cmdinput" class="span4" type="text" placeholder=""></input><br><br>
+                   <div class="btn-group"><button id="sendcmd" data-cmd="popen" class="btn btn-primary" type="button">Execute Command</button></div>
+                   <div class="btn-group"><button id="clearhistory" data-cmd="popen" class="btn btn-primary" type="button">Clear History</button></div>
                 </div>
-                <div class="span4">WARNING! What is written here is passed to the shell! Dont come crying if you delete your hardrive</div>
                 <i class="icon-spinner icon-spin spinner"></i>
             </div>
         </div>

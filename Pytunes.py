@@ -24,7 +24,7 @@ def parse_arguments():
     parser.add_argument('--port', type=int,
                         help='Use a specific port')
     parser.add_argument('--noshell', default=False,
-                        help='Set this if you want to disable shell access. Useful if you open the port to the world.')
+                        help='Set this if you want to disable shell access. Extra security if you open the port to the world.')
     parser.add_argument('--daemon', action='store_true', default=False,
                         help='Daemonize process')
     parser.add_argument('--pid', default=False,
@@ -123,7 +123,7 @@ def main():
     htpc.PASSWORD = htpc.settings.get('app_password')    
 
     #Select if you want to disable shell commands from PyTunes
-    htpc.SHELLCMD = args.noshell
+    htpc.NOSHELL = args.noshell
     
     # Select whether to run as daemon
     htpc.DAEMON = args.daemon

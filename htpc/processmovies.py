@@ -80,7 +80,9 @@ def process():
         os.makedirs(moviedir)
     if not os.path.exists(destdir):
         os.makedirs(destdir)
-    paths = glob.glob(moviedir + '/*')
+    if not os.access(destdir, os.W_OK):
+        sys.exit("No write access to destination music folder")
+    paths = glob.glob(moviedir + '*')
     for path in paths:
         match = 0
         matches = {}

@@ -388,3 +388,23 @@ class Stats:
         except Exception as e:
             print 'error system command function :', e
 
+    @cherrypy.expose()
+    def cmdpopen(self, cmd=None, popen=None):
+        d = {}
+        msg = None
+        if not htpc.NOSHELL:
+            #print cmd,popen
+            if cmd == 'popen':
+                print 'in popen'
+                r = psutil.Popen(popen,stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=True)
+                msg = r.communicate()
+            else:
+                pass
+            return msg
+        else:
+            msg = 'Shell commands disabled. PyTunes is started with --noshell\n'
+            self.logger.error(msg)
+            return msg
+            
+  
+
