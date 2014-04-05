@@ -71,7 +71,13 @@ function get_torrents() {
                 attr('data-hash', torrent.hash).
                 attr('data-name', torrent.name).
                 attr('title', 'Remove torrent');
-                buttons.append(removeButton);
+                deleteButton = $('<a class="qbt_deletetorrent" data-action="deletePerm" data-hash="" data-name="">').
+                addClass('btn btn-mini').
+                html('<i class="icon-trash"></i>').
+                attr('data-hash', torrent.hash).
+                attr('data-name', torrent.name).
+                attr('title', 'Delete torrent');
+                buttons.append(removeButton).append(deleteButton);
 
                 tr.append(
 
@@ -142,9 +148,19 @@ function generateTorrentActionButton(torrent) {
 }
 
 
-// delete torrent
+// remove torrent file
 $(document).on('click', '.qbt_removetorrent', function () {
-    var confirmed = confirm('Delete this torrent forever?');
+    var confirmed = confirm('Remove the torrent file?');
+    if (confirmed === true) {
+        $.get(WEBDIR + 'qbittorrent/command/' + $(this).attr('data-action') + '/' + $(this).attr('data-hash') + '/' + $(this).attr('data-name') + '/', function () {});
+        get_torrents();
+    }
+
+});
+
+// remove torrent file
+$(document).on('click', '.qbt_deletetorrent', function () {
+    var confirmed = confirm('Delete the torrent and all associated files?');
     if (confirmed === true) {
         $.get(WEBDIR + 'qbittorrent/command/' + $(this).attr('data-action') + '/' + $(this).attr('data-hash') + '/' + $(this).attr('data-name') + '/', function () {});
         get_torrents();

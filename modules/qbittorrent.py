@@ -85,7 +85,7 @@ class qbittorrent:
             url += 'command/%s/' % cmd
             data = {}
         
-            if cmd == 'delete':
+            if cmd == 'delete' or cmd == 'deletePerm':
                 data['hashes'] = hash
             elif cmd == 'download':
                 data['urls'] = hash

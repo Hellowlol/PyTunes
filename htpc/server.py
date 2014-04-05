@@ -9,7 +9,7 @@ from cherrypy.lib.auth_digest import get_ha1_dict_plain
 
 
 def start():
-    """ Main function for starting HTTP server """
+    """ Main function for starting PyTunes server """
     logger = logging.getLogger('htpc.server')
     logger.debug("Setting up to start cherrypy")
 
@@ -100,7 +100,7 @@ def start():
         get_ha1 = get_ha1_dict_plain(userpassdict)
         app_config['/'].update({
             'tools.auth_digest.on': True,
-            'tools.auth_digest.realm': "HTPC Manager",
+            'tools.auth_digest.realm': "PyTunes",
             'tools.auth_digest.get_ha1': get_ha1,
             'tools.auth_digest.key': 'a565c27146791cfb'
         })
@@ -108,7 +108,7 @@ def start():
     # Start the CherryPy server (remove trailing slash from webdir)
     logger.info("Starting up webserver")
     print '******************************************************'
-    print 'Starting HTPC Manager on port ' + str(htpc.PORT) + '.'
+    print 'Starting Pytunes on port ' + str(htpc.PORT) + '.'
     print 'Start your browser and go to http://localhost:' + str(htpc.PORT) + '/' + htpc.WEBDIR[:-1]
     print '******************************************************'
     cherrypy.quickstart(htpc.ROOT, htpc.WEBDIR[:-1], config=app_config)
