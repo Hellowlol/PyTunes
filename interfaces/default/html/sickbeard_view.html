@@ -5,19 +5,6 @@
     <div class="content maincontent sickbeard_show">
         <div class="page-header page-title" data-showid="${tvdbid}">
             <img alt="PyTunes" src="../../img/pytuneslogosm.png"/><img alt="Sickbeard Logo" class="pull-right" src="../../img/sickbeardlogo.png"/>
-            <div class="btn-group well show-options-menu" style="float:right; background:url(../../img/bodybg.jpg)">
-                <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
-                    <i class="icon-wrench"></i>&nbsp;<span class="caret"></span>
-                </a>
-                <ul class="dropdown-menu">
-                    <li>
-                        <a href="#" class="full-update">Force full update</a>
-                    </li>
-                    <li>
-                        <a href="#" class="rescan-files">Rescan files</a>
-                    </li>
-                </ul>
-            </div>
         </div>
 
         <ul class="breadcrumb">
@@ -54,10 +41,26 @@
 
         <div class="page-header">
             <h2>Seasons</h2>
+            <div class="btn-group show-options-menu pull-right">
+                <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
+                    <i class="icon-wrench"></i>&nbsp;<span class="caret"></span>
+                </a>
+                <ul class="dropdown-menu">
+                    <li>
+                        <a href="#" class="full-update">Force full update</a>
+                    </li>
+                    <li>
+                        <a href="#" class="rescan-files">Rescan files</a>
+                    </li>
+                    <li>
+                        <a href="#" class="remove-show">Remove Show</a>
+                    </li>
+                </ul>
+            </div>
         </div>
 
-        <ul class="nav nav-pills" id="season-list"></ul>
 
+        <ul class="nav nav-pills" id="season-list"></ul>
         <table class="table table-striped table-condensed table-sortable table-hover table-responsive table-bordered">
             <thead class="pt-thead">
                 <tr>
@@ -71,5 +74,6 @@
             </thead>
             <tbody id="season-content"></tbody>
         </table>
+        <i class="icon-spinner icon-spin spinner"></i>
     </div>
 </div>

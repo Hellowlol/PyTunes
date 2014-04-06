@@ -35,6 +35,11 @@ function loadShowData(showid){
         forceFullUpdate(showid, data.show_name);
       });
 
+      $('.remove-show', menu).click(function(evt) {
+        evt.preventDefault();
+        removeShow(showid, data.show_name);
+      });
+
       renderSeasonTabs(showid, data.season_list);
     },
     error: function(){
@@ -72,6 +77,7 @@ function renderSeasonTabs(showid, seasons){
 
 
 function renderSeason(){
+  $('.spinner').show();
   $('#season-list li').removeClass('active');
   $(this).parent().addClass("active");
 
@@ -119,6 +125,7 @@ function renderSeason(){
         notify('Error', 'Error while loading season.', 'error');
     }
   });
+  $('.spinner').hide();
 }
 
 function sickbeardStatusLabel(text){
@@ -205,6 +212,30 @@ function forceFullUpdate(tvdbid, name) {
       hideModal();
     }
   });
+}
+
+function removeShow(tvdbid, name) {
+    if (confirm('Are you sure? Remove: ' + name + '? This will remove this entry forever!')) {
+        $.ajax({
+            url: WEBDIR + 'sickbeard/RemoveShow?tvdbid=' + tvdbid,
+            type: 'get',
+            dataType: 'json',
+            timeout: 15000,
+            success: function (data) {
+                if (data.result == 'success') {
+                    notify('OK', data.message, 'success');
+                    return;
+                } 
+                else {
+                    notify('Error', data.message, 'error');
+                     return;
+                }
+            },
+            error: function (data) {
+                notify('Error', 'Unable to queue tv show for full update.', 'error', 1);
+            }
+        });
+    }
 }
 
 function rescanFiles(tvdbid, name) {

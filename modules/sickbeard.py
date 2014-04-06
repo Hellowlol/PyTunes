@@ -117,6 +117,24 @@ class Sickbeard:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
+    def RemoveShow(self, tvdbid):
+        self.logger.debug("Force full update for tvdbid " + tvdbid)
+        return self.fetch("show.delete&tvdbid=" + tvdbid)
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def Restart(self):
+        self.logger.debug("Restarting Sickbeard")
+        return self.fetch("sb.restart")
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def Shutdown(self):
+        self.logger.debug("Shutting Down Sickbeard")
+        return self.fetch("sb.shutdown")
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
     def ForceFullUpdate(self, tvdbid):
         self.logger.debug("Force full update for tvdbid " + tvdbid)
         return self.fetch("show.update&tvdbid=" + tvdbid)

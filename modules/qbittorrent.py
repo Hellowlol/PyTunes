@@ -75,6 +75,27 @@ class qbittorrent:
             return json.dumps(l)        
         except Exception as e:
             self.logger.error("Couldn't get total download and uploads speed %s" % e)
+
+    def human_number (self, num):
+        for x in [' Bytes/s',' KB/s',' MB/s',' GB/s']:
+            if num < 1024.0:
+                size = "%3.2f%s" % (num, x)
+                break
+            num /= 1024.0
+        return size
+
+    
+    # Gets total download and upload speed limits
+    @cherrypy.expose()
+    def get_limits(self):
+        try:
+            d={}
+            url = self.qbturl()
+            d["qbittorrent_limit_up"] = self.human_number(int(urllib2.urlopen(url + 'command/getGlobalUpLimit').read()))
+            d["qbittorrent_limit_down"] = self.human_number(int(urllib2.urlopen(url + 'command/getGlobalDlLimit').read()))
+            return json.dumps(d)        
+        except Exception as e:
+            self.logger.error("Couldn't get total download and uploads speed limits %s" % e)
     
     # Handles pause, resume, delete, download single torrents
     @cherrypy.expose

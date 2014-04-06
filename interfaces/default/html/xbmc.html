@@ -139,9 +139,9 @@
                             <div id="player-item-plot" class=""><br>
                             </div>
                             <div><br>
-                            2</div>
+                            </div>
                             <div><br>
-                            3</div>
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -164,26 +164,22 @@
                         <button class="btn btn-primary" data-player-control="bigstepforward" title="Forward 10 min >>"><i class="icon-fast-forward"></i></button>
                         <button class="btn btn-primary" data-player-control="skipnext" title="Next Chapter"><i class="icon-forward"></i><i class="icon-step-forward"></i></button>
                         <button id="mute" class="btn btn-primary" data-player-control="mute" title="Mute"><i class="icon-volume-off  icon-large"></i><i class="icon-remove icon-small"></i></button>
-                        <!--<button class="btn btn-primary" data-player-control="volumedown"><i class="icon-volume-down"></i></button>
-                        <button class="btn btn-primary" data-player-control="volumeup"><i class="icon-volume-up"></i></button>-->
-                        <button class="btn btn-primary" data-player-control="volumeup" title="Subtitles"><i class="icon-text-width"></i></button>
-                        <button class="btn btn-primary" data-player-control="volumeup" title="Language"><i class="icon-comments"></i></button>
-                        </div>
+                        <form class="input-prepend">
+                            <span class="add-on"><i class="icon-text-width"></i></span>
+                            <select id="subtitles"></select>
+                        </form>
+                        <form class="input-prepend">
+                            <span class="add-on"><i class="icon-comments"></i></span>
+                            <select id="audio"></select>
+                        </form>
                         <div class="progress span3" id="player-volume-progressbar">
                             <div id="volumebar" class="bar active"></div>
                         </div>
-                        <div class="btn-group">
                     </div><br>
-                    <div class="row span11 pull-left">cast</div>
+                    <!--</div>-->
                 </div>
-                                <div class="input-prepend pull-right">
-                                    <span class="add-on"><i class="icon-text-width"></i></span>
-                                    <select id="subtitles"></select>
-                                </div>
-                                <div class="input-prepend pull-right">
-                                    <span class="add-on"><i class="icon-volume-up"></i></span>
-                                    <select id="audio"></select>
-                                </div>
+            </div>
+            <div>
                 <table id="playlist-table" class="table table-striped table-hover table-condensed playlist table-responsive table-bordered">
                     <thead class="pt-thead">
                         <tr>

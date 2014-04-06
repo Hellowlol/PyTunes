@@ -5,6 +5,14 @@ $(document).ready(function () {
     loadSickbeardHistory(25);
     loadLogs();
 
+    $('#restart').click(function () {
+        restartSB();
+    });
+
+    $('#shutdown').click(function () {
+        shutdownSB();
+    });
+
     $('#add_show_button').click(function () {
         $(this).attr('disabled', true);
         searchTvDb($('#add_show_name').val());
@@ -218,6 +226,55 @@ function loadLogs() {
         }
     });
 }
+
+function shutdownSB() {
+    if (confirm('Are you sure? Shutdown. ')) {
+        $.ajax({
+            url: WEBDIR + 'sickbeard/Shutdown',
+            type: 'get',
+            dataType: 'json',
+            timeout: 15000,
+            success: function (data) {
+                if (data.result == 'success') {
+                    notify('OK', data.message, 'success');
+                    return;
+                } 
+                else {
+                    notify('Error', data.message, 'error');
+                     return;
+                }
+            },
+            error: function (data) {
+                notify('Error', 'Unable to shutdown.', 'error', 1);
+            }
+        });
+    }
+}
+
+function restartSB() {
+    if (confirm('Are you sure? Restart.')) {
+        $.ajax({
+            url: WEBDIR + 'sickbeard/Restart',
+            type: 'get',
+            dataType: 'json',
+            timeout: 15000,
+            success: function (data) {
+                if (data.result == 'success') {
+                    notify('OK', data.message, 'success');
+                    return;
+                } 
+                else {
+                    notify('Error', data.message, 'error');
+                     return;
+                }
+            },
+            error: function (data) {
+                notify('Error', 'Unable to restart.', 'error', 1);
+            }
+        });
+    }
+}
+
 
 function searchTvDb(query) {
     $.ajax({

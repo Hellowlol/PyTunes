@@ -120,6 +120,17 @@ function get_speed() {
     });
 }
 
+function get_limits() {
+    $.ajax({
+        'url': WEBDIR + 'qbittorrent/get_limits',
+        'dataType': 'json',
+        'success': function (response) {
+            $('#qbittorrent_limit_down').text(response.qbittorrent_limit_down);
+            $('#qbittorrent_limit_up').text(response.qbittorrent_limit_up);
+        }
+    });
+}
+
 function generateTorrentActionButton(torrent) {
     button = $('<a>').addClass('btn btn-mini qbt_rp');
     // Resume button if torrent is paused
@@ -182,7 +193,7 @@ $(document).on('click', '.qbt_rp', function () {
 });
 
 //sets speed up and down
-$(document).on('focusout', '.container .content #ss input', function () {
+$(document).on('focusout', '.container-fluid .content #ss input', function () {
     $.get(WEBDIR + 'qbittorrent/set_speedlimit/' + $(this).data('action') + '/' + $(this).val() + '/', function () {
 
     });
@@ -195,10 +206,14 @@ $(document).ready(function () {
     $('.spinner').show();
     get_torrents();
     get_speed();
+    get_limits();
     setInterval(function () {
         get_speed();
     }, 1000);
     setInterval(function () {
         get_torrents();
     }, 15000);
+    setInterval(function () {
+        get_limits();
+    }, 60000);
 });

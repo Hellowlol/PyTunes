@@ -11,17 +11,17 @@
                     <button class="btn btn-primary" type="button" id="add_show_button"><i class="icon-plus icon-white"></i> Add Show</button>
                     <button class="btn btn-primary hide" type="button" id="add_tvdbid_button"><i class="icon-ok icon-white"></i> Add show</button>
                     <button class="btn hide" type="button" id="cancel_show_button"> Cancel</button>
-                <span href="#" class="btn-group show-options-menu">
+                <span href="#" class="btn-group sickbeard-options-menu">
                     <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
-                    <i class="icon-wrench"></i>&nbsp;<span class="caret"></span>
+                    <i class="icon-off"></i> System&nbsp;<span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
                         <li>
-                            <a href="#" class="full-update">Force full update</a>
+                            <a href="#" id="restart">Restart</a>
                         </li>
-                        <!--<li>
-                            <a href="#" class="rescan-files">Rescan files</a>
-                        </li>-->
+                        <li>
+                            <a href="#" id="shutdown">Shutdown</a>
+                        </li>
                     </ul>
                 </span>
             </div>

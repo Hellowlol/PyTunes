@@ -5,6 +5,7 @@ function search(query, catid) {
         url: WEBDIR + 'torrents/search?q=' + query + '&cat=' + catid,
         type: 'get',
         dataType: 'text',
+        timeout: 60000,
         beforeSend: function () {
             $('#results_table_body').empty();
             $('.spinner').show();
