@@ -49,6 +49,11 @@ img.remote-image {
 .grid-caption h6.artist {
     font-weight: normal;
 }
+#player-volume-progressbar {
+	height: 25px !important;
+	margin: 0px !important;
+	cursor: pointer;
+}
 .grid-control {
     position: absolute;
     bottom: 10px;

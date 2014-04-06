@@ -74,7 +74,12 @@ $(document).ready(function () {
         pos = ((e.pageX - this.offsetLeft) / $(this).width() * 100).toFixed(2);
         $.get(WEBDIR + 'xbmc/ControlPlayer?action=seek&value=' + pos);
     });
+    $('#nowplaying #player-volume-progressbar').click(function(e) {
+        vol = ((e.pageX-this.offsetLeft)/$(this).width()*100).toFixed();
+        $.get(WEBDIR + 'xbmc/ControlPlayer?action=volume&value='+vol);
+    });
 
+ 
     // Toggle wether to show already seen episodes
     $('#hidewatched').click(function (e) {
         e.preventDefault();
@@ -984,8 +989,12 @@ function loadNowPlaying() {
             itemDescription.html(playingDescription);
 
             var progressBar = $('#nowplaying #player-progressbar .bar');
-            progressBar.css('width', data.playerInfo.percentage + '%');
+            progressBar.css('width', data.playerInfo.percentage + '%');            
+            var progressBar2 = $('#nowplaying #player-volume-progressbar .bar');
+            progressBar2.css('width', data.app.volume + '%');
+            progressBar2.text(data.app.volume + '%');
 
+ 
             var select = $('#audio').html('');
             var current = "";
             select.parent().hide();

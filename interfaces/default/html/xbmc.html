@@ -164,27 +164,15 @@
                         <button class="btn btn-primary" data-player-control="bigstepforward" title="Forward 10 min >>"><i class="icon-fast-forward"></i></button>
                         <button class="btn btn-primary" data-player-control="skipnext" title="Next Chapter"><i class="icon-forward"></i><i class="icon-step-forward"></i></button>
                         <button id="mute" class="btn btn-primary" data-player-control="mute" title="Mute"><i class="icon-volume-off  icon-large"></i><i class="icon-remove icon-small"></i></button>
-                        <button class="btn btn-primary" data-player-control="volumedown"><i class="icon-volume-down"></i></button>
-                        <button class="btn btn-primary" data-player-control="volumeup"><i class="icon-volume-up"></i></button>
+                        <!--<button class="btn btn-primary" data-player-control="volumedown"><i class="icon-volume-down"></i></button>
+                        <button class="btn btn-primary" data-player-control="volumeup"><i class="icon-volume-up"></i></button>-->
                         <button class="btn btn-primary" data-player-control="volumeup" title="Subtitles"><i class="icon-text-width"></i></button>
                         <button class="btn btn-primary" data-player-control="volumeup" title="Language"><i class="icon-comments"></i></button>
-                        <div id="ex1Slider" class="slider slider-horizontal pull-right">
-                            <div class="slider-track">
-                                <div style="left: 0%; width: 70%;" class="slider-selection">        
-                                </div>
-                                <div tabindex="0" style="left: 70%;" class="slider-handle round">
-                                </div>
-                                <div tabindex="0" style="left: 0%;" class="slider-handle round hide">
-                                </div>
-                            </div>
-                            <div style="top: -30px; left: 92px;" class="tooltip top">
-                                <div class="tooltip-arrow">
-                                </div>
-                                <div class="tooltip-inner">Current value: 14
-                                </div>
-                            </div>
-                            <input style="display: none;" id="ex1" data-slider-id="ex1Slider" data-slider-min="0" data-slider-max="20" data-slider-step="1" data-slider-value="10" type="text">
                         </div>
+                        <div class="progress span3" id="player-volume-progressbar">
+                            <div id="volumebar" class="bar active"></div>
+                        </div>
+                        <div class="btn-group">
                     </div><br>
                     <div class="row span11 pull-left">cast</div>
                 </div>
