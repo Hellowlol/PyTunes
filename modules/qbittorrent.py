@@ -35,7 +35,7 @@ class qbittorrent:
         port = htpc.settings.get('qbittorrent_port',  '')
         username = htpc.settings.get('qbittorrent_username', '')
         password = htpc.settings.get('qbittorrent_password', '')
-        ssl = 's' if htpc.settings.get('qbittorret_ssl', 0) else ''    
+        ssl = 's' if htpc.settings.get('qbittorrent_ssl', 0) else ''    
         url = 'http' + ssl +'://' + host + ':' + port + '/'        
         realm = 'Web UI Access'
         authhandler = urllib2.HTTPDigestAuthHandler()
@@ -79,7 +79,7 @@ class qbittorrent:
     def human_number (self, num):
         for x in [' Bytes/s',' KB/s',' MB/s',' GB/s']:
             if num < 1024.0:
-                size = "%3.2f%s" % (num, x)
+                size = "%d%s" % (num, x)
                 break
             num /= 1024.0
         return size

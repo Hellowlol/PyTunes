@@ -5,8 +5,12 @@ fatv_apikey = htpc.settings.get('fatv_apikey', '')
 os.environ.setdefault('FANART_APIKEY', fatv_apikey)
 fanart, arts, discs, banners, logos, hdlogos, posters, thumbs = [], [], [], [], [], [], [], []
 def GetArt(id, type):
-    if type == 'movie':                
-        movie = Movie.get(id)
+    if type == 'movie': 
+        try:               
+            movie = Movie.get(id)
+        except:
+            print 'error connecting to fanart.tv'
+            return {}
         for item in movie.backgrounds:
             fanart.append(item.url)
         for item in movie.arts:
@@ -24,4 +28,5 @@ def GetArt(id, type):
         for item in movie.thumbs:
             thumbs.append(item.url)
 
-    return fanart, arts, discs, banners, logos, hdlogos, posters, thumbs
+    return {'fanart':fanart, 'arts':arts, 'discs':discs, 'banners':banners, 'logos':logos, 'hdlogos':hdlogos, 'posters':posters, 'thumbs':thumbs}
+

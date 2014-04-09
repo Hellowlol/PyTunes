@@ -5,9 +5,9 @@ tmdb = TMDB(htpc.settings.get('tmdb_apikey', ''))
 tmdb_url = 'http://image.tmdb.org/t/p/original'
 
 def MovieInfo(tmdbid):
-    backdrops = [] 
+    fanart = [] 
     posters = []
-    trailers = []
+    trailers = ''
     genres = []
     actors = []
     writers = []
@@ -16,12 +16,15 @@ def MovieInfo(tmdbid):
     country = []
     language = []
     movie = tmdb.Movies(tmdbid)
-    stuff = movie
-    print stuff
-    #print response
+    response = movie.trailers()
+    for each in response['youtube']:
+        trailers += '    <trailer>plugin://plugin.video.youtube/?action=play_video&amp;videoid=' + each['source'] + '</trailer>\n'
+    if len(trailers) == 0:
+        trailers.append('    <trailer></trailer>\n')
+    #print 'trailers     ', response
     response = movie.images()
     for each in response['backdrops']:
-        backdrops.append(tmdb_url + each['file_path'])
+        fanart.append(tmdb_url + each['file_path'])
     for each in response['posters']:
         posters.append(tmdb_url + each['file_path'])
     response = movie.credits()
@@ -57,33 +60,31 @@ def MovieInfo(tmdbid):
         country.append(countries['name'])
     for languages in movie_info['spoken_languages']:
         language.append(countries['name'])
-    print movie_info
-    posters.append(tmdb_url + movie_info['poster_path'])
-    backdrops.append(tmdb_url + movie_info['backdrop_path'])
-    posters = set(posters)
-    backdrops = set(backdrops)
+    #print movie_info
     dt = datetime.strptime(movie_info['release_date'], '%Y-%m-%d')
     info = {
         'plot':movie_info['overview'],
         'vote_count':movie_info['vote_count'],
         'imdb':movie_info['imdb_id'],
-        'set':movie_info['belongs_to_collection'],
+        'set':movie_info['belongs_to_collection'],#break apart
         'directors':directors,
         'writers':writers,
         'producers':producers,
         'cast':actors,
         'year':dt.year,
         'rating':movie_info['vote_average'],
-        'fanart':backdrops,
-        'folders':posters,
+        'fanart':fanart,
+        'posters':posters,
+        'main_poster':tmdb_url + movie_info['poster_path'],
+        'main_fanart':tmdb_url + movie_info['backdrop_path'],
         'country':country,
         'language':language,
-        'trailers':'',
+        'trailers':trailers,
         'runtime':movie_info['runtime'],
         'tagline':movie_info['tagline'],
         'original_title':movie_info['original_title']
     }
-    return movie.info(), response, movie.trailers()
+    return info
 
 def Search(query, type):
     if type == 'movie':

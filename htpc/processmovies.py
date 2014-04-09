@@ -1,4 +1,5 @@
 from datetime import datetime
+from mako.template import Template
 import guessit
 import glob
 import urllib
@@ -17,13 +18,57 @@ def stripall(str):
     str = str.replace(' ', '')
     return str
 
-def buildnfo(destdir, tmdb_info):
-    #temp = staticvars.get_var('movienfo')
-    #print temp
+def names(movie, stream):
+    filename = []
+    dirname = movie['title']
+    title = movie['title'].lower()
+    title = title.split(' ')
+    title = '.'.join(title)
+    filename.append(title)
+    dirname += ' (' + str(movie['year']) + ')'
+    filename.append('.' + str(movie['year']))
+    if 'width' in stream:
+        if stream['width'] == '720':
+            filename.append('.' + '720p')
+            dirname += ' [720p]'
+        if stream['width'] == '1080':
+            filename.append('.' + '1080p')
+        filename.append('.' + 'BluRay')
+    elif movie['screenSize']:
+        filename.append('.' + movie['screenSize'])
+        dirname += ' [' + movie['screenSize'] + ']'
+        if movie['format']:
+            filename.append('.' + movie['format'])
+        else:
+            if movie['screenSize'] == '720p' or movie['screenSize'] == '1080p':
+                filename.append('.' + 'BluRay')
+    filename.append('.' + movie['container'])
+    filename = ''.join(filename)
+    return filename, dirname
+
+def buildnfo(destdir, info, stream):
+    nfo = Template(staticvars.get_var('movienfo'))
+    #print nfo.render(info)
     return
 
-def procpics(destdir, tmdb_info):
-    return
+def procpics(destdir, info):
+    print 'in procpics'
+    return ''
+
+def mergeart(info, fa):
+    #print info, fa
+    info['discs'] = fa['discs']
+    info['arts'] = fa['arts']
+    info['banners'] = fa['banners']
+    info['logos'] = fa['logos']
+    info['hdlogos'] = fa['hdlogos']
+    info['posters'].extend(fa['posters'])
+    info['fanart'].extend(fa['fanart'])
+    info['thumbs'] = fa['thumbs']
+    return info
+
+def download(url, dest):
+    urllib.urlretrieve (url, dest)
 
 def streaminfo(file):
     try:
@@ -68,6 +113,7 @@ def streaminfo(file):
     return movieinfo
 
 def process():
+    #print 'in proccess'
     moviedir = htpc.settings.get('movie_in', '')
     destdir = htpc.settings.get('movie_out', '')
     total = 0
@@ -81,8 +127,13 @@ def process():
     if not os.path.exists(destdir):
         os.makedirs(destdir)
     if not os.access(destdir, os.W_OK):
-        sys.exit("No write access to destination music folder")
+        sys.exit("No write access to destination movie folder")
+    if not (moviedir.endswith('/')):
+        moviedir += '/'
+    if not (destdir.endswith('/')):
+        destdir += '/'
     paths = glob.glob(moviedir + '*')
+    #print 'paths', paths
     for path in paths:
         match = 0
         matches = {}
@@ -90,6 +141,7 @@ def process():
               continue
         moviepath = path    
         file = os.path.basename(path)
+        print file
         guess = guessit.guess_movie_info(file, info = ['filename'])
         mimetype, container, screenSize, videoCodec, format = '', '', '', '', ''
         if 'mimetype' in guess:
@@ -145,29 +197,17 @@ def process():
                 else:
                     unmatched.append(guess['title'])
     for movie in matched:
-        filename = []
-        dirname = movie['title']
-        title = movie['title'].lower()
-        title = title.split(' ')
-        title = '.'.join(title)
-        filename.append(title)
-        dirname += ' (' + str(movie['year']) + ')'
-        filename.append('.' + str(movie['year']))
-        if movie['screenSize']:
-            filename.append('.' + movie['screenSize'])
-            dirname += ' [' + movie['screenSize'] + ']'
-        if movie['format']:
-            filename.append('.' + movie['format'])
-        else:
-            if movie['screenSize'] == '720p' or movie['screenSize'] == '1080p':
-                filename.append('.' + 'BluRay')
-        filename.append('.' + movie['container'])
-        filename = ''.join(filename)
-        if not os.path.exists(destdir + '/' + dirname):
-            os.makedirs(destdir + '/' + dirname)
-        info = tmdb.MovieInfo(movie['tmdbid'])
-        fanart, arts, discs, banners, logos, hdlogos, posters, thumbs = fanarttv.GetArt(movie['tmdbid'], 'movie')
         stream = streaminfo(movie['path'])
-        buildnfo(destdir, info)
+        #print stream
+        filename, dirname = names(movie, stream)
+        if not os.path.exists(destdir + dirname):
+            os.makedirs(destdir + dirname)
+        info = tmdb.MovieInfo(movie['tmdbid'])
+        fa_art = fanarttv.GetArt(movie['tmdbid'], 'movie')
+        if fa_art:
+            info = mergeart(info, fa_art)
+        print info
+        print filename,dirname
         procpics(destdir, info) 
+        buildnfo(destdir, info, stream)
 

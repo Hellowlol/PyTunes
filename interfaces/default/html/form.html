@@ -17,6 +17,9 @@ settings =  htpc.settings
                 <% value = field.get('value') if field.get('value') else settings.get(field.get('name')) %>
                 <% placeholder = field.get('placeholder') if field.get('placeholder') else '' %>
                 <input type="${field.get('type')}" name="${field.get('name')}" id="${field.get('name')}" placeholder="${placeholder}" value="${value}"/>
+                    % if field.get('dir'):
+                        <button class="btn">Browse...</button>
+                    % endif
                 % elif field.get('type') == 'bool':
                 <% checked = field.get('checked') if field.get('checked') else settings.get(field.get('name')) %>
                 <input type="checkbox" name="${field.get('name')}" id="${field.get('name')}"${

@@ -14,7 +14,7 @@ def CheckMusic():
 
 def schedule():
     CheckMovies()
-    CheckTV()
-    CheckMusic()
+    #CheckTV()
+    #CheckMusic()
 
 

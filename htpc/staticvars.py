@@ -1,59 +1,65 @@
 def get_var(var):
 
-    movienfo = """
-    <movie>
-        <title>%s</title>
-        <originaltitle>%s</originaltitle>
-        <sorttitle></sorttitle>
-        <set>%s</set>
-        <rating>%s</rating>
-        <year>%s</year>
-        <top250>%s</top250>
-        <votes>%s</votes>
-        <outline>%s</outline>
-        <plot>%s</plot>
-        <tagline>%s</tagline>
-        <runtime>%s</runtime> //runtime in minutes
-        <thumb>%s</thumb>
-        <mpaa>%s</mpaa>
-        <playcount>0</playcount><!-- setting this to > 0 will mark the movie as watched if the "importwatchedstate" flag is set in advancedsettings.xml -->
-        <id>%s</id><!--imdb-->
-        <filenameandpath>%s</filenameandpath>
-        <trailer>%s</trailer>
-        <genre>%s</genre>
-        <credits>%s</credits>
-        <fileinfo>
-            <streamdetails>
-                <video>
-                    <codec>%s</codec>
-                    <aspect>%s</aspect>
-                    <width>%s</width>
-                    <height>%s</height>
-                </video>
-                <audio>
-                    <codec>%s</codec>
-                    <language>%s</language>
-                    <channels>%s</channels>
-                </audio>
-                <subtitle>
-                    <language></language>
-                </subtitle>
-            </streamdetails>
-        </fileinfo>
-        <director>%s</director>
-        %s<!--actors-->
-        <actor>
-            <name></name>
-            <role></role>
-            <thumb></thumb>
-        </actor>
-        <art>
-        %s <!--folder art-->
-        </art>
-    </movie>
+    vars = {}
+    vars['movienfo'] = """
+<movie>
+    <title>${title}</title>
+    <originaltitle>${originaltitle}</originaltitle>
+    <sorttitle></sorttitle>
+    <set>${setname}</set>
+    <setthumb>${setthumb}</setthumb>
+    <setfanart>${setfanart}</setfanart>
+    <rating>${rating}</rating>
+    <year>${year}</year>
+    <top250>${top250}</top250>
+    <votes>${votes}</votes>
+    <outline>${outline}</outline>
+    <plot>${plot}</plot>
+    <tagline>${tagline}</tagline>
+    <runtime>${runtime}</runtime> //runtime in minutes
+${thumbs}
+    <fanart>
+${fanarts}
+    </fanart>
+    <mpaa>${mpaa}</mpaa>
+    <playcount>0</playcount>
+    <id>${imdb}</id>
+    <filenameandpath></filenameandpath>
+${trailers}
+    <genre>${genre}</genre>
+    <credits></credits>
+    <fileinfo>
+        <streamdetails>
+            <video>
+                <codec>${vcodec}</codec>
+                <aspect>$aspect}</aspect>
+                <width>${width}</width>
+                <height>${height}</height>
+            </video>
+            <audio>
+                <codec>${acodec}</codec>
+                <language></language>
+                <channels>${channels}</channels>
+            </audio>
+            <subtitle>
+                <language></language>
+            </subtitle>
+        </streamdetails>
+    </fileinfo>
+    <director>${director}</director>
+    <writer>${writer}</writer>
+${actors}
+    <art>
+${arts}
+    </art>
+</movie>
     """
-    if var == 'movienfo':
-        return movienfo
-    else: 
-        return 'Invalid Variable Name'
+    vars['actor'] = """
+    <actor>
+        <name>%s</name>
+        <role>%s</role>
+        <thumb>%s</thumb>
+    </actor> 
+    """
+    return vars[var]
 

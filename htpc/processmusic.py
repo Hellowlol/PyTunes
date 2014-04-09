@@ -1,6 +1,8 @@
 import htpc
 import os
 import subprocess as sub
+import glob
+
 file = "/home/madclicker/Downloads/Eric Clapton - Old Sock (2013) MP3VBR Beolab1700"
 def process():
     print 'Process Music'
