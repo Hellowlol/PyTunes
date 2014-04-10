@@ -1,4 +1,5 @@
 $(document).ready(function () {
+    var fileBrowserDialog, currentBrowserPath, currentRequest = null;
     $(window).trigger('hashchange')
     $('.btn-test').click(function(e) {
         e.preventDefault();
@@ -23,6 +24,52 @@ $(document).ready(function () {
     $('input, radio, select, button').bind('change input', function(e) {
         $('.btn-test').button('reset').removeClass('btn-success btn-danger');
     });
+    $('.fileBrowser').click(function(e) {
+        //if (!fileBrowserDialog) {
+        var initialDir = document.getElementById($(this).attr('data-target')).value
+        //var initialDir = 'BIG TEST';
+            fileBrowserDialog = $('<div id="fileBrowserDialog" style="display:hidden"></div>').appendTo('body').dialog({
+                dialogClass: 'browserDialog',
+                title:       'Select ' + $(this).attr('title'),
+                position:    ['center', 40],
+                minWidth:    Math.min($(document).width() - 80, 650),
+                height:      Math.min($(document).height() - 80, $(window).height() - 80),
+                maxHeight:   Math.min($(document).height() - 80, $(window).height() - 80),
+                maxWidth:    $(document).width() - 80,
+                modal:       true,
+                autoOpen:    true
+            });
+        //}
+
+        fileBrowserDialog.dialog('option', 'buttons', [
+                    {
+                        text: "Ok",
+                        "class": "btn btn-primary",
+                        click: function() {
+                            // store the browsed path to the associated text field
+                            callback(currentBrowserPath, options);
+                            $(this).dialog("close");
+                        }
+                    },
+                    {
+                        text: "Cancel",
+                        "class": "btn",
+                        click: function() {
+                            $(this).dialog("close");
+                        }
+                    }
+        ]);
+        $('<h2>').text(initialDir).appendTo(fileBrowserDialog);
+                link = $("<a href='javascript:void(0)' />").click(function () { browse(entry.path, endpoint); }).html('<big> ..</big>');
+                $('<span class="icon icon-folder-close-alt icon-large"></span>').prependTo(link);
+                link.hover(
+                    function () {$("span", this).addClass("icon-folder-open-alt");    },
+                    function () {$("span", this).removeClass("icon-folder-open-alt"); }
+                );
+                link.appendTo(fileBrowserDialog);
+    });
+
+
     $('form').submit(function(e) {
         e.preventDefault();
         var action = $(this).attr('action')

@@ -14,15 +14,17 @@ settings =  htpc.settings
             <label for="${field.get('name')}" class="control-label">${field.get('label')}</label>
             <div class="controls">
                 % if field.get('type') in ['text', 'password']:
-                <% value = field.get('value') if field.get('value') else settings.get(field.get('name')) %>
-                <% placeholder = field.get('placeholder') if field.get('placeholder') else '' %>
-                <input type="${field.get('type')}" name="${field.get('name')}" id="${field.get('name')}" placeholder="${placeholder}" value="${value}"/>
-                    % if field.get('dir'):
-                        <button class="btn">Browse...</button>
-                    % endif
+                    <% value = field.get('value') if field.get('value') else settings.get(field.get('name')) %>
+                    <% placeholder = field.get('placeholder') if field.get('placeholder') else '' %>
+                        % if field.get('dir'):
+                            <input type="${field.get('type')}" class="ui-autocomplete-input fileBrowserField" name="${field.get('name')}" id="${field.get('name')}" placeholder="${placeholder}" value="${value}"/>
+                            <input data-target="${field.get('name')}" title="${field.get('label')}" class="btn fileBrowser" type="button" value="Browse...">
+                        % else:
+                            <input type="${field.get('type')}" name="${field.get('name')}" id="${field.get('name')}" placeholder="${placeholder}" value="${value}"/>
+                        % endif
                 % elif field.get('type') == 'bool':
-                <% checked = field.get('checked') if field.get('checked') else settings.get(field.get('name')) %>
-                <input type="checkbox" name="${field.get('name')}" id="${field.get('name')}"${
+                    <% checked = field.get('checked') if field.get('checked') else settings.get(field.get('name')) %>
+                    <input type="checkbox" name="${field.get('name')}" id="${field.get('name')}"${
                 ' checked="checked"' if checked else ''}${
                 ' class="enable-module"' if field.get('name').endswith('enable') else ''}/>
                 % elif field.get('type') == 'select':
@@ -30,7 +32,7 @@ settings =  htpc.settings
                     % for option in field.get('options'):
                     <option value="${option.get('value')}"${
                     ' selected="selected"' if option.get('selected', 0) else ''}>${option.get('name')}</option>
-                    % endfor
+            % endfor
                 </select>
                 % endif
                 % if field.get('desc'):
