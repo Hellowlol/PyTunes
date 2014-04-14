@@ -3,8 +3,8 @@ import htpc
 from fanart.movie import Movie
 fatv_apikey = htpc.settings.get('fatv_apikey', '')
 os.environ.setdefault('FANART_APIKEY', fatv_apikey)
-fanart, arts, discs, banners, logos, hdlogos, posters, thumbs = [], [], [], [], [], [], [], []
 def GetArt(id, type):
+    fanart, arts, discs, banners, logos, hdlogos, posters, thumbs = [], [], [], [], [], [], [], []
     if type == 'movie': 
         try:               
             movie = Movie.get(id)

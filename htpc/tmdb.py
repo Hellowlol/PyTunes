@@ -20,7 +20,7 @@ def MovieInfo(tmdbid):
     for each in response['youtube']:
         trailers += '    <trailer>plugin://plugin.video.youtube/?action=play_video&amp;videoid=' + each['source'] + '</trailer>\n'
     if len(trailers) == 0:
-        trailers.append('    <trailer></trailer>\n')
+        trailers += '    <trailer></trailer>\n'
     #print 'trailers     ', response
     response = movie.images()
     for each in response['backdrops']:
@@ -58,11 +58,17 @@ def MovieInfo(tmdbid):
     movie_info = movie.info()
     for countries in movie_info['production_countries']:
         country.append(countries['name'])
-    for languages in movie_info['spoken_languages']:
-        language.append(countries['name'])
+    #for languages in movie_info['spoken_languages']:
+    #    language.append(countries['name'])
     #print movie_info
     dt = datetime.strptime(movie_info['release_date'], '%Y-%m-%d')
     info = {
+        'discs':[],
+        'arts':[],
+        'banners':[],
+        'logos':[],
+        'hdlogos':[],
+        'thumbs':[],
         'plot':movie_info['overview'],
         'vote_count':movie_info['vote_count'],
         'imdb':movie_info['imdb_id'],

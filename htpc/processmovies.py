@@ -4,12 +4,17 @@ import guessit
 import glob
 import urllib
 import os
+import shutil
 import string
 import htpc
 import staticvars
 import enzyme
 import tmdb
 import fanarttv
+import os 
+import time 
+    
+exclude = ['\'', '"', '-', ';', ':']
 
 def stripall(str):
     str = ''.join(ch for ch in str if ch not in exclude)
@@ -21,27 +26,34 @@ def stripall(str):
 def names(movie, stream):
     filename = []
     dirname = movie['title']
-    title = movie['title'].lower()
+    title = movie['title']
     title = title.split(' ')
     title = '.'.join(title)
     filename.append(title)
     dirname += ' (' + str(movie['year']) + ')'
     filename.append('.' + str(movie['year']))
     if 'width' in stream:
-        if stream['width'] == '720':
+        #print 'in width', stream['width']
+        if stream['width'] == '1280' or stream['height'] == '720':
             filename.append('.' + '720p')
             dirname += ' [720p]'
-        if stream['width'] == '1080':
+            filename.append('.' + 'BluRay')
+        elif stream['width'] == '1920' or stream['height'] == '1080':
             filename.append('.' + '1080p')
-        filename.append('.' + 'BluRay')
+            filename.append('.' + 'BluRay')
+            dirname += ' [1080p]'
+        else:
+            filename.append('.' + 'DVD')
+            dirname += ' [DVD]'
     elif movie['screenSize']:
         filename.append('.' + movie['screenSize'])
         dirname += ' [' + movie['screenSize'] + ']'
-        if movie['format']:
-            filename.append('.' + movie['format'])
-        else:
-            if movie['screenSize'] == '720p' or movie['screenSize'] == '1080p':
+        if movie['screenSize'] == '720p' or movie['screenSize'] == '1080p':
                 filename.append('.' + 'BluRay')
+        else:
+            filename.append('.' + 'DVD')
+            dirname += ' [DVD]'
+
     filename.append('.' + movie['container'])
     filename = ''.join(filename)
     return filename, dirname
@@ -52,19 +64,120 @@ def buildnfo(destdir, info, stream):
     return
 
 def procpics(destdir, info):
-    print 'in procpics'
+    if info['discs']:    
+        name, ext = os.path.splitext(info['discs'][0])            
+        download(info['discs'][0], destdir + '/discart' + ext)
+        if len(info['discs']) > 1:    
+            i = 1
+            dldir = destdir + '/discart'
+            if not os.path.exists(dldir):
+                os.makedirs(dldir)
+            for each in info['discs']:
+                name, ext = os.path.splitext(each)            
+                download(each, dldir + '/discart' + str(i) + ext)
+                print each
+                i += 1
+    if info['arts']:    
+        name, ext = os.path.splitext(info['arts'][0])            
+        download(info['discs'][0], destdir + '/clearart' + ext)
+        if len(info['arts']) > 1:    
+            i = 1
+            dldir = destdir + '/clearart'
+            if not os.path.exists(dldir):
+                os.makedirs(dldir)
+            for each in info['arts']:
+                name, ext = os.path.splitext(each)            
+                download(each, dldir + '/clearart' + str(i) + ext)
+                print each
+                i += 1
+    if info['banners']:    
+        name, ext = os.path.splitext(info['banners'][0])            
+        download(info['banners'][0], destdir + '/banner' + ext)
+        if len(info['banners']) > 1:    
+            i = 1
+            dldir = destdir + '/banners'
+            if not os.path.exists(dldir):
+                os.makedirs(dldir)
+            for each in info['banners']:
+                name, ext = os.path.splitext(each)            
+                download(each, dldir + '/banner' + str(i) + ext)
+                print each
+                i += 1
+    if info['logos']:    
+        name, ext = os.path.splitext(info['logos'][0])            
+        download(info['logos'][0], destdir + '/logo' + ext)
+        if len(info['logos']) > 1:    
+            i = 1
+            dldir = destdir + '/logos'
+            if not os.path.exists(dldir):
+                os.makedirs(dldir)
+            for each in info['logos']:
+                name, ext = os.path.splitext(each)            
+                download(each, dldir + '/logo' + str(i) + ext)
+                print each
+                i += 1
+    if info['hdlogos']:    
+        name, ext = os.path.splitext(info['hdlogos'][0])            
+        download(info['hdlogos'][0], destdir + '/clearlogo' + ext)
+        if len(info['hdlogos']) > 1:    
+            i = 1
+            dldir = destdir + '/clearlogos'
+            if not os.path.exists(dldir):
+                os.makedirs(dldir)
+            for each in info['hdlogos']:
+                name, ext = os.path.splitext(each)            
+                download(each, dldir + '/clearlogo' + str(i) + ext)
+                print each
+                i += 1
+    if info['posters']:    
+        name, ext = os.path.splitext(info['posters'][0])            
+        download(info['posters'][0], destdir + '/folder' + ext)
+        if len(info['posters']) > 1:    
+            i = 1
+            dldir = destdir + '/posters'
+            if not os.path.exists(dldir):
+                os.makedirs(dldir)
+            for each in info['posters']:
+                name, ext = os.path.splitext(each)            
+                download(each, dldir + '/poster' + str(i) + ext)
+                print each
+                i += 1
+    if info['fanart']:    
+        download(info['fanart'][0], destdir + '/fanart.jpg')
+        if len(info['fanart']) > 1:    
+            i = 1
+            dldir = destdir + '/extrafanart'
+            if not os.path.exists(dldir):
+                os.makedirs(dldir)
+            for each in info['fanart']:
+                download(each, dldir + '/fanart' + str(i) + '.jpg')
+                print each
+                i += 1
+    if info['thumbs']:    
+        name, ext = os.path.splitext(info['thumbs'][0])            
+        download(info['thumbs'][0], destdir + '/thumb' + ext)
+        if len(info['thumbs']) > 1:    
+            i = 1
+            dldir = destdir + '/extrathumbs'
+            if not os.path.exists(dldir):
+                os.makedirs(dldir)
+            for each in info['thumbs']:
+                name, ext = os.path.splitext(each)            
+                download(each, dldir + '/thumb' + str(i) + ext)
+                print each
+                i += 1
     return ''
 
 def mergeart(info, fa):
     #print info, fa
-    info['discs'] = fa['discs']
-    info['arts'] = fa['arts']
-    info['banners'] = fa['banners']
-    info['logos'] = fa['logos']
-    info['hdlogos'] = fa['hdlogos']
+    info['discs'].extend(fa['discs'])
+    info['arts'].extend(fa['arts'])
+    info['banners'].extend(fa['banners'])
+    info['logos'].extend(fa['logos'])
+    info['hdlogos'].extend(fa['hdlogos'])
     info['posters'].extend(fa['posters'])
     info['fanart'].extend(fa['fanart'])
-    info['thumbs'] = fa['thumbs']
+    info['thumbs'].extend(fa['thumbs'])
     return info
 
 def download(url, dest):
@@ -114,6 +227,9 @@ def streaminfo(file):
 
 def process():
     #print 'in proccess'
+    #For future to check age of file in seconds
+    #st=os.stat(Filename) 
+    #Age=(time.time()-st.st_mtime)
     moviedir = htpc.settings.get('movie_in', '')
     destdir = htpc.settings.get('movie_out', '')
     total = 0
@@ -121,7 +237,6 @@ def process():
     moviepath = ''
     matched = []  
     unmatched = []  
-    exclude = ['\'', '"', '-', ';', ':']
     if not os.path.exists(moviedir):
         os.makedirs(moviedir)
     if not os.path.exists(destdir):
@@ -141,7 +256,7 @@ def process():
               continue
         moviepath = path    
         file = os.path.basename(path)
-        print file
+        #print file
         guess = guessit.guess_movie_info(file, info = ['filename'])
         mimetype, container, screenSize, videoCodec, format = '', '', '', '', ''
         if 'mimetype' in guess:
@@ -162,7 +277,7 @@ def process():
                     match += 1
                     matches[match] = [s['title'], s['id'], s['release_date'], mimetype, container, screenSize, videoCodec, format]
                 else:
-                    if len(search.results) == 1:
+                    if len(search['results']) == 1:
                         match += 1
                         matches[match] = [s['title'], s['id'], s['release_date'], mimetype, container, screenSize, videoCodec, format]
                     else:
@@ -197,8 +312,11 @@ def process():
                 else:
                     unmatched.append(guess['title'])
     for movie in matched:
+        info = {}
+        fa_art = {}
+        stream = {}
         stream = streaminfo(movie['path'])
-        #print stream
+        print stream
         filename, dirname = names(movie, stream)
         if not os.path.exists(destdir + dirname):
             os.makedirs(destdir + dirname)
@@ -206,8 +324,9 @@ def process():
         fa_art = fanarttv.GetArt(movie['tmdbid'], 'movie')
         if fa_art:
             info = mergeart(info, fa_art)
-        print info
+        #print info
         print filename,dirname
-        procpics(destdir, info) 
-        buildnfo(destdir, info, stream)
+        procpics(destdir + dirname, info) 
+        shutil.move(movie['path'], destdir + dirname + '/' + filename)
+        #buildnfo(destdir + dirname, info, stream)
 
