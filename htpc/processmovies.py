@@ -7,12 +7,15 @@ import os
 import shutil
 import string
 import htpc
+import logging
 import staticvars
 import enzyme
 import tmdb
 import fanarttv
 import os 
 import time 
+
+logger = logging.getLogger('htpc.settings')
     
 exclude = ['\'', '"', '-', ';', ':']
 
@@ -54,7 +57,7 @@ def names(movie, stream):
             filename.append('.' + 'DVD')
             dirname += ' [DVD]'
 
-    filename.append('.' + movie['container'])
+    filename.append('.PyTunes.' + movie['container'])
     filename = ''.join(filename)
     return filename, dirname
 
@@ -79,7 +82,7 @@ def procpics(destdir, info):
                 i += 1
     if info['arts']:    
         name, ext = os.path.splitext(info['arts'][0])            
-        download(info['discs'][0], destdir + '/clearart' + ext)
+        download(info['arts'][0], destdir + '/clearart' + ext)
         if len(info['arts']) > 1:    
             i = 1
             dldir = destdir + '/clearart'
@@ -181,7 +184,17 @@ def mergeart(info, fa):
     return info
 
 def download(url, dest):
-    urllib.urlretrieve (url, dest)
+    try:
+        urllib.urlretrieve (url, dest)
+    except urllib.IOError, e:
+        logger.debug("Unable to connect: " + url + e)
+        print 'IOError:', url
+        return 
+    except Exception:
+        import traceback
+        logger.error('urllib exception: ' + traceback.format_exc())
+        print 'IOError:', url
+        return 
 
 def streaminfo(file):
     try:
@@ -294,8 +307,15 @@ def process():
                     match += 1
                     matches[match] = [s['title'], s['id'], s['release_date'], mimetype, container, screenSize, videoCodec, format]
 
-        if not matches and search.results:
+        if not matches and search['results']:
             unmatched.append(guess['title'])
+            if not os.path.exists(moviedir + 'failed'):
+                os.makedirs(moviedir + 'failed')
+            movie = os.path.basename(path)
+            # for windows
+            #import ntpath
+            #ntpath.basename("a/b/c")            
+            shutil.move(path, moviedir + '/failed/' + movie)
         if len(matches) == 1:
             dt = datetime.strptime(matches[1][2], '%Y-%m-%d')
             matched.append({'title':matches[1][0], 'tmdbid':matches[1][1], 'path':moviepath, 'year':dt.year, 'mimetype':matches[1][3], 'container':matches[1][4], 'screenSize':matches[1][5], 'videoCodec':matches[1][6], 'format':matches[1][7]})
@@ -311,6 +331,13 @@ def process():
                     break
                 else:
                     unmatched.append(guess['title'])
+                    if not os.path.exists(moviedir + 'failed'):
+                        os.makedirs(moviedir + 'failed')
+                    movie = os.path.basename(path)
+                    # for windows
+                    #import ntpath
+                    #ntpath.basename("a/b/c")            
+                    shutil.move(path, moviedir + '/failed/' + movie)
     for movie in matched:
         info = {}
         fa_art = {}
