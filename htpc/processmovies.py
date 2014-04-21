@@ -59,6 +59,8 @@ def names(movie, stream):
 
     filename.append('.PyTunes.' + movie['container'])
     filename = ''.join(filename)
+    filename = filename.replace('/', '-').replace('..', '.').replace(':.', '.')
+    dirname = dirname.replace('/', '-')
     return filename, dirname
 
 def buildnfo(destdir, info, stream):
@@ -78,7 +80,7 @@ def procpics(destdir, info):
             for each in info['discs']:
                 name, ext = os.path.splitext(each)            
                 download(each, dldir + '/discart' + str(i) + ext)
-                print each
+                #print each
                 i += 1
     if info['arts']:    
         name, ext = os.path.splitext(info['arts'][0])            
@@ -91,7 +93,7 @@ def procpics(destdir, info):
             for each in info['arts']:
                 name, ext = os.path.splitext(each)            
                 download(each, dldir + '/clearart' + str(i) + ext)
-                print each
+                #print each
                 i += 1
     if info['banners']:    
         name, ext = os.path.splitext(info['banners'][0])            
@@ -104,33 +106,33 @@ def procpics(destdir, info):
             for each in info['banners']:
                 name, ext = os.path.splitext(each)            
                 download(each, dldir + '/banner' + str(i) + ext)
-                print each
+                #print each
                 i += 1
     if info['logos']:    
         name, ext = os.path.splitext(info['logos'][0])            
-        download(info['logos'][0], destdir + '/logo' + ext)
+        download(info['logos'][0], destdir + '/clearlogo' + ext)
         if len(info['logos']) > 1:    
-            i = 1
-            dldir = destdir + '/logos'
-            if not os.path.exists(dldir):
-                os.makedirs(dldir)
-            for each in info['logos']:
-                name, ext = os.path.splitext(each)            
-                download(each, dldir + '/logo' + str(i) + ext)
-                print each
-                i += 1
-    if info['hdlogos']:    
-        name, ext = os.path.splitext(info['hdlogos'][0])            
-        download(info['hdlogos'][0], destdir + '/clearlogo' + ext)
-        if len(info['hdlogos']) > 1:    
             i = 1
             dldir = destdir + '/clearlogos'
             if not os.path.exists(dldir):
                 os.makedirs(dldir)
-            for each in info['hdlogos']:
+            for each in info['logos']:
                 name, ext = os.path.splitext(each)            
                 download(each, dldir + '/clearlogo' + str(i) + ext)
-                print each
+                #print each
+                i += 1
+    if info['hdlogos']:    
+        name, ext = os.path.splitext(info['hdlogos'][0])            
+        download(info['hdlogos'][0], destdir + '/hdlogo' + ext)
+        if len(info['hdlogos']) > 1:    
+            i = 1
+            dldir = destdir + '/hdlogos'
+            if not os.path.exists(dldir):
+                os.makedirs(dldir)
+            for each in info['hdlogos']:
+                name, ext = os.path.splitext(each)            
+                download(each, dldir + '/hdlogo' + str(i) + ext)
+                #print each
                 i += 1
     if info['posters']:    
         name, ext = os.path.splitext(info['posters'][0])            
@@ -143,7 +145,7 @@ def procpics(destdir, info):
             for each in info['posters']:
                 name, ext = os.path.splitext(each)            
                 download(each, dldir + '/poster' + str(i) + ext)
-                print each
+                #print each
                 i += 1
     if info['fanart']:    
         download(info['fanart'][0], destdir + '/fanart.jpg')
@@ -154,7 +156,7 @@ def procpics(destdir, info):
                 os.makedirs(dldir)
             for each in info['fanart']:
                 download(each, dldir + '/fanart' + str(i) + '.jpg')
-                print each
+                #print each
                 i += 1
     if info['thumbs']:    
         name, ext = os.path.splitext(info['thumbs'][0])            
@@ -167,7 +169,7 @@ def procpics(destdir, info):
             for each in info['thumbs']:
                 name, ext = os.path.splitext(each)            
                 download(each, dldir + '/thumb' + str(i) + ext)
-                print each
+                #print each
                 i += 1
     return ''
 
@@ -186,13 +188,9 @@ def mergeart(info, fa):
 def download(url, dest):
     try:
         urllib.urlretrieve (url, dest)
-    except urllib.IOError, e:
-        logger.debug("Unable to connect: " + url + e)
-        print 'IOError:', url
-        return 
     except Exception:
-        import traceback
-        logger.error('urllib exception: ' + traceback.format_exc())
+        #import traceback
+        #logger.error('urllib exception: ' + traceback.format_exc())
         print 'IOError:', url
         return 
 
@@ -271,6 +269,7 @@ def process():
         file = os.path.basename(path)
         #print file
         guess = guessit.guess_movie_info(file, info = ['filename'])
+        #print guess
         mimetype, container, screenSize, videoCodec, format = '', '', '', '', ''
         if 'mimetype' in guess:
             mimetype = guess['mimetype']
@@ -283,6 +282,7 @@ def process():
         if 'format' in guess:
             format = guess['format']
         search = tmdb.Search(guess['title'], 'movie')
+        #print search
         total += 1
         for s in search['results']:
             if  'year' in guess:
@@ -307,7 +307,9 @@ def process():
                     match += 1
                     matches[match] = [s['title'], s['id'], s['release_date'], mimetype, container, screenSize, videoCodec, format]
 
-        if not matches and search['results']:
+        if not matches and not search['results']:
+            print 'not matches and not search results check name'
+            print path
             unmatched.append(guess['title'])
             if not os.path.exists(moviedir + 'failed'):
                 os.makedirs(moviedir + 'failed')
@@ -315,12 +317,29 @@ def process():
             # for windows
             #import ntpath
             #ntpath.basename("a/b/c")            
-            shutil.move(path, moviedir + '/failed/' + movie)
+            if os.path.exists(path):        
+                shutil.move(path, moviedir + '/failed/' + movie)
+        if not matches and search['results']:
+            #need to add another layer of sophistication here!
+            #right now it's just a trap to log failed matches when there were search results
+            print 'not matches and search results'
+            print path
+            unmatched.append(guess['title'])
+            if not os.path.exists(moviedir + 'failed'):
+                os.makedirs(moviedir + 'failed')
+            movie = os.path.basename(path)
+            # for windows
+            #import ntpath
+            #ntpath.basename("a/b/c")            
+            if os.path.exists(path):        
+                shutil.move(path, moviedir + '/failed/' + movie)
         if len(matches) == 1:
+            #print 'len matches 1'
             dt = datetime.strptime(matches[1][2], '%Y-%m-%d')
             matched.append({'title':matches[1][0], 'tmdbid':matches[1][1], 'path':moviepath, 'year':dt.year, 'mimetype':matches[1][3], 'container':matches[1][4], 'screenSize':matches[1][5], 'videoCodec':matches[1][6], 'format':matches[1][7]})
             hits += 1
         if len(matches) > 1:
+            #print 'len matches >1'
             testguess = stripall(guess['title'])
             for each in matches:
                 testeach = stripall(matches[each][0])
@@ -330,20 +349,22 @@ def process():
                     hits += 1
                     break
                 else:
+                    #print 'else unmatched'
                     unmatched.append(guess['title'])
                     if not os.path.exists(moviedir + 'failed'):
                         os.makedirs(moviedir + 'failed')
                     movie = os.path.basename(path)
                     # for windows
                     #import ntpath
-                    #ntpath.basename("a/b/c")            
-                    shutil.move(path, moviedir + '/failed/' + movie)
+                    #ntpath.basename("a/b/c") 
+                    if os.path.exists(path):        
+                        shutil.move(path, moviedir + '/failed/' + movie)
     for movie in matched:
         info = {}
         fa_art = {}
         stream = {}
         stream = streaminfo(movie['path'])
-        print stream
+        #print stream
         filename, dirname = names(movie, stream)
         if not os.path.exists(destdir + dirname):
             os.makedirs(destdir + dirname)

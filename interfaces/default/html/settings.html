@@ -18,13 +18,14 @@
 
             <div class="tab-content">
             ${form.buildForm(id='general', classes='form-horizontal tab-pane active', legend='General',  fields=[
-                {'type':'text', 'label':'IP / Host *', 'name':'app_host', 'value':settings.get('app_host', '0.0.0.0')},
+                {'type':'text', 'label':'IP / Host *', 'name':'app_host', 'value':settings.get('app_host', '0.0.0.0'), 'desc':'0.0.0.0 will listen to all interfaces'},
                 {'type':'text', 'label':'Port *', 'name':'app_port', 'value':settings.get('app_port', 8085)},
                 {'type':'text', 'label':'Webdir *', 'name':'app_webdir', 'value':settings.get('app_webdir', '/')},
                 {'type':'text', 'label':'Username *', 'name':'app_username', 'value':settings.get('app_username')},
                 {'type':'password', 'label':'Password *', 'name':'app_password', 'value':settings.get('app_password')},
                 {'type':'text', 'label':'SSL Cert', 'name':'app_ssl_cert', 'value':settings.get('app_ssl_cert')},
                 {'type':'text', 'label':'SSL Key', 'name':'app_ssl_key', 'value':settings.get('app_ssl_key')},
+                {'type':'bool', 'label':'Open Browser at Startup', 'name':'browser', 'checked':bool(settings.get('browser', 0))},
                 {'type':'text', 'label':'Git Path', 'name':'git_path', 'value':settings.get('git_path', 'git')}
             ])}
             % for m in htpc.MODULES:
@@ -44,16 +45,24 @@
                 {'type':'select', 'label':'Theme', 'name':'app_theme', 'options':settings.get_themes()}
             ])}
             ${form.buildForm(id='dashboard', classes='form-horizontal tab-pane', legend='Dashboard', fields=[
-                {'type':'bool', 'label':'Show recent movies', 'name':'dash_rec_movies',
+                {'type':'bool', 'label':'Show Recent Movies', 'name':'dash_rec_movies',
                  'checked':bool(settings.get('dash_rec_movies', 0))},
-                {'type':'bool', 'label':'Show recent shows', 'name':'dash_rec_tv',
+                {'type':'bool', 'label':'Show Recent Shows', 'name':'dash_rec_tv',
                  'checked':bool(settings.get('dash_rec_tv', 0))},
                 {'type':'bool', 'label':'Show recent music', 'name':'dash_rec_music',
                  'checked':bool(settings.get('dash_rec_music', 0))},
                 {'type':'bool', 'label':'Show Sickbeard', 'name':'dash_sickbeard',
                  'checked':bool(settings.get('dash_sickbeard', 0))},
-                {'type':'bool', 'label':'Show CouchPotato', 'name':'dash_couchpotato',
-                 'checked':bool(settings.get('dash_couchpotato', 0))},
+                {'type':'bool', 'label':'Show Movies Found', 'name':'dash_moviesfound',
+                 'checked':bool(settings.get('dash_moviesfound', 0))},
+                {'type':'bool', 'label':'Show New Releases', 'name':'dash_releases',
+                 'checked':bool(settings.get('dash_releases', 0))},
+                {'type':'bool', 'label':'Show in Theaters', 'name':'dash_theaters',
+                 'checked':bool(settings.get('dash_theaters', 0))},
+                {'type':'bool', 'label':'Show Coming Soon', 'name':'dash_coming',
+                 'checked':bool(settings.get('dash_coming', 0))},
+                {'type':'bool', 'label':'Show Music Found', 'name':'dash_musicfound',
+                 'checked':bool(settings.get('dash_musicfound', 0))},
                 {'type':'bool', 'label':'Show SABnzbd', 'name':'dash_sabnzbd',
                  'checked':bool(settings.get('dash_sabnzbd', 0))},
                 {'type':'bool', 'label':'Show NZBGet', 'name':'dash_nzbget',

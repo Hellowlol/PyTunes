@@ -9,6 +9,7 @@ import os
 import inspect
 import sys
 import htpc
+import webbrowser
 
 
 def parse_arguments():
@@ -31,6 +32,8 @@ def parse_arguments():
                         help='Generate PID file at location')
     parser.add_argument('--debug', action='store_true', default=False,
                         help='Print debug text')
+    parser.add_argument('--nopass', action='store_true', default=False,
+                        help='Help with lost password')
     parser.add_argument('--webdir', default=None,
                         help='Use a custom webdir')
     parser.add_argument('--loglevel', default='info',
@@ -119,21 +122,34 @@ def main():
     if args.port:
         htpc.PORT = args.port
 
-    htpc.USERNAME = htpc.settings.get('app_username')
-    htpc.PASSWORD = htpc.settings.get('app_password')    
+    #Override for lost password
+    if not args.nopass:
+        htpc.USERNAME = htpc.settings.get('app_username')
+        htpc.PASSWORD = htpc.settings.get('app_password')    
+    else:
+        htpc.USERNAME = ''
+        htpc.PASSWORD = ''   
 
     #Select if you want to disable shell commands from PyTunes
     htpc.NOSHELL = args.noshell
-    
+     
     # Select whether to run as daemon
     htpc.DAEMON = args.daemon
 
     # Set Application PID
     htpc.PID = args.pid
 
+    # Start the webbrowser.....We need a way to detect whether there was a restart signal from an open browser so we don't open another.
+#    if htpc.settings.get('browser')  and not htpc.DEBUG and not htpc.DAEMON:
+#        nb_ssl = 's' if htpc.SSLCERT and htpc.SSLKEY else ''
+#        nb_host = 'localhost' if htpc.settings.get('app_host') == '0.0.0.0' else htpc.settings.get('app_host')
+#        openbrowser = 'http%s://%s:%s%s' % (nb_ssl, nb_host,  htpc.PORT, htpc.WEBDIR[:-1])
+#        webbrowser.open(openbrowser, new=2, autoraise=True)
+
     # Start the server
     from htpc.server import start
     start()
+
 
 if __name__ == '__main__':
     main()

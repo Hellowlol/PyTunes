@@ -81,8 +81,6 @@ def MovieInfo(tmdbid):
         'rating':movie_info['vote_average'],
         'fanart':fanart,
         'posters':posters,
-        'main_poster':tmdb_url + movie_info['poster_path'],
-        'main_fanart':tmdb_url + movie_info['backdrop_path'],
         'country':country,
         'language':language,
         'trailers':trailers,
