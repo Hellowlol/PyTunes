@@ -247,17 +247,20 @@ def process():
     hits = 0 
     moviepath = ''
     matched = []  
-    unmatched = []  
-    if not os.path.exists(moviedir):
-        os.makedirs(moviedir)
-    if not os.path.exists(destdir):
-        os.makedirs(destdir)
-    if not os.access(destdir, os.W_OK):
-        sys.exit("No write access to destination movie folder")
-    if not (moviedir.endswith('/')):
-        moviedir += '/'
-    if not (destdir.endswith('/')):
-        destdir += '/'
+    unmatched = []
+    if moviedir and destdir:  
+        if not os.path.exists(moviedir):
+            os.makedirs(moviedir)
+        if not os.path.exists(destdir):
+            os.makedirs(destdir)
+        if not os.access(destdir, os.W_OK):
+            sys.exit("No write access to destination movie folder")
+        if not (moviedir.endswith('/')):
+            moviedir += '/'
+        if not (destdir.endswith('/')):
+            destdir += '/'
+    else:
+        return
     paths = glob.glob(moviedir + '*')
     #print 'paths', paths
     for path in paths:
