@@ -350,6 +350,9 @@ $(document).ready(function () {
 });
 
 setInterval(function () {
+    get_diskinfo();
+    get_diskinfo2();
+    sys_info();
     processes();
 }, 10000);
 setInterval(function () {
