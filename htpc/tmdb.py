@@ -95,6 +95,20 @@ def Search(query, type):
         search = tmdb.Search()
         return search.movie({'query':query})
 
+def Upcoming():
+    return tmdb.Movie.upcoming()
+
+def Nowplaying():
+    return tmdb.Movie.now_playing()
+
+
+def Popular():
+    return tmdb.Movie.popular()
+
+
+def Toprated():
+    return tmdb.Movie.toprated()
+
 
 
 
