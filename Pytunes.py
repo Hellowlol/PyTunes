@@ -24,10 +24,12 @@ def parse_arguments():
                         help='Use a specific host/IP')
     parser.add_argument('--port', type=int,
                         help='Use a specific port')
-    parser.add_argument('--noshell', default=False,
+    parser.add_argument('--noshell', action='store_true', default=False,
                         help='Set this if you want to disable shell access. Extra security if you open the port to the world.')
     parser.add_argument('--daemon', action='store_true', default=False,
                         help='Daemonize process')
+    parser.add_argument('--nobrowser', action='store_true', default=False,
+                        help='Suppress Automatic Browser at Startup')
     parser.add_argument('--pid', default=False,
                         help='Generate PID file at location')
     parser.add_argument('--debug', action='store_true', default=False,
@@ -91,6 +93,9 @@ def main():
     if args.db:
         htpc.DB = args.db
 
+    # Set browser override if supplied through commandline
+    htpc.NB = args.nobrowser
+
     # Load settings from database
     from htpc.settings import Settings
     htpc.settings = Settings()
@@ -140,11 +145,11 @@ def main():
     htpc.PID = args.pid
 
     # Start the webbrowser.....We need a way to detect whether there was a restart signal from an open browser so we don't open another.
-#    if htpc.settings.get('browser')  and not htpc.DEBUG and not htpc.DAEMON:
-#        nb_ssl = 's' if htpc.SSLCERT and htpc.SSLKEY else ''
-#        nb_host = 'localhost' if htpc.settings.get('app_host') == '0.0.0.0' else htpc.settings.get('app_host')
-#        openbrowser = 'http%s://%s:%s%s' % (nb_ssl, nb_host,  htpc.PORT, htpc.WEBDIR[:-1])
-#        webbrowser.open(openbrowser, new=2, autoraise=True)
+    if htpc.settings.get('browser')  and not htpc.DEBUG and not htpc.DAEMON and not htpc.NB:
+        nb_ssl = 's' if htpc.SSLCERT and htpc.SSLKEY else ''
+        nb_host = 'localhost' if htpc.settings.get('app_host') == '0.0.0.0' else htpc.settings.get('app_host')
+        openbrowser = 'http%s://%s:%s%s' % (nb_ssl, nb_host,  htpc.PORT, htpc.WEBDIR[:-1])
+        webbrowser.open(openbrowser, new=2, autoraise=True)
 
     # Start the server
     from htpc.server import start

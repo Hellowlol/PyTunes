@@ -11,7 +11,7 @@ var movieLoad = {
 
 $(document).ready(function() {
     hideWatched = $('#hidewatched').hasClass('active')?1:0;
-    playerLoader = setInterval('loadNowPlaying()', 2000);
+    //playerLoader = setInterval('loadNowPlaying()', 2000);
 
     // Load data on tab display
     $('a[data-toggle=\'tab\']').click(function(e) {
