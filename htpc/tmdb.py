@@ -96,18 +96,21 @@ def Search(query, type):
         return search.movie({'query':query})
 
 def Upcoming():
-    return tmdb.Movie.upcoming()
+    print tmdb.Movie.upcoming()
+    #return tmdb.Movie.upcoming()
+    return
 
 def Nowplaying():
     return tmdb.Movie.now_playing()
 
-
 def Popular():
     return tmdb.Movie.popular()
 
-
 def Toprated():
-    return tmdb.Movie.toprated()
+    return tmdb.Movie.top_rated()
+
+def Latest():
+    return tmdb.Movie.latest()
 
 
 

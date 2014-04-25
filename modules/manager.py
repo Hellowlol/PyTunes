@@ -2,6 +2,7 @@
 import cherrypy
 import htpc
 from htpc import scheduler
+from htpc import tmdb
 import time
 import threading
 import base64
@@ -481,6 +482,16 @@ class Manager:
             tracks=response['tracks'],
             description=response['description'][0],
         )
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def UpComingMovies(self):
+        """ Get list of upcoming movies """
+        #self.logger.error("Get list of upcoming movies")
+        #print 'upcoming'
+        #upcoming = tmdb.Upcoming()
+        #return loads('kosdfflnveniuern')
+        return
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()

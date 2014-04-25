@@ -6,7 +6,20 @@ $(document).ready(function () {
     loadNZBGetDownloadHistory();
     loadWantedMovies();
     loadNextAired();
+    loadUpcomingMovies();
 });
+
+function loadUpcomingMovies() {
+    //alert("I am an alert box!");
+    $.ajax({
+        'url': WEBDIR + 'manager/UpcomingMovies',
+            'dataType': 'text',
+            'success': function (response) {
+                //alert("I am an alert box!" + response);
+                if (response === null) return;
+            }
+    });
+}
 
 function loadRecentMovies() {
     if (!$('#movie-carousel').length) return;
