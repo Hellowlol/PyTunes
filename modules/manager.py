@@ -1,15 +1,14 @@
 """ Module for Media Management  """
 import cherrypy
 import htpc
-from htpc import scheduler
-from htpc import tmdb
+from htpc import tmdb, staticvars, scheduler
 import time
 import threading
 import base64
 import socket
 import struct
 import json
-import simplejson
+import simplejson as json
 from cherrypy.process.plugins import Monitor
 from htpc.xdb import *
 from itertools import chain
@@ -484,14 +483,17 @@ class Manager:
         )
 
     @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def UpComingMovies(self):
-        """ Get list of upcoming movies """
-        #self.logger.error("Get list of upcoming movies")
-        #print 'upcoming'
-        #upcoming = tmdb.Upcoming()
-        #return loads('kosdfflnveniuern')
-        return
+    def Carousel(self, carousel, page=1):
+        self.logger.debug("Get list of movies for %s" % carousel)
+        movies = ''
+        carousel_item = "<div class='item carousel-item' style='background-image: url(/manager/GetThumb?h=240&w=430&thumb='http://image.tmdb.org/t/p/original%s')'><div class='carousel-caption'><h4>%s (%s)</h4></div></div>"
+        if carousel == 'upcoming':
+            data = tmdb.Upcoming(page)
+        if carousel == 'releases':
+            data = tmdb.Upcoming(page)
+        for each in data['results']:
+            movies += carousel_item % (each['poster_path'], each['title'], each['release_date']) 
+        return movies
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -522,9 +524,9 @@ class Manager:
     @cherrypy.expose()
     def GetThumb(self, thumb=None, h=None, w=None, o=100):
         """ Parse thumb to get the url and send to htpc.proxy.get_image """
-        url = self.url('/images/DefaultVideo.png')
+        url = '/images/DefaultVideo.png'
         if thumb:
-            url = self.url('/image/' + quote(thumb))
+            url = quote(thumb)
 
         self.logger.debug("Trying to fetch image via " + url)
         return get_image(url, h, w, o, self.auth())

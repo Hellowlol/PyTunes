@@ -198,8 +198,9 @@ h6.title {
 }
 .modal .modal-youtube {
     border: 0;
-    height: 415px;
-    width: 910px;
+    height: 425px;
+    width: 100%;
+    overflow: hidden;
 }
 .modal-h3 {
     color: #fff;

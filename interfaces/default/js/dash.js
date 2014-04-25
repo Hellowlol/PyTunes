@@ -6,18 +6,37 @@ $(document).ready(function () {
     loadNZBGetDownloadHistory();
     loadWantedMovies();
     loadNextAired();
+    loadNewReleases();
     loadUpcomingMovies();
 });
 
 function loadUpcomingMovies() {
-    //alert("I am an alert box!");
+    if (!$('#upcoming-carousel').length) return;
     $.ajax({
-        'url': WEBDIR + 'manager/UpcomingMovies',
-            'dataType': 'text',
-            'success': function (response) {
-                //alert("I am an alert box!" + response);
-                if (response === null) return;
-            }
+        'url': WEBDIR + 'manager/Carousel?carousel=upcoming&page=3',
+        type: 'get',
+            'dataType': 'html',
+            'success': function (data) {
+            //alert("Response: " + data);
+            if (data === null) return;
+            $('#upcoming-carousel .carousel-inner').append(data);
+            $('#upcoming-carousel').show();
+        }
+    });
+}
+
+function loadNewReleases() {
+    if (!$('#releases-carousel').length) return;
+    $.ajax({
+        'url': WEBDIR + 'manager/Carousel?carousel=releases&page=1',
+        type: 'get',
+            'dataType': 'html',
+            'success': function (data) {
+            //alert("Response: " + data);
+            if (data === null) return;
+            $('#releases-carousel .carousel-inner').append(data);
+            $('#releases-carousel').show();
+        }
     });
 }
 

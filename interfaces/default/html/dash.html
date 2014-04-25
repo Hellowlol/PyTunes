@@ -111,30 +111,22 @@
             %endif
             %if settings.get('dash_releases', 0):
             <div class="span4">
-                <h3><a href="manager/#releases">New Releases</a></h3>
-                <table class="table table-striped table-main">
-                    <thead>
-                        <tr>
-                            <th>File</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="releases_table_body"></tbody>
-                </table>
+                <h3><a href="manager/#releases">Movie New Releases</a></h3>
+                <div id="releases-carousel" class="carousel slide hide">
+                    <div class="carousel-inner"></div>
+                    <a class="carousel-control left" href="#upcoming-carousel" data-slide="prev">&lsaquo;</a>
+                    <a class="carousel-control right" href="#upcoming-carousel" data-slide="next">&rsaquo;</a>
+                </div>
             </div>
             %endif
             %if settings.get('dash_coming', 0):
             <div class="span4">
-                <h3><a href="manager/#coming">Coming Soon</a></h3>
-                <table class="table table-striped table-main">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Year</th>
-                        </tr>
-                    </thead>
-                    <tbody id="coming_table_body"></tbody>
-                </table>
+                <h3><a href="manager/#coming">Upcoming Movies</a></h3>
+                <div id="upcoming-carousel" class="carousel slide hide">
+                    <div class="carousel-inner"></div>
+                    <a class="carousel-control left" href="#upcoming-carousel" data-slide="prev">&lsaquo;</a>
+                    <a class="carousel-control right" href="#upcoming-carousel" data-slide="next">&rsaquo;</a>
+                </div>
             </div>
             %endif
             %if settings.get('dash_musicfound', 0):

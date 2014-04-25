@@ -54,6 +54,7 @@ ${arts}
     </art>
 </movie>
     """
+
     vars['actor'] = """
     <actor>
         <name>%s</name>
@@ -61,5 +62,16 @@ ${arts}
         <thumb>%s</thumb>
     </actor> 
     """
+    vars['carousel_item'] = "<div class='item carousel-item' style='background-image: url(\"/xbmc/GetThumb?h=240&w=430&thumb=http://image.tmdb.org/t/p/original%s\")'><div class='carousel-caption'><h4>%s (%s)</h4></div></div>"
+    
+    vars['carousel_item2'] = """
+<div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=http://image.tmdb.org/t/p/original%s')">
+    <div class='carousel-caption'>
+        <h4>%s (%s)</h4>
+            <b>Rating</b>: 
+    </div>
+</div> 
+    """
+    
     return vars[var]
 

@@ -95,22 +95,25 @@ def Search(query, type):
         search = tmdb.Search()
         return search.movie({'query':query})
 
-def Upcoming():
-    print tmdb.Movie.upcoming()
-    #return tmdb.Movie.upcoming()
-    return
+def Upcoming(page):
+    stuff = tmdb.Movies()
+    return stuff.upcoming({'page':page})
 
-def Nowplaying():
-    return tmdb.Movie.now_playing()
+def Nowplaying(page):
+    stuff = tmdb.Movies()
+    return stuff.now_playing({'page':page})
 
-def Popular():
-    return tmdb.Movie.popular()
+def Popular(page):
+    stuff = tmdb.Movies()
+    return stuff.popular({'page':page})
 
-def Toprated():
-    return tmdb.Movie.top_rated()
+def Toprated(page):
+    stuff = tmdb.Movies()
+    return stuff.top_rated({'page':page})
 
-def Latest():
-    return tmdb.Movie.latest()
+def Latest(page):
+    stuff = tmdb.Movies()
+    return stuff.latest({'page':page})
 
 
 
