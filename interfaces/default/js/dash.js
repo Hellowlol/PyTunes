@@ -6,18 +6,50 @@ $(document).ready(function () {
     loadNZBGetDownloadHistory();
     loadWantedMovies();
     loadNextAired();
-    loadNewReleases();
+    loadPopular();
+    loadTopRated();
+    loadInTheaters();
     loadUpcomingMovies();
 });
+
+function loadTopRated() {
+    if (!$('#toprated-carousel').length) return;
+    $.ajax({
+        'url': WEBDIR + 'manager/Carousel?carousel=toprated&page=1',
+        type: 'get',
+            'dataType': 'html',
+            'success': function (data) {
+            //alert("Toprated: " + data);
+            if (data === null) return;
+            $('#toprated-carousel .carousel-inner').append(data);
+            $('#toprated-carousel').show();
+        }
+    });
+}
+
+function loadInTheaters() {
+    if (!$('#theaters-carousel').length) return;
+    $.ajax({
+        'url': WEBDIR + 'manager/Carousel?carousel=theaters&page=1',
+        type: 'get',
+            'dataType': 'html',
+            'success': function (data) {
+            //alert("Theaters: " + data);
+            if (data === null) return;
+            $('#theaters-carousel .carousel-inner').append(data);
+            $('#theaters-carousel').show();
+        }
+    });
+}
 
 function loadUpcomingMovies() {
     if (!$('#upcoming-carousel').length) return;
     $.ajax({
-        'url': WEBDIR + 'manager/Carousel?carousel=upcoming&page=3',
+        'url': WEBDIR + 'manager/Carousel?carousel=upcoming&page=1',
         type: 'get',
             'dataType': 'html',
             'success': function (data) {
-            //alert("Response: " + data);
+            //alert("Upcoming: " + data);
             if (data === null) return;
             $('#upcoming-carousel .carousel-inner').append(data);
             $('#upcoming-carousel').show();
@@ -25,17 +57,17 @@ function loadUpcomingMovies() {
     });
 }
 
-function loadNewReleases() {
-    if (!$('#releases-carousel').length) return;
+function loadPopular() {
+    if (!$('#popular-carousel').length) return;
     $.ajax({
-        'url': WEBDIR + 'manager/Carousel?carousel=releases&page=1',
+        'url': WEBDIR + 'manager/Carousel?carousel=popular&page=1',
         type: 'get',
             'dataType': 'html',
             'success': function (data) {
-            //alert("Response: " + data);
+            //alert("Popular: " + data);
             if (data === null) return;
-            $('#releases-carousel .carousel-inner').append(data);
-            $('#releases-carousel').show();
+            $('#popular-carousel .carousel-inner').append(data);
+            $('#popular-carousel').show();
         }
     });
 }

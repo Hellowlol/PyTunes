@@ -486,13 +486,18 @@ class Manager:
     def Carousel(self, carousel, page=1):
         self.logger.debug("Get list of movies for %s" % carousel)
         movies = ''
-        carousel_item = "<div class='item carousel-item' style='background-image: url(/manager/GetThumb?h=240&w=430&thumb='http://image.tmdb.org/t/p/original%s')'><div class='carousel-caption'><h4>%s (%s)</h4></div></div>"
+        carousel_item = """<div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=http://image.tmdb.org/t/p/original%s')"><div class="carousel-caption"><h4>%s (%s)</h4></div></div>"""
         if carousel == 'upcoming':
             data = tmdb.Upcoming(page)
-        if carousel == 'releases':
-            data = tmdb.Upcoming(page)
+        if carousel == 'toprated':
+            data = tmdb.Toprated(page)
+        if carousel == 'theaters':
+            data = tmdb.Nowplaying(page)
+        if carousel == 'popular':
+            data = tmdb.Popular(page)
+        #print data
         for each in data['results']:
-            movies += carousel_item % (each['poster_path'], each['title'], each['release_date']) 
+            movies += carousel_item % (each['backdrop_path'], each['title'], each['release_date']) 
         return movies
 
     @cherrypy.expose()
@@ -525,11 +530,12 @@ class Manager:
     def GetThumb(self, thumb=None, h=None, w=None, o=100):
         """ Parse thumb to get the url and send to htpc.proxy.get_image """
         url = '/images/DefaultVideo.png'
+        print 'thumb: ', thumb
         if thumb:
             url = quote(thumb)
 
         self.logger.debug("Trying to fetch image via " + url)
-        return get_image(url, h, w, o, self.auth())
+        return get_image(url, h, w, o, "")
 
 
     @cherrypy.expose()
@@ -618,6 +624,7 @@ class Manager:
             self.logger.debug("Exception: " + str(e))
             self.logger.error("Unable to fetch albums!")
             return
+
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def GetSongs(self, start=0, end=0, albumid=None, artistid=None, filter='', *args, **kwargs):
@@ -643,71 +650,6 @@ class Manager:
             self.logger.error("Unable to fetch artists!")
             return
 
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def GetChannelGroups(self, type='tv'):
-        """ Get PVR channel list from xbmc """
-        self.logger.debug("Loading XBMC PVC channel list.")
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            return xbmc.PVR.GetChannelGroups(channeltype=type)
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to fetch channelgroups!")
-            return
-
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def GetChannels(self, type='tv', group=2):
-        """ Get PVR channel list from xbmc """
-        self.logger.debug("Loading XBMC PVC channel list.")
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            return xbmc.PVR.GetChannels(channelgroupid=int(group), properties=['thumbnail'])
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to fetch channels!")
-            return
-
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def PlayItem(self, item=None, type=None):
-        """ Play a file in XBMC """
-        self.logger.debug("Playing '" + item + "' of the type " + type)
-        xbmc = Server(self.url('/jsonrpc', True))
-        if type == 'movie':
-            return xbmc.Player.Open(item={'movieid': int(item)}, options={'resume': True})
-        elif type == 'episode':
-            return xbmc.Player.Open(item={'episodeid': int(item)}, options={'resume': True})
-        elif type == 'channel':
-            return xbmc.Player.Open(item={'channelid': int(item)})
-        elif type == 'artist':
-            return xbmc.Player.Open(item={'artistid': int(item)})
-        elif type == 'album':
-            return xbmc.Player.Open(item={'albumid': int(item)})
-        elif type == 'song':
-            return xbmc.Player.Open(item={'songid': int(item)})
-        else:
-            return xbmc.Player.Open(item={'file': item})
-
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def QueueItem(self, item, type):
-        """ Queue a file in XBMC """
-        self.logger.debug("Enqueueing '" + item + "' of the type " + type)
-        xbmc = Server(self.url('/jsonrpc', True))
-        if type == 'movie':
-            return xbmc.Playlist.Add(playlistid=1, item={'movieid': int(item)})
-        elif type == 'episode':
-            return xbmc.Playlist.Add(playlistid=1, item={'episodeid': int(item)})
-        elif type == 'channel':
-            return xbmc.Playlist.Add(playlistid=1, item={'channelid': int(item)})
-        elif type == 'artist':
-            return xbmc.Playlist.Add(playlistid=0, item={'artistid': int(item)})
-        elif type == 'album':
-            return xbmc.Playlist.Add(playlistid=0, item={'albumid': int(item)})
-        elif type == 'song':
-            return xbmc.Playlist.Add(playlistid=0, item={'songid': int(item)})
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()

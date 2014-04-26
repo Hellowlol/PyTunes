@@ -111,10 +111,6 @@ def Toprated(page):
     stuff = tmdb.Movies()
     return stuff.top_rated({'page':page})
 
-def Latest(page):
-    stuff = tmdb.Movies()
-    return stuff.latest({'page':page})
-
 
 
 
