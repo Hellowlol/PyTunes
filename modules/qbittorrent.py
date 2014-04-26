@@ -116,9 +116,10 @@ class qbittorrent:
                 r = urllib2.urlopen(url + cmd)   
             data = urllib.urlencode(data)        
             result = urllib2.urlopen(url, data).read()
-            return result       
+            return cmd + result        
         except Exception as e:
             self.logger.error("Failed at %s %s %s %s" % (cmd, name, hash ,e))
+            return cmd + 'Failed'
     
     # Sets global upload and download speed
     @cherrypy.expose

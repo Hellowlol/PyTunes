@@ -1,20 +1,24 @@
 """
 Logging
 """
+import time
+import re
+import stat
 import os
 import cherrypy
 import htpc
 import logging
+import logging.handlers as handlers
 
 
 class Log:
     """ Root class """
     def __init__(self):
         """ Initialize the logger """
-        self.logfile = os.path.join(htpc.DATADIR, 'htpcmanager.log')
+        self.logfile = os.path.join(htpc.DATADIR, 'pytunes.log')
         htpc.LOGGER = logging.getLogger()
         self.logch = logging.StreamHandler()
-        self.logfh = logging.FileHandler(self.logfile)
+        self.logfh = handlers.TimedRotatingFileHandler(self.logfile, when='midnight', interval=1, backupCount=5)
 
         logformatter = logging.Formatter('%(asctime)s :: %(name)s :: %(levelname)s :: %(message)s', "%Y-%m-%d %H:%M:%S")
         self.logch.setFormatter(logformatter)
@@ -41,7 +45,7 @@ class Log:
         htpc.LOGGER.addHandler(self.logch)
         htpc.LOGGER.addHandler(self.logfh)
 
-        htpc.LOGGER.info("Welcome to HTPC-Manager!")
+        htpc.LOGGER.info("Welcome to PyTunes Media Server Manager!")
         htpc.LOGGER.info("Loglevel set to " + htpc.LOGLEVEL)
 
     @cherrypy.expose()

@@ -13,6 +13,8 @@ from threading import Thread
 def do_restart():
     arguments = sys.argv[:]
     arguments.insert(0, sys.executable)
+    if '--nobrowser' not in arguments:
+        arguments.append('--nobrowser')
     if sys.platform == 'win32':
         arguments = ['"%s"' % arg for arg in arguments]
     os.chdir(os.getcwd())
@@ -41,12 +43,12 @@ class Root:
         """ Shutdown CherryPy and exit script """
         self.logger.info("Shutting down htpc-manager.")
         cherrypy.engine.exit()
-        return "HTPC Manager has shut down"
+        return "PyTunes Media Server Manager has shut down"
 
     @cherrypy.tools.json_out()
     @cherrypy.expose()
     def restart(self):
         """ Shutdown script and rerun with the same variables """
-        self.logger.info("Restarting htpc-manager.")
+        self.logger.info("Restarting PyTunes.")
         Thread(target=do_restart).start()
         return "Restart in progress."
