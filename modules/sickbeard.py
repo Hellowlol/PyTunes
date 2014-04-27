@@ -4,6 +4,7 @@ from urllib import quote
 from urllib2 import urlopen
 from json import loads
 import logging
+import cgi
 
 
 class Sickbeard:
@@ -120,6 +121,19 @@ class Sickbeard:
     def RemoveShow(self, tvdbid):
         self.logger.debug("Force full update for tvdbid " + tvdbid)
         return self.fetch("show.delete&tvdbid=" + tvdbid)
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def ChangeStatus(self):
+        self.logger.debug("Changing Show Status")
+        form = cgi.FieldStorage()
+        name = form.getfirst('statusSelect', 'empty')
+        status = cgi.escape(statusSelect)
+        episodes = form.getlist('changestatus')
+        for each in episodes:
+            tvdbid, season, episode = cgi.escape(each).split('|')
+            self.fetch("episode.setstatus&tvdbid=%s&season=%s&episode=%s&status=%s" % (tvdbid, season, episode, status) 
+        return
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()

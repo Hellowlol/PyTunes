@@ -1,7 +1,12 @@
 $(document).ready(function () {
     var showid = $('div.page-title').attr('data-showid');
     loadShowData(showid);
+
     $('#banner').css('background-image', 'url(' + WEBDIR + 'sickbeard/GetBanner/' + showid + ')');
+
+    $("#ckbCheckAll").click(function () {
+        $(".checkBoxClass").prop('checked', $(this).prop('checked'));
+    });
 });
 
 function loadShowData(showid){
@@ -89,6 +94,7 @@ function renderSeason(){
     type: 'get',
     dataType: 'json',
     success: function(data){
+      $("#ckbCheckAll").prop('checked', false);
       var seasonContent = $('#season-content');
       seasonContent.html(''); // Clear table contents before inserting new rows
 
@@ -106,7 +112,10 @@ function renderSeason(){
           searchEpisode(showid, season, index, value.name);
         });
 
+        var checkbox = $('<input>').addClass('checkBoxClass').attr('type', 'checkbox').attr('name', 'changestatus').attr('value', showid +'|' + season + '|' + index);
+
         row.append(
+          $('<td>').html(checkbox),
           $('<td>').text(index),
           $('<td>').text(value.name),
           $('<td>').text(value.airdate),

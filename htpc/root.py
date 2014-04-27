@@ -41,7 +41,7 @@ class Root:
     @cherrypy.expose()
     def shutdown(self):
         """ Shutdown CherryPy and exit script """
-        self.logger.info("Shutting down htpc-manager.")
+        self.logger.info("Shutting down PyTunes.")
         cherrypy.engine.exit()
         return "PyTunes Media Server Manager has shut down"
 
