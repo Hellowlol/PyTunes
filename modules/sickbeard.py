@@ -132,7 +132,7 @@ class Sickbeard:
         episodes = form.getlist('changestatus')
         for each in episodes:
             tvdbid, season, episode = cgi.escape(each).split('|')
-            self.fetch("episode.setstatus&tvdbid=%s&season=%s&episode=%s&status=%s" % (tvdbid, season, episode, status) 
+            self.fetch("episode.setstatus&tvdbid=%s&season=%s&episode=%s&status=%s" % (tvdbid, season, episode, status)) 
         return
 
     @cherrypy.expose()
