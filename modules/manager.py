@@ -497,7 +497,8 @@ class Manager:
             data = tmdb.Popular(page)
         #print data
         for each in data['results']:
-            movies += carousel_item % (each['backdrop_path'], each['title'], each['release_date']) 
+            if each['backdrop_path']:
+                movies += carousel_item % (each['backdrop_path'], each['title'], each['release_date']) 
         return movies
 
     @cherrypy.expose()
@@ -529,14 +530,19 @@ class Manager:
     @cherrypy.expose()
     def GetThumb(self, thumb=None, h=None, w=None, o=100):
         """ Parse thumb to get the url and send to htpc.proxy.get_image """
-        url = '/images/DefaultVideo.png'
-        print 'thumb: ', thumb
+        if h and w:
+            if int(h)/int(w) > 1.15:
+                url = '/images/no_art_poster.png'
+            elif int(h)/int(w) < .85:
+                url = '/images/no_art_fanart'
+            else:
+                url = '/images/no_art_square.png'
+        else:
+            url = '/images/no_art_square.png'
         if thumb:
-            url = quote(thumb)
-
-        self.logger.debug("Trying to fetch image via " + url)
+            url = thumb
+            self.logger.debug("Trying to fetch image via " + url)
         return get_image(url, h, w, o, "")
-
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
