@@ -483,6 +483,18 @@ class Manager:
         )
 
     @cherrypy.expose()
+    def InTheaters(self):
+        self.logger.debug("Get list of movies in theaters")
+        thumb_item = """<li title="%s"><a href="#"><img class="thumbnail" src="/manager/GetThumb?w=100&h=150&thumb=http://image.tmdb.org/t/p/original%s"></img><h6 class="title">%s</h6></a></li>"""
+        page = 1
+        data = tmdb.Toprated(page)
+        movies = ''
+        for each in data['results']:
+            if each['poster_path']:
+                movies += thumb_item % ( each['title'], each['poster_path'], each['title']) 
+        return movies
+
+    @cherrypy.expose()
     def Carousel(self, carousel, page=1):
         self.logger.debug("Get list of movies for %s" % carousel)
         movies = ''

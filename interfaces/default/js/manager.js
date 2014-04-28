@@ -1,10 +1,27 @@
 
+function loadInTheaters() {
+   $('#theater-grid').empty();
+    theaterLoad.request = $.ajax({
+        url: WEBDIR + "manager/InTheaters",
+        type: 'get',
+        dataType: 'html',
+        success: function (data) {
+            if (data === null) return errorHandler();
+            $('#theaters-grid').append(data);
+        },
+        complete: function () {
+            $('.spinner').hide();
+        }
+    });
+}
+
 var movieLoad = {
     offset: 0,
     request: null,
     limit: 15,
     options: null
 };
+
 
 function loadMovies() {
    $('#movie-table').empty();
