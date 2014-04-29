@@ -237,6 +237,14 @@ class Xbmc:
         )
 
     @cherrypy.expose()
+    def GetTotals(self):
+        #properties = ['year']
+        #sort = {'order': None, 'method': None, 'ignorearticle': False}
+        #return xbmc.VideoLibrary.GetMovies(sort=sort, properties=properties, limits=limits, filter=filter)
+        movies = xbmc.VideoLibrary.GetMovies()
+        return
+
+    @cherrypy.expose()
     def GetThumb(self, thumb=None, h=None, w=None, o=100):
         """ Parse thumb to get the url and send to htpc.proxy.get_image """
         url = self.url('/images/DefaultVideo.png')

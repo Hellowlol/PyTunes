@@ -360,33 +360,54 @@ class Stats:
     
 
     @cherrypy.expose()
-    def command(self, cmd=None, pid=None, signal=None, popen=None):
-        msg = None
+    def command(self, cmd=None, pid=None, signal=None):
+        #pid = int(json.loads(pid))
+        print 'in command', cmd, pid
         dmsg = {}
+        jmsg = None
         try:
             if pid:
                 p = psutil.Process(pid=int(pid))
                 name = p.name()
             else:
                 pass
-            
+
             if cmd == 'kill':
-                #Try to terminate the process gracefully
-                p.terminate()
-                # Wait for the process to terminate, if it hasnt within the timeout
-                p.wait(timeout=5)
-                # PEW kill process with laz0rbeams
-                p.kill()
-                msg = 'Killed %s pid %s successfully'% (name, pid)
+                try:
+                    p.terminate()
+                    dmsg['status'] = 'success'
+                    msg = 'Terminated process %s %s' % (name, pid)
+                    p.wait()
+
+                except psutil.NoSuchProcess:
+                    msg = 'Process %s does not exist' % name
+
+                except psutil.AccessDenied:
+                    msg = 'Dont have permission to terminate/kill %s %s' % (name,pid)
+                    dmsg['status'] = 'error'
+
+                except psutil.TimeoutExpired:
+                    p.kill()
+                    dmsg['status'] = 'success'
+                    msg = 'Killed process %s %s' % (name, pid)
+
+                dmsg['msg'] = msg
+                jmsg = json.dumps(dmsg)
+                self.logger.info(msg)
+                return jmsg
+
             elif cmd == 'signal':
-                psutil.send_signal(signal)
-            elif cmd == 'popen':
-                r = psutil.Popen([popen], stdout=PIPE)
-                msg = r.communicate()               
-            dmsg['msg'] = msg
-            return json.dumps(dmsg)
+                p.send_signal(signal)
+                msg = '%ed pid %s successfully with %s'% (cmd, name, pid, signal)
+                dmsg['msg'] = msg
+                jmsg = json.dumps(dmsg)
+                self.logger.info(msg)
+                return jmsg
+
         except Exception as e:
-            print 'error system command function :', e
+            self.logger.error("Error trying to %s %s" % (cmd, e))
+
+
 
     @cherrypy.expose()
     def cmdpopen(self, cmd=None, popen=None):

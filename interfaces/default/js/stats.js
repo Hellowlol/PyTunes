@@ -248,6 +248,21 @@ function return_settings3() {
     });
 }
 
+function loadProcess(pid) {
+    if (confirm('Are you sure you want to kill this process?')) {
+        $.getJSON(WEBDIR + "stats/command?cmd=kill&pid=" + pid, function (response) {
+            $.pnotify({
+                title: 'Response',
+                text: response.msg,
+                type: 'success',
+                width: '500px',
+                min_height: '400px'
+            });
+
+        });
+    }
+}
+
 function processes() {
     $.ajax({
         'url': WEBDIR + 'stats/processes',
@@ -256,16 +271,17 @@ function processes() {
             $('#proc-table').html("");
             $('#error_message').text("");
             $.each(response, function (i, proc) {
+                pid = proc.pid
                 var row = $('<tr>');
                 //Pid might be used for popen stuff later
                 var pidAnchor = $('<a>').attr('href', '#').click(function (e) {
                     e.preventDefault();
                     loadProcess({
-                        'pid': proc.pid
+                        'pid': pid
                     });
                 });
-                pidAnchor.append(proc.pid);
-                row.attr('data-pid', proc.pid);
+                pidAnchor.append(pid);
+                row.attr('data-pid', pid);
                 row.append(
                     //pidAnchor,
                     $('<td>').addClass('processes-pid').html(pidAnchor),
@@ -278,7 +294,7 @@ function processes() {
                     //$('<td>').addClass('processes-memory-info span2').text(proc.memory_percent.toFixed(2) + ' %  / ' + getReadableFileSizeString(proc.memory_info[0])),
                     $('<td>').addClass('processes-memory-info').text(proc.memory_percent.toFixed(2) + '%'),
                     $('<td>').addClass('processes-runningtime').text(proc.r_time),
-                    $('<td>').append('<button class="btn btn-mini btn-danger"><i class="icon-remove cmd" data-cmd="kill" data-pid=' + proc.pid + '></i></button>')
+                    $('<td>').append('<button class="btn btn-mini btn-danger"><i class="icon-remove cmd" data-cmd="kill" data-pid=' + pid + '></i></button>')
                 );
                 $('#proc-table').append(row);
             });
@@ -286,7 +302,6 @@ function processes() {
         }
     });
 }
-
 
 function reloadtab() {
     if ($('#diskt').is(':visible')) {
