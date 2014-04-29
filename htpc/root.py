@@ -39,6 +39,11 @@ class Root:
         return "An error occured"
 
     @cherrypy.expose()
+    def notices(self):
+        """ Show notices """
+        return "Notice"
+
+    @cherrypy.expose()
     def shutdown(self):
         """ Shutdown CherryPy and exit script """
         self.logger.info("Shutting down PyTunes.")
