@@ -1,10 +1,10 @@
 import cherrypy
-import htpc
+import pytunes
 import glob
 import os
 import sys
-from htpc import staticvars
-from htpc.proxy import get_image
+from pytunes import staticvars
+from pytunes.proxy import get_image
 from urllib2 import urlopen, quote
 from json import loads
 import logging
@@ -14,7 +14,7 @@ from engines import ka
 class Torrents:
     def __init__(self):
         self.logger = logging.getLogger('modules.torrents')
-        htpc.MODULES.append({
+        pytunes.MODULES.append({
             'name': 'Torrent Search',
             'id': 'torrents',
             'fields': [
@@ -25,7 +25,7 @@ class Torrents:
 
     @cherrypy.expose()
     def index(self, query='', **kwargs):
-        return htpc.LOOKUP.get_template('torrents.html').render(scriptname='torrents')
+        return pytunes.LOOKUP.get_template('torrents.html').render(scriptname='torrents')
 
     @cherrypy.expose()
     def sizeof(self, num):

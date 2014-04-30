@@ -1,5 +1,5 @@
 import cherrypy
-import htpc
+import pytunes
 from urllib import quote
 from urllib2 import urlopen
 from json import loads
@@ -10,10 +10,10 @@ import cgi
 class Sickbeard:
     def __init__(self):
         self.logger = logging.getLogger('modules.sickbeard')
-        htpc.MODULES.append({
+        pytunes.MODULES.append({
             'name': 'Sickbeard',
             'id': 'sickbeard',
-            'test': htpc.WEBDIR + 'sickbeard/ping',
+            'test': pytunes.WEBDIR + 'sickbeard/ping',
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'sickbeard_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'sickbeard_name', 'placeholder':'Sickbeard'},
@@ -26,7 +26,7 @@ class Sickbeard:
 
     @cherrypy.expose()
     def index(self):
-        return htpc.LOOKUP.get_template('sickbeard.html').render(scriptname='sickbeard')
+        return pytunes.LOOKUP.get_template('sickbeard.html').render(scriptname='sickbeard')
 
     @cherrypy.expose()
     def view(self, tvdbid):
@@ -35,7 +35,7 @@ class Sickbeard:
             self.logger.error("Invalid show ID was supplied: " + str(tvdbid))
             return False
 
-        return htpc.LOOKUP.get_template('sickbeard_view.html').render(scriptname='sickbeard_view', tvdbid=tvdbid)
+        return pytunes.LOOKUP.get_template('sickbeard_view.html').render(scriptname='sickbeard_view', tvdbid=tvdbid)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -169,11 +169,11 @@ class Sickbeard:
 
     def fetch(self, cmd, img=False, timeout=10):
         try:
-            host = htpc.settings.get('sickbeard_host', '')
-            port = str(htpc.settings.get('sickbeard_port', ''))
-            apikey = htpc.settings.get('sickbeard_apikey', '')
-            ssl = 's' if htpc.settings.get('sickbeard_ssl', 0) else ''
-            sickbeard_basepath = htpc.settings.get('sickbeard_basepath', '/')
+            host = pytunes.settings.get('sickbeard_host', '')
+            port = str(pytunes.settings.get('sickbeard_port', ''))
+            apikey = pytunes.settings.get('sickbeard_apikey', '')
+            ssl = 's' if pytunes.settings.get('sickbeard_ssl', 0) else ''
+            sickbeard_basepath = pytunes.settings.get('sickbeard_basepath', '/')
 
             if not (sickbeard_basepath.endswith('/')):
                 sickbeard_basepath += "/"

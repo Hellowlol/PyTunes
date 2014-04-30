@@ -3,7 +3,7 @@ import requests
 
 __author__ = 'quentingerome'
 import logging
-import htpc
+import pytunes
 import cherrypy
 from HTMLParser import HTMLParser
 
@@ -93,10 +93,10 @@ class UTorrent:
 	_cookies = None
 
 	def __init__(self):
-		htpc.MODULES.append({
+		pytunes.MODULES.append({
 		'name': 'uTorrent',
 		'id': 'utorrent',
-		'test': htpc.WEBDIR + 'utorrent/ping',
+		'test': pytunes.WEBDIR + 'utorrent/ping',
 		'fields': [
 			{'type': 'bool', 'label': 'Enable', 'name': 'utorrent_enable'},
 			{'type': 'text', 'label': 'Menu name', 'name': 'utorrent_name', 'placeholder':'uTorrent'},
@@ -108,7 +108,7 @@ class UTorrent:
 
 	@cherrypy.expose()
 	def index(self):
-		return htpc.LOOKUP.get_template('utorrent.html').render(scriptname='utorrent')
+		return pytunes.LOOKUP.get_template('utorrent.html').render(scriptname='utorrent')
 
 	@cherrypy.expose()
 	@cherrypy.tools.json_out()
@@ -178,8 +178,8 @@ class UTorrent:
 			return {'result': 500}
 
 	def _get_url(self, host=None, port=None):
-		u_host = host or htpc.settings.get('utorrent_host')
-		u_port = port or htpc.settings.get('utorrent_port')
+		u_host = host or pytunes.settings.get('utorrent_host')
+		u_port = port or pytunes.settings.get('utorrent_port')
 
 		return 'http://{}:{}/gui/'.format(u_host, u_port)
 
@@ -216,10 +216,10 @@ class UTorrent:
         :rtype: requests.Response
         :return:
         """
-		password = htpc.settings.get('utorrent_password', '')
-		username = htpc.settings.get('utorrent_username', '')
-		host = htpc.settings.get('utorrent_host')
-		port = htpc.settings.get('utorrent_port')
+		password = pytunes.settings.get('utorrent_password', '')
+		username = pytunes.settings.get('utorrent_username', '')
+		host = pytunes.settings.get('utorrent_host')
+		port = pytunes.settings.get('utorrent_port')
 		try:
 			return self._fetch(host, port, username, password, args)
 		except requests.ConnectionError:

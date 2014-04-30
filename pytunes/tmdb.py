@@ -1,7 +1,7 @@
-import htpc
+import pytunes
 from datetime import datetime
 from tmdbsimple import TMDB
-tmdb = TMDB(htpc.settings.get('tmdb_apikey', ''))
+tmdb = TMDB(pytunes.settings.get('tmdb_apikey', ''))
 tmdb_url = 'http://image.tmdb.org/t/p/original'
 
 def MovieInfo(tmdbid):

@@ -1,11 +1,11 @@
 import cherrypy
-import htpc
+import pytunes
 import re
 import socket
 import struct
 from json import loads, dumps
 from urllib2 import Request, urlopen
-from htpc.proxy import get_image
+from pytunes.proxy import get_image
 import logging
 import urllib
 
@@ -24,10 +24,10 @@ class Plex:
     def __init__(self):
         self.logger = logging.getLogger('modules.plex')
 
-        htpc.MODULES.append({
+        pytunes.MODULES.append({
             'name': 'Plex',
             'id': 'plex',
-            'test': htpc.WEBDIR + 'plex/ping',
+            'test': pytunes.WEBDIR + 'plex/ping',
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'plex_enable'},
 
@@ -61,13 +61,13 @@ class Plex:
 
     @cherrypy.expose()
     def index(self):
-        return htpc.LOOKUP.get_template('plex.html').render(scriptname='plex')
+        return pytunes.LOOKUP.get_template('plex.html').render(scriptname='plex')
 
     @cherrypy.expose()
     def webinterface(self):
         """ Generate page from template """
-        plex_host = htpc.settings.get('plex_host', 'localhost')
-        plex_port = htpc.settings.get('plex_port', '32400')
+        plex_host = pytunes.settings.get('plex_host', 'localhost')
+        plex_port = pytunes.settings.get('plex_port', '32400')
 
         url = "http://%s:%s/web" % (plex_host, plex_port)
 
@@ -80,8 +80,8 @@ class Plex:
         self.logger.debug("Fetching recent Movies")
 
         try:
-            plex_host = htpc.settings.get('plex_host', 'localhost')
-            plex_port = htpc.settings.get('plex_port', '32400')
+            plex_host = pytunes.settings.get('plex_host', 'localhost')
+            plex_port = pytunes.settings.get('plex_port', '32400')
             movies = []
 
             for section in self.JsonLoader(urlopen(Request('http://%s:%s/library/sections' % (plex_host, plex_port), headers={"Accept": "application/json"})).read())["_children"]:
@@ -131,8 +131,8 @@ class Plex:
     def GetRecentShows(self, limit=5):
         """ Get a list of recently added shows """
         try:
-            plex_host = htpc.settings.get('plex_host', 'localhost')
-            plex_port = htpc.settings.get('plex_port', '32400')
+            plex_host = pytunes.settings.get('plex_host', 'localhost')
+            plex_port = pytunes.settings.get('plex_port', '32400')
             episodes = []
 
             for section in self.JsonLoader(urlopen(Request('http://%s:%s/library/sections' % (plex_host, plex_port), headers={"Accept": "application/json"})).read())["_children"]:
@@ -177,8 +177,8 @@ class Plex:
     def GetRecentAlbums(self, limit=5):
         """ Get a list of recently added albums """
         try:
-            plex_host = htpc.settings.get('plex_host', 'localhost')
-            plex_port = htpc.settings.get('plex_port', '32400')
+            plex_host = pytunes.settings.get('plex_host', 'localhost')
+            plex_port = pytunes.settings.get('plex_port', '32400')
             albums = []
 
             for section in self.JsonLoader(urlopen(Request('http://%s:%s/library/sections' % (plex_host, plex_port), headers={"Accept": "application/json"})).read())["_children"]:
@@ -212,9 +212,9 @@ class Plex:
 
     @cherrypy.expose()
     def GetThumb(self, thumb=None, h=None, w=None, o=100):
-        """ Parse thumb to get the url and send to htpc.proxy.get_image """
+        """ Parse thumb to get the url and send to pytunes.proxy.get_image """
         if thumb:
-            url = "http://%s:%s%s" % (htpc.settings.get('plex_host', 'localhost'), htpc.settings.get('plex_port', '32400'), thumb)
+            url = "http://%s:%s%s" % (pytunes.settings.get('plex_host', 'localhost'), pytunes.settings.get('plex_port', '32400'), thumb)
         else:
             url = "/images/DefaultVideo.png"
 
@@ -228,8 +228,8 @@ class Plex:
         self.logger.debug("Fetching Movies")
 
         try:
-            plex_host = htpc.settings.get('plex_host', 'localhost')
-            plex_port = htpc.settings.get('plex_port', '32400')
+            plex_host = pytunes.settings.get('plex_host', 'localhost')
+            plex_port = pytunes.settings.get('plex_port', '32400')
             movies = []
             limits = {}
 
@@ -297,8 +297,8 @@ class Plex:
     def GetShows(self, start=0, end=0, hidewatched=0):
         """ Get a list of shows """
         try:
-            plex_host = htpc.settings.get('plex_host', '')
-            plex_port = htpc.settings.get('plex_port', '32400')
+            plex_host = pytunes.settings.get('plex_host', '')
+            plex_port = pytunes.settings.get('plex_port', '32400')
             tvShows = []
             limits = {}
 
@@ -353,8 +353,8 @@ class Plex:
     def GetArtists(self, start=0, end=0):
         """ Get a list of recently added artists """
         try:
-            plex_host = htpc.settings.get('plex_host', '')
-            plex_port = htpc.settings.get('plex_port', '32400')
+            plex_host = pytunes.settings.get('plex_host', '')
+            plex_port = pytunes.settings.get('plex_port', '32400')
             artists = []
             limits = {}
 
@@ -387,8 +387,8 @@ class Plex:
     def GetAlbums(self, start=0, end=0):
         """ Get a list of Albums """
         try:
-            plex_host = htpc.settings.get('plex_host', '')
-            plex_port = htpc.settings.get('plex_port', '32400')
+            plex_host = pytunes.settings.get('plex_host', '')
+            plex_port = pytunes.settings.get('plex_port', '32400')
             albums = []
             limits = {}
 
@@ -424,8 +424,8 @@ class Plex:
         """ Get information about a single TV Show """
         self.logger.debug("Loading information for TVID" + str(tvshowid))
         try:
-            plex_host = htpc.settings.get('plex_host', '')
-            plex_port = htpc.settings.get('plex_port', '32400')
+            plex_host = pytunes.settings.get('plex_host', '')
+            plex_port = pytunes.settings.get('plex_port', '32400')
             episodes = []
             limits = {}
 
@@ -482,7 +482,7 @@ class Plex:
         """ Send WakeOnLan package """
         self.logger.info("Waking up Plex Media Server")
         try:
-            addr_byte = htpc.settings.get('plex_mac', '').split(':')
+            addr_byte = pytunes.settings.get('plex_mac', '').split(':')
             hw_addr = struct.pack('BBBBBB',
             int(addr_byte[0], 16),
             int(addr_byte[1], 16),
@@ -494,7 +494,7 @@ class Plex:
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             s.sendto(msg, ("255.255.255.255", 9))
-            self.logger.info("WOL package sent to " + htpc.settings.get('plex_mac', ''))
+            self.logger.info("WOL package sent to " + pytunes.settings.get('plex_mac', ''))
             return 'WOL package sent'
         except Exception, e:
             self.logger.debug("Exception: " + str(e))
@@ -524,8 +524,8 @@ class Plex:
         """ Get information about current playing item """
         self.logger.debug("Fetching currently playing information")
         try:
-            plex_host = htpc.settings.get('plex_host', '')
-            plex_port = htpc.settings.get('plex_port', '32400')
+            plex_host = pytunes.settings.get('plex_host', '')
+            plex_port = pytunes.settings.get('plex_port', '32400')
             playing_items = []
 
             for video in self.JsonLoader(urlopen(Request('http://%s:%s/status/sessions' % (plex_host, plex_port), headers={"Accept": "application/json"})).read())["_children"]:
@@ -586,8 +586,8 @@ class Plex:
         """ Get information about current playing item """
         self.logger.debug("Updating Plex library")
         try:
-            plex_host = htpc.settings.get('plex_host', '')
-            plex_port = htpc.settings.get('plex_port', '32400')
+            plex_host = pytunes.settings.get('plex_host', '')
+            plex_port = pytunes.settings.get('plex_port', '32400')
 
             for section in self.JsonLoader(urlopen(Request('http://%s:%s/library/sections' % (plex_host, plex_port), headers={"Accept": "application/json"})).read())["_children"]:
                 if section_type == None or section_type == section['type']:
@@ -612,8 +612,8 @@ class Plex:
             self.playbackCommands = ['play', 'pause', 'stop', 'rewind', 'fastForward', 'stepForward', 'bigStepForward', 'stepBack', 'bigStepBack', 'skipNext', 'skipPrevious']
             self.applicationCommands = ['playFile', 'playMedia', 'screenshot', 'sendString', 'sendKey', 'sendVirtualKey', 'setVolume']
 
-            plex_host = htpc.settings.get('plex_host', '')
-            plex_port = htpc.settings.get('plex_port', '32400')
+            plex_host = pytunes.settings.get('plex_host', '')
+            plex_port = pytunes.settings.get('plex_port', '32400')
             if action in self.navigationCommands:
                 urllib.urlopen('http://%s:%s/system/players/%s/naviation/%s' % (plex_host, plex_port, player, action))
             elif action in self.playbackCommands:
@@ -635,8 +635,8 @@ class Plex:
         self.logger.debug("Getting players from Plex")
         try:
 
-            plex_host = htpc.settings.get('plex_host', '')
-            plex_port = htpc.settings.get('plex_port', '32400')
+            plex_host = pytunes.settings.get('plex_host', '')
+            plex_port = pytunes.settings.get('plex_port', '32400')
             players = []
             for player in self.JsonLoader(urlopen(Request('http://%s:%s/clients' % (plex_host, plex_port), headers={"Accept": "application/json"})).read())["_children"]:
 
@@ -742,8 +742,8 @@ class Plex:
         self.logger.debug("Playing '" + item + "' on player " + player)
         try:
 
-            plex_host = htpc.settings.get('plex_host', '')
-            plex_port = htpc.settings.get('plex_port', '32400')
+            plex_host = pytunes.settings.get('plex_host', '')
+            plex_port = pytunes.settings.get('plex_port', '32400')
             urllib.urlopen('http://%s:%s/system/players/%s/application/playMedia?key=/library/metadata/%s&viewOffset=%s&path=http://%s:%s/library/metadata/%s' % (plex_host, plex_port, player, item, offset, plex_host, plex_port, item))
 
         except Exception, e:

@@ -4,7 +4,7 @@ function search(query, catid) {
     $.ajax({
         url: WEBDIR + 'torrents/search?q=' + query + '&cat=' + catid,
         type: 'get',
-        dataType: 'text',
+        dataType: 'html',
         timeout: 60000,
         beforeSend: function () {
             $('#results_table_body').empty();
@@ -17,7 +17,7 @@ function search(query, catid) {
                 e.preventDefault();
                 var link = $(this);
                  $.getJSON(link.attr('href'), function () {
-                    notify('', 'Sent to qBittorrent', 'success');
+                    notify('', 'Sent to qBittorrent', 'success', '');
                 });
             });
         },

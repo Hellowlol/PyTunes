@@ -21,12 +21,12 @@ import subprocess
 import re
 from json import loads
 import cherrypy
-import htpc
+import pytunes
 import logging
 import tarfile
 import shutil
 
-from htpc.root import do_restart
+from pytunes.root import do_restart
 
 # configure git repo
 gitUser =  'madclicker'
@@ -37,7 +37,7 @@ gitBranch = 'develop'
 class Updater:
     """ Main class """
     def __init__(self):
-        self.logger = logging.getLogger('htpc.updater')
+        self.logger = logging.getLogger('pytunes.updater')
 
         self.updateEngineName = 'Unknown'
         # Set update engine. Use git updater or update from source.
@@ -46,7 +46,7 @@ class Updater:
     """ Determine the update method """
     def getEngine (self):
         self.logger.debug("Selecting Update engine.")
-        gitDir = os.path.join(htpc.RUNDIR, '.git')
+        gitDir = os.path.join(pytunes.RUNDIR, '.git')
         validGitDir = os.path.isdir(gitDir)
         validGitCommand = GitUpdater().git_exec('branch') # do simple command to test git functionality
 
@@ -159,8 +159,8 @@ class GitUpdater():
         """ Set GitHub settings on load """
         self.UPDATING = 0
 
-        self.git = htpc.settings.get('git_path', 'git')
-        self.logger = logging.getLogger('htpc.updater')
+        self.git = pytunes.settings.get('git_path', 'git')
+        self.logger = logging.getLogger('pytunes.updater')
 
     def current(self):
         """ Get hash of current Git commit """
@@ -198,7 +198,7 @@ class GitUpdater():
         """ Tool for running git program on system """
         try:
             proc = subprocess.Popen(self.git + " " + args, stdout=subprocess.PIPE,
-                   stderr=subprocess.STDOUT, shell=True, cwd=htpc.RUNDIR)
+                   stderr=subprocess.STDOUT, shell=True, cwd=pytunes.RUNDIR)
             output, err = proc.communicate()
         except OSError, e:
             self.logger.warning(str(e))
@@ -224,11 +224,11 @@ class SourceUpdater():
         self.currentHash = False
         self.latestHash = False
 
-        self.logger = logging.getLogger('htpc.updater')
+        self.logger = logging.getLogger('pytunes.updater')
 
-        self.versionFile = os.path.join(htpc.RUNDIR, 'VERSION.txt')
-        self.updateFile = os.path.join(htpc.DATADIR, 'pytunes-update.tar.gz')
-        self.updateDir = os.path.join(htpc.DATADIR, 'update-source')
+        self.versionFile = os.path.join(pytunes.RUNDIR, 'VERSION.txt')
+        self.updateFile = os.path.join(pytunes.DATADIR, 'pytunes-update.tar.gz')
+        self.updateDir = os.path.join(pytunes.DATADIR, 'update-source')
 
     """ Get hash of current runnig version """
     def current(self):
@@ -332,7 +332,7 @@ class SourceUpdater():
         sourceUpdateFolder = os.path.join(self.updateDir, '%s-%s-%s' % (gitUser, gitRepo, self.latestHash[:7]))
 
         # Where to extract the update
-        targetFolder = os.path.join(htpc.RUNDIR)
+        targetFolder = os.path.join(pytunes.RUNDIR)
 
         self.logger.debug('Overwriting files.')
         try:

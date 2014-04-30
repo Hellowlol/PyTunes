@@ -2,7 +2,7 @@ import traceback
 import sys
 import os
 import cherrypy
-import htpc
+import pytunes
 import urllib2
 import gzip
 import socket
@@ -19,10 +19,10 @@ class Deluge:
 
     def __init__(self):
         self.logger = logging.getLogger('modules.deluge')
-        htpc.MODULES.append({
+        pytunes.MODULES.append({
             'name': 'Deluge',
             'id': 'deluge',
-            'test': htpc.WEBDIR + 'deluge/ping',
+            'test': pytunes.WEBDIR + 'deluge/ping',
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'deluge_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'deluge_name'},
@@ -33,7 +33,7 @@ class Deluge:
 
     @cherrypy.expose()
     def index(self):
-        return htpc.LOOKUP.get_template('deluge.html').render(scriptname='deluge')
+        return pytunes.LOOKUP.get_template('deluge.html').render(scriptname='deluge')
    
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -99,18 +99,18 @@ class Deluge:
         return response
 
     def auth(self):
-        self.read_data({"method": "auth.login","params": [htpc.settings.get('deluge_password', '')],"id": 1})
+        self.read_data({"method": "auth.login","params": [pytunes.settings.get('deluge_password', '')],"id": 1})
 
         
     def read_data(self,data):
         try:
             self.logger.debug("Read data from server")
 
-            host = htpc.settings.get('deluge_host', '')
-            port = str(htpc.settings.get('deluge_port', ''))
+            host = pytunes.settings.get('deluge_host', '')
+            port = str(pytunes.settings.get('deluge_port', ''))
             
-            host = htpc.settings.get('deluge_host', '')
-            port = str(htpc.settings.get('deluge_port', ''))
+            host = pytunes.settings.get('deluge_host', '')
+            port = str(pytunes.settings.get('deluge_port', ''))
 
             url = 'http://' +  host + ':' + str(port) + '/json'
             

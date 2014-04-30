@@ -1,7 +1,7 @@
 """ Tool for proxying images and resizing if needed """
 import os
 import hashlib
-import htpc
+import pytunes
 import imghdr
 import logging
 from cherrypy.lib.static import serve_file
@@ -15,7 +15,7 @@ except ImportError:
         PIL = True
     except ImportError:
         PIL = False
-logger = logging.getLogger('htpc.proxy')
+logger = logging.getLogger('pytunes.proxy')
 
 def get_image(url, height=None, width=None, opacity=100, auth=None):
     """ Load image form cache if possible, else download. Resize if needed """
@@ -23,7 +23,7 @@ def get_image(url, height=None, width=None, opacity=100, auth=None):
     logger.debug("Get Image: %s, Height: %s, Width: %s, Opacity: %s" % (url, height, width, opacity))
 
     # Create image directory if it doesnt exist
-    imgdir = os.path.join(htpc.DATADIR, 'images/')
+    imgdir = os.path.join(pytunes.DATADIR, 'images/')
     if not os.path.exists(imgdir):
         logger.debug("Creating image directory at " + imgdir)
         os.makedirs(imgdir)
@@ -52,7 +52,7 @@ def get_image(url, height=None, width=None, opacity=100, auth=None):
         else:
             logger.error("Can't resize when PIL is missing on system!")
             if (opacity < 100):
-                image = os.path.join(htpc.RUNDIR, 'interfaces/default/img/fff_20.png')
+                image = os.path.join(pytunes.RUNDIR, 'interfaces/default/img/fff_20.png')
     # Load file from disk
     imagetype = imghdr.what(image)
     if imagetype is not None:

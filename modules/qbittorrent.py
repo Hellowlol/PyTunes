@@ -1,6 +1,6 @@
 # coding=utf-8
 
-import htpc
+import pytunes
 import cherrypy
 import urllib2
 import urllib
@@ -10,10 +10,10 @@ import logging
 class qbittorrent:
     def __init__(self):
         self.logger = logging.getLogger('modules.qbittorrent')
-        htpc.MODULES.append({
+        pytunes.MODULES.append({
             'name': 'qBittorrent',
             'id': 'qbittorrent',
-            'test': htpc.WEBDIR + 'qbittorrent/ping',
+            'test': pytunes.WEBDIR + 'qbittorrent/ping',
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'qbittorrent_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'qbittorrent_name', 'placeholder':'qBittorrent'},
@@ -26,16 +26,16 @@ class qbittorrent:
         
     @cherrypy.expose()
     def index(self):
-        return htpc.LOOKUP.get_template('qbittorrent.html').render(scriptname='qbittorrent')
+        return pytunes.LOOKUP.get_template('qbittorrent.html').render(scriptname='qbittorrent')
     
     #Get url from settings and handles auth
     @cherrypy.expose()
     def qbturl(self):
-        host = htpc.settings.get('qbittorrent_host', '')
-        port = htpc.settings.get('qbittorrent_port',  '')
-        username = htpc.settings.get('qbittorrent_username', '')
-        password = htpc.settings.get('qbittorrent_password', '')
-        ssl = 's' if htpc.settings.get('qbittorrent_ssl', 0) else ''    
+        host = pytunes.settings.get('qbittorrent_host', '')
+        port = pytunes.settings.get('qbittorrent_port',  '')
+        username = pytunes.settings.get('qbittorrent_username', '')
+        password = pytunes.settings.get('qbittorrent_password', '')
+        ssl = 's' if pytunes.settings.get('qbittorrent_ssl', 0) else ''    
         url = 'http' + ssl +'://' + host + ':' + port + '/'        
         realm = 'Web UI Access'
         authhandler = urllib2.HTTPDigestAuthHandler()

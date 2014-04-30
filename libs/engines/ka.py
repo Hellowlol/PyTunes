@@ -1,13 +1,13 @@
 #AUTHORS: Christophe Dumez (chris@qbittorrent.org)
 from nova.helpers import retrieve_url, download_file
 import json
-import htpc
+import pytunes
 
 def download_torrent(info):
     print download_file(info, info)
 
 def search(what, cat='all'):
-    seeds = htpc.settings.get('torrents_seeds', '')
+    seeds = pytunes.settings.get('torrents_seeds', '')
     url = 'https://kickass.to'
     name = 'kickasstorrents'
     supported_categories = {'all': '', 'movies': 'Movies', 'tv': 'TV', 'music': 'Music', 'games': 'Games', 'software': 'Applications'}

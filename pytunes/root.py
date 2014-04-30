@@ -5,7 +5,7 @@ and pages for restarting and shutting down server.
 import os
 import sys
 import cherrypy
-import htpc
+import pytunes
 import logging
 from threading import Thread
 
@@ -25,13 +25,13 @@ class Root:
     """ Root class """
     def __init__(self):
         """ Do nothing on load """
-        self.logger = logging.getLogger('htpc.root')
+        self.logger = logging.getLogger('pytunes.root')
         pass
 
     @cherrypy.expose()
     def index(self):
         """ Load template for frontpage """
-        return htpc.LOOKUP.get_template('dash.html').render(scriptname='dash')
+        return pytunes.LOOKUP.get_template('dash.html').render(scriptname='dash')
 
     @cherrypy.expose()
     def default(self, *args, **kwargs):

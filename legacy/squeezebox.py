@@ -1,13 +1,13 @@
 import cherrypy
 import urllib2
 import base64
-import htpc
+import pytunes
 from json import dumps, loads
 
 
 class Squeezebox:
     def __init__(self):
-        htpc.MODULES.append({
+        pytunes.MODULES.append({
             'name': 'Squeezebox',
             'id': 'squeezebox',
             'fields': [
@@ -21,7 +21,7 @@ class Squeezebox:
 
     @cherrypy.expose()
     def index(self):
-        return htpc.LOOKUP.get_template('squeezebox.html').render(scriptname='squeezebox')
+        return pytunes.LOOKUP.get_template('squeezebox.html').render(scriptname='squeezebox')
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -88,13 +88,13 @@ class Squeezebox:
         return self.jsonRequest("", ["playlists", "0"])
 
     def webhost(self, path=''):
-        settings = htpc.settings
+        settings = pytunes.settings
         host = settings.get('squeezebox_host', '')
         port = str(settings.get('squeezebox_port', ''))
         return 'http://' + host + ':' + str(port) + '/' + path
 
     def auth(self):
-        settings = htpc.settings
+        settings = pytunes.settings
         username = settings.get('squeezebox_username', '')
         password = settings.get('squeezebox_password', '')
         if username and password:

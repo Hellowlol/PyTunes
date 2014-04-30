@@ -1,7 +1,7 @@
 """ Class for handling settings and generating settings page """
 import os
 import cherrypy
-import htpc
+import pytunes
 import logging
 from sqlobject import connectionForURI, sqlhub, SQLObject, SQLObjectNotFound
 from sqlobject.col import StringCol
@@ -18,9 +18,9 @@ class Settings:
 
     def __init__(self):
         """ Create table on load if table doesnt exist """
-        self.logger = logging.getLogger('htpc.settings')
-        self.logger.debug('Connecting to database: ' + htpc.DB)
-        sqlhub.processConnection = connectionForURI('sqlite:' + htpc.DB)
+        self.logger = logging.getLogger('pytunes.settings')
+        self.logger.debug('Connecting to database: ' + pytunes.DB)
+        sqlhub.processConnection = connectionForURI('sqlite:' + pytunes.DB)
         Setting.createTable(ifNotExists=True)
 
     @cherrypy.expose()
@@ -29,7 +29,7 @@ class Settings:
         if kwargs:
             for key, val in kwargs.items():
                 self.set(key, val)
-        return htpc.LOOKUP.get_template('settings.html').render(scriptname='settings', htpc=htpc)
+        return pytunes.LOOKUP.get_template('settings.html').render(scriptname='settings', pytunes=pytunes)
 
     def get(self, key, defval=''):
         """ Get a setting from the database """
@@ -56,7 +56,7 @@ class Settings:
     def get_templates(self):
         """ Get a list of available templates """
         templates = []
-        for template in os.listdir(os.path.join(htpc.RUNDIR, "interfaces/")):
+        for template in os.listdir(os.path.join(pytunes.RUNDIR, "interfaces/")):
             current = bool(template == self.get('app_template', 'default'))
             templates.append({'name': template, 'value': template,
                 'selected': current})
@@ -64,7 +64,7 @@ class Settings:
 
     def get_themes(self):
         """ Get a list of available themes """
-        path = os.path.join(htpc.TEMPLATE, "css/themes/")
+        path = os.path.join(pytunes.TEMPLATE, "css/themes/")
         themes = []
         dirs = [d for d in os.listdir(path) if os.path.isdir(os.path.join(path, d))]
         for theme in dirs:

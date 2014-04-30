@@ -6,7 +6,7 @@ import urllib
 import os
 import shutil
 import string
-import htpc
+import pytunes
 import logging
 import staticvars
 import enzyme
@@ -15,7 +15,7 @@ import fanarttv
 import os 
 import time 
 
-logger = logging.getLogger('htpc.settings')
+logger = logging.getLogger('pytunes.settings')
     
 exclude = ['\'', '"', '-', ';', ':']
 
@@ -241,8 +241,8 @@ def process():
     #For future to check age of file in seconds
     #st=os.stat(Filename) 
     #Age=(time.time()-st.st_mtime)
-    moviedir = htpc.settings.get('movie_in', '')
-    destdir = htpc.settings.get('movie_out', '')
+    moviedir = pytunes.settings.get('movie_in', '')
+    destdir = pytunes.settings.get('movie_out', '')
     total = 0
     hits = 0 
     moviepath = ''

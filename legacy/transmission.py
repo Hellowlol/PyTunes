@@ -1,5 +1,5 @@
 import cherrypy
-import htpc
+import pytunes
 import urllib2
 import base64
 from json import loads, dumps
@@ -11,10 +11,10 @@ class Transmission:
 
     def __init__(self):
         self.logger = logging.getLogger('modules.transmission')
-        htpc.MODULES.append({
+        pytunes.MODULES.append({
             'name': 'Transmission',
             'id': 'transmission',
-            'test': htpc.WEBDIR + 'transmission/ping',
+            'test': pytunes.WEBDIR + 'transmission/ping',
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'transmission_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'transmission_name', 'placeholder':'Transmission'},
@@ -26,7 +26,7 @@ class Transmission:
 
     @cherrypy.expose()
     def index(self):
-        return htpc.LOOKUP.get_template('transmission.html').render(scriptname='transmission')
+        return pytunes.LOOKUP.get_template('transmission.html').render(scriptname='transmission')
 
 
     @cherrypy.expose()
@@ -77,8 +77,8 @@ class Transmission:
         """ Do request to Transmission api """
         self.logger.debug("Request transmission method: "+method)
 
-        host = htpc.settings.get('transmission_host', '')
-        port = str(htpc.settings.get('transmission_port', ''))
+        host = pytunes.settings.get('transmission_host', '')
+        port = str(pytunes.settings.get('transmission_port', ''))
 
         url = 'http://' +  host + ':' + str(port) + '/transmission/rpc/'
 
@@ -131,8 +131,8 @@ class Transmission:
         """ Generate a base64 HTTP auth string based on settings """
         self.logger.debug("Generating authentication string for transmission")
 
-        password = htpc.settings.get('transmission_password', '')
-        username = htpc.settings.get('transmission_username', '')
+        password = pytunes.settings.get('transmission_password', '')
+        username = pytunes.settings.get('transmission_username', '')
 
         if username != '' and password != '':
             return base64.encodestring('%s:%s' % (username, password)).replace('\n', '')

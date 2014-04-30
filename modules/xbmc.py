@@ -1,6 +1,6 @@
 """ Module for connecting to XBMC """
 import cherrypy
-import htpc
+import pytunes
 import base64
 import socket
 import struct
@@ -11,7 +11,7 @@ from urllib2 import quote, unquote
 from jsonrpclib import Server
 from sqlobject import SQLObject, SQLObjectNotFound
 from sqlobject.col import StringCol, IntCol
-from htpc.proxy import get_image
+from pytunes.proxy import get_image
 import logging
 
 
@@ -31,7 +31,7 @@ class Xbmc:
         self.logger = logging.getLogger('modules.xbmc')
 
         XbmcServers.createTable(ifNotExists=True)
-        htpc.MODULES.append({
+        pytunes.MODULES.append({
             'name': 'XBMC',
             'id': 'xbmc',
             'fields': [
@@ -49,11 +49,11 @@ class Xbmc:
                  'label':'Hide watched',
                  'name':'xbmc_hide_watched'}
         ]})
-        htpc.MODULES.append({
+        pytunes.MODULES.append({
             'name': 'XBMC Servers',
             'id': 'xbmc_update_server',
-            'action': htpc.WEBDIR + 'xbmc/setserver',
-            'test': htpc.WEBDIR + 'xbmc/ping',
+            'action': pytunes.WEBDIR + 'xbmc/setserver',
+            'test': pytunes.WEBDIR + 'xbmc/ping',
             'fields': [
                 {'type':'select',
                  'label':'Server',
@@ -83,13 +83,13 @@ class Xbmc:
                  'label':'Mac addr.',
                  'name':'xbmc_server_mac'}
         ]})
-        server = htpc.settings.get('xbmc_current_server', 0)
+        server = pytunes.settings.get('xbmc_current_server', 0)
         self.changeserver(server)
 
     @cherrypy.expose()
     def index(self):
         """ Generate page from template """
-        return htpc.LOOKUP.get_template('xbmc.html').render(scriptname='xbmc')
+        return pytunes.LOOKUP.get_template('xbmc.html').render(scriptname='xbmc')
 
     @cherrypy.expose()
     def webinterface(self):
@@ -185,7 +185,7 @@ class Xbmc:
     def changeserver(self, id=0):
         try:
             self.current = XbmcServers.selectBy(id=id).getOne()
-            htpc.settings.set('xbmc_current_server', id)
+            pytunes.settings.set('xbmc_current_server', id)
             self.logger.info("Selecting XBMC server: " + id)
             return "success"
         except SQLObjectNotFound:
@@ -203,7 +203,7 @@ class Xbmc:
         #try:
         #    xbmc = Server(self.url('/jsonrpc', True))
 
-        template = htpc.LOOKUP.get_template('xbmc_album.html')
+        template = pytunes.LOOKUP.get_template('xbmc_album.html')
         return template.render(
             scriptname='xbmc',
             #artist_id=artist_id,
@@ -229,7 +229,7 @@ class Xbmc:
     def ViewArtist(self, artist_id, artist):
         """ Load artist template """
         self.logger.debug("Get data of a specific artist")
-        template = htpc.LOOKUP.get_template('xbmc_artist.html')
+        template = pytunes.LOOKUP.get_template('xbmc_artist.html')
         return template.render(
             scriptname='xbmc_artist',
             artist_id=artist_id,
@@ -246,7 +246,7 @@ class Xbmc:
 
     @cherrypy.expose()
     def GetThumb(self, thumb=None, h=None, w=None, o=100):
-        """ Parse thumb to get the url and send to htpc.proxy.get_image """
+        """ Parse thumb to get the url and send to pytunes.proxy.get_image """
         url = self.url('/images/DefaultVideo.png')
         if thumb:
             url = self.url('/image/' + quote(thumb))

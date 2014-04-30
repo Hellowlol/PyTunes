@@ -24,7 +24,7 @@ import sqlite3
 import threading
 import time
 
-import htpc
+import pytunes
 
 import logging
 
@@ -32,7 +32,7 @@ db_lock = threading.Lock()
 
 def dbFilename(filename="artist.db"):
 
-    return os.path.join(htpc.DATA_DIR, filename)
+    return os.path.join(pytunes.DATA_DIR, filename)
     
 def getCacheSize():
     #this will protect against typecasting problems produced by empty string and None settings

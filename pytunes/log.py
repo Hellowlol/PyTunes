@@ -6,7 +6,7 @@ import re
 import stat
 import os
 import cherrypy
-import htpc
+import pytunes
 import logging
 import logging.handlers as handlers
 
@@ -15,8 +15,8 @@ class Log:
     """ Root class """
     def __init__(self):
         """ Initialize the logger """
-        self.logfile = os.path.join(htpc.DATADIR, 'pytunes.log')
-        htpc.LOGGER = logging.getLogger()
+        self.logfile = os.path.join(pytunes.DATADIR, 'pytunes.log')
+        pytunes.LOGGER = logging.getLogger()
         self.logch = logging.StreamHandler()
         self.logfh = handlers.TimedRotatingFileHandler(self.logfile, when='midnight', interval=1, backupCount=5)
 
@@ -24,34 +24,34 @@ class Log:
         self.logch.setFormatter(logformatter)
         self.logfh.setFormatter(logformatter)
 
-        if htpc.LOGLEVEL == 'debug' or htpc.DEBUG:
+        if pytunes.LOGLEVEL == 'debug' or pytunes.DEBUG:
             loglevel = logging.DEBUG
-        elif htpc.LOGLEVEL == 'info':
+        elif pytunes.LOGLEVEL == 'info':
             loglevel = logging.INFO
-        elif htpc.LOGLEVEL == 'warning':
+        elif pytunes.LOGLEVEL == 'warning':
             loglevel = logging.WARNING
-        elif htpc.LOGLEVEL == 'error':
+        elif pytunes.LOGLEVEL == 'error':
             loglevel = logging.ERROR
         else:
             loglevel = logging.CRITICAL
 
         self.logch.setLevel(loglevel)
         self.logfh.setLevel(loglevel)
-        htpc.LOGGER.setLevel(loglevel)
+        pytunes.LOGGER.setLevel(loglevel)
 
         # Disable cherrypy access log
         logging.getLogger('cherrypy.access').propagate = False
 
-        htpc.LOGGER.addHandler(self.logch)
-        htpc.LOGGER.addHandler(self.logfh)
+        pytunes.LOGGER.addHandler(self.logch)
+        pytunes.LOGGER.addHandler(self.logfh)
 
-        htpc.LOGGER.info("Welcome to PyTunes Media Server Manager!")
-        htpc.LOGGER.info("Loglevel set to " + htpc.LOGLEVEL)
+        pytunes.LOGGER.info("Welcome to PyTunes Media Server Manager!")
+        pytunes.LOGGER.info("Loglevel set to " + pytunes.LOGLEVEL)
 
     @cherrypy.expose()
     def index(self):
         """ Show log """
-        return htpc.LOOKUP.get_template('log.html').render(scriptname='log')
+        return pytunes.LOOKUP.get_template('log.html').render(scriptname='log')
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()

@@ -8,7 +8,7 @@ start function to start the server.
 import os
 import inspect
 import sys
-import htpc
+import pytunes
 import webbrowser
 
 
@@ -45,20 +45,20 @@ def parse_arguments():
 
 def load_modules():
     """ Import the system modules """
-    from htpc.root import Root
-    htpc.ROOT = Root()
-    from htpc.settings import Settings
-    htpc.ROOT.settings = Settings()
-    from htpc.log import Log
-    htpc.ROOT.log = Log()
-    from htpc.updater import Updater
-    htpc.ROOT.update = Updater()
+    from pytunes.root import Root
+    pytunes.ROOT = Root()
+    from pytunes.settings import Settings
+    pytunes.ROOT.settings = Settings()
+    from pytunes.log import Log
+    pytunes.ROOT.log = Log()
+    from pytunes.updater import Updater
+    pytunes.ROOT.update = Updater()
     for module in os.listdir('modules'):
         if module.endswith('.py') and not module.startswith('_'):
             __import__('modules.' + module[0:-3])
             for name, obj in inspect.getmembers(sys.modules['modules.' + module[0:-3]]):
                 if inspect.isclass(obj) and name.lower() == module[0:-3]:
-                    setattr(htpc.ROOT, module[0:-3], obj())
+                    setattr(pytunes.ROOT, module[0:-3], obj())
 
 def main():
     """
@@ -68,91 +68,91 @@ def main():
     args = parse_arguments()
 
     # Set root and insert bundled libraries into path
-    htpc.RUNDIR = os.path.dirname(os.path.abspath(sys.argv[0]))
-    sys.path.insert(0, os.path.join(htpc.RUNDIR, 'libs'))
+    pytunes.RUNDIR = os.path.dirname(os.path.abspath(sys.argv[0]))
+    sys.path.insert(0, os.path.join(pytunes.RUNDIR, 'libs'))
 
     # Set datadir, create if it doesn't exist and exit if it isn't writable.
-    htpc.DATADIR = os.path.join(htpc.RUNDIR, 'userdata/')
+    pytunes.DATADIR = os.path.join(pytunes.RUNDIR, 'userdata/')
     if args.datadir:
-        htpc.DATADIR = args.datadir
-    if not os.path.isdir(htpc.DATADIR):
-        os.makedirs(htpc.DATADIR)
-    if not os.access(htpc.DATADIR, os.W_OK):
+        pytunes.DATADIR = args.datadir
+    if not os.path.isdir(pytunes.DATADIR):
+        os.makedirs(pytunes.DATADIR)
+    if not os.access(pytunes.DATADIR, os.W_OK):
         sys.exit("No write access to userdata folder")
 
     from mako.lookup import TemplateLookup
 
     # Enable debug mode if needed
-    htpc.DEBUG = args.debug
+    pytunes.DEBUG = args.debug
 
     # Set loglevel
-    htpc.LOGLEVEL = args.loglevel.lower()
+    pytunes.LOGLEVEL = args.loglevel.lower()
 
     # Set default database and overwrite if supplied through commandline
-    htpc.DB = os.path.join(htpc.DATADIR, 'database.db')
+    pytunes.DB = os.path.join(pytunes.DATADIR, 'database.db')
     if args.db:
-        htpc.DB = args.db
+        pytunes.DB = args.db
 
     # Set browser override if supplied through commandline
-    htpc.NOBROWSER = args.nobrowser
+    pytunes.NOBROWSER = args.nobrowser
 
     # Load settings from database
-    from htpc.settings import Settings
-    htpc.settings = Settings()
+    from pytunes.settings import Settings
+    pytunes.settings = Settings()
 
     # Check for SSL
-    htpc.SSLCERT = htpc.settings.get('app_ssl_cert')
-    htpc.SSLKEY = htpc.settings.get('app_ssl_key')
+    pytunes.SSLCERT = pytunes.settings.get('app_ssl_cert')
+    pytunes.SSLKEY = pytunes.settings.get('app_ssl_key')
 
-    htpc.WEBDIR = htpc.settings.get('app_webdir', '/')
+    pytunes.WEBDIR = pytunes.settings.get('app_webdir', '/')
     if args.webdir:
-        htpc.WEBDIR = args.webdir
-    if not(htpc.WEBDIR.endswith('/')):
-        htpc.WEBDIR += '/'
+        pytunes.WEBDIR = args.webdir
+    if not(pytunes.WEBDIR.endswith('/')):
+        pytunes.WEBDIR += '/'
 
     # Inititialize root and settings page
     load_modules()
 
-    htpc.TEMPLATE = os.path.join(htpc.RUNDIR, 'interfaces/',
-                                 htpc.settings.get('app_template', 'default'))
-    htpc.LOOKUP = TemplateLookup(directories=[os.path.join(htpc.TEMPLATE, 'html/')])
+    pytunes.TEMPLATE = os.path.join(pytunes.RUNDIR, 'interfaces/',
+                                 pytunes.settings.get('app_template', 'default'))
+    pytunes.LOOKUP = TemplateLookup(directories=[os.path.join(pytunes.TEMPLATE, 'html/')])
 
     # Overwrite host setting if supplied through commandline
-    htpc.HOST = htpc.settings.get('app_host', '0.0.0.0')
+    pytunes.HOST = pytunes.settings.get('app_host', '0.0.0.0')
     if args.host:
-        htpc.HOST = args.host
+        pytunes.HOST = args.host
 
     # Overwrite port setting if supplied through commandline
-    htpc.PORT = int(htpc.settings.get('app_port', 8085))
+    pytunes.PORT = int(pytunes.settings.get('app_port', 8085))
     if args.port:
-        htpc.PORT = args.port
+        pytunes.PORT = args.port
 
     #Override for lost password
     if not args.nopass:
-        htpc.USERNAME = htpc.settings.get('app_username')
-        htpc.PASSWORD = htpc.settings.get('app_password')    
+        pytunes.USERNAME = pytunes.settings.get('app_username')
+        pytunes.PASSWORD = pytunes.settings.get('app_password')    
     else:
-        htpc.USERNAME = ''
-        htpc.PASSWORD = ''   
+        pytunes.USERNAME = ''
+        pytunes.PASSWORD = ''   
 
     #Select if you want to disable shell commands from PyTunes
-    htpc.NOSHELL = args.noshell
+    pytunes.NOSHELL = args.noshell
      
     # Select whether to run as daemon
-    htpc.DAEMON = args.daemon
+    pytunes.DAEMON = args.daemon
 
     # Set Application PID
-    htpc.PID = args.pid
+    pytunes.PID = args.pid
 
     # Start the webbrowser.....We need a way to detect whether there was a restart signal from an open browser so we don't open another.
-    if htpc.settings.get('browser')  and not htpc.DEBUG and not htpc.DAEMON and not htpc.NOBROWSER:
-        nb_ssl = 's' if htpc.SSLCERT and htpc.SSLKEY else ''
-        nb_host = 'localhost' if htpc.settings.get('app_host') == '0.0.0.0' else htpc.settings.get('app_host')
-        openbrowser = 'http%s://%s:%s%s' % (nb_ssl, nb_host,  htpc.PORT, htpc.WEBDIR[:-1])
+    if pytunes.settings.get('browser')  and not pytunes.DEBUG and not pytunes.DAEMON and not pytunes.NOBROWSER:
+        nb_ssl = 's' if pytunes.SSLCERT and pytunes.SSLKEY else ''
+        nb_host = 'localhost' if pytunes.settings.get('app_host') == '0.0.0.0' else pytunes.settings.get('app_host')
+        openbrowser = 'http%s://%s:%s%s' % (nb_ssl, nb_host,  pytunes.PORT, pytunes.WEBDIR[:-1])
         webbrowser.open(openbrowser, new=2, autoraise=True)
 
     # Start the server
-    from htpc.server import start
+    from pytunes.server import start
     start()
 
 

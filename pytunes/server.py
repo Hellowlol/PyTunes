@@ -2,7 +2,7 @@
 import os
 import sys
 import cherrypy
-import htpc
+import pytunes
 import logging
 from cherrypy.process.plugins import Daemonizer, PIDFile
 from cherrypy.lib.auth_digest import get_ha1_dict_plain
@@ -10,32 +10,32 @@ from cherrypy.lib.auth_digest import get_ha1_dict_plain
 
 def start():
     """ Main function for starting PyTunes server """
-    logger = logging.getLogger('htpc.server')
+    logger = logging.getLogger('pytunes.server')
     logger.debug("Setting up to start cherrypy")
 
     # Set server ip, port and root
     cherrypy.config.update({
-        'server.socket_host': htpc.HOST,
-        'server.socket_port': htpc.PORT,
+        'server.socket_host': pytunes.HOST,
+        'server.socket_port': pytunes.PORT,
         'log.screen': False
     })
 
     # Set server environment to production unless when debugging
-    if not htpc.DEBUG:
+    if not pytunes.DEBUG:
         cherrypy.config.update({
             'environment': 'production'
         })
 
     # Enable SSL
-    if htpc.SSLCERT and htpc.SSLKEY:
+    if pytunes.SSLCERT and pytunes.SSLKEY:
         cherrypy.config.update({
             'server.ssl_module': 'builtin',
-            'server.ssl_certificate': htpc.SSLCERT,
-            'server.ssl_private_key': htpc.SSLKEY
+            'server.ssl_certificate': pytunes.SSLCERT,
+            'server.ssl_private_key': pytunes.SSLKEY
         })
 
     # Daemonize cherrypy if specified
-    if htpc.DAEMON:
+    if pytunes.DAEMON:
         if sys.platform == 'win32':
             logger.error("You are using Windows - I cannot setup daemon mode. Please use the pythonw executable instead.")
             logger.error("More information at http://docs.python.org/2/using/windows.html.")
@@ -43,11 +43,11 @@ def start():
             Daemonizer(cherrypy.engine).subscribe()
 
     # Create PID if specified
-    if htpc.PID:
-        PIDFile(cherrypy.engine, htpc.PID).subscribe()
+    if pytunes.PID:
+        PIDFile(cherrypy.engine, pytunes.PID).subscribe()
 
     # Set static directories
-    webdir = os.path.join(htpc.RUNDIR, htpc.TEMPLATE)
+    webdir = os.path.join(pytunes.RUNDIR, pytunes.TEMPLATE)
     favicon = os.path.join(webdir, "img/favicon.ico")
     app_config = {
         '/': {
@@ -94,9 +94,9 @@ def start():
         },
     }
     # Require username and password if they are set
-    if htpc.USERNAME and htpc.PASSWORD:
+    if pytunes.USERNAME and pytunes.PASSWORD:
         logger.info("Enabling username/password access")
-        userpassdict = {htpc.USERNAME: htpc.PASSWORD}
+        userpassdict = {pytunes.USERNAME: pytunes.PASSWORD}
         get_ha1 = get_ha1_dict_plain(userpassdict)
         app_config['/'].update({
             'tools.auth_digest.on': True,
@@ -108,7 +108,7 @@ def start():
     # Start the CherryPy server (remove trailing slash from webdir)
     logger.info("Starting up webserver")
     print '******************************************************'
-    print 'Starting Pytunes on port ' + str(htpc.PORT) + '.'
-    print 'Start your browser and go to http://localhost:' + str(htpc.PORT) + '/' + htpc.WEBDIR[:-1]
+    print 'Starting Pytunes on port ' + str(pytunes.PORT) + '.'
+    print 'Start your browser and go to http://localhost:' + str(pytunes.PORT) + '/' + pytunes.WEBDIR[:-1]
     print '******************************************************'
-    cherrypy.quickstart(htpc.ROOT, htpc.WEBDIR[:-1], config=app_config)
+    cherrypy.quickstart(pytunes.ROOT, pytunes.WEBDIR[:-1], config=app_config)

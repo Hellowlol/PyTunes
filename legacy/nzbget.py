@@ -1,5 +1,5 @@
 import cherrypy
-import htpc
+import pytunes
 from urllib import quote
 from urllib2 import urlopen, Request
 from json import loads
@@ -10,10 +10,10 @@ import base64
 class NZBGet:
     def __init__(self):
         self.logger = logging.getLogger('modules.nzbget')
-        htpc.MODULES.append({
+        pytunes.MODULES.append({
             'name': 'NZBGet',
             'id': 'nzbget',
-            'test': htpc.WEBDIR + 'nzbget/version',
+            'test': pytunes.WEBDIR + 'nzbget/version',
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'nzbget_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'nzbget_name'},
@@ -27,7 +27,7 @@ class NZBGet:
 
     @cherrypy.expose()
     def index(self):
-        return htpc.LOOKUP.get_template('nzbget.html').render(scriptname='nzbget')
+        return pytunes.LOOKUP.get_template('nzbget.html').render(scriptname='nzbget')
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -67,12 +67,12 @@ class NZBGet:
     
     def fetch(self, path):
         try:
-            host = htpc.settings.get('nzbget_host', '')
-            port = str(htpc.settings.get('nzbget_port', ''))
-            username = htpc.settings.get('nzbget_username', '')
-            password = htpc.settings.get('nzbget_password', '')
-            nzbget_basepath = htpc.settings.get('nzbget_basepath', '/')
-            ssl = 's' if htpc.settings.get('nzbget_ssl', True) else ''
+            host = pytunes.settings.get('nzbget_host', '')
+            port = str(pytunes.settings.get('nzbget_port', ''))
+            username = pytunes.settings.get('nzbget_username', '')
+            password = pytunes.settings.get('nzbget_password', '')
+            nzbget_basepath = pytunes.settings.get('nzbget_basepath', '/')
+            ssl = 's' if pytunes.settings.get('nzbget_ssl', True) else ''
 
             if(nzbget_basepath == ""):
                 nzbget_basepath = "/"

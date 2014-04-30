@@ -1,5 +1,5 @@
 import cherrypy
-import htpc
+import pytunes
 from urllib import quote
 from urllib2 import urlopen
 from json import loads
@@ -9,10 +9,10 @@ import logging
 class Sabnzbd:
     def __init__(self):
         self.logger = logging.getLogger('modules.sabnzbd')
-        htpc.MODULES.append({
+        pytunes.MODULES.append({
             'name': 'SABnzbd',
             'id': 'sabnzbd',
-            'test': htpc.WEBDIR + 'sabnzbd/version',
+            'test': pytunes.WEBDIR + 'sabnzbd/version',
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'sabnzbd_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'sabnzbd_name', 'placeholder':'Sabnzb+'},
@@ -25,12 +25,12 @@ class Sabnzbd:
 
     @cherrypy.expose()
     def index(self):
-        return htpc.LOOKUP.get_template('sabnzbd.html').render(scriptname='sabnzbd')
+        return pytunes.LOOKUP.get_template('sabnzbd.html').render(scriptname='sabnzbd')
 
     @cherrypy.expose()
     def sabupload(self):
         return 'sabupload.html'
-        #return htpc.LOOKUP.get_template('sabupload.html')
+        #return pytunes.LOOKUP.get_template('sabupload.html')
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -128,11 +128,11 @@ class Sabnzbd:
 
     def fetch(self, path):
         try:
-            host = htpc.settings.get('sabnzbd_host', '')
-            port = str(htpc.settings.get('sabnzbd_port', ''))
-            apikey = htpc.settings.get('sabnzbd_apikey', '')
-            sabnzbd_basepath = htpc.settings.get('sabnzbd_basepath', '/sabnzbd/')
-            ssl = 's' if htpc.settings.get('sabnzbd_ssl', 0) else ''
+            host = pytunes.settings.get('sabnzbd_host', '')
+            port = str(pytunes.settings.get('sabnzbd_port', ''))
+            apikey = pytunes.settings.get('sabnzbd_apikey', '')
+            sabnzbd_basepath = pytunes.settings.get('sabnzbd_basepath', '/sabnzbd/')
+            ssl = 's' if pytunes.settings.get('sabnzbd_ssl', 0) else ''
 
             if(sabnzbd_basepath == ""):
                 sabnzbd_basepath = "/sabnzbd/"

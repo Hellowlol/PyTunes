@@ -3,8 +3,8 @@ from collections import defaultdict
 import random
 import time
 import cherrypy
-import htpc
-from htpc.proxy import get_image
+import pytunes
+from pytunes.proxy import get_image
 from urllib2 import urlopen, quote
 from json import loads
 import logging

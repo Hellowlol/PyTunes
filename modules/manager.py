@@ -1,7 +1,7 @@
 """ Module for Media Management  """
 import cherrypy
-import htpc
-from htpc import tmdb, staticvars, scheduler
+import pytunes
+from pytunes import tmdb, staticvars, scheduler
 import time
 import threading
 import base64
@@ -10,13 +10,13 @@ import struct
 import json
 import simplejson as json
 from cherrypy.process.plugins import Monitor
-from htpc.xdb import *
+from pytunes.xdb import *
 from itertools import chain
 from urllib2 import quote, unquote
 from jsonrpclib import Server
 from sqlobject import SQLObject, SQLObjectNotFound
 from sqlobject.col import StringCol, IntCol, FloatCol
-from htpc.proxy import get_image
+from pytunes.proxy import get_image
 import logging
 
 musicvideo_schema_map = {
@@ -315,7 +315,7 @@ class Manager:
         VideoArt.createTable(ifNotExists=True)
         Movie.createTable(ifNotExists=True)
         TvShow.createTable(ifNotExists=True)
-        htpc.MODULES.append({
+        pytunes.MODULES.append({
             'name': 'Media Manager',
             'id': 'manager',
             'fields': [
@@ -368,7 +368,7 @@ class Manager:
     @cherrypy.expose()
     def index(self):
         """ Generate page from template """
-        return htpc.LOOKUP.get_template('manager.html').render(scriptname='manager')
+        return pytunes.LOOKUP.get_template('manager.html').render(scriptname='manager')
 
     @cherrypy.expose()
     def GetMovies(self, offset, limit):
@@ -437,7 +437,7 @@ class Manager:
         """ Generate page from template """
         if action == "movies":
             data = table_dump('video.db', 'movieview', '10', '0')
-            return htpc.LOOKUP.get_template('manager.html').render(scriptname='manager')
+            return pytunes.LOOKUP.get_template('manager.html').render(scriptname='manager')
         if action == "tv":
             data = table_dump('video.db', 'tvshowview', '10', '0')
             data2 = table_dump('video.db', 'episodeview', '10', '0')
@@ -453,7 +453,7 @@ class Manager:
         if action == "art":
             data = table_dump('video.db', 'art', '10', '0')
             data2 = table_dump('music.db', 'art', '10', '0')
-        return htpc.LOOKUP.get_template('manager.html').render(scriptname='manager')
+        return pytunes.LOOKUP.get_template('manager.html').render(scriptname='manager')
 
 
 
@@ -471,12 +471,12 @@ class Manager:
             t['DurationText'] = '%d:%02d' % (minutes, seconds)
             t['TrackStatus'] = _get_status_icon('Downloaded' if t['Location'] is not None else '')
 
-        template = htpc.LOOKUP.get_template('xbmc_album.html')
+        template = pytunes.LOOKUP.get_template('xbmc_album.html')
         return template.render(
             scriptname=None,
             artist_id=response['album'][0]['ArtistID'],
             album_id=album_id,
-            module_name=htpc.settings.get('xbmc_name') or 'XBMC',
+            module_name=pytunes.settings.get('xbmc_name') or 'XBMC',
             album=response['album'][0],
             tracks=response['tracks'],
             description=response['description'][0],
@@ -532,7 +532,7 @@ class Manager:
     def ViewArtist(self, artist_id, artist):
         """ Load artist template """
         self.logger.debug("Get data of a specific artist")
-        template = htpc.LOOKUP.get_template('xbmc_artist.html')
+        template = pytunes.LOOKUP.get_template('xbmc_artist.html')
         return template.render(
             scriptname='xbmc_artist',
             artist_id=artist_id,
@@ -541,7 +541,7 @@ class Manager:
 
     @cherrypy.expose()
     def GetThumb(self, thumb=None, h=None, w=None, o=100):
-        """ Parse thumb to get the url and send to htpc.proxy.get_image """
+        """ Parse thumb to get the url and send to pytunes.proxy.get_image """
         if h and w:
             if int(h)/int(w) > 1.15:
                 url = '/images/no_art_poster.png'

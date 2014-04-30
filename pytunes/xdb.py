@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
 
-import htpc
+import pytunes
 import os
 import sqlite3 as lite
 import sys
@@ -16,7 +16,7 @@ def table_dump(db, table, limit, offset, sort):
     query = "SELECT * FROM %s ORDER BY %s ASC LIMIT %s OFFSET %s"
     data = []
     i = 0
-    db = htpc.DATADIR + db
+    db = pytunes.DATADIR + db
     #print db
     con = lite.connect(db)
 
@@ -35,7 +35,7 @@ def table_dump(db, table, limit, offset, sort):
     return data
 
 def art_count(db, media_type, media_id, type):
-    db = htpc.DATADIR + db
+    db = pytunes.DATADIR + db
     #print db
     con = lite.connect(db)
     with con:

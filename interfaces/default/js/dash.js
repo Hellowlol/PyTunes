@@ -7,10 +7,26 @@ $(document).ready(function () {
     loadWantedMovies();
     loadNextAired();
     loadPopular();
+    loadSystem();
     loadTopRated();
     loadInTheaters();
     loadUpcomingMovies();
 });
+
+function loadSystem() {
+    if (!$('#system-table').length) return;
+    $.ajax({
+        'url': WEBDIR + 'stats/Carousel',
+        type: 'get',
+            'dataType': 'html',
+            'success': function (data) {
+            //alert("System: " + data);
+            if (data === null) return;
+            $('#system-table').append(data);
+            $('#system-table').show();
+        }
+    });
+}
 
 function loadTopRated() {
     if (!$('#toprated-carousel').length) return;

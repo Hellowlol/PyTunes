@@ -11,7 +11,7 @@ import ConfigParser
 import urllib2
 import platform
 import cherrypy
-import htpc
+import pytunes
 import logging
 
 
@@ -27,10 +27,10 @@ except ImportError:
 class Stats:
     def __init__(self):
         self.logger = logging.getLogger('modules.stats')
-        htpc.MODULES.append({
+        pytunes.MODULES.append({
             'name': 'System',
             'id': 'stats',
-            'test': htpc.WEBDIR + 'stats/ping',
+            'test': pytunes.WEBDIR + 'stats/ping',
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'stats_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'stats_name'},
@@ -46,7 +46,7 @@ class Stats:
         else:
             self.logger.error("Psutil is outdated, needs atleast version 0,7")
 
-        return htpc.LOOKUP.get_template('stats.html').render(scriptname='stats')
+        return pytunes.LOOKUP.get_template('stats.html').render(scriptname='stats')
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -347,8 +347,8 @@ class Stats:
         d = {}
         try:
             
-            d['real'] = htpc.settings.get('stats_use_bars')
-            if str(htpc.settings.get('stats_use_bars')) == str('False'):
+            d['real'] = pytunes.settings.get('stats_use_bars')
+            if str(pytunes.settings.get('stats_use_bars')) == str('False'):
                 d['stats_use_bars'] = 'false'
             else:
                 d['stats_use_bars'] = 'true'
@@ -413,7 +413,7 @@ class Stats:
     def cmdpopen(self, cmd=None, popen=None):
         d = {}
         msg = None
-        if not htpc.NOSHELL:
+        if not pytunes.NOSHELL:
             #print cmd,popen
             if cmd == 'popen':
                 print 'in popen'

@@ -1,7 +1,7 @@
 import cherrypy
-import htpc
+import pytunes
 import math
-from htpc.proxy import get_image
+from pytunes.proxy import get_image
 from urllib2 import urlopen, quote
 from json import loads
 import logging
@@ -10,7 +10,7 @@ import logging
 class Newznab:
     def __init__(self):
         self.logger = logging.getLogger('modules.newznab')
-        htpc.MODULES.append({
+        pytunes.MODULES.append({
             'name': 'NZB Search',
             'id': 'newznab',
             'fields': [
@@ -31,7 +31,7 @@ class Newznab:
 
     @cherrypy.expose()
     def index(self, query='', **kwargs):
-        return htpc.LOOKUP.get_template('newznab.html').render(query=query, scriptname='newznab')
+        return pytunes.LOOKUP.get_template('newznab.html').render(query=query, scriptname='newznab')
 
     """
     NOT IMPLEMENTET
@@ -45,7 +45,7 @@ class Newznab:
     @cherrypy.expose()
     def thumb(self, url, h=None, w=None, o=100):
         if url.startswith('rageid'):
-            settings = htpc.settings
+            settings = pytunes.settings
             host = settings.get('newznab_host', '').replace('http://', '').replace('https://', '')
             ssl = 's' if settings.get('newznab_ssl', 0) else ''
 
@@ -57,7 +57,7 @@ class Newznab:
     def getcategories(self, **kwargs):
         self.logger.debug("Fetching available categories")
         try:
-            settings = htpc.settings
+            settings = pytunes.settings
             host = settings.get('newznab_host', '').replace('http://', '').replace('https://', '')
             ssl = 's' if settings.get('newznab_ssl', 0) else ''
             apikey = settings.get('newznab_apikey', '')
@@ -86,7 +86,7 @@ class Newznab:
     def search(self, q='', cat='', **kwargs):
         ret = ''
         row = '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'
-        settings = htpc.settings
+        settings = pytunes.settings
         sab_cat = {
             '1000':settings.get('newznab_console', ''),
             '2000':settings.get('newznab_movies', ''),
@@ -125,7 +125,7 @@ class Newznab:
 
     def fetch(self, cmd):
         try:
-            settings = htpc.settings
+            settings = pytunes.settings
             host = settings.get('newznab_host', '').replace('http://', '').replace('https://', '')
             ssl = 's' if settings.get('newznab_ssl', 0) else ''
             apikey = settings.get('newznab_apikey', '')
