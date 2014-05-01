@@ -9,7 +9,7 @@
         <div class="tabbable tabs-left">
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#general" data-toggle="tab">General</a></li>
-                % for m in htpc.MODULES:
+                % for m in pytunes.MODULES:
                 <li><a href="#${m.get('id')}" data-toggle="tab">${m.get('name')}</a></li>
                 % endfor
                 <li><a href="#dashboard" data-toggle="tab">Dashboard</a></li>
@@ -28,7 +28,7 @@
                 {'type':'bool', 'label':'Open Browser at Startup', 'name':'browser', 'checked':bool(settings.get('browser', 0))},
                 {'type':'text', 'label':'Git Path', 'name':'git_path', 'value':settings.get('git_path', 'git')}
             ])}
-            % for m in htpc.MODULES:
+            % for m in pytunes.MODULES:
                 % if m.get('test'):
                     ${form.buildForm(action=m.get('action'), id=m.get('id'), classes='form-horizontal tab-pane', legend=m.get('name'),
                                      fields=m.get('fields'), buttons=[
@@ -53,8 +53,8 @@
                  'checked':bool(settings.get('dash_rec_music', 0))},
                 {'type':'bool', 'label':'Show Sickbeard', 'name':'dash_sickbeard',
                  'checked':bool(settings.get('dash_sickbeard', 0))},
-                {'type':'bool', 'label':'Show Movies Found', 'name':'dash_moviesfound',
-                 'checked':bool(settings.get('dash_moviesfound', 0))},
+                {'type':'bool', 'label':'Show CouchPotato', 'name':'dash_couchpotato',
+                 'checked':bool(settings.get('dash_couchpotato', 0))},
                 {'type':'bool', 'label':'Show Top Rated Movies', 'name':'dash_toprated',
                  'checked':bool(settings.get('dash_toprated', 0))},
                 {'type':'bool', 'label':'Show Popular Movies', 'name':'dash_popular',
@@ -63,6 +63,8 @@
                  'checked':bool(settings.get('dash_theaters', 0))},
                 {'type':'bool', 'label':'Show New Releases', 'name':'dash_coming',
                  'checked':bool(settings.get('dash_coming', 0))},
+                {'type':'bool', 'label':'Show Movies Found', 'name':'dash_moviesfound',
+                 'checked':bool(settings.get('dash_moviesfound', 0))},
                 {'type':'bool', 'label':'Show Music Found', 'name':'dash_musicfound',
                  'checked':bool(settings.get('dash_musicfound', 0))},
                 {'type':'bool', 'label':'Show SABnzbd', 'name':'dash_sabnzbd',

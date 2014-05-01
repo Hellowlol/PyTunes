@@ -64,20 +64,6 @@
                 </table>
             </div>
             %endif
-            %if settings.get('dash_moviesfound', 0):
-            <div class="span4">
-                <h3><a href="manager/#moviesfound">Latest Movies Found</a></h3>
-                <table class="table table-striped table-main">
-                    <thead>
-                        <tr>
-                            <th>Title</th>
-                            <th>Year</th>
-                        </tr>
-                    </thead>
-                    <tbody id="foundmovies_table_body"></tbody>
-                </table>
-            </div>
-            %endif
             %if settings.get('dash_sickbeard', 0):
             <div class="span4">
                 <h3><a href="sickbeard/#nextaired">Next Aired</a></h3>
@@ -90,6 +76,20 @@
                         </tr>
                     </thead>
                     <tbody id="nextaired_table_body"></tbody>
+                </table>
+            </div>
+            %endif
+            %if settings.get('dash_couchpotato', 0):
+            <div class="span4">
+                <h3><a href="couchpotato/#wanted">Wanted Movies</a></h3>
+                <table class="table table-striped table-main">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Year</th>
+                        </tr>
+                    </thead>
+                    <tbody id="wantedmovies_table_body"></tbody>
                 </table>
             </div>
             %endif
@@ -137,7 +137,35 @@
                 </div>
             </div>
             %endif
+            %if settings.get('dash_moviesfound', 0):
+            <div class="span4">
+                <h3><a href="manager/#moviesfound">Latest Movies Found</a></h3>
+                <table class="table table-striped table-main">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Year</th>
+                        </tr>
+                    </thead>
+                    <tbody id="foundmovies_table_body"></tbody>
+                </table>
+            </div>
+            %endif
         </div>
+            %if settings.get('dash_musicfound', 0):
+            <div class="span4">
+                <h3><a href="manager/#musicfound">Latest Music Found</a></h3>
+                <table class="table table-striped table-main">
+                    <thead>
+                        <tr>
+                            <th>Title</th>
+                            <th>Year</th>
+                        </tr>
+                    </thead>
+                    <tbody id="foundmusic_table_body"></tbody>
+                </table>
+            </div>
+            %endif
         <%
             dashcount = settings.get('dash_sickbeard', 0);
             dashcount += settings.get('dash_couchpotato', 0);
