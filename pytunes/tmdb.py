@@ -95,7 +95,7 @@ def Search(query, type):
         search = tmdb.Search()
         return search.movie({'query':query})
 
-def Upcoming(page):
+def Releases(page):
     stuff = tmdb.Movies()
     return stuff.upcoming({'page':page})
 

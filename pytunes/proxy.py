@@ -80,7 +80,7 @@ def resize_image(img, height, width, opacity, dest):
         im = Image.open(img)
         im = im.resize(size, Image.ANTIALIAS)
     except:
-        logger.error("Failed resizing image: %s" % im)
+        logger.error("Failed resizing image: %s" % img)
         return
     # Apply overlay if opacity is set
     opacity = float(opacity)

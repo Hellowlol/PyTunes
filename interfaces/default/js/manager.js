@@ -1,13 +1,72 @@
 
 function loadInTheaters() {
-   $('#theater-grid').empty();
-    theaterLoad.request = $.ajax({
-        url: WEBDIR + "manager/InTheaters",
+    //alert("In Theaters");
+    $('#theaters-grid').empty();
+    var theaterLoad = $.ajax({
+        url: WEBDIR + "manager/Tmdb?source=intheaters&page=2",
         type: 'get',
         dataType: 'html',
         success: function (data) {
+            //alert("Theaters: " + data);
             if (data === null) return errorHandler();
             $('#theaters-grid').append(data);
+        },
+        complete: function () {
+            $('.spinner').hide();
+        }
+    });
+}
+
+
+function loadReleases() {
+    //alert("In Releases");
+    $('#releases-grid').empty();
+    var theaterLoad = $.ajax({
+        url: WEBDIR + "manager/Tmdb?source=releases&page=2",
+        type: 'get',
+        dataType: 'html',
+        success: function (data) {
+            //alert("Releases: " + data);
+            if (data === null) return errorHandler();
+            $('#releases-grid').append(data);
+        },
+        complete: function () {
+            $('.spinner').hide();
+        }
+    });
+}
+
+
+function loadTopRated() {
+    //alert("In Top Rated");
+    $('#toprated-grid').empty();
+    var theaterLoad = $.ajax({
+        url: WEBDIR + "manager/Tmdb?source=toprated&page=2",
+        type: 'get',
+        dataType: 'html',
+        success: function (data) {
+            //alert("Top Rated: " + data);
+            if (data === null) return errorHandler();
+            $('#toprated-grid').append(data);
+        },
+        complete: function () {
+            $('.spinner').hide();
+        }
+    });
+}
+
+
+function loadPopular() {
+    //alert("In Popular");
+    $('#popular-grid').empty();
+    var popLoad = $.ajax({
+        url: WEBDIR + "manager/Tmdb?source=popular&page=2",
+        type: 'get',
+        dataType: 'html',
+        success: function (data) {
+            //alert("Popular: " + data);
+            if (data === null) return errorHandler();
+            $('#popular-grid').append(data);
         },
         complete: function () {
             $('.spinner').hide();
@@ -82,6 +141,18 @@ function reloadTab() {
     else if ($('#shows').is(':visible')) {
         loadShows();
     } 
+    else if ($('#theaters').is(':visible')) {
+        loadInTheaters();
+    } 
+    else if ($('#releases').is(':visible')) {
+        loadReleases();
+    } 
+    else if ($('#toprated').is(':visible')) {
+        loadTopRated();
+    } 
+    else if ($('#popular').is(':visible')) {
+        loadPopular();
+    } 
     //else if ($('#episodes').is(':visible')) {
     //    options = $.extend(options, {
     //        'tvshowid': currentShow
@@ -128,8 +199,24 @@ var pageoptions = {
     
 $(document).ready(function () {
     $('.spinner').show();
-    loadMovies();
-    loadShows();
+    //loadMovies();
+    //loadShows();
+    //loadInTheaters();
+    reloadTab();
     $('.spinner').hide();
+
+    // Load data on tab display
+    $('a[data-toggle="tab"]').click(function (e) {
+        $('#search').val('');
+        searchString = '';
+    }).on('shown', reloadTab);
+    $(window).trigger('hashchange');
+
+    // Load more titles on scroll
+//    $(window).scroll(function () {
+//        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 10) {
+//            reloadTab();
+//        }
+//    });
 });
 

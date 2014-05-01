@@ -483,15 +483,28 @@ class Manager:
         )
 
     @cherrypy.expose()
-    def InTheaters(self):
-        self.logger.debug("Get list of movies in theaters")
-        thumb_item = """<li title="%s"><a href="#"><img class="thumbnail" src="/manager/GetThumb?w=100&h=150&thumb=http://image.tmdb.org/t/p/original%s"></img><h6 class="title">%s</h6></a></li>"""
-        page = 1
-        data = tmdb.Toprated(page)
+    def Tmdb(self, source, page):
+        self.logger.debug("Get list of %s movies from TMDB" % source)
+        thumb_item = """<li title="%s"><a href="#"><img class="thumbnail" src="/manager/GetThumb?w=100&h=150&thumb=%s"></img><h6 class="title">%s</h6></a></li>"""
+        if source == 'intheaters':
+            data = tmdb.Nowplaying(page)
+        elif source == 'releases':
+            data = tmdb.Releases(page)
+        elif source == 'toprated':
+            data = tmdb.Toprated(page)
+        elif source == 'popular':
+            data = tmdb.Popular(page)
+        else:
+            return
         movies = ''
+        print data['total_pages'], 'total pages'
         for each in data['results']:
             if each['poster_path']:
-                movies += thumb_item % ( each['title'], each['poster_path'], each['title']) 
+                thumb = 'http://image.tmdb.org/t/p/original%s' % each['poster_path']
+            else:
+                thumb ='/img/no_art_square.png'
+            shorttitle = (each['title'][:14] + '..') if len(each['title']) > 16 else each['title']
+            movies += thumb_item % (each['title'], thumb, shorttitle) 
         return movies
 
     @cherrypy.expose()
@@ -544,13 +557,13 @@ class Manager:
         """ Parse thumb to get the url and send to pytunes.proxy.get_image """
         if h and w:
             if int(h)/int(w) > 1.15:
-                url = '/images/no_art_poster.png'
+                url = '../img/no_art_poster.png'
             elif int(h)/int(w) < .85:
-                url = '/images/no_art_fanart'
+                url = '../img/no_art_fanart'
             else:
-                url = '/images/no_art_square.png'
+                url = '../img/no_art_square.png'
         else:
-            url = '/images/no_art_square.png'
+            url = '../img/no_art_square.png'
         if thumb:
             url = thumb
             self.logger.debug("Trying to fetch image via " + url)
@@ -729,38 +742,6 @@ class Manager:
 
         return xbmc.Playlist.GetItems(playlistid=0, properties=['artist', 'title', 'album', 'duration'])
 
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def NowPlaying(self):
-        """ Get information about current playing item """
-        self.logger.debug("Fetching currently playing information")
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            player = xbmc.Player.GetActivePlayers()[0]
-            playerid = player['playerid']
-
-            if player['type'] == 'video':
-                playerprop = ['speed', 'position', 'time', 'totaltime',
-                              'percentage', 'subtitleenabled', 'currentsubtitle',
-                              'subtitles', 'currentaudiostream', 'audiostreams']
-                itemprop = ['thumbnail', 'showtitle', 'season', 'episode', 'year', 'fanart']
-
-            elif player['type'] == 'audio':
-                playerprop = ['speed', 'position', 'time', 'totaltime', 'percentage']
-                itemprop = ['thumbnail', 'title', 'artist', 'album', 'year', 'fanart']
-
-            app = xbmc.Application.GetProperties(properties=['muted', 'volume'])
-            player = xbmc.Player.GetProperties(playerid=playerid, properties=playerprop)
-            item = xbmc.Player.GetItem(playerid=playerid, properties=itemprop)
-
-            return {'playerInfo': player, 'itemInfo': item, 'app': app}
-        except IndexError:
-            self.logger.debug("Nothing current playing.")
-            return
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to fetch currently playing information!")
-            return
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -795,39 +776,6 @@ class Manager:
         xbmc = Server(self.url('/jsonrpc', True))
         return xbmc.Input.SendText(text=text)
 
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def Subtitles(self, subtitle='off'):
-        """ Change the subtitles """
-        self.logger.debug("Changing subtitles to " + subtitle)
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            playerid = xbmc.Player.GetActivePlayers()[0][u'playerid']
-            try:
-                subtitle = int(subtitle)
-                xbmc.Player.SetSubtitle(playerid=playerid, subtitle=subtitle, enable=True)
-                return "success"
-            except ValueError:
-                xbmc.Player.SetSubtitle(playerid=playerid, subtitle='off')
-                return "Disabling subtitles."
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to set subtitle to specified value " + subtitle)
-            return
-
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def Audio(self, audio):
-        """ Change the audio stream  """
-        self.logger.debug("Changing audio stream to " + audio)
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            playerid = xbmc.Player.GetActivePlayers()[0][u'playerid']
-            return xbmc.Player.SetAudioStream(playerid=playerid, stream=int(audio))
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to change audio stream to specified value " + audio)
-            return
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -913,36 +861,6 @@ class Manager:
             self.logger.error("Unable to fetch recently added movies!")
             return
 
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def GetRecentShows(self, limit=5):
-        """ Get a list of recently added TV Shows """
-        self.logger.debug("Fetching recently added TV Shows")
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            properties = ['showtitle', 'season', 'episode', 'title', 'runtime',
-                          'thumbnail', 'plot', 'fanart', 'file']
-            limits = {'start': 0, 'end': int(limit)}
-            return xbmc.VideoLibrary.GetRecentlyAddedEpisodes(properties=properties, limits=limits)
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to fetch recently added TV Shows")
-            return
-
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def GetRecentAlbums(self, limit=5):
-        """ Get a list of recently added music """
-        self.logger.debug("Fetching recently added Music")
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            properties = ['artist', 'albumlabel', 'year', 'description', 'thumbnail']
-            limits = {'start': 0, 'end': int(limit)}
-            return xbmc.AudioLibrary.GetRecentlyAddedAlbums(properties=properties, limits=limits)
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to fetch recently added Music!")
-            return
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
