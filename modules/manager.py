@@ -513,7 +513,7 @@ class Manager:
         movies = ''
         carousel_item = """<div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=http://image.tmdb.org/t/p/original%s')"><div class="carousel-caption"><h4>%s (%s)</h4></div></div>"""
         if carousel == 'upcoming':
-            data = tmdb.Upcoming(page)
+            data = tmdb.Releases(page)
         if carousel == 'toprated':
             data = tmdb.Toprated(page)
         if carousel == 'theaters':
