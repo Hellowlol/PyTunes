@@ -371,6 +371,11 @@ class Manager:
         return pytunes.LOOKUP.get_template('manager.html').render(scriptname='manager')
 
     @cherrypy.expose()
+    def GetMovie(self, tmdbid):
+        """ Generate page from template """
+        return tmdb.MovieInfo(tmdbid)
+        
+    @cherrypy.expose()
     def GetMovies(self, offset, limit):
         """ Generate page from template """
         table = ''
@@ -485,7 +490,7 @@ class Manager:
     @cherrypy.expose()
     def Tmdb(self, source, page):
         self.logger.debug("Get list of %s movies from TMDB" % source)
-        thumb_item = """<li title="%s"><a href="#"><img class="thumbnail" src="/manager/GetThumb?w=100&h=150&thumb=%s"></img><h6 class="title">%s</h6></a></li>"""
+        thumb_item = """<li title="%s"><a href="#" id="%s" class="tmdb"><img class="thumbnail" src="/manager/GetThumb?w=100&h=150&thumb=%s"></img><h6 class="title">%s</h6></a></li>"""
         if source == 'intheaters':
             data = tmdb.Nowplaying(page)
         elif source == 'releases':
@@ -497,6 +502,7 @@ class Manager:
         else:
             return
         movies = ''
+        print data
         print data['total_pages'], 'total pages'
         for each in data['results']:
             if each['poster_path']:
@@ -504,7 +510,7 @@ class Manager:
             else:
                 thumb ='/img/no_art_square.png'
             shorttitle = (each['title'][:14] + '..') if len(each['title']) > 16 else each['title']
-            movies += thumb_item % (each['title'], thumb, shorttitle) 
+            movies += thumb_item % (each['title'], each['id'],  thumb, shorttitle) 
         return movies
 
     @cherrypy.expose()

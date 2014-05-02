@@ -2,7 +2,7 @@
 function loadInTheaters() {
     //alert("In Theaters");
     $('#theaters-grid').empty();
-    var theaterLoad = $.ajax({
+    $.ajax({
         url: WEBDIR + "manager/Tmdb?source=intheaters&page=2",
         type: 'get',
         dataType: 'html',
@@ -12,6 +12,11 @@ function loadInTheaters() {
             $('#theaters-grid').append(data);
         },
         complete: function () {
+            $('.tmdb').click(function (e) {
+                e.preventDefault();
+                alert('click');
+                loadMovie($(this).id);
+            });
             $('.spinner').hide();
         }
     });
@@ -21,7 +26,7 @@ function loadInTheaters() {
 function loadReleases() {
     //alert("In Releases");
     $('#releases-grid').empty();
-    var theaterLoad = $.ajax({
+    $.ajax({
         url: WEBDIR + "manager/Tmdb?source=releases&page=2",
         type: 'get',
         dataType: 'html',
@@ -31,6 +36,11 @@ function loadReleases() {
             $('#releases-grid').append(data);
         },
         complete: function () {
+            $('.tmdb').click(function (e) {
+                e.preventDefault();
+                alert('click');
+                loadMovie($(this).id);
+            });
             $('.spinner').hide();
         }
     });
@@ -40,7 +50,7 @@ function loadReleases() {
 function loadTopRated() {
     //alert("In Top Rated");
     $('#toprated-grid').empty();
-    var theaterLoad = $.ajax({
+    $.ajax({
         url: WEBDIR + "manager/Tmdb?source=toprated&page=2",
         type: 'get',
         dataType: 'html',
@@ -50,6 +60,11 @@ function loadTopRated() {
             $('#toprated-grid').append(data);
         },
         complete: function () {
+            $('.tmdb').click(function (e) {
+                e.preventDefault();
+                alert('click');
+                loadMovie($(this).id);
+            });
             $('.spinner').hide();
         }
     });
@@ -59,7 +74,7 @@ function loadTopRated() {
 function loadPopular() {
     //alert("In Popular");
     $('#popular-grid').empty();
-    var popLoad = $.ajax({
+    $.ajax({
         url: WEBDIR + "manager/Tmdb?source=popular&page=2",
         type: 'get',
         dataType: 'html',
@@ -69,6 +84,11 @@ function loadPopular() {
             $('#popular-grid').append(data);
         },
         complete: function () {
+            $('.tmdb').click(function (e) {
+                e.preventDefault();
+                alert('click');
+                loadMovie($(this).id);
+            });
             $('.spinner').hide();
         }
     });
@@ -80,6 +100,24 @@ var movieLoad = {
     limit: 15,
     options: null
 };
+
+
+function loadMovie() {
+    alert('load movie');
+    var sendData = {
+        tmdbid: '96721'
+    };
+    $.ajax({
+        url: WEBDIR + "manager/GetMovie",
+        type: 'get',
+        data: sendData,
+        dataType: 'text',
+        success: function (data) {
+            alert(data);
+        }
+    });
+}
+ 
 
 
 function loadMovies() {
@@ -191,6 +229,7 @@ $('#nshow').click(function () {
     showLoad.offset += showLoad.limit;
     loadShows();
 });
+
 
 var pageoptions = {
     limit: 30,

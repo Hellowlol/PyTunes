@@ -91,6 +91,7 @@ class Deluge:
            
     
         response = self.read_data(data)
+        print "response: ", response
         self.logger.debug ("response is %s" %response)
         if response and response['error']:
             self.auth()
@@ -105,15 +106,12 @@ class Deluge:
     def read_data(self,data):
         try:
             self.logger.debug("Read data from server")
-
-            host = pytunes.settings.get('deluge_host', '')
-            port = str(pytunes.settings.get('deluge_port', ''))
             
             host = pytunes.settings.get('deluge_host', '')
             port = str(pytunes.settings.get('deluge_port', ''))
 
             url = 'http://' +  host + ':' + str(port) + '/json'
-            
+            print 'url: ', url
             post_data = dumps(data)
             buf = StringIO( self.opener.open(url, post_data,1).read())
             f = gzip.GzipFile(fileobj=buf)
