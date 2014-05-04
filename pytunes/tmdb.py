@@ -7,8 +7,9 @@ tmdb_url = 'http://image.tmdb.org/t/p/original'
 def MovieInfo(tmdbid):
     fanart = [] 
     posters = []
-    trailers = ''
-    genres = []
+    trailers = []
+    genre = []
+    studios = []
     actors = []
     writers = []
     producers = []
@@ -17,10 +18,12 @@ def MovieInfo(tmdbid):
     language = []
     movie = tmdb.Movies(tmdbid)
     response = movie.trailers()
+    #print response
     for each in response['youtube']:
-        trailers += '    <trailer>plugin://plugin.video.youtube/?action=play_video&amp;videoid=' + each['source'] + '</trailer>\n'
-    if len(trailers) == 0:
-        trailers += '    <trailer></trailer>\n'
+        #trailers += '    <trailer>plugin://plugin.video.youtube/?action=play_video&amp;videoid=' + each['source'] + '</trailer>\n'
+        trailers.append(each['source'])
+    #if len(trailers) == 0:
+    #    trailers += '    <trailer></trailer>\n'
     #print 'trailers     ', response
     response = movie.images()
     for each in response['backdrops']:
@@ -56,10 +59,15 @@ def MovieInfo(tmdbid):
             producers.append({'name':crew['name'], 'thumb':thumb})
     #print directors, writers, producers
     movie_info = movie.info()
+    print movie_info
     for countries in movie_info['production_countries']:
         country.append(countries['name'])
-    #for languages in movie_info['spoken_languages']:
-    #    language.append(countries['name'])
+    for companies in movie_info['production_companies']:
+        studios.append(companies['name'])
+    for genres in movie_info['genres']:
+        genre.append(genres['name'])
+    for languages in movie_info['spoken_languages']:
+        language.append(languages['name'])
     #print movie_info
     dt = datetime.strptime(movie_info['release_date'], '%Y-%m-%d')
     info = {
@@ -70,13 +78,17 @@ def MovieInfo(tmdbid):
         'hdlogos':[],
         'thumbs':[],
         'plot':movie_info['overview'],
+        'release_date':movie_info['release_date'],
         'vote_count':movie_info['vote_count'],
         'imdb':movie_info['imdb_id'],
+        'popularity':movie_info['popularity'],
         'set':movie_info['belongs_to_collection'],#break apart
         'directors':directors,
         'writers':writers,
         'producers':producers,
         'cast':actors,
+        'studios':studios,
+        'genre':genre,
         'year':dt.year,
         'rating':movie_info['vote_average'],
         'fanart':fanart,
@@ -86,7 +98,8 @@ def MovieInfo(tmdbid):
         'trailers':trailers,
         'runtime':movie_info['runtime'],
         'tagline':movie_info['tagline'],
-        'original_title':movie_info['original_title']
+        'original_title':movie_info['original_title'],
+        'title':movie_info['title']
     }
     return info
 

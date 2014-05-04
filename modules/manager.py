@@ -372,8 +372,56 @@ class Manager:
 
     @cherrypy.expose()
     def GetMovie(self, tmdbid):
-        """ Generate page from template """
-        return tmdb.MovieInfo(tmdbid)
+        """ Get Movie info """
+        movie = {}
+        directors = []
+        writers = []
+        genres = []
+        actors = ''
+        li = '<li title="%s --> %s"><a href="#"><img class="thumbnail actor-thumb" src="/manager/GetThumb?w=83&h=125&thumb=%s"></img><h6 class="title">%s</h6><h6 class="title">%s</h6></a></li>'
+        print 'tmdbid', tmdbid
+        info = tmdb.MovieInfo(tmdbid)
+        print 'title: ', info['title']
+        print 'release_date: ', info['release_date']
+        print 'trailers: ', info['trailers']
+        print 'plot: ', info['plot']
+        print 'popularity: ', info['popularity']
+        print 'year: ', info['year']
+        print 'imdb: ', info['imdb']
+        print 'genre: ', info['genre']
+        print 'tagline: ', info['tagline']
+        print 'runtime: ', info['runtime']
+        print 'original_title: ', info['original_title']
+        print 'rating: ', info['rating']
+        print 'country: ', info['country']
+        print 'language: ', info['language']
+        for each in info['directors']:
+            directors.append(each['name'])
+        if directors:
+            directors = ", ".join(directors)
+        else:
+            directors = 'N/A'
+        for each in info['writers']:
+            writers.append(each['name'])
+        if writers:
+            writers = ", ".join(writers)
+        else:
+            writers = 'N/A'
+        if info['posters']:
+            poster = info['posters'][0]
+        else:
+            host = 'localhost' if pytunes.settings.get('app_host') == '0.0.0.0' else pytunes.settings.get('app_host')
+            poster = 'http://%s:%s/img/no_art_square.png' % (host, pytunes.PORT)
+        for each in info['cast']:
+            shortname = (each['name'][:14] + '..') if len(each['name']) > 16 else each['name']
+            shortrole = (each['role'][:14] + '..') if len(each['role']) > 16 else each['role']
+            actors += li % (each['name'], each['role'], each['thumb'], shortname, shortrole)
+
+        movie['body'] = staticvars.get_var('modal_middle') % (poster, info['plot'], directors, ", ".join(info['genre']), info['runtime'], writers, ", ".join(info['country']), ", ".join(info['studios']), actors)
+        movie['head'] = info['title'] + '   ' + info['release_date']
+        movie['foot'] = '<button class="btn btn-primary" data-dismiss="modal">Close</button>'
+        return json.dumps(movie)
+
         
     @cherrypy.expose()
     def GetMovies(self, offset, limit):
@@ -508,7 +556,8 @@ class Manager:
             if each['poster_path']:
                 thumb = 'http://image.tmdb.org/t/p/original%s' % each['poster_path']
             else:
-                thumb ='/img/no_art_square.png'
+                host = 'localhost' if pytunes.settings.get('app_host') == '0.0.0.0' else pytunes.settings.get('app_host')
+                thumb = 'http://%s:%s/img/no_art_square.png' % (host, pytunes.PORT)
             shorttitle = (each['title'][:14] + '..') if len(each['title']) > 16 else each['title']
             movies += thumb_item % (each['title'], each['id'],  thumb, shorttitle) 
         return movies
@@ -526,7 +575,6 @@ class Manager:
             data = tmdb.Nowplaying(page)
         if carousel == 'popular':
             data = tmdb.Popular(page)
-        #print data
         for each in data['results']:
             if each['backdrop_path']:
                 movies += carousel_item % (each['backdrop_path'], each['title'], each['release_date']) 

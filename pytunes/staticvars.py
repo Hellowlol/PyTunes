@@ -72,6 +72,73 @@ ${arts}
     </div>
 </div> 
     """
+
+    vars['modal_middle'] = """
+            <div>
+                <div class="modal-body-middle">
+                    <div class="pull-left modal-body-middle-left">
+
+                        <p>
+                            <img class="thumbnail modal-movie-poster" src="/manager/GetThumb?w=133&h=200&thumb=%s"></img>
+                        </p>
+                    </div>
+                    <div class="modal-body-middle-right">
+                        <p>
+                            <b>
+                                Plot:
+                            </b>
+                            %s
+                        </p>
+                        <div class="pull-left">
+                            <p class="modal-info-item">
+                                <b>
+                                    Director:
+                                </b>
+                                 %s
+                            </p>
+                            <p class="modal-info-item">
+                                <b>
+                                    Genre:
+                                </b>
+                                 %s
+                            </p>
+                            <p class="modal-info-item">
+                                <b>
+                                    Runtime:
+                                </b>
+                                 %s
+                            </p>
+                        </div>
+                        <div class="pull-right">
+                            <p class="modal-info-item">
+                                <b>
+                                    Writer:
+                                </b>
+                                 %s
+                            </p>
+                            <p class="modal-info-item">
+                                <b>
+                                    Country:
+                                </b>
+                                 %s
+                            </p>
+                            <p class="modal-info-item">
+                                <b>
+                                    Studio:
+                                </b>
+                                 %s
+                            </p>
+                        </div>
+                   </div>
+                </div>
+                <div class="modal-body-bottom pull-left">
+                    <ul class="thumbnails">%s</ul>
+                </div>
+
+    """
+
+
+
     
     return vars[var]
 

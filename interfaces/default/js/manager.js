@@ -14,8 +14,8 @@ function loadInTheaters() {
         complete: function () {
             $('.tmdb').click(function (e) {
                 e.preventDefault();
-                alert('click');
-                loadMovie($(this).id);
+                //alert('click');
+                loadMovie($(this).prop('id'));
             });
             $('.spinner').hide();
         }
@@ -38,8 +38,8 @@ function loadReleases() {
         complete: function () {
             $('.tmdb').click(function (e) {
                 e.preventDefault();
-                alert('click');
-                loadMovie($(this).id);
+                //alert('click');
+                loadMovie($(this).prop('id'));
             });
             $('.spinner').hide();
         }
@@ -62,8 +62,8 @@ function loadTopRated() {
         complete: function () {
             $('.tmdb').click(function (e) {
                 e.preventDefault();
-                alert('click');
-                loadMovie($(this).id);
+                //alert('click');
+                loadMovie($(this).prop('id'));
             });
             $('.spinner').hide();
         }
@@ -84,10 +84,10 @@ function loadPopular() {
             $('#popular-grid').append(data);
         },
         complete: function () {
-            $('.tmdb').click(function (e) {
+            $('.tmdb').click(function(e){
                 e.preventDefault();
-                alert('click');
-                loadMovie($(this).id);
+                //alert('click');
+                loadMovie($(this).prop('id'));
             });
             $('.spinner').hide();
         }
@@ -102,18 +102,34 @@ var movieLoad = {
 };
 
 
-function loadMovie() {
-    alert('load movie');
+function loadMovie(id) {
+    //alert('load movie ' + id);
     var sendData = {
-        tmdbid: '96721'
+        tmdbid: id
     };
     $.ajax({
         url: WEBDIR + "manager/GetMovie",
         type: 'get',
         data: sendData,
-        dataType: 'text',
+        dataType: 'json',
         success: function (data) {
-            alert(data);
+            //alert(data.head);
+            //alert(data.body);
+            var head = ' + movie.year + ';
+            var body = 'body';
+            var foot = 'buttons';
+            $('#modal_dialog .modal-h3').html(data.head);
+            $('#modal_dialog .modal-body').html(data.body);
+            $('#modal_dialog .modal-footer').html(data.foot);
+
+            $('#modal_dialog').modal({
+                show: true,
+                backdrop: false
+            });
+
+            //$('.modal-fanart').css({
+                //'background-image': 'url(' + WEBDIR + 'xbmc/GetThumb?w=950&h=450&o=10&thumb=' +            encodeURIComponent(movie.fanart) + ')'
+    //});
         }
     });
 }
@@ -139,6 +155,17 @@ function loadMovies() {
         complete: function () {
             $('.spinner').hide();
         }
+    });
+}
+
+function showMovie(title, content, buttons) {
+    alert('showMovie');
+    $('#modal_dialog .modal-h3').html(title);
+    $('#modal_dialog .modal-body').html(content);
+    var footer = $('#modal_dialog .modal-footer').empty();
+    $('#modal_dialog').modal({
+        show: true,
+        backdrop: false
     });
 }
 

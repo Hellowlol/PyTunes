@@ -245,7 +245,6 @@ function loadMovies(options) {
 function loadMovie(movie) {
     var poster = WEBDIR + 'xbmc/GetThumb?w=133&h=200&thumb=' + encodeURIComponent(movie.thumbnail);
     var info = $('<div>').addClass('modal-movieinfo');
-    var footerbuttons = $('<div>').addClass('modal-footerbuttons');
     var actors = "";
     var castshow = $('<ul>').addClass('thumbnails');
     var actorItem = "";    
