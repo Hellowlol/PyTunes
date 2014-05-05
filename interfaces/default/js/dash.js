@@ -91,7 +91,7 @@ function loadPopular() {
 function loadRecentMovies() {
     if (!$('#movie-carousel').length) return;
     $.getJSON(WEBDIR + 'xbmc/GetRecentMovies', function (data) {
-        if (data === null) return;
+        if (data === null || data.movies === null) return;
         $.each(data.movies, function (i, movie) {
             var itemDiv = $('<div>').addClass('item carousel-item');
 
@@ -219,6 +219,7 @@ function loadWantedMovies() {
 
 function loadNextAired(options) {
     if (!$('#nextaired_table_body').length) return;
+
     $.getJSON(WEBDIR + 'sickbeard/GetNextAired', function (result) {
         if (result === null || result.data.soon.legth === 0) {
             $('#nextaired_table_body').append(

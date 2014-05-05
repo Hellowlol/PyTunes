@@ -57,7 +57,6 @@ def MovieInfo(tmdbid):
             else:
                 thumb = ''
             producers.append({'name':crew['name'], 'thumb':thumb})
-    #print directors, writers, producers
     movie_info = movie.info()
     print movie_info
     for countries in movie_info['production_countries']:

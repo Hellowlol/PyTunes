@@ -1,15 +1,23 @@
 
-function loadInTheaters() {
-    //alert("In Theaters");
-    $('#theaters-grid').empty();
+var page_counts = {
+    theaters: 1,
+    releases: 1,
+    popular: 1,
+    toprated: 1
+};    
+
+
+function loadInTheaters(page) {
+    alert("In Theaters" + page);
     $.ajax({
-        url: WEBDIR + "manager/Tmdb?source=intheaters&page=2",
+        url: WEBDIR + "manager/Tmdb?source=intheaters&page=" + page,
         type: 'get',
         dataType: 'html',
         success: function (data) {
             //alert("Theaters: " + data);
             if (data === null) return errorHandler();
             $('#theaters-grid').append(data);
+            //page_counts.theaters += 1;
         },
         complete: function () {
             $('.tmdb').click(function (e) {
@@ -23,17 +31,17 @@ function loadInTheaters() {
 }
 
 
-function loadReleases() {
-    //alert("In Releases");
-    $('#releases-grid').empty();
+function loadReleases(page) {
+    alert("In Releases" + page);
     $.ajax({
-        url: WEBDIR + "manager/Tmdb?source=releases&page=2",
+        url: WEBDIR + "manager/Tmdb?source=releases&page=" + page,
         type: 'get',
         dataType: 'html',
         success: function (data) {
             //alert("Releases: " + data);
             if (data === null) return errorHandler();
             $('#releases-grid').append(data);
+            //page_counts.releases += 1;
         },
         complete: function () {
             $('.tmdb').click(function (e) {
@@ -46,18 +54,17 @@ function loadReleases() {
     });
 }
 
-
-function loadTopRated() {
-    //alert("In Top Rated");
-    $('#toprated-grid').empty();
+function loadTopRated(page) {
+    alert("In Top Rated" + page);
     $.ajax({
-        url: WEBDIR + "manager/Tmdb?source=toprated&page=2",
+        url: WEBDIR + "manager/Tmdb?source=toprated&page=" + page,
         type: 'get',
         dataType: 'html',
         success: function (data) {
             //alert("Top Rated: " + data);
             if (data === null) return errorHandler();
             $('#toprated-grid').append(data);
+            //page_counts.toprated += 1;
         },
         complete: function () {
             $('.tmdb').click(function (e) {
@@ -71,17 +78,17 @@ function loadTopRated() {
 }
 
 
-function loadPopular() {
-    //alert("In Popular");
-    $('#popular-grid').empty();
+function loadPopular(page) {
+    alert("In Popular" + page);
     $.ajax({
-        url: WEBDIR + "manager/Tmdb?source=popular&page=2",
+        url: WEBDIR + "manager/Tmdb?source=popular&page=" + page,
         type: 'get',
         dataType: 'html',
         success: function (data) {
-            //alert("Popular: " + data);
+            //alert("Popular: " page_counts.popular);
             if (data === null) return errorHandler();
             $('#popular-grid').append(data);
+            //page_counts.popular += 1;
         },
         complete: function () {
             $('.tmdb').click(function(e){
@@ -100,7 +107,6 @@ var movieLoad = {
     limit: 15,
     options: null
 };
-
 
 function loadMovie(id) {
     //alert('load movie ' + id);
@@ -127,9 +133,16 @@ function loadMovie(id) {
                 backdrop: false
             });
 
-            //$('.modal-fanart').css({
-                //'background-image': 'url(' + WEBDIR + 'xbmc/GetThumb?w=950&h=450&o=10&thumb=' +            encodeURIComponent(movie.fanart) + ')'
-    //});
+            $('.modal-fanart').css({
+                'background-image': 'url(' + WEBDIR + 'manager/GetThumb?w=950&h=450&o=10&thumb=' + encodeURIComponent(data.fanart) + ')'
+            });
+            $('#youtube').click(function (e) {
+                //e.preventDefault();
+                var src = 'http://www.youtube.com/embed/' + $(this).attr('ytid') + '?rel=0&autoplay=1';
+                var youtube = $('<iframe allowfullscreen>').attr('src', src).addClass('modal-youtube');
+                //alert($(this).prop('ytid'));
+                $('#modal_dialog .modal-body').html(youtube);
+            });
         }
     });
 }
@@ -155,17 +168,6 @@ function loadMovies() {
         complete: function () {
             $('.spinner').hide();
         }
-    });
-}
-
-function showMovie(title, content, buttons) {
-    alert('showMovie');
-    $('#modal_dialog .modal-h3').html(title);
-    $('#modal_dialog .modal-body').html(content);
-    var footer = $('#modal_dialog .modal-footer').empty();
-    $('#modal_dialog').modal({
-        show: true,
-        backdrop: false
     });
 }
 
@@ -198,8 +200,8 @@ function loadShows() {
     });
 }
 
-
-function reloadTab() {
+//Initial Load
+function loadTab() {
     if ($('#movies').is(':visible')) {
         loadMovies();
     } 
@@ -207,16 +209,24 @@ function reloadTab() {
         loadShows();
     } 
     else if ($('#theaters').is(':visible')) {
-        loadInTheaters();
+        $('#theaters-grid').empty();
+        loadInTheaters(page_counts['theaters']);
+        page_counts['theaters'] += 1;
     } 
     else if ($('#releases').is(':visible')) {
-        loadReleases();
+        $('#releases-grid').empty();
+        loadReleases(page_counts['releases']);
+        page_counts['releases'] += 1;
     } 
     else if ($('#toprated').is(':visible')) {
-        loadTopRated();
+        $('#toprated-grid').empty();
+        loadTopRated(page_counts['toprated']);
+        page_counts['toprated'] += 1;
     } 
     else if ($('#popular').is(':visible')) {
-        loadPopular();
+        $('#popular-grid').empty();
+        loadPopular(page_counts['popular']);
+        page_counts['popular'] += 1;
     } 
     //else if ($('#episodes').is(':visible')) {
     //    options = $.extend(options, {
@@ -236,6 +246,26 @@ function reloadTab() {
     //else if ($('#pvr').is(':visible')) {
     //    loadChannels();
     //}
+}
+
+//reLoad
+function reloadTab() {
+    if ($('#theaters').is(':visible')) {
+        loadInTheaters(page_counts['theaters']);
+        page_counts['theaters'] += 1;
+    } 
+    else if ($('#releases').is(':visible')) {
+        loadReleases(page_counts['releases']);
+        page_counts['releases'] += 1;
+    } 
+    else if ($('#toprated').is(':visible')) {
+        loadTopRated(page_counts['toprated']);
+        page_counts['toprated'] += 1;
+    } 
+    else if ($('#popular').is(':visible')) {
+        loadPopular(page_counts['popular']);
+        page_counts['popular'] += 1;
+    } 
 }
 $('#pmovie').click(function () {
     movieLoad.offset -= movieLoad.limit;
@@ -268,21 +298,24 @@ $(document).ready(function () {
     //loadMovies();
     //loadShows();
     //loadInTheaters();
-    reloadTab();
+    loadTab();
     $('.spinner').hide();
 
     // Load data on tab display
     $('a[data-toggle="tab"]').click(function (e) {
         $('#search').val('');
         searchString = '';
-    }).on('shown', reloadTab);
+    }).on('shown', loadTab);
+
     $(window).trigger('hashchange');
 
     // Load more titles on scroll
-//    $(window).scroll(function () {
-//        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 10) {
-//            reloadTab();
-//        }
-//    });
+    $(window).scroll(function () {
+        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 10) {
+            reloadTab();
+        }
+    });
+
+
 });
 

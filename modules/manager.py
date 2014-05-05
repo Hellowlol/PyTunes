@@ -378,7 +378,9 @@ class Manager:
         writers = []
         genres = []
         actors = ''
-        li = '<li title="%s --> %s"><a href="#"><img class="thumbnail actor-thumb" src="/manager/GetThumb?w=83&h=125&thumb=%s"></img><h6 class="title">%s</h6><h6 class="title">%s</h6></a></li>'
+
+        download = '<button class="btn btn-primary">Get It!</button>'
+        close = '<button class="btn btn-primary" data-dismiss="modal">Close</button>'
         print 'tmdbid', tmdbid
         info = tmdb.MovieInfo(tmdbid)
         print 'title: ', info['title']
@@ -415,11 +417,18 @@ class Manager:
         for each in info['cast']:
             shortname = (each['name'][:14] + '..') if len(each['name']) > 16 else each['name']
             shortrole = (each['role'][:14] + '..') if len(each['role']) > 16 else each['role']
-            actors += li % (each['name'], each['role'], each['thumb'], shortname, shortrole)
-
+            actors += staticvars.get_var('actor_li') % (each['name'], each['role'], each['thumb'], shortname, shortrole)
+        if info['trailers']:
+            trailer  = staticvars.get_var('trailer') % info['trailers'][0]
+        else:
+            trailer = ''
+        if info['imdb']:
+            imdb = staticvars.get_var('imdb') % info['imdb']
+        else:
+            imdb = ''
         movie['body'] = staticvars.get_var('modal_middle') % (poster, info['plot'], directors, ", ".join(info['genre']), info['runtime'], writers, ", ".join(info['country']), ", ".join(info['studios']), actors)
         movie['head'] = info['title'] + '   ' + info['release_date']
-        movie['foot'] = '<button class="btn btn-primary" data-dismiss="modal">Close</button>'
+        movie['foot'] = imdb + trailer + download + close
         return json.dumps(movie)
 
         
@@ -550,8 +559,8 @@ class Manager:
         else:
             return
         movies = ''
-        print data
-        print data['total_pages'], 'total pages'
+        #print data
+        #print data['total_pages'], 'total pages'
         for each in data['results']:
             if each['poster_path']:
                 thumb = 'http://image.tmdb.org/t/p/original%s' % each['poster_path']
@@ -641,19 +650,9 @@ class Manager:
             acodec = "acodec"
             channels = "channels"
             subt = "subt"
-            #table += row19 %  (title, year, vcodec, quality, acodec, channels, subt, fanart, thumb, mpaa, trailer, genre, rating, imdb, plot, tagline, director, writers, duration) 
             table += row19 %  (title, year, seasons, channels, subt, vcodec, quality, acodec, channels, subt, vcodec, quality, acodec, channels, subt, vcodec, quality, acodec, channels) 
         return table
-        #for movie in data:
-        #    if movie['c19']:
-        #        trailer = "<img src='../img/yes16.png'>"
-        #    else:
-        #        trailer = "<img src='../img/no16.png'>"
-        #    if movie['c03']:
-        #        tagline = "<img src='../img/yes16.png'>"
-        #    else:
-        #        tagline = "<img src='../img/no16.png'>"
- 
+
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def GetEpisodes(self, start=0, end=0, sortmethod='episode', sortorder='ascending', tvshowid=None, hidewatched=False, filter=''):

@@ -137,7 +137,11 @@ ${arts}
 
     """
 
+    vars['imdb'] = '<a href="http://www.imdb.com/title/%s" target="_blank"><button class="btn btn-primary">IMDB</button></a>&nbsp;&nbsp;'
 
+    vars['trailer'] = '<button id="youtube" ytid="%s" class="btn btn-primary">Trailer</button>'
+
+    vars['actor_li'] = '<li title="%s --> %s"><a href="#"><img class="thumbnail actor-thumb" src="/manager/GetThumb?w=83&h=125&thumb=%s"></img><h6 class="title">%s</h6><h6 class="title">%s</h6></a></li>'
 
     
     return vars[var]
