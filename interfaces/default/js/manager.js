@@ -8,7 +8,7 @@ var page_counts = {
 
 
 function loadInTheaters(page) {
-    alert("In Theaters" + page);
+    //alert("In Theaters" + page);
     $.ajax({
         url: WEBDIR + "manager/Tmdb?source=intheaters&page=" + page,
         type: 'get',
@@ -32,7 +32,7 @@ function loadInTheaters(page) {
 
 
 function loadReleases(page) {
-    alert("In Releases" + page);
+    //alert("In Releases" + page);
     $.ajax({
         url: WEBDIR + "manager/Tmdb?source=releases&page=" + page,
         type: 'get',
@@ -55,7 +55,7 @@ function loadReleases(page) {
 }
 
 function loadTopRated(page) {
-    alert("In Top Rated" + page);
+    //alert("In Top Rated" + page);
     $.ajax({
         url: WEBDIR + "manager/Tmdb?source=toprated&page=" + page,
         type: 'get',
@@ -79,7 +79,7 @@ function loadTopRated(page) {
 
 
 function loadPopular(page) {
-    alert("In Popular" + page);
+    //alert("In Popular" + page);
     $.ajax({
         url: WEBDIR + "manager/Tmdb?source=popular&page=" + page,
         type: 'get',

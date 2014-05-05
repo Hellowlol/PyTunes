@@ -426,6 +426,10 @@ class Manager:
             imdb = staticvars.get_var('imdb') % info['imdb']
         else:
             imdb = ''
+        if info['fanart']:
+            movie['fanart'] = info['fanart'][0]
+        else:
+            movie['fanart']  = ''
         movie['body'] = staticvars.get_var('modal_middle') % (poster, info['plot'], directors, ", ".join(info['genre']), info['runtime'], writers, ", ".join(info['country']), ", ".join(info['studios']), actors)
         movie['head'] = info['title'] + '   ' + info['release_date']
         movie['foot'] = imdb + trailer + download + close
