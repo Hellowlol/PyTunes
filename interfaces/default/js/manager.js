@@ -17,7 +17,6 @@ function loadInTheaters(page) {
             //alert("Theaters: " + data);
             if (data === null) return errorHandler();
             $('#theaters-grid').append(data);
-            //page_counts.theaters += 1;
         },
         complete: function () {
             $('.tmdb').click(function (e) {
@@ -41,7 +40,6 @@ function loadReleases(page) {
             //alert("Releases: " + data);
             if (data === null) return errorHandler();
             $('#releases-grid').append(data);
-            //page_counts.releases += 1;
         },
         complete: function () {
             $('.tmdb').click(function (e) {
@@ -64,7 +62,6 @@ function loadTopRated(page) {
             //alert("Top Rated: " + data);
             if (data === null) return errorHandler();
             $('#toprated-grid').append(data);
-            //page_counts.toprated += 1;
         },
         complete: function () {
             $('.tmdb').click(function (e) {
@@ -88,7 +85,6 @@ function loadPopular(page) {
             //alert("Popular: " page_counts.popular);
             if (data === null) return errorHandler();
             $('#popular-grid').append(data);
-            //page_counts.popular += 1;
         },
         complete: function () {
             $('.tmdb').click(function(e){
@@ -228,24 +224,6 @@ function loadTab() {
         loadPopular(page_counts['popular']);
         page_counts['popular'] += 1;
     } 
-    //else if ($('#episodes').is(':visible')) {
-    //    options = $.extend(options, {
-    //        'tvshowid': currentShow
-    //   });
-    //    loadEpisodes(options);
-    //} 
-    //else if ($('#artists').is(':visible')) {
-    //    loadArtists(options);
-    //} 
-    //else if ($('#albums').is(':visible')) {
-    //    loadAlbums(options);
-    //} 
-    //else if ($('#songs').is(':visible')) {
-    //    loadSongs();
-    //} 
-    //else if ($('#pvr').is(':visible')) {
-    //    loadChannels();
-    //}
 }
 
 //reLoad

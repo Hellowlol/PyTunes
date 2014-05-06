@@ -5,6 +5,7 @@ DB = None
 DEBUG = None
 DAEMON = None
 PID = None
+IMGURL = None
 NOSHELL = None
 NOBROWSER = None
 WEBDIR = None

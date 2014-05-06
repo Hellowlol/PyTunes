@@ -2,6 +2,7 @@
 import cherrypy
 import pytunes
 from pytunes import tmdb, staticvars, scheduler
+from pytunes.staticvars import get_var as html
 import time
 import threading
 import base64
@@ -121,6 +122,18 @@ tvshow_schema_map = {
 'c21': 'strUnknown7',
 'c23': 'strUnknown8'
 }
+
+""" SQLObject class for movies wanted table """
+class MoviesWanted(SQLObject):
+    strImdb = StringCol()
+    strTmdb = StringCol()
+    strFanart = StringCol()
+    strThumb = StringCol()
+    strPlot = StringCol()
+    strTitle = StringCol()
+    strRating = StringCol()
+    strYear = StringCol()
+    strGenre = StringCol()
 
 """ SQLObject class for movie table """
 class Movie(SQLObject):
@@ -314,6 +327,7 @@ class Manager:
         MusicArt.createTable(ifNotExists=True)
         VideoArt.createTable(ifNotExists=True)
         Movie.createTable(ifNotExists=True)
+        MoviesWanted.createTable(ifNotExists=True)
         TvShow.createTable(ifNotExists=True)
         pytunes.MODULES.append({
             'name': 'Media Manager',
@@ -327,7 +341,8 @@ class Manager:
                     'name':'manager_name'},
                 {'type':'text', 
                     'label':'Movie Source Folder', 
-                    'name':'movie_in', 
+                    'name':'movie_in',
+                    'desc':'Where Movies Are Downloaded', 
                     'dir':True},
                 {'type':'text', 
                     'label':'Movie Destination Folder', 
@@ -336,6 +351,7 @@ class Manager:
                 {'type':'text', 
                     'label':'Music Source Folder', 
                     'name':'music_in', 
+                    'desc':'Where Music is Downloaded', 
                     'dir':True},
                 {'type':'text', 
                     'label':'Music Destination Folder', 
@@ -371,6 +387,27 @@ class Manager:
         return pytunes.LOOKUP.get_template('manager.html').render(scriptname='manager')
 
     @cherrypy.expose()
+    def FindMovie(self, tmdbid):
+        """ Add Movie To Wanted DB Table """
+        info = tmdb.MovieInfo(tmdbid)
+        if info:
+            if info['fanart']:
+                fanart = info['fanart'][0]
+            else: 
+                fanart = ''
+            if info['posters']:
+                poster = info['posters'][0]
+            else: 
+                poster = ''
+        #Check to see if it's already in the table
+        try:
+            check = MoviesWanted.selectBy(strTmdb=tmdbid).getOne()
+            if check:
+                return 'Already in the Want List'
+        except SQLObjectNotFound:
+            MoviesWanted(strTmdb=tmdbid, strImdb=info['imdb'], strTitle=info['title'], strFanart=fanart, strThumb=thumb, strRating=info['rating'], strPlot=info['plot'])
+
+    @cherrypy.expose()
     def GetMovie(self, tmdbid):
         """ Get Movie info """
         movie = {}
@@ -379,8 +416,7 @@ class Manager:
         genres = []
         actors = ''
 
-        download = '<button class="btn btn-primary">Get It!</button>'
-        close = '<button class="btn btn-primary" data-dismiss="modal">Close</button>'
+        download = html('download_button') % tmdbid
         print 'tmdbid', tmdbid
         info = tmdb.MovieInfo(tmdbid)
         print 'title: ', info['title']
@@ -413,26 +449,26 @@ class Manager:
             poster = info['posters'][0]
         else:
             host = 'localhost' if pytunes.settings.get('app_host') == '0.0.0.0' else pytunes.settings.get('app_host')
-            poster = 'http://%s:%s/img/no_art_square.png' % (host, pytunes.PORT)
+            poster = pytunes.IMGURL + 'no_art_square.png'
         for each in info['cast']:
             shortname = (each['name'][:14] + '..') if len(each['name']) > 16 else each['name']
             shortrole = (each['role'][:14] + '..') if len(each['role']) > 16 else each['role']
-            actors += staticvars.get_var('actor_li') % (each['name'], each['role'], each['thumb'], shortname, shortrole)
+            actors += html('actor_li') % (each['name'], each['role'], each['thumb'], shortname, shortrole)
         if info['trailers']:
-            trailer  = staticvars.get_var('trailer') % info['trailers'][0]
+            trailer  = html('trailer') % info['trailers'][0]
         else:
             trailer = ''
         if info['imdb']:
-            imdb = staticvars.get_var('imdb') % info['imdb']
+            imdb = html('imdb') % info['imdb']
         else:
             imdb = ''
         if info['fanart']:
             movie['fanart'] = info['fanart'][0]
         else:
             movie['fanart']  = ''
-        movie['body'] = staticvars.get_var('modal_middle') % (poster, info['plot'], directors, ", ".join(info['genre']), info['runtime'], writers, ", ".join(info['country']), ", ".join(info['studios']), actors)
+        movie['body'] = html('modal_middle') % (poster, info['plot'], directors, ", ".join(info['genre']), info['runtime'], writers, ", ".join(info['country']), ", ".join(info['studios']), actors)
         movie['head'] = info['title'] + '   ' + info['release_date']
-        movie['foot'] = imdb + trailer + download + close
+        movie['foot'] = imdb + trailer + download + html('close_button')
         return json.dumps(movie)
 
         
@@ -440,7 +476,6 @@ class Manager:
     def GetMovies(self, offset, limit):
         """ Generate page from template """
         table = ''
-        row19 =  "<tr><td>%s<td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
         data = table_dump('video.db', 'movieview', limit, offset, 'c00')
         for movie in data:
             if movie['c19']:
@@ -495,7 +530,7 @@ class Manager:
             acodec = "acodec"
             channels = "channels"
             subt = "subt"
-            table += row19 %  (title, year, vcodec, quality, acodec, channels, subt, fanart, thumb, mpaa, trailer, genre, rating, imdb, plot, tagline, director, writers, duration) 
+            table += htmls['row19'] %  (title, year, vcodec, quality, acodec, channels, subt, fanart, thumb, mpaa, trailer, genre, rating, imdb, plot, tagline, director, writers, duration) 
         return table
 
     @cherrypy.expose()
@@ -520,9 +555,6 @@ class Manager:
             data = table_dump('video.db', 'art', '10', '0')
             data2 = table_dump('music.db', 'art', '10', '0')
         return pytunes.LOOKUP.get_template('manager.html').render(scriptname='manager')
-
-
-
 
     @cherrypy.expose()
     def ViewAlbum(self, album_id):
@@ -551,7 +583,6 @@ class Manager:
     @cherrypy.expose()
     def Tmdb(self, source, page):
         self.logger.debug("Get list of %s movies from TMDB" % source)
-        thumb_item = """<li title="%s"><a href="#" id="%s" class="tmdb"><img class="thumbnail" src="/manager/GetThumb?w=100&h=150&thumb=%s"></img><h6 class="title">%s</h6></a></li>"""
         if source == 'intheaters':
             data = tmdb.Nowplaying(page)
         elif source == 'releases':
@@ -569,17 +600,15 @@ class Manager:
             if each['poster_path']:
                 thumb = 'http://image.tmdb.org/t/p/original%s' % each['poster_path']
             else:
-                host = 'localhost' if pytunes.settings.get('app_host') == '0.0.0.0' else pytunes.settings.get('app_host')
-                thumb = 'http://%s:%s/img/no_art_square.png' % (host, pytunes.PORT)
+                thumb = pytunes.IMGURL + 'no_art_square.png'
             shorttitle = (each['title'][:14] + '..') if len(each['title']) > 16 else each['title']
-            movies += thumb_item % (each['title'], each['id'],  thumb, shorttitle) 
+            movies += html['thumb_item'] % (each['title'], each['id'],  thumb, shorttitle) 
         return movies
 
     @cherrypy.expose()
     def Carousel(self, carousel, page=1):
         self.logger.debug("Get list of movies for %s" % carousel)
         movies = ''
-        carousel_item = """<div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=http://image.tmdb.org/t/p/original%s')"><div class="carousel-caption"><h4>%s (%s)</h4></div></div>"""
         if carousel == 'upcoming':
             data = tmdb.Releases(page)
         if carousel == 'toprated':
@@ -590,7 +619,7 @@ class Manager:
             data = tmdb.Popular(page)
         for each in data['results']:
             if each['backdrop_path']:
-                movies += carousel_item % (each['backdrop_path'], each['title'], each['release_date']) 
+                movies += html['carousel_item'] % (each['backdrop_path'], each['title'], each['release_date']) 
         return movies
 
     @cherrypy.expose()
@@ -642,7 +671,6 @@ class Manager:
         """ Get a list of all the TV Shows """
         self.logger.debug("Fetching TV Shows")
         table = ''
-        row19 =  "<tr><td>%s<td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
         data = table_dump('video.db', 'tvshowview', limit, offset, 'c00')
         for show in data:
             title = show['c00']
@@ -654,7 +682,7 @@ class Manager:
             acodec = "acodec"
             channels = "channels"
             subt = "subt"
-            table += row19 %  (title, year, seasons, channels, subt, vcodec, quality, acodec, channels, subt, vcodec, quality, acodec, channels, subt, vcodec, quality, acodec, channels) 
+            table += html['row19'] %  (title, year, seasons, channels, subt, vcodec, quality, acodec, channels, subt, vcodec, quality, acodec, channels, subt, vcodec, quality, acodec, channels) 
         return table
 
     @cherrypy.expose()

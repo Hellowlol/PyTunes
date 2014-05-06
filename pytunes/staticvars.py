@@ -143,6 +143,15 @@ ${arts}
 
     vars['actor_li'] = '<li title="%s --> %s"><a href="#"><img class="thumbnail actor-thumb" src="/manager/GetThumb?w=83&h=125&thumb=%s"></img><h6 class="title">%s</h6><h6 class="title">%s</h6></a></li>'
 
+    vars['row19'] =  "<tr><td>%s<td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
     
+    vars['thumb_item'] = """<li title="%s"><a href="#" id="%s" class="tmdb"><img class="thumbnail" src="/manager/GetThumb?w=100&h=150&thumb=%s"></img><h6 class="title">%s</h6></a></li>"""
+
+    vars['carousel_item'] = """<div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=http://image.tmdb.org/t/p/original%s')"><div class="carousel-caption"><h4>%s (%s)</h4></div></div>"""
+
+    vars['download_button'] = '<button id="download" class="btn btn-primary" title="Find This Movie!" tmdb="%s">Get It!</button>'
+
+    vars['close_button'] = '<button class="btn btn-primary" data-dismiss="modal">Close</button>'
+
     return vars[var]
 

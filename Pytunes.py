@@ -144,11 +144,16 @@ def main():
     # Set Application PID
     pytunes.PID = args.pid
 
-    # Start the webbrowser.....We need a way to detect whether there was a restart signal from an open browser so we don't open another.
+    # Set Some Temp Vars
+    ssl = 's' if pytunes.SSLCERT and pytunes.SSLKEY else ''
+    host = 'localhost' if pytunes.settings.get('app_host') == '0.0.0.0' else pytunes.settings.get('app_host')
+
+    # Set Images URL
+    pytunes.IMGURL = 'http%s://%s:%s%s/img/' % (ssl, host, pytunes.PORT, pytunes.WEBDIR[:-1])
+
+    # Start the webbrowser
     if pytunes.settings.get('browser')  and not pytunes.DEBUG and not pytunes.DAEMON and not pytunes.NOBROWSER:
-        nb_ssl = 's' if pytunes.SSLCERT and pytunes.SSLKEY else ''
-        nb_host = 'localhost' if pytunes.settings.get('app_host') == '0.0.0.0' else pytunes.settings.get('app_host')
-        openbrowser = 'http%s://%s:%s%s' % (nb_ssl, nb_host,  pytunes.PORT, pytunes.WEBDIR[:-1])
+        openbrowser = 'http%s://%s:%s%s' % (ssl, host, pytunes.PORT, pytunes.WEBDIR[:-1])
         webbrowser.open(openbrowser, new=2, autoraise=True)
 
     # Start the server
