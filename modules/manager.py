@@ -3,6 +3,7 @@ import cherrypy
 import pytunes
 from pytunes import tmdb, staticvars, scheduler
 from pytunes.staticvars import get_var as html
+from pytunes.proxy import get_image
 import time
 import threading
 import base64
@@ -17,7 +18,6 @@ from urllib2 import quote, unquote
 from jsonrpclib import Server
 from sqlobject import SQLObject, SQLObjectNotFound
 from sqlobject.col import StringCol, IntCol, FloatCol
-from pytunes.proxy import get_image
 import logging
 
 musicvideo_schema_map = {
@@ -530,7 +530,7 @@ class Manager:
             acodec = "acodec"
             channels = "channels"
             subt = "subt"
-            table += htmls['row19'] %  (title, year, vcodec, quality, acodec, channels, subt, fanart, thumb, mpaa, trailer, genre, rating, imdb, plot, tagline, director, writers, duration) 
+            table += html('row19') %  (title, year, vcodec, quality, acodec, channels, subt, fanart, thumb, mpaa, trailer, genre, rating, imdb, plot, tagline, director, writers, duration) 
         return table
 
     @cherrypy.expose()
@@ -602,7 +602,7 @@ class Manager:
             else:
                 thumb = pytunes.IMGURL + 'no_art_square.png'
             shorttitle = (each['title'][:14] + '..') if len(each['title']) > 16 else each['title']
-            movies += html['thumb_item'] % (each['title'], each['id'],  thumb, shorttitle) 
+            movies += html('thumb_item') % (each['title'], each['id'],  thumb, shorttitle) 
         return movies
 
     @cherrypy.expose()
@@ -619,7 +619,7 @@ class Manager:
             data = tmdb.Popular(page)
         for each in data['results']:
             if each['backdrop_path']:
-                movies += html['carousel_item'] % (each['backdrop_path'], each['title'], each['release_date']) 
+                movies += html('carousel_item') % (each['backdrop_path'], each['title'], each['release_date']) 
         return movies
 
     @cherrypy.expose()
