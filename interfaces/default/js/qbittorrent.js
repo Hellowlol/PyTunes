@@ -169,7 +169,7 @@ $(document).on('click', '.qbt_removetorrent', function () {
 
 });
 
-// remove torrent file
+// remove torrent and all files
 $(document).on('click', '.qbt_deletetorrent', function () {
     var confirmed = confirm('Delete the torrent and all associated files?');
     if (confirmed === true) {
