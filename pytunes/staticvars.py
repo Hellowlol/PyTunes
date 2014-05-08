@@ -77,7 +77,6 @@ ${arts}
             <div>
                 <div class="modal-body-middle">
                     <div class="pull-left modal-body-middle-left">
-
                         <p>
                             <img class="thumbnail modal-movie-poster" src="/manager/GetThumb?w=133&h=200&thumb=%s"></img>
                         </p>
@@ -137,6 +136,66 @@ ${arts}
 
     """
 
+    vars['yify_modal_middle'] = """
+            <div>
+                <div class="modal-body-middle">
+                    <div class="pull-left modal-body-middle-left">
+                        <p>
+                            <img class="modal-movie-poster" src="/manager/GetThumb?w=133&h=200&thumb=%s"></img>
+                        </p>
+                    </div>
+                    <div class="modal-body-middle-right">
+                        <p>
+                            <b>
+                                Plot:
+                            </b>
+                            %s
+                        </p>
+                        <div class="pull-left">
+                            <p class="modal-info-item">
+                                <b>
+                                    Director:
+                                </b>
+                                 %s
+                            </p>
+                            <p class="modal-info-item">
+                                <b>
+                                    Genre:
+                                </b>
+                                 %s
+                            </p>
+                            <p class="modal-info-item">
+                                <b>
+                                    Runtime:
+                                </b>
+                                 %s
+                            </p>
+                        </div>
+                        <div class="pull-right">
+                            <p class="modal-info-item">
+                                <b>
+                                    Writer:
+                                </b>
+                                 %s
+                            </p>
+                            <p class="modal-info-item">
+                                <b>
+                                    Country:
+                                </b>
+                                 %s
+                            </p>
+                            <p class="modal-info-item">
+                                <b>
+                                    Studio:
+                                </b>
+                                 %s
+                            </p>
+                        </div>
+                   </div>
+                </div>
+
+    """
+
     vars['imdb'] = '<a href="http://www.imdb.com/title/%s" target="_blank"><button class="btn btn-primary">IMDB</button></a>&nbsp;&nbsp;'
 
     vars['trailer'] = '<button id="youtube" ytid="%s" class="btn btn-primary">Trailer</button>'
@@ -147,9 +206,13 @@ ${arts}
     
     vars['thumb_item'] = """<li title="%s"><a href="#" id="%s" class="tmdb"><img class="thumbnail" src="/manager/GetThumb?w=100&h=150&thumb=%s"></img><h6 class="title">%s</h6></a></li>"""
 
+    vars['yify_thumb_item'] = """<li title="%s"><a href="#" id="%s" class="yify"><img src="/manager/GetThumb?w=100&h=150&thumb=%s"></img><h6 class="title">%s</h6></a></li>"""
+
     vars['carousel_item'] = """<div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=http://image.tmdb.org/t/p/original%s')"><div class="carousel-caption"><h4>%s (%s)</h4></div></div>"""
 
     vars['download_button'] = '<button id="download" class="btn btn-primary" title="Find This Movie!" tmdb="%s">Get It!</button>'
+
+    vars['torrent_button'] = '<button id="download" class="btn btn-primary" title="Download This Movie!" yify_link="%s">Download</button>'
 
     vars['close_button'] = '<button class="btn btn-primary" data-dismiss="modal">Close</button>'
 

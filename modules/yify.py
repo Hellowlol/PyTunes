@@ -1,5 +1,5 @@
 import pytunes
-from pytunes.proxy import get_image
+from pytunes.staticvars import get_var as html
 import cherrypy
 import logging
 import requests, copy, json
@@ -21,43 +21,41 @@ class Yify:
 
     @cherrypy.expose()
     def newest(self, quality= 'ALL', format='json'):
-        return self.movie_list(1, 20, 'ALL', 0, '', 'ALL', 'date', 'desc', format)
+        data = self.movie_list(1, 40, 'ALL', 0, '', 'ALL', 'date', 'desc', format)
+        movies = ''
+        for movie in data['movies']['MovieList']:
+            title = (movie['MovieTitleClean'][:14] + '..') if len(movie['MovieTitleClean']) > 16 else movie['MovieTitleClean']
+            movies += html('yify_thumb_item') % (movie['MovieTitle'], movie['MovieID'],  movie['CoverImage'], title) 
+        return movies
 
-    def movie_details(self, id=None, format='json'):
-        self.uri = 'movie'
-
-        data = {
-            'movie':    [],
-            'errors':   {
-                'state':    False,
-                'message':  []
-            }
+    @cherrypy.expose()
+    def GetMovie(self, yifyid):
+        format='json'
+        print 'get movie id: ', yifyid
+        url = 'https://yts.re/api/movie.json?id=%s' % yifyid
+        movie = {
+            'head':'head',
+            'body':'body',
+            'fanart':'fanart',
+            'foot':'foot'
         }
-
-        errors = {
-            'state': False,
-            'message': []
-        }
-
-        if format in self.data_formats:
-            self.uri = '%s.%s' % (self.uri, format)
+        moviedata = self._fetch_data(url)
+        movie['head'] = moviedata['MovieTitle']
+        movie['body'] = html('yify_modal_middle') % (moviedata['LargeCover'], moviedata['LongDescription'], 'directorlist', 'Genre List', moviedata['MovieRuntime'], 'writer', 'country', 'studio')
+        if 'YoutubeTrailerID' in moviedata:
+            trailer = html('trailer') % moviedata['YoutubeTrailerID']
         else:
-            errors['state'] = True
-            errors['message'].append('Data return format must be json, xml or csv')
-
-        if id is None:
-            errors['state'] = True
-            errors['message'].append('Movie ID must not be blank')
-
-        if errors['state']:
-            data['errors'] = errors
+            trailer = ''
+        if 'ImdbCode' in moviedata:
+            imdb = html('imdb') % moviedata['ImdbCode']
         else:
-            url = "%s?id=%s" % (self._construct_url(), id)
-            m = self._fetch_data(url)
-            if m is not None:
-                data['movie'] = m
-
-        return data
+            imdb = ''
+        download = html('torrent_button') % moviedata['TorrentUrl']        
+        movie['foot'] = imdb + trailer + download + html('close_button')
+        movie['fanart'] = moviedata['LargeScreenshot1']
+        #print moviedata['LargeScreenshot1']
+        #print 'movie', moviedata
+        return json.dumps(movie)
 
     def upcoming(self, format='json'):
         self.uri = 'upcoming'
@@ -92,12 +90,12 @@ class Yify:
         return data
 
     def movie_list(self,
-                   set=1, limit=20,
+                   set=1, limit=40,
                    quality='ALL', rating=0,
                    keywords='', genre='ALL',
                    sort='date', order='desc',
                    format='json'):
-        self.uri = 'list'
+        uri = 'list'
 
         data = {
             'movies':   [],
@@ -108,7 +106,7 @@ class Yify:
         }
 
         movie_list_params = {
-            'limit':            20,         # Maximum number of returned items
+            'limit':            40,         # Maximum number of returned items
             'set':              1,          # Which set (page) do you want to return?
             'quality':          'ALL',      # {720p, 1080p, 3D, ALL}
             'rating':           0,          # Minimum rating between 0 - 9
@@ -117,8 +115,6 @@ class Yify:
             'sort':             'date',     # {date, seeds, peers, size, alphabet, rating, downloaded, year}
             'order':            'desc'      # {desc, asc}
         }
-
-        uri = ''
 
         opt_qualities = ['720p', '1080p', '3D', 'ALL']
         opt_ratings = range(10)
@@ -176,7 +172,7 @@ class Yify:
     def _fetch_data(self, url):
         r = requests.get(url)
         if r.status_code == 200:
-            print r.text
+            #print r.text
             return json.loads(r.text)
         else:
             return None

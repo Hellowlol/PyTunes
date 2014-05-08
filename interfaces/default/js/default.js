@@ -132,7 +132,7 @@ function notify(title, text, type, time) {
         history: false,
         sticker: false,
         closer_hover: false,
-        addclass: "stack-bottomright",
+        addclass: "stack-topright",
         stack: {
             "dir1": "up",
                 "dir2": "left",
