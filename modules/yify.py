@@ -41,12 +41,7 @@ class Yify:
         genres = []
         print 'get movie id: ', yifyid
         url = 'https://yts.re/api/movie.json?id=%s' % yifyid
-        movie = {
-            'head':'head',
-            'body':'body',
-            'fanart':'fanart',
-            'foot':'foot'
-        }
+        movie = {}
         moviedata = self._fetch_data(url)
         if 'YoutubeTrailerID' in moviedata:
             trailer = html('trailer') % moviedata['YoutubeTrailerID']
@@ -77,7 +72,7 @@ class Yify:
             genre = 'N/A'
 
         movie['head'] = moviedata['MovieTitle']
-        movie['body'] = html('yify_modal_middle') % (moviedata['LargeCover'], moviedata['LongDescription'], director, genre, moviedata['MovieRating'], moviedata['MovieRuntime'], actor, moviedata['Size'], moviedata['TorrentSeeds'], moviedata['Language'])
+        movie['body'] = html('yify_modal_middle') % (moviedata['LargeCover'], moviedata['LongDescription'], director, genre, moviedata['MovieRating'], moviedata['MovieRuntime'], moviedata['AgeRating'], actor, moviedata['Size'], moviedata['TorrentSeeds'], moviedata['Language'])
 
         download = html('torrent_button') % moviedata['TorrentUrl']        
         movie['foot'] = imdb + trailer + download + html('close_button')

@@ -74,11 +74,36 @@ function loadMovie(id) {
         }
     });
 }
- 
+
+function search(keywords, quality, genre, rating, sort) {
+    if (query === undefined) return;
+    $.ajax({
+        url: WEBDIR + 'yify/search?q=' + query + '&cat=' + catid,
+        type: 'get',
+        dataType: 'html',
+        timeout: 60000,
+        beforeSend: function () {
+            $('#results_table_body').empty();
+            $('.spinner').show();
+        },
+        success: function (data) {
+            if (data === null) return errorHandler();
+            $('#yify-grid').empty;
+            $('#yify-grid').append(data);
+        },
+        complete: function () {
+            $('.spinner').hide();
+        }
+    });
+} 
 
 $(document).ready(function () {
     $('.spinner').show();
     loadNewest();
     $('.spinner').hide();
+    $('#searchform').submit(function () {
+        search($('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val());
+        return false;
+    });
 });
 

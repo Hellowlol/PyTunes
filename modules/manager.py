@@ -601,6 +601,7 @@ class Manager:
             else:
                 thumb = pytunes.IMGURL + 'no_art_square.png'
             shorttitle = (each['title'][:14] + '..') if len(each['title']) > 16 else each['title']
+            shorttitle += '<br>' + each['release_date']
             movies += html('thumb_item') % (each['title'], each['id'],  thumb, shorttitle) 
         return movies
 

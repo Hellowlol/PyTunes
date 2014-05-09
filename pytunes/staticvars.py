@@ -176,6 +176,12 @@ ${arts}
                                 </b>
                                  %s
                             </p>
+                            <p class="modal-info-item">
+                                <b>
+                                    MPAA:
+                                </b>
+                                 %s
+                            </p>
                         </div>
                         <div class="pull-right">
                             <p class="modal-info-item">
