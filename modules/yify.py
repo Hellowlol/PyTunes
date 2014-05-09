@@ -21,10 +21,9 @@ class Yify:
 
     @cherrypy.expose()
     def search(self, quality= 'ALL', limit=40, set=1, rating=0, keywords='Star Wars', genre='All', sort='date', order='desc', format='json'):
+        print 'hellow'
 
-
-
-   @cherrypy.expose()
+    @cherrypy.expose()
     def newest(self, quality= 'ALL', format='json'):
         data = self.movie_list(1, 40, 'ALL', 0, '', 'ALL', 'date', 'desc', format)
         movies = ''
