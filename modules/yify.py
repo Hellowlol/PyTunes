@@ -21,7 +21,7 @@ class Yify:
 
     @cherrypy.expose()
     def search(self, quality= 'ALL', limit=40, set=1, rating=0, keywords='Star Wars', genre='All', sort='date', order='desc', format='json'):
-        print 'hellow'
+        print 'hellow, come to the Dark side. You must complete your journey, weedhopper.'
 
     @cherrypy.expose()
     def newest(self, quality= 'ALL', format='json'):
