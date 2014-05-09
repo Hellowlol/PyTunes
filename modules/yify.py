@@ -81,7 +81,7 @@ class Yify:
 
         download = html('torrent_button') % moviedata['TorrentUrl']        
         movie['foot'] = imdb + trailer + download + html('close_button')
-        movie['fanart'] = moviedata['MediumScreenshot1']
+        movie['fanart'] = moviedata['LargeScreenshot1']
         #print moviedata['LargeScreenshot1']
         print 'movie', moviedata
         return json.dumps(movie)

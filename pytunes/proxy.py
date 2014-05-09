@@ -38,7 +38,11 @@ def get_image(url, height=None, width=None, opacity=100, auth=None):
     if not os.path.isfile(image):
         logger.debug("No local image found for " + image + ". Downloading")
         download_image(url, image, auth)
-
+        #need to convert png to jpg
+        imagetype = imghdr.what(image)
+        if imagetype == 'png':
+            Image.open(image).save(image, 'jpeg', quality=95)
+            
     # Check if resize is needed
     if (height and width) or (opacity < 100):
         if PIL:
