@@ -45,7 +45,7 @@ class Torrents:
         for r in results:
             icon = "<img alt='icon' src='../img/kickasstorrents.png'/>"
             link = r['link'].split('?')[0]
-            dl = "<a href='/qbittorrent/command?cmd=download&hash=%s' class='ajax-link' title='Send to qBittorrent'><i class='icon-download-alt'></a>" % link
+            dl = "<button class='btn btn-mini download' torr_link='%s' title='Send to Download'><i class='icon-download-alt'></button>" % link
             name = "<a href='" + r['desc_link'] + "' target='_blank'>" + r['name'] + "</a>"
             num = int(r['size'])
             for x in [' bytes',' KB',' MB',' GB']:

@@ -20,17 +20,26 @@ class Yify:
         return pytunes.LOOKUP.get_template('yify.html').render(scriptname='yify')
 
     @cherrypy.expose()
+    def search(self, quality= 'ALL', limit=40, set=1, rating=0, keywords='Star Wars', genre='All', sort='date', order='desc', format='json'):
+
+
+
+   @cherrypy.expose()
     def newest(self, quality= 'ALL', format='json'):
         data = self.movie_list(1, 40, 'ALL', 0, '', 'ALL', 'date', 'desc', format)
         movies = ''
         for movie in data['movies']['MovieList']:
             title = (movie['MovieTitleClean'][:14] + '..') if len(movie['MovieTitleClean']) > 16 else movie['MovieTitleClean']
+            title += '<br>' + movie['MovieYear']
             movies += html('yify_thumb_item') % (movie['MovieTitle'], movie['MovieID'],  movie['CoverImage'], title) 
         return movies
 
     @cherrypy.expose()
     def GetMovie(self, yifyid):
         format='json'
+        directors = []
+        actors = []
+        genres = []
         print 'get movie id: ', yifyid
         url = 'https://yts.re/api/movie.json?id=%s' % yifyid
         movie = {
@@ -40,8 +49,6 @@ class Yify:
             'foot':'foot'
         }
         moviedata = self._fetch_data(url)
-        movie['head'] = moviedata['MovieTitle']
-        movie['body'] = html('yify_modal_middle') % (moviedata['LargeCover'], moviedata['LongDescription'], 'directorlist', 'Genre List', moviedata['MovieRuntime'], 'writer', 'country', 'studio')
         if 'YoutubeTrailerID' in moviedata:
             trailer = html('trailer') % moviedata['YoutubeTrailerID']
         else:
@@ -50,11 +57,34 @@ class Yify:
             imdb = html('imdb') % moviedata['ImdbCode']
         else:
             imdb = ''
+        for each in moviedata['DirectorList']:
+            directors.append(each['DirectorName'])
+        director = ", ".join(directors)
+        for each in moviedata['CastList']:
+            actors.append(html('actor_imdb') % (each['ActorImdbCode'], each['ActorName'], each['CharacterName'], each['ActorName']))
+        actor = ", ".join(actors)
+        if 'Genre1' in moviedata:
+            if moviedata['Genre1']:
+                genres.append(moviedata['Genre1'])
+        if 'Genre2' in moviedata:
+            if moviedata['Genre2']:
+                genres.append(moviedata['Genre2'])
+        if 'Genre3' in moviedata:
+            if moviedata['Genre3']:
+                genres.append(moviedata['Genre3'])
+        if genres:
+            genre = ", ".join(genres)
+        else:
+            genre = 'N/A'
+
+        movie['head'] = moviedata['MovieTitle']
+        movie['body'] = html('yify_modal_middle') % (moviedata['LargeCover'], moviedata['LongDescription'], director, genre, moviedata['MovieRating'], moviedata['MovieRuntime'], actor, moviedata['Size'], moviedata['TorrentSeeds'], moviedata['Language'])
+
         download = html('torrent_button') % moviedata['TorrentUrl']        
         movie['foot'] = imdb + trailer + download + html('close_button')
-        movie['fanart'] = moviedata['LargeScreenshot1']
+        movie['fanart'] = moviedata['MediumScreenshot1']
         #print moviedata['LargeScreenshot1']
-        #print 'movie', moviedata
+        print 'movie', moviedata
         return json.dumps(movie)
 
     def upcoming(self, format='json'):

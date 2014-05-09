@@ -13,11 +13,21 @@ function search(query, catid) {
         success: function (data) {
             if (data === null) return errorHandler();
             $('#results_table_body').append(data);
-            $('a.ajax-link').click(function (e) {
-                e.preventDefault();
-                var link = $(this);
-                 $.getJSON(link.attr('href'), function () {
-                    notify('', 'Sent to qBittorrent', 'success', '');
+            $('.download').click(function (e) {
+                var sendData = {
+                    hash: $(this).attr('torr_link'),
+                    cmd: 'download'
+                };
+                $.ajax({
+                    //alert('load movie ' + id);
+                    url: WEBDIR + "qbittorrent/command",
+                    type: 'get',
+                    data: sendData,
+                    dataType: 'text',
+                    success: function (data) {
+                        notify(data, 'Sent to qBittorrent', 'success', '');
+                    }
+
                 });
             });
         },

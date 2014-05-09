@@ -166,6 +166,12 @@ ${arts}
                             </p>
                             <p class="modal-info-item">
                                 <b>
+                                    Rating:
+                                </b>
+                                 %s
+                            </p>
+                            <p class="modal-info-item">
+                                <b>
                                     Runtime:
                                 </b>
                                  %s
@@ -174,19 +180,25 @@ ${arts}
                         <div class="pull-right">
                             <p class="modal-info-item">
                                 <b>
-                                    Writer:
+                                    Actors:
                                 </b>
                                  %s
                             </p>
                             <p class="modal-info-item">
                                 <b>
-                                    Country:
+                                    Size:
                                 </b>
                                  %s
                             </p>
                             <p class="modal-info-item">
                                 <b>
-                                    Studio:
+                                    Seeds:
+                                </b>
+                                 %s
+                            </p>
+                            <p class="modal-info-item">
+                                <b>
+                                    Language:
                                 </b>
                                  %s
                             </p>
@@ -197,6 +209,8 @@ ${arts}
     """
 
     vars['imdb'] = '<a href="http://www.imdb.com/title/%s" target="_blank"><button class="btn btn-primary">IMDB</button></a>&nbsp;&nbsp;'
+
+    vars['actor_imdb'] = '<a href="http://www.imdb.com/name/%s" title="%s-->%s" target="_blank">%s</a>'
 
     vars['trailer'] = '<button id="youtube" ytid="%s" class="btn btn-primary">Trailer</button>'
 

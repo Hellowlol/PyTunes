@@ -448,7 +448,6 @@ class Manager:
         if info['posters']:
             poster = info['posters'][0]
         else:
-            host = 'localhost' if pytunes.settings.get('app_host') == '0.0.0.0' else pytunes.settings.get('app_host')
             poster = pytunes.IMGURL + 'no_art_square.png'
         for each in info['cast']:
             shortname = (each['name'][:14] + '..') if len(each['name']) > 16 else each['name']

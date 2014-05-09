@@ -42,9 +42,10 @@ function loadMovie(id) {
                 backdrop: false
             });
 
-            //$('.modal-fanart').css({
-            //    'background-image': 'url(' + WEBDIR + 'manager/GetThumb?w=950&h=450&o=10&thumb=' + encodeURIComponent(data.fanart) + ')'
-            //});
+            $('.modal-fanart').css({
+                //'background-image': 'url(' + WEBDIR + 'manager/GetThumb?w=950&h=450&o=10&thumb=' + encodeURIComponent(data.fanart) + ')'
+                'background-image': 'url(' + WEBDIR + 'manager/GetThumb?w=950&h=450&o=10&thumb=' + data.fanart + ')'
+            });
             $('#download').click(function (e) {
                 var sendData = {
                     hash: $(this).attr('yify_link'),
