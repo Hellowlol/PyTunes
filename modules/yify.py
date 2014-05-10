@@ -25,11 +25,14 @@ class Yify:
         url = html('yify_link') % (limit, set, quality, rating, keywords, genre, sort, order)
         movies = ''
         moviedata = self._fetch_data(url)
-        for movie in moviedata['MovieList']:
-            title = (movie['MovieTitleClean'][:14] + '..') if len(movie['MovieTitleClean']) > 16 else movie['MovieTitleClean']
-            title += '<br>' + movie['MovieYear']
-            movies += html('yify_thumb_item') % (movie['MovieTitle'], movie['MovieID'],  movie['CoverImage'], title) 
-        return movies
+        if 'MovieList' in moviedata:
+            for movie in moviedata['MovieList']:
+                title = (movie['MovieTitleClean'][:14] + '..') if len(movie['MovieTitleClean']) > 16 else movie['MovieTitleClean']
+                title += '<br>' + movie['MovieYear']
+                movies += html('yify_thumb_item') % (movie['MovieTitle'], movie['MovieID'],  movie['CoverImage'], title) 
+            return movies
+        else:
+            return '<b>&nbsp;&nbsp;No Movies Found.</b>'
 
     @cherrypy.expose()
     def GetMovie(self, yifyid):

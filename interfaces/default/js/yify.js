@@ -52,7 +52,7 @@ function loadMovie(id) {
     });
 }
 
-function search(set, keywords, quality, genre, rating, sort, append) {
+function search(set, keywords, quality, genre, rating, sort, order, append) {
     //alert('search ' + keywords);
     var sendData = {
         set: set,
@@ -60,7 +60,8 @@ function search(set, keywords, quality, genre, rating, sort, append) {
         quality: quality,
         genre: genre,
         rating: rating,
-        sort: sort
+        sort: sort,
+        order: order
     };
     $.ajax({
         url: WEBDIR + 'yify/search',
@@ -94,19 +95,20 @@ var set = 1;
 
 $(document).ready(function () {
     $('.spinner').show();
-    search(set, $('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val(), 0);
+    search(set, $('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val(),$('#order').val(), 0);
     $('.spinner').hide();
-    $('#searchform').submit(function (e) {
+    $('#searchform').submit(function () {
         //e.preventDefault();
         //alert('search  submit' );
-        search(set, $('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val(), 0);
+        set = 1;
+        search(set, $('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val(),$('#order').val(), 0);
         return false;
     });
     // Load more titles on scroll
     $(window).scroll(function () {
         if ($(window).scrollTop() + $(window).height() >= $(document).height() - 10) {
             set += 1;
-            search(set, $('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val(), 1);
+            search(set, $('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val(),$('#order').val(), 1);
         }
     });
 
