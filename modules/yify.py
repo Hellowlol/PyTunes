@@ -22,6 +22,16 @@ class Yify:
     @cherrypy.expose()
     def search(self, quality= 'ALL', limit=40, set=1, rating=0, keywords='Star Wars', genre='All', sort='date', order='desc', format='json'):
         print 'hellow, come to the Dark side. You must complete your journey, weedhopper.'
+        url = html('yify_link') % (limit, set, quality, rating, keywords, genre, sort, order)
+        movies = ''
+        moviedata = self._fetch_data(url)
+        print 'url: ', url
+        print 'data: ', moviedata
+        for movie in moviedata['MovieList']:
+            title = (movie['MovieTitleClean'][:14] + '..') if len(movie['MovieTitleClean']) > 16 else movie['MovieTitleClean']
+            title += '<br>' + movie['MovieYear']
+            movies += html('yify_thumb_item') % (movie['MovieTitle'], movie['MovieID'],  movie['CoverImage'], title) 
+        return movies
 
     @cherrypy.expose()
     def newest(self, quality= 'ALL', format='json'):
@@ -129,67 +139,11 @@ class Yify:
             }
         }
 
-        movie_list_params = {
-            'limit':            40,         # Maximum number of returned items
-            'set':              1,          # Which set (page) do you want to return?
-            'quality':          'ALL',      # {720p, 1080p, 3D, ALL}
-            'rating':           0,          # Minimum rating between 0 - 9
-            'keywords':         '',         # {String}
-            'genre':            'ALL',      # {String} Refer to http://www.imdb.com/genre/
-            'sort':             'date',     # {date, seeds, peers, size, alphabet, rating, downloaded, year}
-            'order':            'desc'      # {desc, asc}
-        }
-
-        opt_qualities = ['720p', '1080p', '3D', 'ALL']
-        opt_ratings = range(10)
-        opt_sorts = ['date', 'seeds', 'size', 'alphabet', 'rating']
-        opt_orders = ['desc', 'asc']
-
-        data_formats = ['json', 'xml', 'csv']
-
-        params = copy.deepcopy(movie_list_params)
-        errors = {
-            'state': False,
-            'message': []
-        }
-
-        if quality in opt_qualities:
-            params['quality'] = quality
-        else:
-            errors['state'] = True
-            errors['message'].append('Quality needs to be 720p, 1080p, 3D or ALL')
-
-        if rating in opt_ratings:
-            params['rating'] = rating
-        else:
-            errors['state'] = True
-            errors['message'].append('Rating needs to be an integer between 0 to 10')
-
-        if sort in opt_sorts:
-            params['sort'] = sort
-        else:
-            errors['state'] = True
-            errors['message'].append('Sort needs to be date, seeds, size, alphabet or rating')
-
-        if order in opt_orders:
-            params['order'] = order
-        else:
-            errors['state'] = True
-            errors['message'].append('Order needs to be desc or asc')
-
-        if format in data_formats:
-            uri = '%s.%s' % (uri, format)
-        else:
-            errors['state'] = True
-            errors['message'].append('Data return format must be json, xml or csv')
-
-        if errors['state']:
-            data['errors'] = errors
-        else:
-            url = self._construct_url(uri)
-            m = self._fetch_data(url)
-            if m is not None:
-                data['movies'] = m
+        url = self._construct_url(uri)
+        print 'url: ', url
+        m = self._fetch_data(url)
+        if m is not None:
+            data['movies'] = m
 
         return data
 

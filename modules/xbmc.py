@@ -107,7 +107,7 @@ class Xbmc:
             if xbmc_server_username and xbmc_server_password:
                 url = xbmc_server_username + ':' + xbmc_server_password + '@' + url
             xbmc = Server('http://' + url + '/jsonrpc')
-            self.logger.debug("Trying to contact xbmc via " + url)
+            self.logger.debug("Trying to contact xbmc via %s" % url)
             return xbmc.XBMC.GetInfoLabels(labels=["Network.MacAddress"])
         except Exception, e:
             self.logger.debug("Exception: " + str(e))

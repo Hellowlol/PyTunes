@@ -218,6 +218,8 @@ ${arts}
 
     vars['actor_imdb'] = '<a href="http://www.imdb.com/name/%s" title="%s-->%s" target="_blank">%s</a>'
 
+    vars['yify_link'] = 'http://yts.re/api/list.json?limit=%s&set=%s&quality=%s&rating=%s&keywords=%s&genre=%s&sort=%s&order=%s'
+
     vars['trailer'] = '<button id="youtube" ytid="%s" class="btn btn-primary">Trailer</button>'
 
     vars['actor_li'] = '<li title="%s --> %s"><a href="#"><img class="thumbnail actor-thumb" src="/manager/GetThumb?w=83&h=125&thumb=%s"></img><h6 class="title">%s</h6><h6 class="title">%s</h6></a></li>'

@@ -7,7 +7,7 @@
             <img alt="PyTunes" src="../img/pytuneslogosm.png"/><img alt="Bittorrent Logo" class='pull-right' src="../img/yts_logo.png"/>
         </div>
 <div class="">
-    <form class="searchform form-inline" method="post" accept-charset="utf-8" action="">
+    <form id="searchform" class="form-inline" method="post" accept-charset="utf-8" action="">
         <label>
             <b>Search Term:</b>
         </label>
@@ -15,7 +15,7 @@
         <label class="label">
             Quality:
         </label>
-        <select id="form_Quality" name="quality" style="width:75px;">
+        <select id="quality" name="quality" style="width:75px;">
             <option selected="selected" style="text-indent: 0px;" value="All">
                 All
             </option>
@@ -32,7 +32,7 @@
         <label class="label">
             Genre:
         </label>
-        <select id="form_Genre" class="span1" name="genre">
+        <select id="genre" class="span1" name="genre">
             <option selected="selected" style="text-indent: 0px;" value="All">
                 All
             </option>
@@ -109,7 +109,7 @@
         <label class="label">
             Rating:
         </label>
-        <select id="form_Rating" class="span1" name="rating">
+        <select id="rating" class="span1" name="rating">
             <option selected="selected" style="text-indent: 0px;" value="0">
                 All
             </option>
@@ -144,7 +144,7 @@
         <label class="label">
             Sort By:
         </label>
-        <select id="form_orderBy" name="sort" style="margin-right:0; width:100px;">
+        <select id="sort" name="sort" style="margin-right:0; width:100px;">
             <option selected="selected" style="text-indent: 0px;" value="latest">
                 Latest
             </option>
@@ -179,7 +179,7 @@
 <div>
         <ul id="yify-grid" class="thumbnails"></ul>
 </div>
-<div class="spinner"></div>
+        <div class="spinner"><img alt="spinner" class='' src="../img/loader.gif" style="float:center"/></div>
 </div>
 </div>
 
