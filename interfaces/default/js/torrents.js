@@ -42,6 +42,5 @@ $(document).ready(function () {
         search($('#query').val(), $('#catid').val());
         return false;
     });
-    if ($('#query').val()) $('#searchform').submit();
 });
 

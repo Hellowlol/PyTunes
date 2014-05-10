@@ -1,24 +1,3 @@
-function loadNewest() {
-    //alert("In Newest" + page);
-    $.ajax({
-        url: WEBDIR + "yify/newest",
-        type: 'get',
-        dataType: 'text',
-        success: function (data) {
-            //alert("Newest: " page_counts.popular);
-            if (data === null) return errorHandler();
-            $('#yify-grid').append(data);
-        },
-        complete: function () {
-            $('.yify').click(function(e){
-                e.preventDefault();
-                //alert('click');
-                loadMovie($(this).prop('id'));
-            });
-            $('.spinner').hide();
-        }
-    });
-}
 
 function loadMovie(id) {
     //alert('load movie ' + id);
@@ -73,9 +52,10 @@ function loadMovie(id) {
     });
 }
 
-function search(keywords, quality, genre, rating, sort) {
+function search(set, keywords, quality, genre, rating, sort, append) {
     //alert('search ' + keywords);
     var sendData = {
+        set: set,
         keywords: keywords,
         quality: quality,
         genre: genre,
@@ -89,7 +69,9 @@ function search(keywords, quality, genre, rating, sort) {
         dataType: 'text',
         timeout: 60000,
         success: function (data) {
-            document.getElementById("yify-grid").innerHTML = "";
+            if (!append) {
+                document.getElementById("yify-grid").innerHTML = "";
+            }
             //for some reason the .empty method didn't work
             //$('#yify-grid').empty;
             $('.spinner').show();
@@ -108,16 +90,25 @@ function search(keywords, quality, genre, rating, sort) {
     });
 } 
 
+var set = 1;
+
 $(document).ready(function () {
     $('.spinner').show();
-    loadNewest();
+    search(set, $('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val(), 0);
     $('.spinner').hide();
     $('#searchform').submit(function (e) {
         //e.preventDefault();
         //alert('search  submit' );
-        search($('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val());
+        search(set, $('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val(), 0);
         return false;
     });
-    if ($('#keywords').val()) $('#searchform').submit();
+    // Load more titles on scroll
+    $(window).scroll(function () {
+        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 10) {
+            set += 1;
+            search(set, $('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val(), 1);
+        }
+    });
+
 });
 
