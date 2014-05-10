@@ -558,6 +558,17 @@ class Xbmc:
                 return xbmc.Player.GoTo(playerid=player[u'playerid'], to=int(value))
             elif action == 'party':
                 return xbmc.Player.Open(item={'partymode': 'audio'})
+            elif action == 'getsub':
+                try:
+                    #Frodo
+                    return xbmc.Addons.ExecuteAddon(addonid='script.xbmc.subtitles')
+                except:
+                    pass
+                try:
+                    #Gotham
+                    return xbmc.GUI.ActivateWindow(window='subtitlesearch')
+                except:
+                    pass
             elif action == 'volume':
                 return xbmc.Application.SetVolume(volume=int(value))
             elif action == 'fullscreen':
