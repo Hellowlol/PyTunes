@@ -7,6 +7,7 @@ $(document).ready(function () {
     loadWantedMovies();
     loadNextAired();
     loadPopular();
+    loadYify();
     loadSystem();
     loadTopRated();
     loadInTheaters();
@@ -24,6 +25,21 @@ function loadSystem() {
             if (data === null) return;
             $('#system-table').append(data);
             $('#system-table').show();
+        }
+    });
+}
+
+function loadYify() {
+    if (!$('#yify-carousel').length) return;
+    $.ajax({
+        'url': WEBDIR + 'yify/Carousel',
+        type: 'get',
+            'dataType': 'html',
+            'success': function (data) {
+            //alert("Yify: " + data);
+            if (data === null) return;
+            $('#yify-carousel-inner').append(data);
+            $('#yify-carousel').show();
         }
     });
 }

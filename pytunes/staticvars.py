@@ -214,6 +214,29 @@ ${arts}
 
     """
 
+    vars['yify_carousel'] = """
+<div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=%s')">
+    <div class="carousel-caption">
+        <h4>
+            %s
+        </h4>
+        <p style="display: none;">
+            <b>
+                Runtime
+            </b>
+            : %s
+            <br>
+            <b>
+                Genre
+            </b>
+            : %s
+            <br>
+            %s
+        </p>
+    </div>
+</div>
+    """
+
     vars['imdb'] = '<a href="http://www.imdb.com/title/%s" target="_blank"><button class="btn btn-primary">IMDB</button></a>&nbsp;&nbsp;'
 
     vars['actor_imdb'] = '<a href="http://www.imdb.com/name/%s" title="%s-->%s" target="_blank">%s</a>'

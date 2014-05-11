@@ -20,6 +20,37 @@ class Yify:
         return pytunes.LOOKUP.get_template('yify.html').render(scriptname='yify')
 
     @cherrypy.expose()
+    def Carousel(self):
+        self.logger.debug("Get list of movies for Yify widget")
+        yify_list = []
+        genres = []
+        url = html('yify_link') % (3, 1, 'ALL', 0, '', 'ALL', 'date', 'desc')
+        movies = ''
+        data = self._fetch_data(url)
+        if 'MovieList' in data:
+            for movie in data['MovieList']:
+                url = 'https://yts.re/api/movie.json?id=%s' % movie['MovieID']
+                moviedata = self._fetch_data(url)
+                if 'Genre1' in moviedata:
+                    if moviedata['Genre1']:
+                        genres.append(moviedata['Genre1'])
+                if 'Genre2' in moviedata:
+                    if moviedata['Genre2']:
+                        genres.append(moviedata['Genre2'])
+                if 'Genre3' in moviedata:
+                    if moviedata['Genre3']:
+                        genres.append(moviedata['Genre3'])
+                if genres:
+                    genre = ", ".join(genres)
+                else:
+                    genre = 'N/A'
+                movies += html('yify_carousel') % (moviedata['LargeScreenshot1'], moviedata['MovieTitle'], moviedata['MovieRuntime'], genre, moviedata['LongDescription']) 
+            return movies
+        else:
+            return 'No Movies Found'
+
+
+    @cherrypy.expose()
     def search(self, quality= 'ALL', limit=40, set=1, rating=0, keywords='', genre='All', sort='date', order='desc'):
         #print 'hellow, come to the Dark side. You must complete your journey, weedhopper.'
         url = html('yify_link') % (limit, set, quality, rating, keywords, genre, sort, order)
@@ -40,7 +71,7 @@ class Yify:
         directors = []
         actors = []
         genres = []
-        print 'get movie id: ', yifyid
+        #print 'get movie id: ', yifyid
         url = 'https://yts.re/api/movie.json?id=%s' % yifyid
         movie = {}
         moviedata = self._fetch_data(url)
