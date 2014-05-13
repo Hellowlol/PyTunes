@@ -214,6 +214,43 @@ ${arts}
 
     """
 
+    vars['proc_row'] = """
+<tr>
+    <td class="processes-pid">
+        <a href="#" class="show-proc" data-pid="%s">
+            %s
+        </a>
+    </td>
+    <td class="processes-name span2">
+        %s
+    </td>
+    <td class="processes-owner">
+        %s
+    </td>
+    <td class="processes-cpu span1">
+        %s
+    </td>
+    <td class="processes-command span3">
+        %s
+    </td>
+    <td class="processes-status">
+        %s
+    </td>
+    <td class="processes-memory">
+        %s
+    </td>
+    <td class="processes-runningtime">
+        %s
+    </td>
+    <td>
+        <button class="btn btn-mini btn-danger cmd" data-pid="%s" data-cmd="kill">
+            <i class="icon-remove"></i>
+        </button>
+    </td>
+</tr>
+
+    """
+
     vars['yify_carousel'] = """
 <div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=%s')">
     <div class="carousel-caption">
@@ -260,6 +297,14 @@ ${arts}
     vars['torrent_button'] = '<button id="download" class="btn btn-primary" title="Download This Movie!" yify_link="%s">Download</button>'
 
     vars['close_button'] = '<button class="btn btn-primary" data-dismiss="modal">Close</button>'
+
+    vars['terminate_button'] = '<button class="btn btn-primary process" pid="%s" data-action="terminate">Terminate</button>'
+
+    vars['kill_button'] = '<button class="btn btn-primary process" pid="%s" data-action="kill">Kill</button>'
+
+    vars['suspend_button'] = '<button class="btn btn-primary process" pid="%s" data-action="suspend">Suspend</button>'
+
+    vars['resume_button'] = '<button class="btn btn-primary process" pid="%s" data-action="resume">Resume</button>'
 
     return vars[var]
 

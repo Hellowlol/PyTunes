@@ -8,6 +8,7 @@ $(document).ready(function () {
     loadNextAired();
     loadPopular();
     loadYify();
+    loadStats();
     loadSystem();
     loadTopRated();
     loadInTheaters();
@@ -25,6 +26,21 @@ function loadSystem() {
             if (data === null) return;
             $('#system-table').append(data);
             $('#system-table').show();
+        }
+    });
+}
+
+function loadStats() {
+    if (!$('#stats-table').length) return;
+    $.ajax({
+        'url': WEBDIR + 'stats/Dash',
+        type: 'get',
+            'dataType': 'html',
+            'success': function (data) {
+            //alert("Stats: " + data);
+            if (data === null) return;
+            $('#stats-table').append(data);
+            $('#stats-table').show();
         }
     });
 }

@@ -39,7 +39,7 @@
             %if settings.get('dash_sabnzbd', 0):
             <div class="span4">
                 <h3><a href="sabnzbd/#history">Latest Sabnzbd+ Downloads</a></h3>
-                <table class="table table-striped table-main">
+                <table class="table table-striped table-condensed table-main">
                     <thead>
                         <tr>
                             <th>File</th>
@@ -67,7 +67,7 @@
             %if settings.get('dash_sickbeard', 0):
             <div class="span4">
                 <h3><a href="sickbeard/#nextaired">Next Aired</a></h3>
-                <table class="table table-striped table-main">
+                <table class="table table-striped table-condensed table-main">
                     <thead>
                         <tr>
                             <th>Showname</th>
@@ -145,6 +145,20 @@
                     <a class="carousel-control left" href="#yify-carousel" data-slide="prev">&lsaquo;</a>
                     <a class="carousel-control right" href="#yify-carousel" data-slide="next">&rsaquo;</a>
                 </div>
+            </div>
+            %endif
+            %if settings.get('dash_stats', 0):
+            <div class="span4">
+                <h3><a href="stats">System Stats</a></h3>
+                <table class="table table-striped table-condensed table-main">
+                    <thead>
+                        <tr>
+                            <th>File</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stats-table"></tbody>
+                </table>
             </div>
             %endif
             %if settings.get('dash_moviesfound', 0):

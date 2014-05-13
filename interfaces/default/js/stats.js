@@ -5,7 +5,7 @@
 // For hdd.
 function getReadableFileSizeStringHDD(fileSizeInBytes) {
     var i = -1;
-    var byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB'];
+    var byteUnits = [' kB', ' MB', ' GB', ' TB', ' PB'];
     do {
         fileSizeInBytes = fileSizeInBytes / 1000;
         i++;
@@ -220,7 +220,6 @@ function cpu_percent_bar() {
     });
 }
 
-
 function cpu_percent_table() {
     $.getJSON(WEBDIR + "stats/cpu_percent", function (cpu) {
         $(".cpu").html("<table class='table nwtable'><tr><td class=span4>CPU:</td><td class=span4>" + (100 - cpu.idle).toFixed(1) + "%</td></tr><tr><td>User:</td><td>" + cpu.user + "%</td></tr><tr><td>System:</td><td>" + cpu.system + "%</td></tr><tr><td>Idle:</td><td>" + cpu.idle + "%</td></tr></tbody></table>");
@@ -248,60 +247,50 @@ function return_settings3() {
     });
 }
 
-function loadProcess(pid) {
-    if (confirm('Are you sure you want to kill this process?')) {
-        $.getJSON(WEBDIR + "stats/command?cmd=kill&pid=" + pid, function (response) {
-            $.pnotify({
-                title: 'Response',
-                text: response.msg,
-                type: 'success',
-                width: '500px',
-                min_height: '400px'
-            });
-
-        });
-    }
-}
-
 function processes() {
     $.ajax({
         'url': WEBDIR + 'stats/processes',
-        'dataType': 'json',
-        'success': function (response) {
-            $('#proc-table').html("");
-            $('#error_message').text("");
-            $.each(response, function (i, proc) {
-                pid = proc.pid
-                var row = $('<tr>');
-                //Pid might be used for popen stuff later
-                var pidAnchor = $('<a>').attr('href', '#').click(function (e) {
-                    e.preventDefault();
-                    loadProcess({
-                        'pid': pid
-                    });
-                });
-                pidAnchor.append(pid);
-                row.attr('data-pid', pid);
-                row.append(
-                    //pidAnchor,
-                    $('<td>').addClass('processes-pid').html(pidAnchor),
-                    //$('<td>').addClass('').text(proc.pid),
-                    $('<td>').addClass('processes-name span2').text(proc.name),
-                    $('<td>').addClass('processes-owner').text(proc.username),
-                    $('<td>').addClass('processes-percent span1').text(proc.cpu_percent+ ' %'),
-                    $('<td>').addClass('processes-command span3').text(proc.cmdline),
-                    $('<td>').addClass('processes-name').text(proc.status),
-                    //$('<td>').addClass('processes-memory-info span2').text(proc.memory_percent.toFixed(2) + ' %  / ' + getReadableFileSizeString(proc.memory_info[0])),
-                    $('<td>').addClass('processes-memory-info').text(proc.memory_percent.toFixed(2) + '%'),
-                    $('<td>').addClass('processes-runningtime').text(proc.r_time),
-                    $('<td>').append('<button class="btn btn-mini btn-danger"><i class="icon-remove cmd" data-cmd="kill" data-pid=' + pid + '></i></button>')
-                );
-                $('#proc-table').append(row);
+            'dataType': 'html',
+            'success': function (response) {
+            $('#proc-table').append(response);
+            $('.show_proc').click(function () {
+                alert('PID: ' + $(this).attr('data-pid'));
+                showProcess($(this).attr('data-pid'));
+            });
+            $('.show-proc').click(function (e) {
+                //alert('PID: ' + $(this).attr('data-pid'));
+                e.preventDefault();
+                showProcess($(this).attr('data-pid'))
             });
             $('.spinner').hide();
         }
     });
 }
+
+function showProcess(pid) {
+    //alert('show process ' + pid);
+    var sendData = {
+        'pid': pid
+    };
+    $.ajax({
+        url: WEBDIR + "stats/ShowProcess",
+        type: 'get',
+        data: sendData,
+        dataType: 'text',
+        success: function (data) {
+            //alert(data);
+            $('#modal_dialog .modal-h3').html('Process Information');
+            $('#modal_dialog .modal-body').html('data.body');
+            $('#modal_dialog .modal-footer').html('data.foot');
+
+            $('#modal_dialog').modal({
+                show: true,
+                backdrop: false
+            });
+        }
+    });
+}
+
 
 function reloadtab() {
     if ($('#diskt').is(':visible')) {
@@ -317,33 +306,20 @@ function reloadtab() {
     $('#processes').click(function () {
        processes();
    });
-    //Can't get the kill to work!
-    //Hellow? Hellow? ANYBODY THERE?   
-   //Used for kill and signal command
-   $(document).on('click', '.cmd', function(){
-       var x = $(this).attr('data-pid');
-       alert(x);
-       if (confirm('Are you sure?')) {
-       $.getJSON(WEBDIR + "stats/command/"+ $(this).attr('data-cmd')+"/" + $(this).attr('data-pid'), function (response) {
-            alert(response);
-       
-       });
-        }
-   });
-   
+
    // Used for popen
     $(document).on('click', '#sendcmd', function(){
-        var i = $('#cmdinput').val()
+        var i = $('#cmdinput').val();
         $('#shellres').append('<b>' + i + '</b>\n')
        $.get(WEBDIR + "stats/cmdpopen/"+ $(this).attr('data-cmd')+"/" + i, function (response) {
-            //alert(response);
-            $('#shellres').append(response)
+            $('#shellres').append(response);
+            document.getElementById("cmdinput").value = "";
        
        });
    });
 
     $(document).on('click', '#clearhistory', function(){
-            $('#shellres').empty()
+            $('#shellres').empty();
    });
 
 

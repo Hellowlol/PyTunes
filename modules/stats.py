@@ -12,6 +12,7 @@ import urllib2
 import platform
 import cherrypy
 import pytunes
+from pytunes.staticvars import get_var as html
 import logging
 
 
@@ -35,7 +36,6 @@ class Stats:
                 {'type': 'bool', 'label': 'Enable', 'name': 'stats_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'stats_name'},
                 {'type': 'bool', 'label': 'Bar', 'name': 'stats_use_bars'}
-                #{'type': 'text', 'label': 'Polling', 'name': 'stats_polling'}
         ]})
 
     @cherrypy.expose()
@@ -52,7 +52,7 @@ class Stats:
     @cherrypy.tools.json_out()
     def ping(self):
         """ Tests For Installation of psutil """
-        self.logger.debug("Testing XBMC connectivity")
+        self.logger.debug("Testing Stats connectivity")
         try:
             import psutil
             #psutil.version_info >= (0, 7)
@@ -61,6 +61,11 @@ class Stats:
             self.logger.debug("Exception: " + str(e))
             self.logger.error("psutil not installed or version too low ")
             return
+
+    def trunc(self, f, n):
+        '''Truncates/pads a float f to n decimal places without rounding'''
+        slen = len('%.*f' % (n, f))
+        return str(f)[:slen]
 
     @cherrypy.expose()
     def uptime2(self):
@@ -148,6 +153,7 @@ class Stats:
 
     @cherrypy.expose()
     def processes(self):
+        out = ''
         procs = []
         procs_status = {}
         for p in psutil.process_iter():
@@ -169,9 +175,16 @@ class Stats:
             else:
                 procs.append(p.dict)
 
-        # return processes sorted by CPU percent usage
+        # processes sorted by CPU percent usage
         processes = sorted(procs, key=lambda p: p['cpu_percent'], reverse=True)
-        return json.dumps(processes)
+        for proc in processes:
+            if len(proc['cmdline']):
+                cmdline = proc['cmdline'][0]
+            else:
+                cmdline = 'N/A'
+                
+            out += html('proc_row') % (proc['pid'], proc['pid'], proc['name'], proc['username'], str(proc['cpu_percent']) + '%', cmdline, proc['status'], self.trunc(proc['memory_percent'], 2) + '%', proc['r_time'], proc['pid']) 
+        return out
  
 
 
@@ -214,7 +227,13 @@ class Stats:
         except Exception as e:
             self.logger.error("Error trying to pull cpu cores %s" % e)
 
-    #num_cpu()
+    @cherrypy.expose()
+    def Dash(self):
+        return 'System'
+
+    @cherrypy.expose()
+    def ShowProcess(self, pid):
+        return 'ShowProcess' + pid
 
     @cherrypy.expose()
     def get_user(self):
@@ -222,7 +241,6 @@ class Stats:
         d = {}
         rr = None
         try:
-        
             for user in psutil.get_users():
                 duser = user._asdict()
                 td = datetime.now() - datetime.fromtimestamp(duser['started'])
@@ -361,7 +379,7 @@ class Stats:
 
     @cherrypy.expose()
     def command(self, cmd=None, pid=None, signal=None):
-        #pid = int(json.loads(pid))
+        pid = int(json.loads(pid))
         print 'in command', cmd, pid
         dmsg = {}
         jmsg = None
@@ -369,6 +387,7 @@ class Stats:
             if pid:
                 p = psutil.Process(pid=int(pid))
                 name = p.name()
+                print 'name: ', name
             else:
                 pass
 
@@ -405,6 +424,7 @@ class Stats:
                 return jmsg
 
         except Exception as e:
+            #print msg
             self.logger.error("Error trying to %s %s" % (cmd, e))
 
 
