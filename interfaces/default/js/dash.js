@@ -9,37 +9,21 @@ $(document).ready(function () {
     loadPopular();
     loadYify();
     loadStats();
-    loadSystem();
     loadTopRated();
     loadInTheaters();
     loadUpcomingMovies();
 });
-
-function loadSystem() {
-    if (!$('#system-table').length) return;
-    $.ajax({
-        'url': WEBDIR + 'stats/Carousel',
-        type: 'get',
-            'dataType': 'html',
-            'success': function (data) {
-            //alert("System: " + data);
-            if (data === null) return;
-            $('#system-table').append(data);
-            $('#system-table').show();
-        }
-    });
-}
 
 function loadStats() {
     if (!$('#stats-table').length) return;
     $.ajax({
         'url': WEBDIR + 'stats/Dash',
         type: 'get',
-            'dataType': 'html',
+            'dataType': 'json',
             'success': function (data) {
-            //alert("Stats: " + data);
+            alert("Stats: " + data['bar']);
             if (data === null) return;
-            $('#stats-table').append(data);
+            $('#stats-table').append(data['bar']);
             $('#stats-table').show();
         }
     });

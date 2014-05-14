@@ -79,21 +79,21 @@ table.networktable {
      border-top-right-radius: 5px;
  }
 
-.modal .modal-body-middle-right-stats {
+.modal-stats .modal-body-middle-right-stats {
     margin-left: 180px;
     width: 770px;
 }
 
-.modal .modal-body-middle-bottom-stats {
+.modal-stats .modal-body-middle-bottom-stats {
     margin-left: 180px;
     width: 770px;
 }
 
-.modal .modal-body-middle-left-stats {
+.modal-stats .modal-body-middle-left-stats {
     width: 150px;
 }
 
-.modal .modal-body-bottom-stats {
+.modal-stats .modal-body-bottom-stats {
     margin-top: 15px;
 }
 

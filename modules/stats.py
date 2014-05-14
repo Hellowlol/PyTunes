@@ -87,8 +87,7 @@ class Stats:
 
     @cherrypy.expose()
     def disk_usage(self):
-        rr = None
-        l = []        
+        disks = []        
         try:
             if os.name == 'nt':
                 # Need to be true, or else not network disks will show.
@@ -103,8 +102,8 @@ class Stats:
                     dusage['mountpoint'] = disk.mountpoint
                     dusage['device'] = disk.device
                     dusage['fstype'] = disk.fstype
-                    l.append(dusage)
-                    rr = json.dumps(l)
+                    disks.append(dusage)
+                    #rr = json.dumps(l)
                     
             if os.name == 'posix':
                 
@@ -114,18 +113,17 @@ class Stats:
                     dusage['mountpoint'] = disk.mountpoint
                     dusage['device'] = disk.device
                     dusage['fstype'] = disk.fstype
-                    l.append(dusage)
-                    rr = json.dumps(l)
+                    disks.append(dusage)
+                    #rr = json.dumps(l)
                     
         except Exception as e:
             self.logger.error("Could not get disk info %s" % e)
         
-        return rr
+        return json.dumps(disks)
 
     @cherrypy.expose()
     def disk_usage2(self):
-        rr = None
-        l = []
+        disks = []
         fstypes = ['ext', 'ext2', 'ext3', 'ext4', 'nfs', 'nfs4', 'fuseblk', 'cifs', 'msdos', 'ntfs', 'fat', 'fat32']
         try:
             for disk in psutil.disk_partitions(all=True):
@@ -140,14 +138,12 @@ class Stats:
                         dusage['fstype'] = 'ntfs'
                     else:
                         dusage['fstype'] = disk.fstype
-                    l.append(dusage)
-  
-                    rr = json.dumps(l)
+                    disks.append(dusage)
                         
         except Exception as e:
             self.logger.error("Could not get disk info %s" % e)
         
-        return rr
+        return json.dumps(disks)
 
 
 
@@ -228,12 +224,58 @@ class Stats:
             self.logger.error("Error trying to pull cpu cores %s" % e)
 
     @cherrypy.expose()
+    def sizeof(self, num):
+        for x in ['bytes','KB','MB','GB', 'TB']:
+            if num < 1024.0:
+                return "%3.2f%s" % (num, x)
+            num /= 1024.0
+        return "%3.2f%s" % (num, 'TB')
+
+    @cherrypy.expose()
     def Dash(self):
-        return 'System'
+        dash = {
+        'total':0.0,
+        'free':0.0,
+        'used':0.0,
+        'percent':0.0,
+        'bar':''}
+        free = 0.0
+        used = 0.0
+        total = 0.0
+        percent = 0.0
+        fstypes = ['ext', 'ext2', 'ext3', 'ext4', 'nfs', 'nfs4', 'fuseblk', 'cifs', 'msdos', 'ntfs', 'fat', 'fat32']
+        try:
+            for disk in psutil.disk_partitions(all=True):
+            	if 'cdrom' in disk.opts or disk.fstype == '' or disk.fstype not in fstypes:
+                    pass
+            	else:
+                    usage = psutil.disk_usage(disk.mountpoint)
+                    total += float(usage.total)
+                    free += float(usage.free)
+                    used += float(usage.used)
+                    #print dash
+            print 'total', total, 'used', used, 'free', free
+            if total:
+                usedpercent = (used/total)*100
+                freepercent = (free/total)*100
+            #print 'percent', percent, dash['percent']
+            dash['bar'] = html('dash_stats') % (self.sizeof(total), self.sizeof(used), str(usedpercent) + '%', str(100 - usedpercent) + '%')
+        except Exception as e:
+            self.logger.error("Could not get dash disk info %s" % e)
+        print dash
+        return json.dumps(dash)
 
     @cherrypy.expose()
     def ShowProcess(self, pid):
-        return 'ShowProcess' + pid
+        cpu = psutil.NUM_CPUS
+        #dcpu = cpu._asdict()
+        #jcpu  = json.dumps(dcpu)
+
+        proc = {}
+        proc['head'] = 'Process Information'
+        proc['body'] = 'CPUs: ' + str(cpu)
+        proc['foot'] = html('kill_button') % pid + html('terminate_button') % pid + html('suspend_button') % pid + html('resume_button') % pid + html('close_button')
+        return json.dumps(proc)
 
     @cherrypy.expose()
     def get_user(self):

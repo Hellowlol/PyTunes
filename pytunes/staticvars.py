@@ -306,5 +306,7 @@ ${arts}
 
     vars['resume_button'] = '<button class="btn btn-primary process" pid="%s" data-action="resume">Resume</button>'
 
+    vars['dash_stats'] = "<tr><td>%s</td><td>%s</td><td><div class='progress'><div class='bar bar-danger' style='width:%s'></div><div class='bar bar-info' style='width:%s' ></div></div></td></tr>"
+
     return vars[var]
 

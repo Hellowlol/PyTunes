@@ -257,6 +257,14 @@ function processes() {
                 alert('PID: ' + $(this).attr('data-pid'));
                 showProcess($(this).attr('data-pid'));
             });
+            $('.cmd').click(function () {
+                alert('PID: ' + $(this).attr('data-pid'));
+                if (confirm('Are you sure?')) {
+                    $.getJSON(WEBDIR + "stats/command/" + $(this).attr('data-cmd') + "/" + $(this).attr('data-pid'), function (response) {
+                        alert(response);
+                    });
+                }
+            });
             $('.show-proc').click(function (e) {
                 //alert('PID: ' + $(this).attr('data-pid'));
                 e.preventDefault();
@@ -276,12 +284,12 @@ function showProcess(pid) {
         url: WEBDIR + "stats/ShowProcess",
         type: 'get',
         data: sendData,
-        dataType: 'text',
+        dataType: 'json',
         success: function (data) {
             //alert(data);
-            $('#modal_dialog .modal-h3').html('Process Information');
-            $('#modal_dialog .modal-body').html('data.body');
-            $('#modal_dialog .modal-footer').html('data.foot');
+            $('#modal_dialog .modal-h3').html(data.head);
+            $('#modal_dialog .modal-body').html(data.body);
+            $('#modal_dialog .modal-footer').html(data.foot);
 
             $('#modal_dialog').modal({
                 show: true,

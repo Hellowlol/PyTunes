@@ -607,6 +607,7 @@ class Manager:
 
     @cherrypy.expose()
     def Carousel(self, carousel, page=1):
+        limit = 1
         self.logger.debug("Get list of movies for %s" % carousel)
         movies = ''
         if carousel == 'upcoming':
@@ -618,8 +619,11 @@ class Manager:
         if carousel == 'popular':
             data = tmdb.Popular(page)
         for each in data['results']:
+            if limit >=5:
+                pass
             if each['backdrop_path']:
                 movies += html('carousel_item') % (each['backdrop_path'], each['title'], each['release_date']) 
+                limit += 1
         return movies
 
     @cherrypy.expose()
