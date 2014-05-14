@@ -256,10 +256,9 @@ class Stats:
                     #print dash
             print 'total', total, 'used', used, 'free', free
             if total:
-                usedpercent = (used/total)*100
-                freepercent = (free/total)*100
+                percent = (used/total)*100
             #print 'percent', percent, dash['percent']
-            dash['bar'] = html('dash_stats') % (self.sizeof(total), self.sizeof(used), str(usedpercent) + '%', str(100 - usedpercent) + '%')
+            dash['bar'] = html('dash_stats') % (self.sizeof(total), self.sizeof(used), str(percent) + '%', str(100 - percent) + '%')
         except Exception as e:
             self.logger.error("Could not get dash disk info %s" % e)
         print dash

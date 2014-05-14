@@ -21,7 +21,7 @@ function loadStats() {
         type: 'get',
             'dataType': 'json',
             'success': function (data) {
-            alert("Stats: " + data['bar']);
+            //alert("Stats: " + data['bar']);
             if (data === null) return;
             $('#stats-table').append(data['bar']);
             $('#stats-table').show();
