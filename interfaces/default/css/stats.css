@@ -41,35 +41,25 @@ table.networktable {
 	table-layout: fixed;
 	word-wrap: break-word !important;
 }
-#modal_stats {
+.modal-stats {
     position: fixed;
     top: 0px;
-    left: 500px;
-    width: 700px;
-    height: 423px;
+    left: 300px;
+    width: 1000px;
+    height: 530px;
 }
 .modal-body-stats {
-    width: 700px;
-    height: 310px;
+    width: 970px;
+    height: 500px;
 }
 .modal-footer-stats {
-    height: 30px;
     padding:9px 15px;
-	text-align: right;
     border-top:5px solid #dac91b;
     background-color: #DADED3;
-	background: url('../img/bodybg.jpg');
-    -webkit-border-bottom-left-radius: 5px;
-    -webkit-border-bottom-right-radius: 5px;
-    -moz-border-radius-bottomleft: 5px;
-    -moz-border-radius-bottomright: 5px;
-     border-bottom-left-radius: 5px;
-     border-bottom-right-radius: 5px;
+	background: url('../../../img/bodybg.jpg')
 }
 .modal-header-stats {
-    height: 40px;
     padding:9px 15px;
-	vertical-align: top;
     border-bottom:5px solid #dac91b;
     background-color: hsl(110, 56%, 16%) !important; 
     background-repeat: repeat-x; 
@@ -88,6 +78,24 @@ table.networktable {
      border-top-left-radius: 5px;
      border-top-right-radius: 5px;
  }
+
+.modal-stats .modal-body-middle-right-stats {
+    margin-left: 180px;
+    width: 770px;
+}
+
+.modal-stats .modal-body-middle-bottom-stats {
+    margin-left: 180px;
+    width: 770px;
+}
+
+.modal-stats .modal-body-middle-left-stats {
+    width: 150px;
+}
+
+.modal-stats .modal-body-bottom-stats {
+    margin-top: 15px;
+}
 
 .modal-h3-stats {
     color: #fff;

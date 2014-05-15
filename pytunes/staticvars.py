@@ -292,19 +292,19 @@ ${arts}
 
     vars['carousel_item'] = """<div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=http://image.tmdb.org/t/p/original%s')"><div class="carousel-caption"><h4>%s (%s)</h4></div></div>"""
 
-    vars['download_button'] = '<div class="btn-group"><button id="download" class="btn btn-primary" title="Find This Movie!" tmdb="%s">Get It!</button></div>'
+    vars['download_button'] = '<button id="download" class="btn btn-primary" title="Find This Movie!" tmdb="%s">Get It!</button>'
 
-    vars['torrent_button'] = '<div class="btn-group"><button id="download" class="btn btn-primary" title="Download This Movie!" yify_link="%s">Download</button></div>'
+    vars['torrent_button'] = '<button id="download" class="btn btn-primary" title="Download This Movie!" yify_link="%s">Download</button>'
 
-    vars['close_button'] = '<div class="btn-group"><button class="btn btn-primary" data-dismiss="modal">Close</button></div>'
+    vars['close_button'] = '<button class="btn btn-primary" data-dismiss="modal">Close</button>'
 
-    vars['terminate_button'] = '<div class="btn-group"><button class="btn btn-primary process" pid="%s" data-action="terminate">Terminate</button></div>'
+    vars['terminate_button'] = '<button class="btn btn-primary process" pid="%s" data-action="terminate">Terminate</button>'
 
-    vars['kill_button'] = '<div class="btn-group"><button class="btn btn-primary process" pid="%s" data-action="kill">Kill</button></div>'
+    vars['kill_button'] = '<button class="btn btn-primary process" pid="%s" data-action="kill">Kill</button>'
 
-    vars['suspend_button'] = '<div class="btn-group"><button class="btn btn-primary process" pid="%s" data-action="suspend">Suspend</button></div>'
+    vars['suspend_button'] = '<button class="btn btn-primary process" pid="%s" data-action="suspend">Suspend</button>'
 
-    vars['resume_button'] = '<div class="btn-group"><button class="btn btn-primary process" pid="%s" data-action="resume">Resume</button></div>'
+    vars['resume_button'] = '<button class="btn btn-primary process" pid="%s" data-action="resume">Resume</button>'
 
     vars['dash_stats'] = "<tr><td>%s</td><td>%s</td><td><div class='progress'><div class='bar bar-danger' style='width:%s'></div><div class='bar bar-info' style='width:%s' ></div></div></td></tr>"
 
