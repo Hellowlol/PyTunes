@@ -41,25 +41,32 @@ table.networktable {
 	table-layout: fixed;
 	word-wrap: break-word !important;
 }
-.modal-stats {
+#modal_stats {
     position: fixed;
-    top: 0px;
-    left: 300px;
-    width: 1000px;
-    height: 530px;
+    top: 100px;
+    left: 500px;
+    width: 600px;
+    height: 400px;
 }
 .modal-body-stats {
-    width: 970px;
-    height: 500px;
+    height: 300px;
 }
 .modal-footer-stats {
+	text-align: right;
     padding:9px 15px;
     border-top:5px solid #dac91b;
     background-color: #DADED3;
-	background: url('../../../img/bodybg.jpg')
+	background: url('../img/bodybg.jpg');
+    -webkit-border-bottom-left-radius: 5px;
+    -webkit-border-bottom-right-radius: 5px;
+    -moz-border-radius-bottomleft: 5px;
+    -moz-border-radius-bottomright: 5px;
+     border-bottom-left-radius: 5px;
+     border-bottom-right-radius: 5px;
 }
 .modal-header-stats {
-    padding:9px 15px;
+    height: 40px;
+    padding:5px 15px 5px;
     border-bottom:5px solid #dac91b;
     background-color: hsl(110, 56%, 16%) !important; 
     background-repeat: repeat-x; 

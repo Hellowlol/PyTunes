@@ -287,11 +287,11 @@ function showProcess(pid) {
         dataType: 'json',
         success: function (data) {
             //alert(data);
-            $('#modal_dialog .modal-h3').html(data.head);
-            $('#modal_dialog .modal-body').html(data.body);
-            $('#modal_dialog .modal-footer').html(data.foot);
+            $('#modal_stats .modal-h3-stats').html(data.head);
+            $('#modal_stats .modal-body-stats').html(data.body);
+            $('#modal_stats .modal-footer-stats').html(data.foot);
 
-            $('#modal_dialog').modal({
+            $('#modal_stats').modal({
                 show: true,
                 backdrop: false
             });

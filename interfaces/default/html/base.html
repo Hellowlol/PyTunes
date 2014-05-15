@@ -42,8 +42,7 @@
                             <li id="nav-${m.get('id')}"><a href="${pytunes.WEBDIR}${m.get('id')}/">${s.get(m.get('id')+'_name')}</a></li>
                             %endif
                             % endfor
-                        </ul>
-                        <div class="pull-right visible-desktop">
+                        <li class="pull-right visible-desktop">
                             <div class="btn-group">
                                 <button class="btn btn-primary dropdown-toggle btn-xs" data-toggle="dropdown">
                         <i class="icon-th-list"></i>
@@ -63,7 +62,8 @@
                             <li><a href="${pytunes.WEBDIR}xbmc/System?action=shutdown-server" class="ajax-confirm" title="Shutdown Media Server"><i class="icon-off"></i> Shutdown Server</a></li>
                                 </ul>
                             </div>
-                        </div>
+                        </li>
+                        </ul>
                     </div>
                 </div>
             </div>
