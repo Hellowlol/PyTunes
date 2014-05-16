@@ -267,12 +267,12 @@ class Stats:
     @cherrypy.expose()
     def ShowProcess(self, pid):
         cpu = psutil.NUM_CPUS
-        #dcpu = cpu._asdict()
-        #jcpu  = json.dumps(dcpu)
-
+        p = psutil.Process(int(pid))
+        runtime = str(timedelta(seconds=int(time.time() - p.create_time)))
+        starttime = time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(int(p.create_time)))
         proc = {}
         proc['head'] = 'Process Information'
-        proc['body'] = 'CPUs: ' + str(cpu)
+        proc['body'] = html('stats_modal') % (' '.join(p.cmdline), pid, p.get_cpu_percent(interval=1.0), p.username, p.status, p.uids[0], p.gids[0], p.nice, self.trunc(p.get_memory_percent(), 2), starttime, runtime)
         proc['foot'] = html('kill_button') % pid + html('terminate_button') % pid + html('suspend_button') % pid + html('resume_button') % pid + html('close_button')
         return json.dumps(proc)
 

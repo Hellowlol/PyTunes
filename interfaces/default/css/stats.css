@@ -65,8 +65,8 @@ table.networktable {
      border-bottom-right-radius: 5px;
 }
 .modal-header-stats {
-    height: 40px;
-    padding:5px 15px 5px;
+    /*height: 40px;*/
+    padding:9px 15px;
     border-bottom:5px solid #dac91b;
     background-color: hsl(110, 56%, 16%) !important; 
     background-repeat: repeat-x; 

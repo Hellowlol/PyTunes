@@ -280,8 +280,6 @@ ${arts}
 
     vars['yify_link'] = 'http://yts.re/api/list.json?limit=%s&set=%s&quality=%s&rating=%s&keywords=%s&genre=%s&sort=%s&order=%s'
 
-    vars['trailer'] = '<button id="youtube" ytid="%s" class="btn btn-primary">Trailer</button>'
-
     vars['actor_li'] = '<li title="%s --> %s"><a href="#"><img class="thumbnail actor-thumb" src="/manager/GetThumb?w=83&h=125&thumb=%s"></img><h6 class="title">%s</h6><h6 class="title">%s</h6></a></li>'
 
     vars['row19'] =  "<tr><td>%s<td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
@@ -291,6 +289,8 @@ ${arts}
     vars['yify_thumb_item'] = """<li title="%s"><a href="#" id="%s" class="yify"><img src="/manager/GetThumb?w=100&h=150&thumb=%s"></img><h6 class="title">%s</h6></a></li>"""
 
     vars['carousel_item'] = """<div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=http://image.tmdb.org/t/p/original%s')"><div class="carousel-caption"><h4>%s (%s)</h4></div></div>"""
+
+    vars['trailer_button'] = '<div class="btn-group"><button id="youtube" ytid="%s" class="btn btn-primary">Trailer</button></div>'
 
     vars['download_button'] = '<div class="btn-group"><button id="download" class="btn btn-primary" title="Find This Movie!" tmdb="%s">Get It!</button></div>'
 
@@ -307,6 +307,19 @@ ${arts}
     vars['resume_button'] = '<div class="btn-group"><button class="btn btn-primary process" pid="%s" data-action="resume">Resume</button></div>'
 
     vars['dash_stats'] = "<tr><td>%s</td><td>%s</td><td><div class='progress'><div class='bar bar-danger' style='width:%s'></div><div class='bar bar-info' style='width:%s' ></div></div></td></tr>"
+
+    vars['stats_modal'] = """
+<table class="span6">
+<tr><td class="span1"><b>Command</b></td><td class="span5">%s</td></tr>
+</table>
+<table class="span6">
+<tr><td><b>PID</b></td><td>%s</td><td><b>CPU</b></td><td>%s</td></tr>
+<tr><td><b>Owner</b></td><td>%s</td><td><b>Status</b></td><td>%s</td><tr>
+<tr><td><b>UID</b></td><td>%s</td><td><b>GID</b></td><td>%s</td><tr>
+<tr><td><b>Nice</b></td><td>%s</td><td><b>Memory</b></td><td>%s</td></tr>
+<tr><td><b>Started</b></td><td>%s</td><td><b>Run time</b></td><td>%s</td></tr>
+</table>
+    """
 
     return vars[var]
 

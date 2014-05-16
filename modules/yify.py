@@ -76,7 +76,7 @@ class Yify:
         movie = {}
         moviedata = self._fetch_data(url)
         if 'YoutubeTrailerID' in moviedata:
-            trailer = html('trailer') % moviedata['YoutubeTrailerID']
+            trailer = html('trailer_button') % moviedata['YoutubeTrailerID']
         else:
             trailer = ''
         if 'ImdbCode' in moviedata:
