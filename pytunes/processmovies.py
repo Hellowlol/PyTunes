@@ -248,6 +248,7 @@ def process():
     moviepath = ''
     matched = []  
     unmatched = []
+    exts = ['.avi', '.mp4', '.mkv', '.flv', '.mpeg', '.riff']
     if moviedir and destdir:  
         if not os.path.exists(moviedir):
             os.makedirs(moviedir)
@@ -268,6 +269,9 @@ def process():
         matches = {}
         if not os.path.isfile(path):
               continue
+        fileName, fileExtension = os.path.splitext(path)
+        if not fileExtension in exts:
+            continue
         moviepath = path    
         file = os.path.basename(path)
         #print file
