@@ -46,7 +46,7 @@
                             <li><a href="ControlPlayer?action=fullscreen" class="ajax-link"><i class="icon-fullscreen"></i> Toggle Fullscreen</a></li>
                             <li><a href="ControlPlayer?action=party" class="ajax-link"><i class="icon-beer"></i> Party Mode</a></li>
                             <li><a href="ExecuteAddon?addon=script.artwork.downloader" class="ajax-link"><i class="icon-picture"></i> Get Video Artwork</a></li>
-                            <li><a href="ExecuteAddon?addon=script.cdartmanager&cmd0=autoall" class="ajax-link"><i class="icon-picture"></i> Get Music Artwork</a></li>
+                            <li><a href="ExecuteAddon?addon=script.cdartmanager?cmd0=autoall" class="ajax-link"><i class="icon-picture"></i> Get Music Artwork</a></li>
                             <li><a href="ControlPlayer?action=audiotoggledigital" class="ajax-link"><i class="icon-headphones"></i> Toggle Audio Output</a></li>
                         </ul>
                     </div>
@@ -84,7 +84,8 @@
             %if settings.get('xbmc_enable_pvr', 0):
             <li><a href="#pvr" data-toggle="tab">PVR</a></li>
             %endif
-            <li class="hide"><a href="#playlist" data-toggle="tab">Now Playing</a></li>
+            <li class=""><a href="#playlist" data-toggle="tab">Play List</a></li>
+            <li class=""><a href="#nowplaying" data-toggle="tab">Now Playing</a></li>
         </ul>
         <div class="tab-content">
             <div id="movies" class="tab-pane">
@@ -115,8 +116,8 @@
                     <tbody></tbody>
                 </table>
             </div>
-            <div id="playlist" class="tab-pane">
-                <div class="well hide" id="nowplaying">
+            <div id="nowplaying" class="tab-pane">
+                <div class="well">
                     <div class="row">
                         <div class="span4">
                             <h2>
@@ -164,6 +165,7 @@
                         <button class="btn btn-primary" data-player-control="bigstepforward" title="Forward 10 min >>"><i class="icon-fast-forward"></i></button>
                         <button class="btn btn-primary" data-player-control="skipnext" title="Next Chapter"><i class="icon-forward"></i><i class="icon-step-forward"></i></button>
                         <button id="mute" class="btn btn-primary" data-player-control="mute" title="Mute"><i class="icon-volume-off  icon-large"></i><i class="icon-remove icon-small"></i></button>
+                        <input id="ex1" class="span6" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="75"/>
                         <form class="input-prepend">
                             <span class="add-on"><i class="icon-text-width"></i></span>
                             <select id="subtitles"></select>
@@ -172,14 +174,10 @@
                             <span class="add-on"><i class="icon-comments"></i></span>
                             <select id="audio"></select>
                         </form>
-                        <div class="progress span3" id="player-volume-progressbar">
-                            <div id="volumebar" class="bar active"></div>
-                        </div>
                     </div><br>
-                    <!--</div>-->
                 </div>
             </div>
-            <div>
+            <div id="playlist" class="tab-pane">
                 <table id="playlist-table" class="table table-striped table-hover table-condensed playlist table-responsive table-bordered">
                     <thead class="pt-thead">
                         <tr>

@@ -12,12 +12,6 @@ $(document).ready(function () {
     playerLoader = setInterval('loadNowPlaying()', 1000);
     hideWatched = $('#hidewatched').hasClass('active') ? 1 : 0;
 
-    $('#ex1').slider({
-	    formater: function(value) {
-		    return 'Current value: ' + value;
-	    }
-    });
-
     // Load data on tab display
     $('a[data-toggle="tab"]').click(function (e) {
         $('#search').val('');
@@ -74,12 +68,14 @@ $(document).ready(function () {
         pos = ((e.pageX - this.offsetLeft) / $(this).width() * 100).toFixed(2);
         $.get(WEBDIR + 'xbmc/ControlPlayer?action=seek&value=' + pos);
     });
-    $('#nowplaying #player-volume-progressbar').click(function(e) {
-        vol = ((e.pageX-this.offsetLeft)/$(this).width()*100).toFixed();
-        $.get(WEBDIR + 'xbmc/ControlPlayer?action=volume&value='+vol);
+
+    $('#ex1').slider({
+	    formater: function(value) {
+            $.get(WEBDIR + 'xbmc/ControlPlayer?action=volume&value='+value);		
+            return 'Volume: ' + value;
+	    }
     });
 
- 
     // Toggle whether to show already seen episodes
     $('#hidewatched').click(function (e) {
         e.preventDefault();
@@ -888,14 +884,14 @@ function loadNowPlaying() {
         dataType: 'json',
         success: function (data) {
             if (data === null) {
-                $('#nowplaying').hide();
+                $('a[href=#nowplaying]').parent().hide();
                 $('a[href=#playlist]').parent().hide();
                 return;
             }
             if (nowPlayingId != data.itemInfo.item.id) {
                 var nowPlayingThumb = encodeURIComponent(data.itemInfo.item.thumbnail);
                 var thumbnail = $('#nowplaying .thumb img').attr('alt', data.itemInfo.item.label);
-                if (nowPlayingThumb == '') {
+                if (nowPlayingThumb === '') {
                     thumbnail.attr('src', 'holder.js/140x140/text:No artwork');
                     thumbnail.attr('width', '140').attr('height', '140');
                     Holder.run();
@@ -989,10 +985,6 @@ function loadNowPlaying() {
 
             var progressBar = $('#nowplaying #player-progressbar .bar');
             progressBar.css('width', data.playerInfo.percentage + '%');            
-            var progressBar2 = $('#nowplaying #player-volume-progressbar .bar');
-            progressBar2.css('width', data.app.volume + '%');
-            progressBar2.text(data.app.volume + '%');
-
  
             var select = $('#audio').html('');
             var current = "";
@@ -1031,7 +1023,8 @@ function loadNowPlaying() {
                 loadPlaylist(data.itemInfo.item.type == 'song' ? 'audio' : 'video');
                 nowPlayingId = data.itemInfo.item.id;
             }
-            $('#nowplaying').slideDown();
+                $('a[href=#nowplaying]').parent().show();
+            //$('#nowplaying').show();
         }
     });
 }

@@ -454,7 +454,7 @@ class Manager:
             shortrole = (each['role'][:14] + '..') if len(each['role']) > 16 else each['role']
             actors += html('actor_li') % (each['name'], each['role'], each['thumb'], shortname, shortrole)
         if info['trailers']:
-            trailer  = html('trailer') % info['trailers'][0]
+            trailer  = html('trailer_button') % info['trailers'][0]
         else:
             trailer = ''
         if info['imdb']:
