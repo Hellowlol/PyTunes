@@ -1142,21 +1142,63 @@ function reloadTab() {
 
     if ($('#movies').is(':visible')) {
         loadMovies(options);
-    } else if ($('#shows').is(':visible')) {
+        //show filter and sort
+        $('#filter').show();
+        $('#sort').show();
+    } 
+    else if ($('#shows').is(':visible')) {
         loadShows(options);
-    } else if ($('#episodes').is(':visible')) {
+        //show filter and sort
+        $('#filter').show();
+        $('#sort').show();
+    } 
+    else if ($('#episodes').is(':visible')) {
         options = $.extend(options, {
             'tvshowid': currentShow
+        //show filter and sort
         });
         loadEpisodes(options);
-    } else if ($('#artists').is(':visible')) {
+        $('#filter').show();
+        $('#sort').show();
+    } 
+    else if ($('#artists').is(':visible')) {
         loadArtists(options);
-    } else if ($('#albums').is(':visible')) {
+        //show filter and hide sort
+        $('#filter').show();
+        $('#sort').hide();
+    } 
+    else if ($('#albums').is(':visible')) {
         loadAlbums(options);
-    } else if ($('#songs').is(':visible')) {
+        //show filter and hide sort
+        $('#filter').show();
+        $('#sort').hide();
+    } 
+    else if ($('#songs').is(':visible')) {
         loadSongs();
-    } else if ($('#pvr').is(':visible')) {
+        //show filter and hide sort
+        $('#filter').show();
+        $('#sort').hide();
+    } 
+    else if ($('#pvr').is(':visible')) {
         loadChannels();
+        //hide filter and sort
+        $('#filter').hide();
+        $('#sort').hide();
+    }
+    else if ($('#remote').is(':visible')) {
+        //hide filter and sort
+        $('#filter').hide();
+        $('#sort').hide();
+    }
+    else if ($('#playlist').is(':visible')) {
+        //hide filter and sort
+        $('#filter').hide();
+        $('#sort').hide();
+    }
+    else if ($('#nowplaying').is(':visible')) {
+        //hide filter and sort
+        $('#filter').hide();
+        $('#sort').hide();
     }
 }
 

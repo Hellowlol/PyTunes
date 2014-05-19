@@ -121,6 +121,17 @@ def Popular(page):
 
 def Toprated(page):
     stuff = tmdb.Movies()
+    #print 'top ratedstuff', stuff.top_rated
+    return stuff.top_rated({'page':page})
+
+def PopularTV(page):
+    stuff = tmdb.TV()
+    #print 'popular stuff', stuff.popular({'page':page})
+    return stuff.popular({'page':page})
+
+def TopratedTV(page):
+    stuff = tmdb.TV()
+    #print 'stuff',  stuff.top_rated({'page':page})
     return stuff.top_rated({'page':page})
 
 

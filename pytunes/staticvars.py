@@ -284,7 +284,7 @@ ${arts}
 
     vars['row19'] =  "<tr><td>%s<td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>"
     
-    vars['thumb_item'] = """<li title="%s"><a href="#" id="%s" class="tmdb"><img class="thumbnail" src="/manager/GetThumb?w=100&h=150&thumb=%s"></img><h6 class="title">%s</h6></a></li>"""
+    vars['tmdb_thumb_item'] = """<li title="%s"><a href="#" id="%s" class="tmdb"><img class="thumbnail" src="/manager/GetThumb?w=100&h=150&thumb=%s"></img><h6 class="title">%s</h6></a></li>"""
 
     vars['yify_thumb_item'] = """<li title="%s"><a href="#" id="%s" class="yify"><img src="/manager/GetThumb?w=100&h=150&thumb=%s"></img><h6 class="title">%s</h6></a></li>"""
 

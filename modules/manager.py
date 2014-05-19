@@ -408,6 +408,44 @@ class Manager:
             MoviesWanted(strTmdb=tmdbid, strImdb=info['imdb'], strTitle=info['title'], strFanart=fanart, strThumb=thumb, strRating=info['rating'], strPlot=info['plot'])
 
     @cherrypy.expose()
+    def GetTVShow(self, tmdbid):
+        """ Get Movie info """
+        movie = {}
+        directors = []
+        writers = []
+        genres = []
+        actors = ''
+
+        download = html('download_button') % tmdbid
+        print 'tmdbid', tmdbid
+        info = tmdb.TVInfo(tmdbid)
+        if info['posters']:
+            poster = info['posters'][0]
+        else:
+            poster = pytunes.IMGURL + 'no_art_square.png'
+        for each in info['cast']:
+            shortname = (each['name'][:14] + '..') if len(each['name']) > 16 else each['name']
+            shortrole = (each['role'][:14] + '..') if len(each['role']) > 16 else each['role']
+            actors += html('actor_li') % (each['name'], each['role'], each['thumb'], shortname, shortrole)
+        if info['trailers']:
+            trailer  = html('trailer_button') % info['trailers'][0]
+        else:
+            trailer = ''
+        if info['imdb']:
+            imdb = html('imdb') % info['imdb']
+        else:
+            imdb = ''
+        if info['fanart']:
+            movie['fanart'] = info['fanart'][0]
+        else:
+            movie['fanart']  = ''
+        movie['body'] = html('modal_middle') % (poster, info['plot'], directors, ", ".join(info['genre']), info['runtime'], writers, ", ".join(info['country']), ", ".join(info['studios']), actors)
+        movie['head'] = info['title'] + '   ' + info['release_date']
+        movie['foot'] = imdb + trailer + download + html('close_button')
+        return json.dumps(movie)
+
+        
+    @cherrypy.expose()
     def GetMovie(self, tmdbid):
         """ Get Movie info """
         movie = {}
@@ -581,7 +619,10 @@ class Manager:
 
     @cherrypy.expose()
     def Tmdb(self, source, page):
+        #print 'TMDB: ', source, page
         self.logger.debug("Get list of %s movies from TMDB" % source)
+        moviecats = ['intheaters', 'releases', 'toprated', 'popular']
+        tvcats = ['topratedtv', 'populartv']
         if source == 'intheaters':
             data = tmdb.Nowplaying(page)
         elif source == 'releases':
@@ -590,19 +631,33 @@ class Manager:
             data = tmdb.Toprated(page)
         elif source == 'popular':
             data = tmdb.Popular(page)
+        elif source == 'topratedtv':
+            data = tmdb.TopratedTV(page)
+        elif source == 'populartv':
+            data = tmdb.PopularTV(page)
         else:
             return
         movies = ''
         #print data
         #print data['total_pages'], 'total pages'
-        for each in data['results']:
-            if each['poster_path']:
-                thumb = 'http://image.tmdb.org/t/p/original%s' % each['poster_path']
-            else:
-                thumb = pytunes.IMGURL + 'no_art_square.png'
-            shorttitle = (each['title'][:14] + '..') if len(each['title']) > 16 else each['title']
-            shorttitle += '<br>' + each['release_date']
-            movies += html('thumb_item') % (each['title'], each['id'],  thumb, shorttitle) 
+        if source in moviecats:
+            for each in data['results']:
+                if each['poster_path']:
+                    thumb = 'http://image.tmdb.org/t/p/original%s' % each['poster_path']
+                else:
+                    thumb = pytunes.IMGURL + 'no_art_square.png'
+                shorttitle = (each['title'][:14] + '..') if len(each['title']) > 16 else each['title']
+                shorttitle += '<br>' + each['release_date']
+                movies += html('tmdb_thumb_item') % (each['title'], each['id'],  thumb, shorttitle) 
+        elif source in tvcats:
+            for each in data['results']:
+                if each['poster_path']:
+                    thumb = 'http://image.tmdb.org/t/p/original%s' % each['poster_path']
+                else:
+                    thumb = pytunes.IMGURL + 'no_art_square.png'
+                shortname = (each['name'][:14] + '..') if len(each['name']) > 16 else each['name']
+                shortname += '<br>' + each['first_air_date']
+                movies += html('tmdb_thumb_item') % (each['name'], each['id'],  thumb, shortname) 
         return movies
 
     @cherrypy.expose()
