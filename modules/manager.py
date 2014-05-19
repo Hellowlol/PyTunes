@@ -410,41 +410,50 @@ class Manager:
     @cherrypy.expose()
     def GetTVShow(self, tmdbid):
         """ Get Movie info """
-        movie = {}
+        show = {}
+        networks = []
+        languages = []
         directors = []
         writers = []
         genres = []
         actors = ''
 
-        download = html('download_button') % tmdbid
-        print 'tmdbid', tmdbid
+        #print 'tmdbid tv', tmdbid
         info = tmdb.TVInfo(tmdbid)
-        if info['posters']:
-            poster = info['posters'][0]
+        addshow = html('addshow_button') % info['name']
+        #print info
+        #return
+        for each in info['directors']:
+            directors.append(each['name'])
+        if directors:
+            directors = ", ".join(directors)
         else:
-            poster = pytunes.IMGURL + 'no_art_square.png'
+            directors = 'N/A'
+        for each in info['writers']:
+            writers.append(each['name'])
+        if writers:
+            writers = ", ".join(writers)
+            writers = (writers[:40] + '..') if len(writers) > 42 else writers
+        else:
+            writers = 'N/A'
         for each in info['cast']:
             shortname = (each['name'][:14] + '..') if len(each['name']) > 16 else each['name']
             shortrole = (each['role'][:14] + '..') if len(each['role']) > 16 else each['role']
             actors += html('actor_li') % (each['name'], each['role'], each['thumb'], shortname, shortrole)
-        if info['trailers']:
-            trailer  = html('trailer_button') % info['trailers'][0]
-        else:
-            trailer = ''
-        if info['imdb']:
-            imdb = html('imdb') % info['imdb']
-        else:
-            imdb = ''
-        if info['fanart']:
-            movie['fanart'] = info['fanart'][0]
-        else:
-            movie['fanart']  = ''
-        movie['body'] = html('modal_middle') % (poster, info['plot'], directors, ", ".join(info['genre']), info['runtime'], writers, ", ".join(info['country']), ", ".join(info['studios']), actors)
-        movie['head'] = info['title'] + '   ' + info['release_date']
-        movie['foot'] = imdb + trailer + download + html('close_button')
-        return json.dumps(movie)
+        show['fanart'] = info['fanart']
+        show['body'] = html('tmdb_tv_modal_middle') % (info['poster'], info['plot'], directors, info['genre'], info['status'], info['first_air'], info['last_air'], writers, info['country'], info['networks'], info['seasons'], info['episodes'], actors)
+        show['head'] = info['name'] + '   ' + info['first_air']
+        show['foot'] = addshow + html('close_button')
+        return json.dumps(show)
 
-        
+    @cherrypy.expose()
+    def SearchShow(self, query):
+        try:
+            url = 'http://www.thetvdb.com/api/GetSeries.php?seriesname=' + quote(query)
+            return urlopen(url, timeout=10).read()
+        except:
+            return
+
     @cherrypy.expose()
     def GetMovie(self, tmdbid):
         """ Get Movie info """
@@ -503,7 +512,7 @@ class Manager:
             movie['fanart'] = info['fanart'][0]
         else:
             movie['fanart']  = ''
-        movie['body'] = html('modal_middle') % (poster, info['plot'], directors, ", ".join(info['genre']), info['runtime'], writers, ", ".join(info['country']), ", ".join(info['studios']), actors)
+        movie['body'] = html('tmdb_movie_modal_middle') % (poster, info['plot'], directors, ", ".join(info['genre']), info['runtime'], writers, ", ".join(info['country']), ", ".join(info['studios']), actors)
         movie['head'] = info['title'] + '   ' + info['release_date']
         movie['foot'] = imdb + trailer + download + html('close_button')
         return json.dumps(movie)
@@ -656,7 +665,8 @@ class Manager:
                 else:
                     thumb = pytunes.IMGURL + 'no_art_square.png'
                 shortname = (each['name'][:14] + '..') if len(each['name']) > 16 else each['name']
-                shortname += '<br>' + each['first_air_date']
+                if each['first_air_date']:
+                    shortname += '<br>' + each['first_air_date']
                 movies += html('tmdb_thumb_item') % (each['name'], each['id'],  thumb, shortname) 
         return movies
 

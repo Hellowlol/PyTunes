@@ -73,7 +73,7 @@ ${arts}
 </div> 
     """
 
-    vars['modal_middle'] = """
+    vars['tmdb_movie_modal_middle'] = """
             <div>
                 <div class="modal-body-middle">
                     <div class="pull-left modal-body-middle-left">
@@ -124,6 +124,93 @@ ${arts}
                             <p class="modal-info-item">
                                 <b>
                                     Studio:
+                                </b>
+                                 %s
+                            </p>
+                        </div>
+                   </div>
+                </div>
+                <div class="modal-body-bottom pull-left">
+                    <ul class="thumbnails">%s</ul>
+                </div>
+
+    """
+
+    vars['tmdb_tv_modal_middle'] = """
+            <div>
+                <div class="modal-body-middle">
+                    <div class="pull-left modal-body-middle-left">
+                        <p>
+                            <img class="thumbnail modal-movie-poster" src="/manager/GetThumb?w=133&h=200&thumb=%s"></img>
+                        </p>
+                    </div>
+                    <div class="modal-body-middle-right">
+                        <p>
+                            <b>
+                                Plot:
+                            </b>
+                            %s
+                        </p>
+                        <div class="pull-left">
+                            <p class="modal-info-item">
+                                <b>
+                                    Director:
+                                </b>
+                                 %s
+                            </p>
+                            <p class="modal-info-item">
+                                <b>
+                                    Genre:
+                                </b>
+                                 %s
+                            </p>
+                            <p class="modal-info-item">
+                                <b>
+                                    Status:
+                                </b>
+                                 %s
+                            </p>
+                            <p class="modal-info-item">
+                                <b>
+                                    First Aired:
+                                </b>
+                                 %s
+                            </p>
+                            <p class="modal-info-item">
+                                <b>
+                                    Last Aired:
+                                </b>
+                                 %s
+                            </p>
+                        </div>
+                        <div class="pull-right">
+                            <p class="modal-info-item">
+                                <b>
+                                    Writer:
+                                </b>
+                                 %s
+                            </p>
+                            <p class="modal-info-item">
+                                <b>
+                                    Country:
+                                </b>
+                                 %s
+                            </p>
+                            <p class="modal-info-item">
+                                <b>
+                                    Studio:
+                                </b>
+                                 %s
+                            </p>
+                            <p class="modal-info-item">
+                                <b>
+                                    Seasons:
+                                </b>
+                                 %s
+                            </p>
+                            <p class="modal-info-item">
+                                <b>
+                                    Episodes:
                                 </b>
                                  %s
                             </p>
@@ -293,6 +380,8 @@ ${arts}
     vars['trailer_button'] = '<div class="btn-group"><button id="youtube" ytid="%s" class="btn btn-primary">Trailer</button></div>'
 
     vars['download_button'] = '<div class="btn-group"><button id="download" class="btn btn-primary" title="Find This Movie!" tmdb="%s">Get It!</button></div>'
+
+    vars['addshow_button'] = '<div class="btn-group"><button id="addshow" class="btn btn-primary" title="Add This Show!" name="%s">Add Show</button></div>'
 
     vars['torrent_button'] = '<div class="btn-group"><button id="download" class="btn btn-primary" title="Download This Movie!" yify_link="%s">Download</button></div>'
 

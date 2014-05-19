@@ -8,7 +8,6 @@ var page_counts = {
     topratedtv: 1
 };    
 
-
 function loadInTheaters(page) {
     //alert("In Theaters" + page);
     $.ajax({
@@ -30,7 +29,6 @@ function loadInTheaters(page) {
         }
     });
 }
-
 
 function loadReleases(page) {
     //alert("In Releases" + page);
@@ -76,7 +74,6 @@ function loadTopRated(page) {
     });
 }
 
-
 function loadPopular(page) {
     //alert("In Popular" + page);
     $.ajax({
@@ -99,7 +96,6 @@ function loadPopular(page) {
     });
 }
 
-
 function loadTopRatedTV(page) {
     //alert("In Top Rated TV" + page);
     $.ajax({
@@ -121,7 +117,6 @@ function loadTopRatedTV(page) {
         }
     });
 }
-
 
 function loadPopularTV(page) {
     //alert("In Popular TV" + page);
@@ -191,9 +186,8 @@ function loadMovie(id) {
     });
 }
  
-
 function loadTVshow(id) {
-    alert('load tv show ' + id);
+    //alert('load tv show ' + id);
     var sendData = {
         tmdbid: id
     };
@@ -205,9 +199,6 @@ function loadTVshow(id) {
         success: function (data) {
             //alert(data.head);
             //alert(data.body);
-            var head = ' + movie.year + ';
-            var body = 'body';
-            var foot = 'buttons';
             $('#modal_dialog .modal-h3').html(data.head);
             $('#modal_dialog .modal-body').html(data.body);
             $('#modal_dialog .modal-footer').html(data.foot);
@@ -220,19 +211,10 @@ function loadTVshow(id) {
             $('.modal-fanart').css({
                 'background-image': 'url(' + WEBDIR + 'manager/GetThumb?w=950&h=450&o=10&thumb=' + encodeURIComponent(data.fanart) + ')'
             });
-            $('#youtube').click(function (e) {
-                //e.preventDefault();
-                var src = 'http://www.youtube.com/embed/' + $(this).attr('ytid') + '?rel=0&autoplay=1';
-                var youtube = $('<iframe allowfullscreen>').attr('src', src).addClass('modal-youtube');
-                //alert($(this).prop('ytid'));
-                $('#modal_dialog .modal-body').html(youtube);
-            });
         }
     });
 }
  
-
-
 function loadMovies() {
    $('#movie-table').empty();
     var sendData = {
@@ -284,6 +266,37 @@ function loadShows() {
     });
 }
 
+function searchTvDb(query) {
+    $.ajax({
+        url: WEBDIR + 'manager/SearchShow?query=' + query,
+        type: 'get',
+        dataType: 'xml',
+        success: function (result) {
+            series = $(result).find('Series');
+            if (series.length === 0) {
+                $('#add_show_button').attr('disabled', false);
+                notify('No Series Found', query, 'error');
+                return;
+            }
+            $('#add_show_select').html('');
+            series.each(function () {
+                var tvdbid = $(this).find('seriesid').text();
+                var showname = $(this).find('SeriesName').text();
+                var language = $(this).find('language').text();
+                var option = $('<option>');
+                option.attr('value', tvdbid);
+                option.html(showname + ' (' + language + ')');
+                $('#add_show_select').append(option);
+            });
+            $('#add_show_name').hide();
+            $('#cancel_show_button').show();
+            $('#add_show_select').fadeIn();
+            $('#add_show_button').attr('disabled', false).hide();
+            $('#add_tvdbid_button').show();
+        }
+    });
+}
+
 //Initial Load
 function loadTab() {
     if ($('#movies').is(':visible')) {
@@ -315,12 +328,12 @@ function loadTab() {
     else if ($('#topratedtv').is(':visible')) {
         $('#topratedtv-grid').empty();
         loadTopRatedTV(page_counts['topratedtv']);
-        page_counts['toprated'] += 1;
+        page_counts['topratedtv'] += 1;
     } 
     else if ($('#populartv').is(':visible')) {
         $('#populartv-grid').empty();
         loadPopularTV(page_counts['populartv']);
-        page_counts['popular'] += 1;
+        page_counts['populartv'] += 1;
     } 
 }
 
@@ -379,9 +392,6 @@ var pageoptions = {
     
 $(document).ready(function () {
     $('.spinner').show();
-    //loadMovies();
-    //loadShows();
-    //loadInTheaters();
     loadTab();
     $('.spinner').hide();
 

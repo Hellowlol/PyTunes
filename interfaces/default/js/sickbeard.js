@@ -285,6 +285,7 @@ function searchTvDb(query) {
             series = $(result).find('Series');
             if (series.length === 0) {
                 $('#add_show_button').attr('disabled', false);
+                notify('No Series Found', query, 'error');
                 return;
             }
             $('#add_show_select').html('');
