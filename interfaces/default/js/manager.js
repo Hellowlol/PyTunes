@@ -266,37 +266,6 @@ function loadShows() {
     });
 }
 
-function searchTvDb(query) {
-    $.ajax({
-        url: WEBDIR + 'manager/SearchShow?query=' + query,
-        type: 'get',
-        dataType: 'xml',
-        success: function (result) {
-            series = $(result).find('Series');
-            if (series.length === 0) {
-                $('#add_show_button').attr('disabled', false);
-                notify('No Series Found', query, 'error');
-                return;
-            }
-            $('#add_show_select').html('');
-            series.each(function () {
-                var tvdbid = $(this).find('seriesid').text();
-                var showname = $(this).find('SeriesName').text();
-                var language = $(this).find('language').text();
-                var option = $('<option>');
-                option.attr('value', tvdbid);
-                option.html(showname + ' (' + language + ')');
-                $('#add_show_select').append(option);
-            });
-            $('#add_show_name').hide();
-            $('#cancel_show_button').show();
-            $('#add_show_select').fadeIn();
-            $('#add_show_button').attr('disabled', false).hide();
-            $('#add_tvdbid_button').show();
-        }
-    });
-}
-
 //Initial Load
 function loadTab() {
     if ($('#movies').is(':visible')) {

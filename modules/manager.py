@@ -447,14 +447,6 @@ class Manager:
         return json.dumps(show)
 
     @cherrypy.expose()
-    def SearchShow(self, query):
-        try:
-            url = 'http://www.thetvdb.com/api/GetSeries.php?seriesname=' + quote(query)
-            return urlopen(url, timeout=10).read()
-        except:
-            return
-
-    @cherrypy.expose()
     def GetMovie(self, tmdbid):
         """ Get Movie info """
         movie = {}

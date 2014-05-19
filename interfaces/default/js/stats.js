@@ -30,6 +30,7 @@ function get_diskinfo() {
         'url': WEBDIR + 'stats/disk_usage',
             'dataType': 'json',
             'success': function (response) {
+            //alert(response);
             $('#files-table').html("");
             $('#error_message').text("");
 
@@ -43,14 +44,14 @@ function get_diskinfo() {
                 }
 
                 row.append(
-                $('<td>').addClass('qbt_name').text(disk.mountpoint),
-                $('<td>').addClass('qbt_name').text(disk.device),
-                $('<td>').addClass('qbt_name').text(disk.fstype),
-                $('<td>').addClass('qbt_ratio').text(getReadableFileSizeStringHDD(disk.free)),
+                $('<td>').addClass('stats_name').text(disk.mountpoint),
+                $('<td>').addClass('stats_name').text(disk.device),
+                $('<td>').addClass('stats_name').text(disk.fstype),
+                $('<td>').addClass('stats_ratio').text(getReadableFileSizeStringHDD(disk.free)),
                 $('<td>').addClass('qbit_eta').text(getReadableFileSizeStringHDD(disk.used)),
-                $('<td>').addClass('qbt_state').text(getReadableFileSizeStringHDD(disk.total)),
+                $('<td>').addClass('stats_state').text(getReadableFileSizeStringHDD(disk.total)),
                 //$('<td>').addClass('span3 qbit_progress').html(progress2),
-                $('<td>').addClass('qbt_state').text(disk.percent));
+                $('<td>').addClass('stats_state').text(disk.percent));
                 $('#files-table').append(row);
             });
             $('.spinner').hide();
@@ -76,14 +77,14 @@ function get_diskinfo2() {
                 }
 
                 row.append(
-                $('<td>').addClass('qbt_name').text(disk.mountpoint),
-                $('<td>').addClass('qbt_name').text(disk.device),
-                $('<td>').addClass('qbt_name').text(disk.fstype),
-                $('<td>').addClass('qbt_ratio').text(getReadableFileSizeStringHDD(disk.free)),
-                $('<td>').addClass('qbit_eta').text(getReadableFileSizeStringHDD(disk.used)),
-                $('<td>').addClass('qbt_state').text(getReadableFileSizeStringHDD(disk.total)),
+                $('<td>').addClass('stats_name').text(disk.mountpoint),
+                $('<td>').addClass('stats_name').text(disk.device),
+                $('<td>').addClass('stats_name').text(disk.fstype),
+                $('<td>').addClass('stats_ratio').text(getReadableFileSizeStringHDD(disk.free)),
+                $('<td>').addClass('stats_eta').text(getReadableFileSizeStringHDD(disk.used)),
+                $('<td>').addClass('stats_state').text(getReadableFileSizeStringHDD(disk.total)),
                 $('<td>').addClass('span3 qbit_progress').html(progress2),
-                $('<td>').addClass('qbt_state').text(disk.percent));
+                $('<td>').addClass('stats_state').text(disk.percent));
                 $("#disk-table").append(row);
             });
             $('.spinner').hide();
@@ -108,19 +109,15 @@ $(document).on('click', '.cmd', function () {
     }
 });
 
-
 function get_external_ip() {
     $.getJSON(WEBDIR + "stats/get_external_ip", function (response) {
-        //$(".externalip").append("External ip : "+ response.externalip);
         $(".txip").text(response.externalip);
 
     });
 }
 
-
 function get_local_ip() {
     $.getJSON(WEBDIR + "stats/get_local_ip", function (response) {
-        //$(".localip").text("Local ip: "+ response.localip);
         $(".tlip").text(response.localip);
 
     });
@@ -129,21 +126,12 @@ function get_local_ip() {
 function network_usage() {
     $.getJSON(WEBDIR + "stats/network_usage", function (response) {
         //alert(response);
-        $(".nw").append("<div>Recv: " + getReadableFileSizeString(response.bytes_recv) + "</div>");
-        $(".nw").append("<div>Sent: " + getReadableFileSizeString(response.bytes_sent) + "</div>");
-        $(".nw").append("<div>Error in: " + response.errin + "</div>");
-        $(".nw").append("<div>Error out: " + response.errout + "</div>");
-        $(".nw").append("<div>Drop in: " + response.dropin + "</div>");
-        $(".nw").append("<div>Drop out: " + response.dropout + "</div>");
-    });
-}
-
-function network_usage_table() {
-    $.getJSON(WEBDIR + "stats/network_usage", function (response) {
-        //alert(response);
         $("#stat-sent").text(getReadableFileSizeString(response.bytes_sent));
         $("#stat-recv").text(getReadableFileSizeString(response.bytes_recv));
-        $(".nw").html("<table class='table-fluid nwtable'><tr><td class=span4>Network</td><td class=span4>In</td><td class=span4>Out</td</tr><tr><td>Drop</td><td>" + response.dropin + "</td><td>" + response.dropout + "</td></tr><tr><td>Error</td><td>" + response.errin + "</td><td>" + response.errout + "</td></tr><tr><td>IP</td><td class=tlip></td><td class=txip></td></tr></tbody></table>");
+        $("#errin").text(response.errin);
+        $("#errout").text(response.errout);
+        $("#dropin").text(response.dropin);
+        $("#dropout").text(response.dropout);
     });
 }
 
@@ -160,74 +148,35 @@ function sys_info() {
     });
 }
 
-
-function virtual_memory_nobar() {
+function virtual_memory() {
     $.getJSON(WEBDIR + "stats/virtual_memory", function (virtual) {
-        //alert(response);
-        var progressBar = $('<div>');
-        progressBar.addClass('bar');
-        progressBar.css('width', (virtual.percent) + '%');
-        progressBar.text('Memory: ' + virtual.percent + ' %');
-        var progress = $('<div>');
-        progress.addClass('progress');
-
-        if (virtual.percent >= 90) {
-            progress.addClass('progress-danger');
-        }
-        progress.append(progressBar);
-        //$(".virmem").append(progress);
-        $(".virmem").append("<div class=nonbar>Physical Memory: " + virtual.percent + "%</div>");
-        $(".virmem").append("<div>Total: " + getReadableFileSizeString(virtual.total) + "</div>");
-        $(".virmem").append("<div>Used: " + getReadableFileSizeString(virtual.used) + "</div>");
-        $(".virmem").append("<div>Free: " + getReadableFileSizeString(virtual.available) + "</div>");
-
+        $('#vperc').text(virtual.percent + "%");
+        $('#vtot').text(getReadableFileSizeString(virtual.total));
+        $('#vused').text(getReadableFileSizeString(virtual.total - virtual.available));
+        $('#vfree').text(getReadableFileSizeString(virtual.available));
     });
 }
 
-function virtual_memory_bar() {
-    $.getJSON(WEBDIR + "stats/virtual_memory", function (virtual) {
-        $(".virmem").html("<div>Real Memory</div><div class=progress><div class=bar style=width:" + virtual.percent + "%><span class=sr-only>Used: " + virtual.percent + "%</span></div><div class='bar bar-success' style=width:" + (100 - virtual.percent) + "%><span class=sr-only>Free: " + (100 - virtual.percent) + "%</span></div></div><div class=progress><div class=bar style=width:" + virtual.percent + "%><span class=sr-only>Used: " + getReadableFileSizeString(virtual.total - virtual.available) + "</span></div><div class='bar bar-success' style=width:" + (100 - virtual.percent) + "% ><span class=sr-only>Free: " + getReadableFileSizeString(virtual.available) + "</span></div>");
-
-    });
-}
-
-function virtual_memory_table() {
-    $.getJSON(WEBDIR + "stats/virtual_memory", function (virtual) {
-        $(".virmem").html("<table class='table nwtable'><tr><td class=span4>Real Memory:</td><td class=span4>" + virtual.percent + "%</td></tr><tr><td>Total:</td><td>" + getReadableFileSizeString(virtual.total) + "</td></tr><tr><td>Used:</td><td>" + getReadableFileSizeString(virtual.total - virtual.available) + "</td></tr><tr><td>Free:</td><td>" + getReadableFileSizeString(virtual.available) + "</td></tr></tbody></table>");
-    });
-}
-
-function swap_memory_bar() {
+function swap_memory() {
     $.getJSON(WEBDIR + "stats/swap_memory", function (swap) {
         //alert(response.total);
-        $(".swpmem").html("<div>Swap Memory</div><div class=progress><div class=bar style=width:" + swap.percent + "%><span class=sr-only>Used: " + swap.percent + "%</span></div><div class='bar bar-success' style=width:" + (100 - swap.percent) + "%><span class=sr-only>Free: " + (100 - swap.percent) + "%</span></div></div><div class=progress><div class=bar style=width:" + swap.percent + "%><span class=sr-only>Used: " + getReadableFileSizeString(swap.used) + "</span></div><div class='bar bar-success' style=width:" + (100 - swap.percent) + "% ><span class=sr-only>Free: " + getReadableFileSizeString(swap.free) + "</span></div>");
-
-    });
-}
-function swap_memory_table() {
-    $.getJSON(WEBDIR + "stats/swap_memory", function (swap) {
-        //alert(response.total);
-        $(".swpmem").html("<table class='table nwtable'><tr><td class=span4>Swap Memory:</td><td class=span4>" + swap.percent + "%</td></tr><tr><td>Total:</td><td>" + getReadableFileSizeString(swap.total) + "</td></tr><tr><td>Used:</td><td>" + getReadableFileSizeString(swap.used) + "</td></tr><tr><td>Free:</td><td>" + getReadableFileSizeString(swap.free) + "</td></tr></tbody></table>");
+        $('#stot').text(getReadableFileSizeString(swap.total));
+        $('#sfree').text(getReadableFileSizeString(swap.free));
+        $('#sused').text(getReadableFileSizeString(swap.used));
+        $('#sperc').text(swap.percent + '%');
     });
 }
 
-
-
-function cpu_percent_bar() {
+function cpu_percent() {
     $.getJSON(WEBDIR + "stats/cpu_percent", function (cpu) {
-        //alert(typeof(response.idle));
-        $(".cpu").html("<div>CPU</div><div class=progress><div class=bar style=width:" + (cpu.user + cpu.system).toFixed(1) + "%><span class=sr-only>Used: " + (cpu.user + cpu.system).toFixed(1) + "%</span></div><div class='bar bar-success' style=width:" + (100 - (cpu.user + cpu.system)).toFixed(1) + "%><span class=sr-only>Idle: " + cpu.idle.toFixed(1) + "%</span></div></div><div class=progress><div class=bar style=width:" + cpu.user.toFixed(1) + "%><span class=sr-only>User: " + cpu.user.toFixed(1) + "%</span></div><div class='bar bar-warning' style=width:" + cpu.system.toFixed(1) + "%><span class=sr-only>System: " + cpu.system.toFixed(1) + "%</span></div><div class='bar bar-success' style=width:" + (100 - (cpu.user + cpu.system)).toFixed(1) + "%><span class=sr-only>Idle: " + cpu.idle.toFixed(1) + "%</span></div></div>");
+        $('#cuser').text(cpu.user + '%');
+        $('#cidle').text(cpu.idle + '%');
+        $('#csys').text(cpu.system +'%');
+        $("#cpu").text((100 - cpu.idle).toFixed(1) + '%');
     });
 }
 
-function cpu_percent_table() {
-    $.getJSON(WEBDIR + "stats/cpu_percent", function (cpu) {
-        $(".cpu").html("<table class='table nwtable'><tr><td class=span4>CPU:</td><td class=span4>" + (100 - cpu.idle).toFixed(1) + "%</td></tr><tr><td>User:</td><td>" + cpu.user + "%</td></tr><tr><td>System:</td><td>" + cpu.system + "%</td></tr><tr><td>Idle:</td><td>" + cpu.idle + "%</td></tr></tbody></table>");
-
-    });
-}
-
-function return_settings3() {
+function return_settings() {
     $.getJSON(WEBDIR + "stats/return_settings", function (return_settings) {
         if (return_settings.stats_use_bars == 'true') {
             cpu_percent_bar();
@@ -235,11 +184,11 @@ function return_settings3() {
             virtual_memory_bar();
         } else if (return_settings.stats_use_bars == 'false') {
             //cpu_percent_nobar();
-            cpu_percent_table();
+            cpu_percent();
             //swap_memory_nobar();
-            swap_memory_table();
+            swap_memory();
             //virtual_memory_nobar();
-            virtual_memory_table();
+            virtual_memory();
 
         } else {
             //pass 
@@ -300,18 +249,43 @@ function showProcess(pid) {
 }
 
 
-function reloadtab() {
-    if ($('#diskt').is(':visible')) {
-        get_diskinfo();
-    } else if ($('#processes').is(':visible')) {
+function loadtabs() {
+    if ($('#summary_tab').is(':visible')) {
+        get_diskinfo2();
+        uptime();
+        get_user();
+        cpu_percent();
+        swap_memory();
+        virtual_memory();
+        get_external_ip();
+        get_local_ip();
+        network_usage();
+        sys_info();
+    } 
+    else if ($('#filesystems_tab').is(':visible')) {
+        disk_info();
+    }
+    else if ($('#processes_tab').is(':visible')) {
         processes();
     }
 }
 
-   $('#diskt').click(function () {
+   $('#summary_tab').click(function () {
+        get_diskinfo2();
+        uptime();
+        get_user();
+        cpu_percent();
+        swap_memory();
+        virtual_memory();
+        get_external_ip();
+        get_local_ip();
+        network_usage();
+        sys_info();
+   });
+   $('#filesystems_tab').click(function () {
        get_diskinfo();
    });
-    $('#processes').click(function () {
+    $('#processes_tab').click(function () {
        processes();
    });
 
@@ -335,24 +309,27 @@ function reloadtab() {
 // Loads the moduleinfo
 $(document).ready(function () {
     $('.spinner').show();
-    get_diskinfo();
-    get_diskinfo2();
-    reloadtab();
-    uptime();
-    get_user();
-    processes();
-    get_external_ip();
-    get_local_ip();
-    network_usage_table();
-    sys_info();
-    return_settings3();
+    //get_diskinfo();
+    //get_diskinfo2();
+    loadtabs();
+    //uptime();
+    //get_user();
+    //cpu_percent();
+    //swap_memory();
+    //virtual_memory();
+    //processes();
+    //get_external_ip();
+    //get_local_ip();
+    //network_usage();
+    //sys_info();
+    //return_settings();
 });
 
 setInterval(function () {
-    get_diskinfo();
-    get_diskinfo2();
-    sys_info();
-    processes();
+    //get_diskinfo();
+    //get_diskinfo2();
+    //sys_info();
+    //processes();
 }, 10000);
 setInterval(function () {
 //    get_diskinfo();
@@ -363,7 +340,7 @@ setInterval(function () {
 //    get_local_ip();
 //    network_usage_table();
 //    sys_info();
-    return_settings3();
+//    return_settings3();
 }, 2000);
 
 

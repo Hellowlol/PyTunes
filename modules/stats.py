@@ -303,21 +303,17 @@ class Stats:
         # added a small delay since getting local is faster then network usage (Does not render in the html)
         time.sleep(0.1)
         d = {}
-        rr = None
         try:
             
             ip = socket.socket(socket.AF_INET, socket.SOCK_DGRAM); 
             ip.connect(('8.8.8.8', 80)) 
             local_ip =(ip.getsockname()[0])
             d['localip'] = local_ip
-            rr = json.dumps(d)
-            
-            return rr
+            return json.dumps(d)
             
         except Exception as e:
             self.logger.error("Pulling  local ip %s" % e)
 
-    #get_local_ip()
     
     @cherrypy.expose()
     def get_external_ip(self):
@@ -327,19 +323,14 @@ class Stats:
         try:
             s = urllib2.urlopen('http://myexternalip.com/raw').read()
             d['externalip'] = s
-            rr = json.dumps(d)
-            
-            return rr
+            return json.dumps(d)
             
         except Exception as e:
             self.logger.error("Pulling external ip %s" % e)
 
-    #get_external_ip()
-    
     @cherrypy.expose()
     def sys_info(self):
         d = {}
-        rr = None
         
         try:
             computer = platform.uname()
@@ -349,9 +340,7 @@ class Stats:
             d['version'] = computer[3]
             d['machine'] = computer[4]
             d['processor'] = computer[5]
-            rr = json.dumps(d)
-            
-            return rr
+            return json.dumps(d)
             
         except Exception as e:
             self.logger.error("Pulling system info %s" % e )
@@ -373,14 +362,11 @@ class Stats:
     @cherrypy.expose()
     def virtual_memory(self):
         d = {}
-        rr = None
         
         try:
             mem = psutil.virtual_memory()
             mem = mem._asdict()
-            rr = json.dumps(mem)
-            
-            return rr
+            return json.dumps(mem)
             
         except Exception as e:
             self.logger.error("Pulling physical memory %s" % e)
@@ -388,15 +374,12 @@ class Stats:
     @cherrypy.expose()
     def swap_memory(self):
         d = {}
-        rr = None
         
         try:
             
             mem = psutil.swap_memory()
             mem = mem._asdict()
-            rr = json.dumps(mem)
-            
-            return rr
+            return json.dumps(mem)
             
         except Exception as e:
             self.logger.error("Pulling swap memory %s" % e)
@@ -423,7 +406,6 @@ class Stats:
         pid = int(json.loads(pid))
         print 'in command', cmd, pid
         dmsg = {}
-        jmsg = None
         try:
             if pid:
                 p = psutil.Process(pid=int(pid))
@@ -452,17 +434,15 @@ class Stats:
                     msg = 'Killed process %s %s' % (name, pid)
 
                 dmsg['msg'] = msg
-                jmsg = json.dumps(dmsg)
                 self.logger.info(msg)
-                return jmsg
+                return json.dumps(dmsg)
 
             elif cmd == 'signal':
                 p.send_signal(signal)
                 msg = '%ed pid %s successfully with %s'% (cmd, name, pid, signal)
                 dmsg['msg'] = msg
-                jmsg = json.dumps(dmsg)
                 self.logger.info(msg)
-                return jmsg
+                return json.dumps(dmsg)
 
         except Exception as e:
             #print msg

@@ -201,12 +201,12 @@ def Toprated(page):
 
 def PopularTV(page):
     stuff = tmdb.TV()
-    print 'popular stuff', stuff.popular({'page':page})
+    #print 'popular stuff', stuff.popular({'page':page})
     return stuff.popular({'page':page})
 
 def TopratedTV(page):
     stuff = tmdb.TV()
-    print 'stuff',  stuff.top_rated({'page':page})
+    #print 'stuff',  stuff.top_rated({'page':page})
     return stuff.top_rated({'page':page})
 
 

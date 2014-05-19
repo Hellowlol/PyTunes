@@ -25,8 +25,8 @@ class Sickbeard:
         ]})
 
     @cherrypy.expose()
-    def index(self):
-        return pytunes.LOOKUP.get_template('sickbeard.html').render(scriptname='sickbeard')
+    def index(self, query=''):
+        return pytunes.LOOKUP.get_template('sickbeard.html').render(scriptname='sickbeard', query=query)
 
     @cherrypy.expose()
     def view(self, tvdbid):

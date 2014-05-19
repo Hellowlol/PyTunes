@@ -381,7 +381,7 @@ ${arts}
 
     vars['download_button'] = '<div class="btn-group"><button id="download" class="btn btn-primary" title="Find This Movie!" tmdb="%s">Get It!</button></div>'
 
-    vars['addshow_button'] = '<div class="btn-group"><button id="addshow" class="btn btn-primary" title="Add This Show!" name="%s">Add Show</button></div>'
+    vars['addshow_button'] = '<div class="btn-group"><a href="/sickbeard?query=%s"><button id="addshow" class="btn btn-primary" title="Add This Show!">Add Show</button></a></div>'
 
     vars['torrent_button'] = '<div class="btn-group"><button id="download" class="btn btn-primary" title="Download This Movie!" yify_link="%s">Download</button></div>'
 
