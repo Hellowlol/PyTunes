@@ -403,13 +403,13 @@ class Stats:
 
     @cherrypy.expose()
     def command(self, cmd=None, pid=None, signal=None):
-        pid = int(json.loads(pid))
+        #pid = int(json.loads(pid))
         print 'in command', cmd, pid
         dmsg = {}
         try:
             if pid:
-                p = psutil.Process(pid=int(pid))
-                name = p.name()
+                p = psutil.Process(int(pid))
+                name = p.name
                 print 'name: ', name
             else:
                 pass
@@ -423,6 +423,7 @@ class Stats:
 
                 except psutil.NoSuchProcess:
                     msg = 'Process %s does not exist' % name
+                    dmsg['status'] = 'error'
 
                 except psutil.AccessDenied:
                     msg = 'Dont have permission to terminate/kill %s %s' % (name,pid)
@@ -439,7 +440,7 @@ class Stats:
 
             elif cmd == 'signal':
                 p.send_signal(signal)
-                msg = '%ed pid %s successfully with %s'% (cmd, name, pid, signal)
+                msg = '%ed pid %s successfully with %s'% (cmd, pid, signal)
                 dmsg['msg'] = msg
                 self.logger.info(msg)
                 return json.dumps(dmsg)

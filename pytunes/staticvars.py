@@ -387,13 +387,13 @@ ${arts}
 
     vars['close_button'] = '<div class="btn-group"><button class="btn btn-primary" data-dismiss="modal">Close</button></div>'
 
-    vars['terminate_button'] = '<div class="btn-group"><button class="btn btn-primary process" pid="%s" data-action="terminate">Terminate</button></div>'
+    vars['terminate_button'] = '<div class="btn-group"><button class="btn btn-primary process modal-cmd" data-pid="%s" data-cmd="terminate" data-dismiss="modal">Terminate</button></div>'
 
-    vars['kill_button'] = '<div class="btn-group"><button class="btn btn-primary process" pid="%s" data-action="kill">Kill</button></div>'
+    vars['kill_button'] = '<div class="btn-group"><button class="btn btn-primary process modal-cmd" data-pid="%s" data-cmd="kill" data-dismiss="modal">Kill</button></div>'
 
-    vars['suspend_button'] = '<div class="btn-group"><button class="btn btn-primary process" pid="%s" data-action="suspend">Suspend</button></div>'
+    vars['suspend_button'] = '<div class="btn-group"><button class="btn btn-primary process modal-cmd" data-pid="%s" data-cmd="suspend cmd" data-dismiss="modal">Suspend</button></div>'
 
-    vars['resume_button'] = '<div class="btn-group"><button class="btn btn-primary process" pid="%s" data-action="resume">Resume</button></div>'
+    vars['resume_button'] = '<div class="btn-group"><button class="btn btn-primary process modal-cmd" data-pid="%s" data-cmd="resume" data-dismiss="modal">Resume</button></div>'
 
     vars['dash_stats'] = "<tr><td>%s</td><td>%s</td><td><div class='progress'><div class='bar bar-danger' style='width:%s'></div><div class='bar bar-info' style='width:%s' ></div></div></td></tr>"
 
