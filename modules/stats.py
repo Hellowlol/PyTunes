@@ -14,6 +14,7 @@ import cherrypy
 import pytunes
 from pytunes.staticvars import get_var as html
 import logging
+import pwd, grp
 
 
 try:
@@ -275,6 +276,14 @@ class Stats:
         proc['body'] = html('stats_modal') % (' '.join(p.cmdline), pid, p.get_cpu_percent(interval=1.0), p.username, p.status, p.uids[0], p.gids[0], p.nice, self.trunc(p.get_memory_percent(), 2), starttime, runtime)
         proc['foot'] = html('kill_button') % pid + html('terminate_button') % pid + html('suspend_button') % pid + html('resume_button') % pid + html('close_button')
         return json.dumps(proc)
+
+    @cherrypy.expose()
+    def get_users(self):
+        table = ''
+        row6 = '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'
+        for p in pwd.getpwall():
+            table += row6 % (p[0], p[2], grp.getgrgid(p[3])[0], p[3], p[5], p[6])
+        return table
 
     @cherrypy.expose()
     def get_user(self):

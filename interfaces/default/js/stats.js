@@ -176,6 +176,16 @@ function processes() {
     });
 }
 
+function get_users() {
+    $.ajax({
+        'url': WEBDIR + 'stats/get_users',
+            'dataType': 'html',
+            'success': function (response) {
+            $('#user-table').append(response);
+        }
+    });
+}
+
 function showProcess(pid) {
     var sendData = {
         'pid': pid
@@ -224,6 +234,9 @@ function loadtabs() {
     else if ($('#processes_tab').is(':visible')) {
         processes();
     }
+    else if ($('#users_tab').is(':visible')) {
+        get_users();
+    }
 }
 
 function reloadtabs() {
@@ -266,6 +279,9 @@ function reloadtabs() {
     $('#processes_tab').click(function () {
        processes();
    });
+   $('#users_tab').click(function () {
+        get_users();
+   });
 
    // Used for popen
     $(document).on('click', '#sendcmd', function(){
@@ -293,8 +309,10 @@ $(document).ready(function () {
 setInterval(function () {
     //get_diskinfo();
     //get_diskinfo2();
-    sys_info();
-    processes();
+//    sys_info();
+//    processes();
+    cpu_percent();
+    virtual_memory();
 }, 10000);
 setInterval(function () {
 //    get_diskinfo();
@@ -303,9 +321,9 @@ setInterval(function () {
 //    get_user();
 //    get_external_ip(); // dont want to spam a external service.
 //    get_local_ip();
-    network_usage();
-    cpu_percent();
-    virtual_memory();
+//    network_usage();
+//    cpu_percent();
+//    virtual_memory();
 //    sys_info();
 //    return_settings3();
 }, 5000);
