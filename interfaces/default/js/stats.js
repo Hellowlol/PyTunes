@@ -304,6 +304,9 @@ function reloadtabs() {
 $(document).ready(function () {
     $('.spinner').show();
     loadtabs();
+	var elf = $('#elfinder').elfinder({
+		url : '/home/madclicker/pytunes/pytunes/connector.py'  // connector URL (REQUIRED)
+	}).elfinder('instance');
 });
 
 setInterval(function () {
