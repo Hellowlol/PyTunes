@@ -666,6 +666,8 @@ class Manager:
     def Carousel(self, carousel, page=1):
         limit = 1
         self.logger.debug("Get list of movies for %s" % carousel)
+        moviecats = ['theaters', 'upcoming', 'toprated', 'popular']
+        tvcats = ['topratedtv', 'populartv']
         movies = ''
         if carousel == 'upcoming':
             data = tmdb.Releases(page)
@@ -675,12 +677,21 @@ class Manager:
             data = tmdb.Nowplaying(page)
         if carousel == 'popular':
             data = tmdb.Popular(page)
+        if carousel == 'topratedtv':
+            data = tmdb.TopratedTV(page)
+        if carousel == 'populartv':
+            data = tmdb.PopularTV(page)
         for each in data['results']:
             if limit >=5:
                 pass
-            if each['backdrop_path']:
-                movies += html('carousel_item') % (each['backdrop_path'], each['title'], each['release_date']) 
-                limit += 1
+            if carousel in moviecats:
+                if each['backdrop_path']:
+                    movies += html('carousel_item') % (each['backdrop_path'], each['title'], each['release_date']) 
+                    limit += 1
+            elif carousel in tvcats:
+                if each['backdrop_path']:
+                    movies += html('carousel_item') % (each['backdrop_path'], each['name'], each['first_air_date']) 
+                    limit += 1
         return movies
 
     @cherrypy.expose()

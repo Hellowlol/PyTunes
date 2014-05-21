@@ -79,6 +79,21 @@
                 </table>
             </div>
             %endif
+            %if settings.get('dash_stats', 0):
+            <div class="span4">
+                <h3><a href="stats">System Stats</a></h3>
+                <table class="table table-striped table-condensed table-main table-hover table-responsive table-bordered">
+                    <thead class="pt-thead">
+                        <tr>
+                            <th>Total</th>
+                            <th>Used</th>
+                            <th width="60%">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody id="stats-table"></tbody>
+                </table>
+            </div>
+            %endif
             %if settings.get('dash_couchpotato', 0):
             <div class="span4">
                 <h3><a href="couchpotato/#wanted">Wanted Movies</a></h3>
@@ -117,7 +132,7 @@
             %endif
             %if settings.get('dash_coming', 0):
             <div class="span4">
-                <h3><a href="manager/#coming">New Releases</a></h3>
+                <h3><a href="manager/#releases">New Releases</a></h3>
                 <div id="upcoming-carousel" class="carousel slide hide">
                     <div class="carousel-inner"></div>
                     <a class="carousel-control left" href="#upcoming-carousel" data-slide="prev">&lsaquo;</a>
@@ -137,6 +152,28 @@
                 </div>
             </div>
             %endif
+            %if settings.get('dash_topratedtv', 0):
+            <div class="span4">
+                <h3><a href="manager/#topratedtv">Top Rated TV Shows</a></h3>
+                <div id="topratedtv-carousel" class="carousel slide hide">
+                    <div class="carousel-inner"></div>
+                    <a class="carousel-control left" href="#topratedtv-carousel" data-slide="prev">&lsaquo;</a>
+                    <a class="carousel-control right" href="#topratedtv-carousel" data-slide="next">&rsaquo;</a>
+                </div>
+            </div>
+            %endif
+            %if settings.get('dash_populartv', 0):
+            <div class="span4">
+                <h3><a href="manager/#populartv">Popular TV Shows</a></h3>
+                <div id="populartv-carousel" class="carousel slide hide">
+                    <div class="carousel-inner"></div>
+                    <a class="carousel-control left" href="#populartv-carousel" data-slide="prev">&lsaquo;</a>
+                    <a class="carousel-control right" href="#populartv-carousel" data-slide="next">&rsaquo;</a>
+                </div>
+            </div>
+            %endif
+        </div>
+        <div class="row-fluid">
             %if settings.get('dash_yify', 0):
             <div class="span4">
                 <h3><a href="yify">Recently Added Yify Movies</a></h3>
@@ -145,21 +182,6 @@
                     <a class="carousel-control left" href="#yify-carousel" data-slide="prev">&lsaquo;</a>
                     <a class="carousel-control right" href="#yify-carousel" data-slide="next">&rsaquo;</a>
                 </div>
-            </div>
-            %endif
-            %if settings.get('dash_stats', 0):
-            <div class="span4">
-                <h3><a href="stats">System Stats</a></h3>
-                <table class="table table-striped table-condensed table-main table-hover table-responsive table-bordered">
-                    <thead class="pt-thead">
-                        <tr>
-                            <th>Total</th>
-                            <th>Used</th>
-                            <th width="60%">Status</th>
-                        </tr>
-                    </thead>
-                    <tbody id="stats-table"></tbody>
-                </table>
             </div>
             %endif
             %if settings.get('dash_moviesfound', 0):

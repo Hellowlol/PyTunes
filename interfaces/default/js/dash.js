@@ -7,8 +7,10 @@ $(document).ready(function () {
     loadWantedMovies();
     loadNextAired();
     loadPopular();
+    loadPopularTV();
     loadYify();
     loadStats();
+    loadTopRatedTV();
     loadTopRated();
     loadInTheaters();
     loadUpcomingMovies();
@@ -59,6 +61,21 @@ function loadTopRated() {
     });
 }
 
+function loadTopRatedTV() {
+    if (!$('#topratedtv-carousel').length) return;
+    $.ajax({
+        'url': WEBDIR + 'manager/Carousel?carousel=topratedtv&page=1',
+        type: 'get',
+            'dataType': 'html',
+            'success': function (data) {
+            //alert("TopratedTV: " + data);
+            if (data === null) return;
+            $('#topratedtv-carousel .carousel-inner').append(data);
+            $('#topratedtv-carousel').show();
+        }
+    });
+}
+
 function loadInTheaters() {
     if (!$('#theaters-carousel').length) return;
     $.ajax({
@@ -100,6 +117,21 @@ function loadPopular() {
             if (data === null) return;
             $('#popular-carousel .carousel-inner').append(data);
             $('#popular-carousel').show();
+        }
+    });
+}
+
+function loadPopularTV() {
+    if (!$('#populartv-carousel').length) return;
+    $.ajax({
+        'url': WEBDIR + 'manager/Carousel?carousel=populartv&page=1',
+        type: 'get',
+            'dataType': 'html',
+            'success': function (data) {
+            //alert("PopularTV: " + data);
+            if (data === null) return;
+            $('#populartv-carousel .carousel-inner').append(data);
+            $('#populartv-carousel').show();
         }
     });
 }

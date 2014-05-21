@@ -256,14 +256,11 @@ class Stats:
                     free += float(usage.free)
                     used += float(usage.used)
                     #print dash
-            print 'total', total, 'used', used, 'free', free
             if total:
                 percent = (used/total)*100
-            #print 'percent', percent, dash['percent']
             dash['bar'] = html('dash_stats') % (self.sizeof(total), self.sizeof(used), str(percent) + '%', str(100 - percent) + '%')
         except Exception as e:
             self.logger.error("Could not get dash disk info %s" % e)
-        print dash
         return json.dumps(dash)
 
     @cherrypy.expose()

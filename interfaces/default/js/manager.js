@@ -278,14 +278,20 @@ function loadTab() {
         $('#theaters-grid').empty();
         loadInTheaters(page_counts['theaters']);
         page_counts['theaters'] += 1;
+        loadInTheaters(page_counts['theaters']);
+        page_counts['theaters'] += 1;
     } 
     else if ($('#releases').is(':visible')) {
         $('#releases-grid').empty();
         loadReleases(page_counts['releases']);
         page_counts['releases'] += 1;
+        loadReleases(page_counts['releases']);
+        page_counts['releases'] += 1;
     } 
     else if ($('#toprated').is(':visible')) {
         $('#toprated-grid').empty();
+        loadTopRated(page_counts['toprated']);
+        page_counts['toprated'] += 1;
         loadTopRated(page_counts['toprated']);
         page_counts['toprated'] += 1;
     } 
@@ -298,9 +304,13 @@ function loadTab() {
         $('#topratedtv-grid').empty();
         loadTopRatedTV(page_counts['topratedtv']);
         page_counts['topratedtv'] += 1;
+        loadTopRatedTV(page_counts['topratedtv']);
+        page_counts['topratedtv'] += 1;
     } 
     else if ($('#populartv').is(':visible')) {
         $('#populartv-grid').empty();
+        loadPopularTV(page_counts['populartv']);
+        page_counts['populartv'] += 1;
         loadPopularTV(page_counts['populartv']);
         page_counts['populartv'] += 1;
     } 
