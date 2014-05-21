@@ -305,8 +305,11 @@ $(document).ready(function () {
     $('.spinner').show();
     loadtabs();
 	var elf = $('#elfinder').elfinder({
-		url : '/home/madclicker/pytunes/pytunes/connector.py'  // connector URL (REQUIRED)
+		url : WEBDIR + "connector/"  // connector URL (REQUIRED)
 	}).elfinder('instance');
+   $.get(WEBDIR + "connector/", function (response) {
+        //alert(response);       
+   });
 });
 
 setInterval(function () {

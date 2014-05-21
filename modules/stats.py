@@ -12,7 +12,7 @@ import urllib2
 import platform
 import cherrypy
 import pytunes
-from pytunes import connector
+#from pytunes import connector
 from pytunes.staticvars import get_var as html
 import logging
 import pwd, grp
