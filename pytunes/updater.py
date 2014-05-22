@@ -31,8 +31,8 @@ from pytunes.root import do_restart
 # configure git repo
 gitUser =  'madclicker'
 gitRepo = 'PyTunes'
-#gitBranch = 'master'
-gitBranch = 'develop'
+gitBranch = 'master'
+#gitBranch = 'develop'
 
 class Updater:
     """ Main class """

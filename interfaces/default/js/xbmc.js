@@ -149,7 +149,7 @@ $(document).ready(function () {
     });
 
     // Filter on searchfield changes
-    $("#search").on('input', function (e) {
+    $("#filter").on('input', function (e) {
         searchString = $(this).val();
         reloadTab();
     });
