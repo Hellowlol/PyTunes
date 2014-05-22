@@ -1,0 +1,233 @@
+<%inherit file="base.html"/>
+<% settings = self.attr.settings %>
+<div class="container-fluid">
+<div class="content maincontent">
+    <div class="page-header page-title">
+        <img alt="PyTunes" src="../img/pytuneslogosm.png"/><img class="pull-right" alt="System" src="../img/system.png"/>
+    </div>
+    <div class="tabbable tabs-left">
+        <ul class="nav nav-tabs">
+            <li id="summary_tab" class="active"><a href="#summary" data-toggle="tab">Summary</a></li>
+            <li id="filesystems_tab"><a href="#filesystems" data-toggle="tab">File Systems</a></li>
+            <li id="processes_tab"><a href="#processes" data-toggle="tab">Running Processes</a></li>
+            <li id="users_tab"><a href="#users" data-toggle="tab">Users and Groups</a></li>
+            <li><a href="#files" data-toggle="tab">File Manager</a></li>
+            <li><a href="#start" data-toggle="tab">Bootup and Shutdown</a></li>
+            <li><a href="#shell" data-toggle="tab">Shell</a></li>
+        </ul>
+        <div class="tab-content">
+            <div class="tab-pane active" id="summary">
+                <i class="icon-arrow-down"></i>
+                <span id="stat-recv"></span>
+                <i class="icon-arrow-up"></i>
+                <span id="stat-sent"></span>
+                <div class="row-fluid">
+                    <div class="span4 l text-left"></div>
+                    <div class="span4 c text-center"></div>
+                    <div class="span4 r text-right"></div>
+                </div>
+                <div id="ss" class="row-fluid text-center">
+                    <div class="span3 cpu text-center">
+                        <table class='table-fluid nwtable'>
+                            <tbody>
+                                <tr>
+                                    <td class=span4>CPU:</td>
+                                    <td id="cpu" class=span4></td>
+                                </tr>
+                                <tr>
+                                    <td>User:</td>
+                                    <td id="cuser"></td>
+                                </tr>
+                                <tr>
+                                    <td>System:</td>
+                                    <td id="csys"></td>
+                                </tr>
+                                <tr>
+                                    <td>Idle:</td>
+                                    <td id="cidle"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="span3 virmem text-center">
+                        <table class='table nwtable'>
+                            <tbody>
+                                <tr>
+                                    <td class=span4>Real Memory:</td>
+                                    <td id="vperc" class=span4></td>
+                                </tr>
+                                <tr>
+                                    <td>Total:</td>
+                                    <td id="vtot"></td>
+                                </tr>
+                                <tr>
+                                    <td>Used:</td>
+                                    <td id="vused"></td>
+                                </tr>
+                                <tr>
+                                    <td>Free:</td>
+                                    <td id="vfree"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="span3 swpmem text-center">
+                        <table class='table nwtable'>
+                            <tbody>
+                                <tr>
+                                    <td class=span4>Swap Memory:</td>
+                                    <td id="sperc" class=span4></td>
+                                </tr>
+                                <tr>
+                                    <td>Total:</td>
+                                    <td id="stot"></td>
+                                </tr>
+                                <tr>
+                                    <td>Used:</td>
+                                    <td id="sused"></td>
+                                </tr>
+                                <tr>
+                                    <td>Free:</td>
+                                    <td id="sfree"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="span3 nw text-center">
+                        <table class='table-fluid nwtable'>
+                            </tbody>
+                                <tr>
+                                    <td class=span4>Network</td>
+                                    <td id="nin" class=span4>In</td>
+                                    <td id="nout" class=span4>Out</td>
+                                </tr>
+                                <tr>
+                                    <td>Drop</td>
+                                    <td id="dropin"></td>
+                                    <td id="dropout"></td>
+                                </tr>
+                                <tr>
+                                    <td>Error</td>
+                                    <td id="errin"></td>
+                                    <td id="errout"></td>
+                                </tr>
+                                <tr>
+                                    <td>IP</td>
+                                    <td class=tlip></td>
+                                    <td class=txip></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div><br>
+                <div id="disk-summary" class="row-fluid text-center">
+                    <table class="table table-striped table-condensed table-hover table-responsive table-bordered">
+                        <thead class="pt-thead">
+                            <tr>
+                                <th align="center">Mount Point</th>
+                                <th>Location</th>
+                                <th>File System</th>
+                                <th class="">Free</th>
+                                <th class="">Used</th>
+                                <th class="">Total</th>
+                                <th class="">Bars</th>
+                                <th class="span1">%</th>
+                            </tr>
+                        </thead>
+                        <tbody id="disk-table">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+                <div class="tab-pane" id="filesystems">
+                    <table class="table table-striped table-condensed table-hover table-responsive table-bordered">
+                        <thead class="pt-thead">
+                            <tr>
+                                <th>Mount Point</th>
+                                <th>Location</th>
+                                <th>File System</th>
+                                <th class="">Free</th>
+                                <th class="">Used</th>
+                                <th class="">Total</th>
+                                <th class="">%</th>
+                            </tr>
+                        </thead>
+                        <tbody id="files-table">
+                        </tbody>
+                    </table>
+                    <span id="error_message">
+                    <i class="icon-spinner icon-spin spinner"></i>
+                    </span>
+                </div>
+            <div class="tab-pane" id="processes">
+                    <table class="table table-striped table-condensed table-hover table-responsive table-bordered">
+                        <thead class="pt-thead">
+                            <tr>
+                                <th class="span1">PID</th>
+                                <th class="span1">Name</th>
+                                <th class="span1">Owner</th>
+                                <th class="span1">CPU</th>
+                                <th class="span3">Command</th>
+                                <th class="span1">Status</th>
+                                <th class="span1">Memory</th>
+                                <th class="span2">Running Time</th>
+                                <th width='1%'>Kill</th>
+                            </tr>
+                        </thead>
+                        <tbody id="proc-table">
+                        </tbody>
+                    </table>
+            </div>
+            <div class="tab-pane" id="users">
+                    <table class="table table-striped table-condensed table-hover table-responsive table-bordered">
+                        <thead class="pt-thead">
+                            <tr>
+                                <th>Name</th>
+                                <th>UID</th>
+                                <th class="">Group</th>
+                                <th class="">GID</th>
+                                <th class="">Directory</th>
+                                <th class="">Shell</th>
+                            </tr>
+                        </thead>
+                        <tbody id="user-table">
+                        </tbody>
+                    </table>
+            </div>
+            <div class="tab-pane" id="files"><div id="elfinder"></div></div>
+            <div class="tab-pane" id="start">
+                    <table class="table table-striped table-condensed table-hover table-responsive table-bordered">
+                        <thead class="pt-thead">
+                            <tr>
+                                <th>Service Name</th>
+                                <th>Service Description</th>
+                                <th class="">Start at Boot?</th>
+                                <th class="">Running Now?</th>
+                            </tr>
+                        </thead>
+                        <tbody id="boot-table">
+                        </tbody>
+                    </table>
+            </div>
+            <div class="tab-pane" id="shell">
+                <div><pre id='shellres'></pre></div><br>
+               <div class="input-append pull-left">
+                   <input id="cmdinput" class="span4" type="text"></input><br><br>
+                   <div class="btn-group"><button id="sendcmd" data-cmd="popen" class="btn btn-primary" type="button">Execute Command</button></div>
+                   <div class="btn-group"><button id="clearhistory" data-cmd="popen" class="btn btn-primary" type="button">Clear History</button></div>
+                </div>
+                <i class="icon-spinner icon-spin spinner"></i>
+            </div>
+        <div id="modal_stats" class="modal fade hide">
+            <div class="modal-header-stats">
+                <button class="close" data-dismiss="modal"><i class="icon-remove-circle icon-white"></i></button>
+                <h3 class="modal-h3-stats"></h3>
+            </div>
+            <div class="modal-body-stats"></div>
+            <div class="modal-footer-stats"></div>
+        </div>
+        </div>
+    </div>
+
+</div>
+

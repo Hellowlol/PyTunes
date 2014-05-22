@@ -1,0 +1,30 @@
+<%inherit file="base.html"/>
+<% settings = self.attr.settings %>
+<div class="container-fluid">
+    <div class="content maincontent">
+        <div class="page-header page-title">
+            <img alt="PyTunes" src="../img/pytuneslogosm.png"/>
+        <form action="" id="searchform" class="well form-inline well-short" style="float:right; background:url(../img/bodybg.jpg)">
+            <input class="span2" id="query" name="query" type="text" value="" placeholder="Search term" />
+            <select class="span2" name="catid" id="catid">
+                <option value="">Everything</option>
+            </select>
+            <button type="submit" id="search_nzb_button" class="btn btn-primary"><i class="icon-search icon-white"></i> Search</button>
+        </form>
+        </div>
+        <table class="table table-striped table-condensed table-hover table-responsive table-bordered">
+            <thead class='pt-thead'>
+                <tr>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Size</th>
+                    <th>Files</th>
+                    <th>Grabs</th>
+                    <th>D/L</th>
+                </tr>
+            </thead>
+            <tbody id="results_table_body"></tbody>
+        </table>
+        <i class="icon-spinner icon-spin spinner"></i>
+    </div>
+</div>

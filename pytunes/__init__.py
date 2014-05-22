@@ -1,0 +1,26 @@
+""" Initiate global variables """
+RUNDIR = None
+DATADIR = None
+DB = None
+DEBUG = None
+DAEMON = None
+PID = None
+IMGURL = None
+NOSHELL = None
+NOBROWSER = None
+WEBDIR = None
+ROOT = None
+MODULES = []
+NOTICES = []
+TEMPLATE = None
+LOOKUP = None
+HOST = None
+PORT = None
+USERNAME = None
+PASSWORD = None
+UPDATE = None
+SSLCERT = None
+SSLKEY = None
+LOGGER = None
+LOGLEVEL = None
+settings = None

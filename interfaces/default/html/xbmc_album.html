@@ -1,0 +1,78 @@
+<%inherit file="base.html"/>
+<% settings = self.attr.settings %>
+<div class="container">
+    <div class="content maincontent xbmc_album">
+        <div class="page-header page-title">
+            <img alt="PyTunes" src="../../img/pytuneslogoxs.png"/>
+                <div id="xbmc-well" class="well-small btn-toolbar pull-right form-inline" style="float:right; background:url(../../img/bodybg.jpg)">
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-primary btn-small dropdown-toggle" data-toggle="dropdown">
+                        <i class="icon-th-list"></i>
+                        Options <i class="caret"></i></a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="ControlPlayer?action=fullscreen" class="ajax-link"><i class="icon-fullscreen"></i> Toggle Fullscreen</a></li>
+                            <li><a href="ControlPlayer?action=party" class="ajax-link"><i class="icon-glass"></i> Party Mode</a></li>
+                            <li><a href="ControlPlayer?action=audiotoggledigital" class="ajax-link"><i class="icon-headphones"></i> Toggle Audio Output</a></li>
+                            <li><a href="Library/scan/video" class="ajax-link"><i class="icon-search"></i> Update Video Library</a></li>
+                            <li><a href="Library/clean/video" class="ajax-link"><i class="icon-trash"></i> Clean Video Library</a></li>
+                            <li><a href="Library/scan/audio" class="ajax-link"><i class="icon-search"></i> Update Music Library</a></li>
+                            <li><a href="Library/clean/audio" class="ajax-link"><i class="icon-trash"></i> Clean Music Library</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-primary btn-small dropdown-toggle" data-toggle="dropdown"><i class="icon-off"></i>
+                        System <i class="caret"></i></a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="System?action=wake-xbmc" class="ajax-link" title="Wake XBMC"><i class="icon-off"></i> Wake</a></li>
+                            <li><a href="System?action=suspend-xbmc" class="ajax-confirm" title="Suspend XBMC"><i class="icon-eye-close"></i> Suspend XBMC</a></li>
+                            <li><a href="System?action=reboot-xbmc" class="ajax-confirm" title="Restart XBMC"><i class="icon-refresh"></i> Restart XBMC</a></li>
+                            <li><a href="System?action=shutdown-xbmc" class="ajax-confirm" title="Shutdown XBMC"><i class="icon-off"></i> Shutdown XBMC</a></li>
+                        </ul>
+                    </div>
+                </div>
+        </div>
+
+        <ul class="breadcrumb">
+            <li><a href="/">Home</a> <span class="divider">/</span></li>
+            <li><a href="/xbmc">XBMC</a> <span class="divider">/</span></li>
+            <li class="xbmc_artistname"><a href="/xbmc/viewArtist/${artist_id}">artist</a> <span class="divider">/</span></li>
+            <li class="xbmc_albumname">album</li>
+        </ul>
+
+        <div id="banner" class="row-fluid banner">
+            <div class="album_details span4 pull-right">
+                <div id="album_details_top" class="span4"></div>
+                <strong>Album details</strong>
+                <table class="table table-condensed">
+                    <tr>
+                        <td>Status</td>
+                        <td class="xbmc_album_status">Status</td>
+                    </tr>
+                    <tr>
+                        <td>Tracks</td>
+                        <td class="xbmc_album_tracks">tracks</td>
+                    </tr>
+                    <tr>
+                        <td>Release Date</td>
+                        <td class="xbmc_release_date">ReleaseDate</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div id="tracks">
+            <table class="table table-striped table-condensed table-sortable">
+                <thead>
+                <tr>
+                    <th>Track</th>
+                    <th>Title</th>
+                    <th>Length</th>
+                    <th>Status</th>
+                </tr>
+                </thead>
+                <tbody>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

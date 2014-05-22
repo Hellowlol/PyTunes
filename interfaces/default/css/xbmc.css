@@ -1,0 +1,115 @@
+a:Hover {
+    text-decoration: none;
+}
+img.remote-image {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+#movie-grid img.thumbnail,
+#show-grid img.thumbnail {
+    height: 150px;
+    width: 100px;
+}
+#episode-grid img.thumbnail {
+    position: relative;
+    height: 85px;
+    width: 150px;
+}
+#album-grid img.thumbnail,
+#artist-grid img.thumbnail {
+    height: 150px;
+    width: 150px;
+}
+#pvr-grid img.thumbnail {
+    height: 75px;
+    width: 75px;
+}
+.watched {
+    position: absolute;
+    top: 138px;
+    right: 5px;
+    width: 16px;
+    height: 16px;
+}
+.grid-caption {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    background: rgba(0,0,0,0.75);
+    padding: 10px;
+    width: 130px;
+    height: 130px;
+}
+.grid-caption h6 {
+    color: #fff;
+    font-family: inherit;
+    margin: 0;
+}
+.grid-caption h6.artist {
+    font-weight: normal;
+}
+#player-volume-progressbar {
+	height: 25px !important;
+	margin: 0px !important;
+	cursor: pointer;
+}
+.grid-control {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+}
+.grid-control a:first-child {
+    margin-right: 35px;
+}
+h6.title {
+    color: #555555;
+    text-align: center;
+    margin: 0;
+    padding-top: 4px;
+}
+#artist-grid tr td:first-child {
+    width: 35px;
+}
+#artist-grid a.artist-link {
+    display: block;
+}
+#artist-grid i,
+#playlist-table i {
+    margin: 0 5px 0 0;
+}
+#nowplaying #player-progressbar,
+#playlist tr td {
+    cursor: pointer;
+}
+#nowplaying {
+    background-size: 100%;
+    background-position: 50% 20%;
+    background-repeat: no-repeat;
+    margin-bottom: 10px;
+}
+#playlist-table tr td:last-child {
+    width: 35px;
+}
+
+#ex1Slider .slider-selection {
+    background-color: hsl(110, 56%, 16%) !important; 
+    background-repeat: repeat-x; 
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#398f28", endColorstr="#193f11"); 
+    background-image: -khtml-gradient(linear, left top, left bottom, from(#398f28), to(#193f11)); 
+    background-image: -moz-linear-gradient(top, #398f28, #193f11); 
+    background-image: -ms-linear-gradient(top, #398f28, #193f11); 
+    background-image: -webkit-gradient(linear, left top, left bottom, color-stop(0%, #398f28), color-stop(100%, #193f11));    
+    background-image: -webkit-linear-gradient(top, #398f28, #193f11); 
+    background-image: -o-linear-gradient(top, #398f28, #193f11); 
+    background-image: linear-gradient(#398f28, #193f11); 
+    border-color: #193f11 #193f11 hsl(110, 56%, 11%); 
+    color: #fff !important; 
+    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.33); -webkit-font-smoothing: antialiased; }.thumbnails li {
+    position: relative;
+}
+#ex1Slider .slider-handle {
+	background: green;
+}
+
+

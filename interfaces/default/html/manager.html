@@ -1,0 +1,190 @@
+<%inherit file="base.html"/>
+<% settings = self.attr.settings %>
+<div class="container-fluid">
+    <div class="content vertical-align: top">
+        <div class="page-header page-title">
+            <img alt="PyTunes" src="../img/pytuneslogosm.png"/><img alt="PyTunes" class="pull-right" src="../img/manager.png"/>
+        </div>
+                        <div class="pull-right visible-desktop">
+                            <div class="btn-group">
+                                <button class="btn btn-primary dropdown-toggle btn-xs" data-toggle="dropdown">
+                        <i class="icon-th-list"></i>
+                                Options
+                                <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu pull-right">
+                            <li><a href="RebuildDB?action=movies" class=><i class="icon-eye-close"></i> Reload XBMC Movies</a></li>
+                            <li><a href="RebuildDB?action=tv" class=><i class="icon-eye-close"></i> Reload XBMC TV Shows</a></li>
+                            <li><a href="RebuildDB?action=music" class=><i class="icon-eye-close"></i> Reload XBMC Music</a></li>
+                            <li><a href="RebuildDB?action=art" class=><i class="icon-eye-close"></i> Reload XBMC Art</a></li>
+                                </ul>
+                            </div>
+                        </div>
+
+       <ul class="nav nav-tabs">
+            <li><a href="#topratedtv" class="active" data-toggle="tab">Top Rated TV</a></li>
+            <li><a href="#populartv" data-toggle="tab">Popular TV</a></li>
+            <li><a href="#artists" data-toggle="tab">Music</a></li>
+            <li><a href="#theaters" data-toggle="tab">In Theaters</a></li>
+            <li><a href="#releases" data-toggle="tab">New Releases</a></li>
+            <li><a href="#toprated" data-toggle="tab">Top Rated Movies</a></li>
+            <li><a href="#popular" data-toggle="tab">Popular Movies</a></li>
+            <li><a href="#musicfound" data-toggle="tab">Music Found</a></li>
+            <li><a href="#moviesfound" data-toggle="tab">Movies Found</a></li>
+            <li><a href="#musicwanted" data-toggle="tab">Music Wanted</a></li>
+            <li><a href="#movieswanted" data-toggle="tab">Movies Wanted</a></li>
+        </ul>
+        <div class="tab-content">
+            <!--<div id="movies" class="active tab-pane">
+                <table class="table table-striped  table-hover table-condensed table-responsive table-bordered">
+                    <thead class="pt-thead">
+                        <tr>
+                            <th class="span3">Title</th>
+                            <th>Year</th>
+                            <th>V-Codec</th>
+                            <th>Quality</th>
+                            <th>A-Codec</th>
+                            <th>Channels</th>
+                            <th>SubT</th>
+                            <th>F/A</th>
+                            <th>tmbs</th>
+                            <th>MPAA</th>
+                            <th>Trlr</th>
+                            <th>Genre</th>
+                            <th>Rating</th>
+                            <th>IMDB</th>
+                            <th>Plot</th>
+                            <th>Tag</th>
+                            <th>Director</th>
+                            <th>Writers</th>
+                            <th>Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody id="movie-table"></tbody>
+                </table>
+                <ul class="pager">
+                    <li><a href="#movies" id="pmovie">Previous</a></li>
+                    <li><a href="#movies" id="nmovie">Next</a></li>
+                </ul>
+                <div id="pages"></div>
+                <div class="spinner"><img alt="Spinner" src="../img/loader.gif"/></div>
+            </div>
+            <div id="shows" class="tab-pane">
+                <table class="table table-striped  table-hover table-condensed table-responsive table-bordered">
+                    <thead class="pt-thead">
+                        <tr>
+                            <th>Title</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                            <th>Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody  id="show-table"></tbody>
+                </table>
+            </div>
+            <div id="episodes" class="tab-pane">
+                <ul id="episode-grid" class="thumbnails"></ul>
+            </div>-->
+            <div id="artists" class="tab-pane">
+                <table id="artists-table" class="table table-striped table-hover table-condensed">
+                    <thead class="pt-thead">
+                        <tr>
+                            <th>Name</th>
+                            <th>Discography</th>
+                            <th>Albums</th>
+                            <th>Progress</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div id="topratedtv" class="tab-pane">
+                <ul id="topratedtv-grid" class="thumbnails"></ul>
+            </div>
+            <div id="populartv" class="tab-pane">
+                <ul id="populartv-grid" class="thumbnails"></ul>
+            </div>
+            <div id="theaters" class="tab-pane">
+                <ul id="theaters-grid" class="thumbnails"></ul>
+            </div>
+            <div id="releases" class="tab-pane">
+                <ul id="releases-grid" class="thumbnails"></ul>
+            </div>
+            <div id="toprated" class="tab-pane">
+                <ul id="toprated-grid" class="thumbnails"></ul>
+            </div>
+            <div id="popular" class="tab-pane">
+                <ul id="popular-grid" class="thumbnails"></ul>
+            </div>
+            <div id="musicfound" class="tab-pane">
+                <table id="musicfound-table" class="table table-striped table-hover">
+                    <thead class="pt-thead">
+                        <tr>
+                            <th>Title</th>
+                            <th>Artist</th>
+                            <th>Album</th>
+                            <th>Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div id="moviesfound" class="tab-pane">
+                <table id="moviesfound-table" class="table table-striped table-hover">
+                    <thead class="pt-thead">
+                        <tr>
+                            <th>Title</th>
+                            <th>Artist</th>
+                            <th>Album</th>
+                            <th>Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div id="musicwanted" class="tab-pane">
+                <table id="musicwanted-table" class="table table-striped table-hover">
+                    <thead class="pt-thead">
+                        <tr>
+                            <th>Title</th>
+                            <th>Artist</th>
+                            <th>Album</th>
+                            <th>Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div id="movieswanted" class="tab-pane">
+                <table id="movieswanted-table" class="table table-striped table-hover">
+                    <thead class="pt-thead">
+                        <tr>
+                            <th>Title</th>
+                            <th>Artist</th>
+                            <th>Album</th>
+                            <th>Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+        <div class="spinner"></div>
+    </div>
+</div>
+

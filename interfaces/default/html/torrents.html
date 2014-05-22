@@ -1,0 +1,44 @@
+<%inherit file="base.html"/>
+<% settings = self.attr.settings %>
+<div class="container-fluid">
+    <div class="content maincontent">
+        <div class="page-header page-title">
+            <img alt="PyTunes" src="../img/pytuneslogosm.png"/><img alt="Bittorrent Logo" class='pull-right' src="../img/btorrent.png"/>
+        </div>
+        <div class="pull-right">
+        <form action="" id="searchform" class="form-inline">
+            <input class="span2" id="query" name="query" type="text" value="" placeholder="Search term" />
+            <select class="span2" name="engineid" id="engineid">
+                <option value="ka">KickassTorrents</option>
+            </select>
+            <select class="span2" name="catid" id="catid">
+                <option value="all">Everything</option>
+                <option value="movies">Movies</option>
+                <option value="music">Music</option>
+                <option value="tv">TV</option>
+                <option value="books">Books</option>
+                <option value="anime">Anime</option>
+                <option value="pictures">Pictures</option>
+                <option value="games">Games</option>
+                <option value="software">Software</option>
+            </select>
+            <button type="submit" id="search_torr_button" class="btn btn-primary"><i class="icon-search icon-white"></i> Search</button>
+        </form>
+        </div>
+        <table class="table table-striped table-condensed table-hover table-responsive table-bordered">
+            <thead class='pt-thead'>
+                <tr>
+                    <th>&nbsp;</th>
+                    <th>Name</th>
+                    <th>Size</th>
+                    <th>Seeders</th>
+                    <th>Leeches</th>
+                    <th>Search Engine</th>
+                    <th>D/L</th>
+                </tr>
+            </thead>
+            <tbody id="results_table_body"></tbody>
+        </table>
+        <div class="spinner"><img alt="spinner" class='pull-right' src="../img/loader.gif" style="float:left"/></div>
+    </div>
+</div>

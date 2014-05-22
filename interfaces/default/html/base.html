@@ -1,0 +1,101 @@
+<%!
+    import pytunes
+    settings = pytunes.settings
+    webdir = pytunes.WEBDIR
+    %>
+<% s = self.attr.settings %>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>PyTunes Media Server Manager</title>
+        <link href="${pytunes.WEBDIR}img/favicon.ico" type="image/x-icon" rel="icon">
+        <link rel="apple-touch-icon" href="${pytunes.WEBDIR}img/ios/homescreen.png">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+        <link href="${pytunes.WEBDIR}css/themes/${s.get('app_theme','default')}/bootstrap.css" rel="stylesheet" />
+        <link href="${pytunes.WEBDIR}css/bootstrap-combined.min.css" rel="stylesheet" />
+        <link href="${pytunes.WEBDIR}css/bootstrap-slider.css" rel="stylesheet" />
+        <link href="${pytunes.WEBDIR}css/bootstrap-responsive.min.css" rel="stylesheet" />
+        <link href="${pytunes.WEBDIR}css/jquery-ui.min.css" rel="stylesheet" />
+        <link href="${pytunes.WEBDIR}css/jquery.pnotify.default.css" rel="stylesheet" />
+        <link href="${pytunes.WEBDIR}css/base.css" rel="stylesheet" />
+        <link href="${pytunes.WEBDIR}css/themes/${s.get('app_theme','default')}/style.css" rel="stylesheet" />
+        <link href="${pytunes.WEBDIR}css/font-awesome.min.css" rel="stylesheet" />
+        <link href="${self.attr.webdir}css/${scriptname}.css" rel="stylesheet" />
+		<link rel="stylesheet" type="text/css" media="screen" href="${pytunes.WEBDIR}css/elfinder.min.css">
+		<link rel="stylesheet" type="text/css" media="screen" href="${pytunes.WEBDIR}css/elfinder.theme.css">
+        <!--<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>-->
+        <script type="text/javascript">var WEBDIR="${pytunes.WEBDIR}";</script>
+    </head>
+    <body>
+        <div class="navbar navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <i class="icon-th icon-white"></i>
+                    </a>
+                    <a href="${pytunes.WEBDIR}" class="brand">DASH</a>
+                    <div class="nav-collapse">
+                        <ul class="nav">
+                            % for m in pytunes.MODULES:
+                            % if s.get(m.get('id')+'_enable'):
+                            <li id="nav-${m.get('id')}"><a href="${pytunes.WEBDIR}${m.get('id')}/">${s.get(m.get('id')+'_name')}</a></li>
+                            %endif
+                            % endfor
+                        <li class="pull-right visible-desktop">
+                            <div class="btn-group">
+                                <button class="btn btn-primary dropdown-toggle btn-xs" data-toggle="dropdown">
+                        <i class="icon-th-list"></i>
+                                Options
+                                <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu pull-right">
+                                    <li><a href="http://github.com/madclicker/PyTunes"><i class="icon-github"></i> Github project</a></li>
+                                    <li><a href="#" id="btn-check-update"><i class="icon-eye-open"></i> Check for updates</a></li>
+                                    <li><a href="${pytunes.WEBDIR}settings/" id="btn-settings"><i class="icon-cog"></i> Settings</a></li>
+                                    <li><a href="${pytunes.WEBDIR}log/" id="btn-log"><i class="icon-list"></i> Log</a></li>
+                                    <li><a href="${pytunes.WEBDIR}restart" class="ajax-confirm" title="Restart PyTunes"><i class="icon-refresh"></i> Restart PyTunes</a></li>
+                                    <li><a href="${pytunes.WEBDIR}shutdown" class="confirm" title="Shutdown PyTunes"><i class="icon-off"></i> Shutdown PyTunes</a></li>
+                            <li><a href="${pytunes.WEBDIR}/xbmc/Wake" class="ajax-link" title="Send WakeOnLan"><i class="icon-off"></i> Wake On Lan</a></li>
+                            <li><a href="${pytunes.WEBDIR}xbmc/System?action=suspend-server" class="ajax-confirm" title="Suspend Media Server"><i class="icon-eye-close"></i> Suspend Server</a></li>
+                            <li><a href="${pytunes.WEBDIR}xbmc/System?action=reboot-server" class="ajax-confirm" title="Reboot Media Server"><i class="icon-refresh"></i> Reboot Server</a></li>
+                            <li><a href="${pytunes.WEBDIR}xbmc/System?action=shutdown-server" class="ajax-confirm" title="Shutdown Media Server"><i class="icon-off"></i> Shutdown Server</a></li>
+                                </ul>
+                            </div>
+                        </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        ${self.body()}
+        <div id="modal_dialog" class="modal fade hide">
+            <div class="modal-header">
+                <button class="close" data-dismiss="modal"><i class='icon-remove-circle'></i></button>
+                <h3 class="modal-h3"></h3>
+            </div>
+            <div class="modal-fanart modal-body"></div>
+            <div class="modal-footer"></div>
+        </div>
+        <script src="${pytunes.WEBDIR}js/libs/jquery.min.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/jquery-ui.min.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/jquery.form.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/jquery.cookie.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/jquery.metadata.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/jquery.tablesorter.min.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/jquery.raty.min.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/jquery.pnotify.min.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/jquery.pager.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/bootstrap.min.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/bootstrap-paginator.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/bootstrap-slider.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/holder.js"></script>
+        <script src="${pytunes.WEBDIR}js/elfinder.min.js"></script>
+        <script src="${pytunes.WEBDIR}js/default.js"></script>
+        <script src="${pytunes.WEBDIR}js/${scriptname}.js"></script>
+    </body>
+</html>
+
+

@@ -1,0 +1,238 @@
+<%inherit file="base.html"/>
+<% settings = self.attr.settings %>
+<div class="container-fluid">
+    <div class="content vertical-align: top">
+        <div class="page-header page-title">
+            <img alt="PyTunes" src="../img/pytuneslogosm.png"/>
+            <img alt="XBMC" src="../img/xbmc-logo.png" class="pull-right"/>
+        </div>
+                <div class="pull-right">
+                    <div id="sort" class="btn-group">
+                        <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" title="Sort by">
+                        <i class="icon-sort"></i> Sort 
+                        <i class="caret"></i></a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="#" class="active" data-sort-method="title" data-sort-order="ascending"><i class="icon-sort-by-alphabet"></i> Title</a></li>
+                            <li><a href="#" data-sort-method="title" data-sort-order="descending"><i class="icon-sort-by-alphabet-alt"></i> Title (descending)</a></li>
+                            <li><a href="#" data-sort-method="dateadded" data-sort-order="descending"><i class="icon-sort-by-attributes-alt"></i> Recently Added</a></li>
+                            <li><a href="#" data-sort-method="rating" data-sort-order="descending"><i class="icon-sort-by-attributes-alt"></i> Rating</a></li>
+                            <li><a href="#" data-sort-method="year" data-sort-order="descending"><i class="icon-sort-by-order-alt"></i> Year</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                        <i class="icon-th"></i>
+                        Library <i class="caret"></i></a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="Library/scan/video" class="ajax-link"><i class="icon-repeat"></i> Update Video Library</a></li>
+                            <li><a href="Library/clean/video" class="ajax-link"><i class="icon-trash"></i> Clean Video Library</a></li>
+                            <li><a href="Library/export/video" class="ajax-link"><i class="icon-archive"></i> Export Video Library</a></li>
+                            <li><a href="Library/scan/audio" class="ajax-link"><i class="icon-repeat"></i> Update Music Library</a></li>
+                            <li><a href="Library/clean/audio" class="ajax-link"><i class="icon-trash"></i> Clean Music Library</a></li>
+                            <li><a href="Library/export/audio" class="ajax-link"><i class="icon-archive"></i> Export Music Library</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                        <i class="icon-th-list"></i>
+                        Options <i class="caret"></i></a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="#" id="xbmc-notify" title="Send Message To Screen"><i class="icon-envelope"></i> Send Message</a></li>
+                            %if settings.get('xbmc_hide_watched', 0):
+                            <li><a href="#" id="hidewatched" class="active"><i class="icon-eye-open"></i> Show Watched</a></li>
+                            %else:
+                            <li><a href="#" id="hidewatched"><i class="icon-eye-open"></i> Hide Watched</a></li>
+                            %endif
+                            <li><a href="ControlPlayer?action=fullscreen" class="ajax-link"><i class="icon-fullscreen"></i> Toggle Fullscreen</a></li>
+                            <li><a href="ControlPlayer?action=party" class="ajax-link"><i class="icon-beer"></i> Party Mode</a></li>
+                            <li><a href="ExecuteAddon?addon=script.artwork.downloader" class="ajax-link"><i class="icon-picture"></i> Get Video Artwork</a></li>
+                            <li><a href="ExecuteAddon?addon=script.cdartmanager?cmd0=autoall" class="ajax-link"><i class="icon-picture"></i> Get Music Artwork</a></li>
+                            <li><a href="ControlPlayer?action=audiotoggledigital" class="ajax-link"><i class="icon-headphones"></i> Toggle Audio Output</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="icon-off"></i>
+                        System <i class="caret"></i></a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="System?action=wake-xbmc" class="ajax-link" title="Wake XBMC"><i class="icon-off"></i> Wake XBMC</a></li>
+                            <li><a href="System?action=suspend-xbmc" class="ajax-confirm" title="Suspend XBMC"><i class="icon-eye-close"></i> Suspend XBMC</a></li>
+                            <li><a href="System?action=reboot-xbmc" class="ajax-confirm" title="Restart XBMC"><i class="icon-refresh"></i> Restart XBMC</a></li>
+                            <li><a href="System?action=shutdown-xbmc" class="ajax-confirm" title="Shutdown XBMC"><i class="icon-off"></i> Shutdown XBMC</a></li>
+                        </ul>
+                    </div>
+                </div>
+        <div class="form-inline" style="float:right">
+            <input id="filter" type="text" name="query" id="search" class="span1" accesskey="s" placeholder="Filter">
+            <span>
+            <select id="servers" class="span2"></select>
+            </span>  
+        </div>
+        <ul class="nav nav-tabs">
+            <li><a href="#movies" data-toggle="tab">Movies</a></li>
+            <li><a href="#shows" data-toggle="tab">TV Shows</a></li>
+            <li class="hide"><a href="#episodes" data-toggle="tab">Episodes</a></li>
+            <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown">Music
+                <i class="caret"></i></a>
+                <ul class="dropdown-menu">
+                    <li><a href="#artists" data-toggle="tab">Artists</a></li>
+                    <li><a href="#albums" data-toggle="tab">Albums</a></li>
+                    <li><a href="#songs" data-toggle="tab">Songs</a></li>
+                </ul>
+            </li>
+            <li><a href="#remote" data-toggle="tab">Remote</a></li>
+            %if settings.get('xbmc_enable_pvr', 0):
+            <li><a href="#pvr" data-toggle="tab">PVR</a></li>
+            %endif
+            <li class=""><a href="#playlist" data-toggle="tab">Play List</a></li>
+            <li class=""><a href="#nowplaying" data-toggle="tab">Now Playing</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="movies" class="tab-pane">
+                <ul id="movie-grid" class="thumbnails"></ul>
+            </div>
+            <div id="shows" class="tab-pane">
+                <ul id="show-grid" class="thumbnails"></ul>
+            </div>
+            <div id="episodes" class="tab-pane">
+                <ul id="episode-grid" class="thumbnails"></ul>
+            </div>
+            <div id="artists" class="tab-pane">
+                <ul id="artist-grid" class="thumbnails"></ul>
+            </div>
+            <div id="albums" class="tab-pane">
+                <ul id="album-grid" class="artist-albums thumbnails"></ul>
+            </div>
+            <div id="songs" class="tab-pane">
+                <table id="songs-grid" class="table table-striped table-hover">
+                    <thead class="pt-thead">
+                        <tr>
+                            <th>Title</th>
+                            <th>Artist</th>
+                            <th>Album</th>
+                            <th>Duration</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div id="nowplaying" class="tab-pane">
+                <div class="well">
+                    <div class="row">
+                        <div class="span4">
+                            <h2>
+                                <big><span id="player-item-title"></span>&nbsp;</big>
+                                <span id="player-item-year" class=""></span>
+                            </h2>
+                        </div>
+                        <div class="well-small pull-right"style="float:right; background:url(../img/bodybg.jpg)">INFO
+                        </div>
+                    </div>
+                    <div class="row">
+                        <span id="player-item-tagline" class="span5"></span>
+                    </div><br>
+                    <div class="row">
+                        <div class="span3 hidden-phone thumb">
+                            <img class="img-polaroid img-rounded" /><br>
+                            <span id="player-item-rating"></span>
+                        </div>
+                        <div>
+                            <div id="player-item-plot" class=""><br>
+                            </div>
+                            <div><br>
+                            </div>
+                            <div><br>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="span11">
+                            <h2><small id="player-item-time"></small></h2>
+                            <div class="progress progress-warning" id="player-progressbar">
+                                <div class="bar active"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row span11">
+                        <button class="btn btn-primary" data-player-control="skipprevious" title="Previous Chapter"><i class="icon-step-backward"></i><i class="icon-backward"></i></button>
+                        <button class="btn btn-primary" data-player-control="bigstepback" title="<< Back 10 min"><i class="icon-fast-backward"></i></button>
+                        <button class="btn btn-primary" data-player-control="stepback" title="<< Back 30 sec"><i class="icon-step-backward"></i></button>
+                        <button class="btn btn-primary" data-player-control="rewind" title="Rewind"><i class="icon-backward"></i></button>
+                        <button class="btn btn-primary" data-player-control="stop" title="Stop"><i class="icon-stop"></i></button>
+                        <button class="btn btn-primary" data-player-control="play" title="Pause/Play"><i class="icon-pause"></i></button>
+                        <button class="btn btn-primary" data-player-control="fastforward" title="Fast Forward"><i class="icon-forward"></i></button>
+                        <button class="btn btn-primary" data-player-control="stepforward" title="Forward 30 sec >>"><i class="icon-step-forward"></i></button>
+                        <button class="btn btn-primary" data-player-control="bigstepforward" title="Forward 10 min >>"><i class="icon-fast-forward"></i></button>
+                        <button class="btn btn-primary" data-player-control="skipnext" title="Next Chapter"><i class="icon-forward"></i><i class="icon-step-forward"></i></button>
+                        <button id="mute" class="btn btn-primary" data-player-control="mute" title="Mute"><i class="icon-volume-off  icon-large"></i><i class="icon-remove icon-small"></i></button>
+                        <input id="ex1" class="span6" data-slider-id='ex1Slider' type="text" data-slider-min="0" data-slider-max="100" data-slider-step="1" data-slider-value="75"/>
+                        <form class="input-prepend">
+                            <span class="add-on"><i class="icon-text-width"></i></span>
+                            <select id="subtitles"></select>
+                        </form>
+                        <form class="input-prepend">
+                            <span class="add-on"><i class="icon-comments"></i></span>
+                            <select id="audio"></select>
+                        </form>
+                    </div><br>
+                </div>
+            </div>
+            <div id="playlist" class="tab-pane">
+                <table id="playlist-table" class="table table-striped table-hover table-condensed playlist table-responsive table-bordered">
+                    <thead class="pt-thead">
+                        <tr>
+                            <th>Title</th>
+                            <th>Artist</th>
+                            <th>Album</th>
+                            <th>Duration</th>
+                            <th>&nbsp;</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+            <div id="pvr" class="tab-pane">
+                <ul id="pvr-grid" class="thumbnails"></ul>
+            </div>
+            <div id="remote" class="tab-pane">
+                <img id="remote-image" class="remote-image" src="../img/remote.jpg" border="0" width="659" height="212" usemap="#remote-maps" />
+                <map name="remote-maps">
+                    <area id="mute" shape="rect" coords="387,120,437,153" alt="Mute" title="Mute" data-player-control="mute">
+                    <a href="Library/scan/video" class="ajax-link" title="Update Video Library">
+                        <area  shape="rect" coords="481,117,547,161" alt="Update Video Library">
+                    </a>
+                    <a href="Library/clean/video" class="ajax-link">
+                        <area  shape="rect" coords="547,113,614,167" alt="Clean Video Library" title="Clean Video Library">
+                    </a>
+                    <a href="Library/scan/audio" class="ajax-link">
+                        <area  shape="rect" coords="484,57,548,97" alt="Update Audio Library" title="Update Audio Library">
+                    </a>
+                    <a href="Library/clean/audio" class="ajax-link">
+                        <area  shape="rect" coords="548,54,610,96" alt="Clean Audio Library" title="Clean Audio Library">
+                    </a>
+                    <area  shape="rect" coords="414,54,468,103" alt="Volume Up" title="Volume Up" data-player-control="volumeup">
+                    <area  shape="rect" coords="353,56,411,109" alt="Volume Down" title="Volume Down"data-player-control="volumedown">
+                    <area  shape="rect" coords="300,112,351,150" alt="Skip Forward" title="Skip Forward" data-player-control="skipnext">
+                    <area  shape="rect" coords="251,112,295,148" alt="Fast Forward" title="Fast Forward" data-player-control="fastforward">
+                    <area  shape="rect" coords="205,114,249,147" alt="Rewind" title="Rewind" data-player-control="rewind">
+                    <area  shape="rect" coords="161,114,203,147" alt="Skip Back" title="Skip Back" data-player-control="skipprevious">
+                    <area  shape="rect" coords="256,76,298,104" alt="Pause/Play" data-player-control="play">
+                    <area  shape="rect" coords="207,75,250,104" alt="Stop" title="Stop" data-player-control="stop">
+                    <area  shape="rect" coords="156,27,206,63" alt="Back" title="Back" data-player-control="back">
+                    <a href="System?action=Shutdown" class="ajax-confirm" title="Shutdown XBMC">
+                        <area  shape="rect" coords="11,11,48,49" alt="Power" title="Power">
+                    </a>
+                    <area  shape="rect" coords="53,42,104,74" alt="Up Arrow" title="Up Arrow" data-player-control="up">
+                    <area  shape="rect" coords="113,86,146,128" alt="Right Arrow" title="Right Arrow" data-player-control="right">
+                    <area  shape="rect" coords="51,82,107,135" alt="OK" title="OK" data-player-control="select">
+                    <area  shape="rect" coords="56,139,97,174" alt="Down Arrow" title="Down Arrow" data-player-control="down">
+                    <area  shape="rect" coords="14,91,51,122" alt="Left Arrow" title="Left Arrow" data-player-control="left">
+                    <area  shape="rect" coords="6,169,55,204" alt="Home" title="Home" data-player-control="home">
+                    <area shape="rect" coords="657,210,659,212" alt="Image Map" title="Image Map">
+                </map>
+            </div>
+        </div>
+        <i class="icon-spinner icon-spin spinner"></i>
+    </div>
+</div>
+

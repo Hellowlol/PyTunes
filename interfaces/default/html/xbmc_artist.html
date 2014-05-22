@@ -1,0 +1,94 @@
+<%inherit file="base.html"/>
+<% settings = self.attr.settings %>
+<div class="container-fluid">
+    <div class="content maincontent xbmc_artist">
+        <div class="page-header page-title" data-artist-id="${artist_id}">
+            <img alt="PyTunes" src="../../img/pytuneslogosm.png"/>
+                <div id="xbmc-well" class="well btn-toolbar pull-right form-inline" style="float:right; background:url(../../img/bodybg.jpg)">
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" title="Sort by">
+                        <i class="icon-sort"></i> Sort 
+                        <i class="caret"></i></a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="#" class="active" data-sort-method="title" data-sort-order="ascending"><i class="icon-sort-by-alphabet"></i> Title</a></li>
+                            <li><a href="#" data-sort-method="title" data-sort-order="descending"><i class="icon-sort-by-alphabet-alt"></i> Title (descending)</a></li>
+                            <li><a href="#" data-sort-method="dateadded" data-sort-order="descending"><i class="icon-sort-by-attributes-alt"></i> Recently Added</a></li>
+                            <li><a href="#" data-sort-method="rating" data-sort-order="descending"><i class="icon-sort-by-attributes-alt"></i> Rating</a></li>
+                            <li><a href="#" data-sort-method="year" data-sort-order="descending"><i class="icon-sort-by-order-alt"></i> Year</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                        <i class="icon-th"></i>
+                        Library <i class="caret"></i></a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="Library/scan/video" class="ajax-link"><i class="icon-repeat"></i> Update Video Library</a></li>
+                            <li><a href="Library/clean/video" class="ajax-link"><i class="icon-trash"></i> Clean Video Library</a></li>
+                            <li><a href="Library/export/video" class="ajax-link"><i class="icon-archive"></i> Export Video Library</a></li>
+                            <li><a href="Library/scan/audio" class="ajax-link"><i class="icon-repeat"></i> Update Music Library</a></li>
+                            <li><a href="Library/clean/audio" class="ajax-link"><i class="icon-trash"></i> Clean Music Library</a></li>
+                            <li><a href="Library/export/audio" class="ajax-link"><i class="icon-archive"></i> Export Music Library</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+                        <i class="icon-th-list"></i>
+                        Options <i class="caret"></i></a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="#" id="xbmc-notify" title="Send Message To Screen"><i class="icon-envelope"></i> Send Message</a></li>
+                            %if settings.get('xbmc_hide_watched', 0):
+                            <li><a href="#" id="hidewatched" class="active"><i class="icon-eye-open"></i> Show Watched</a></li>
+                            %else:
+                            <li><a href="#" id="hidewatched"><i class="icon-eye-open"></i> Hide Watched</a></li>
+                            %endif
+                            <li><a href="ControlPlayer?action=fullscreen" class="ajax-link"><i class="icon-fullscreen"></i> Toggle Fullscreen</a></li>
+                            <li><a href="ControlPlayer?action=party" class="ajax-link"><i class="icon-beer"></i> Party Mode</a></li>
+                            <li><a href="ExecuteAddon?addon=script.artwork.downloader" class="ajax-link"><i class="icon-picture"></i> Get Artwork</a></li>
+                            <li><a href="ControlPlayer?action=audiotoggledigital" class="ajax-link"><i class="icon-headphones"></i> Toggle Audio Output</a></li>
+                        </ul>
+                    </div>
+                    <div class="btn-group">
+                        <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown"><i class="icon-off"></i>
+                        System <i class="caret"></i></a>
+                        <ul class="dropdown-menu pull-right">
+                            <li><a href="System?action=wake-xbmc" class="ajax-link" title="Wake XBMC"><i class="icon-off"></i> Wake XBMC</a></li>
+                            <li><a href="System?action=suspend-xbmc" class="ajax-confirm" title="Suspend XBMC"><i class="icon-eye-close"></i> Suspend XBMC</a></li>
+                            <li><a href="System?action=reboot-xbmc" class="ajax-confirm" title="Restart XBMC"><i class="icon-refresh"></i> Restart XBMC</a></li>
+                            <li><a href="System?action=shutdown-xbmc" class="ajax-confirm" title="Shutdown XBMC"><i class="icon-off"></i> Shutdown XBMC</a></li>
+                        </ul>
+                    </div>
+                </div>
+        </div>
+
+        <ul class="breadcrumb">
+            <li><a href="/">Home</a> <span class="divider">/</span></li>
+            <li><a href="/xbmc">XBMC</a> <span class="divider">/</span></li>
+            <li><a href="/xbmc/#artists">Artists</a> <span class="divider">/</span></li>
+            <li class="active artistname">${name}</li>
+        </ul>
+
+        <div id="fanart" class="row-fluid fanart">
+        <!--<div id="thumb" class="thumb pull-left"></div>-->
+            <img id="thumb" class="thumbnail" align="left" style="" src="../../img/default-artist.png"/>
+            <div class="description span5" style=""></div>
+            <div class="artist_details span4 pull-right" style="margin-left:10px">
+                <div id="artist_details_top" class="span4"></div>
+                <strong>Artist Details: ${name}</strong>
+                <table class="table table-condensed artist-table">
+                    <tr><td>Albums</td><td class="xbmc_albums"></td></tr>
+                    <tr><td>Born</td><td class="xbmc_born"></td></tr>
+                    <tr><td>Formed</td><td class="xbmc_formed"></td></tr>
+                    <tr><td>Died</td><td class="xbmc_died"></td></tr>
+                    <tr><td>Style</td><td class="xbmc_style"></td></tr>
+                    <tr><td>Years</td><td class="xbmc_yearsactive"></td></tr>
+                    <tr><td>Mood</td><td class="xbmc_mood"></td></tr>
+                    <tr><td>Disbanded</td><td class="xbmc_disbanded"></td></tr>
+                </table>
+                <div id="artist_details_bottom" class="span4"></div>
+            </div>
+        </div>
+                <br><br>
+                <ul id="album-grid" class="artist-albums thumbnails"></ul>
+                <div class="spinner"></div>
+    </div>
+</div>

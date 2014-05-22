@@ -1,0 +1,675 @@
+var searchString = '';
+var hideWatched = 0;
+var playerLoader = null;
+var position1 = null;
+var sorting = {
+    method: 'title',
+    order: 'ascending'
+};
+var spacerh10 = "<img src='../img/spacer.png' class='spacer-h10'>";
+
+$(document).ready(function () {
+    playerLoader = setInterval('loadNowPlaying()', 1000);
+    hideWatched = $('#hidewatched').hasClass('active') ? 1 : 0;
+
+    // Load data on tab display
+    $('a[data-toggle="tab"]').click(function (e) {
+        $('#search').val('');
+        searchString = '';
+    }).on('shown', reloadTab);
+    $(window).trigger('hashchange');
+
+    // Catch keyboard event and send to XBMC
+    $(document).keydown(function (e) {
+        if (!$('input').is(":focus")) {
+            arrow = {
+                8: 'back',
+                27: 'back',
+                13: 'select',
+                37: 'left',
+                38: 'up',
+                39: 'right',
+                40: 'down',
+                88: 'stop',
+                32: 'playpause',
+                67: 'contextmenu',
+                73: 'info',
+                77: 'mute'
+            };
+            command = arrow[e.which];
+            if (command) {
+                $.get(WEBDIR + 'xbmc/ControlPlayer?action=' + command);
+                e.preventDefault();
+            }
+        }
+    });
+
+    // Load serverlist and send command on change.
+    var servers = $('#servers').change(function () {
+        $.get(WEBDIR + 'xbmc/changeserver?id=' + $(this).val(), function (data) {
+            notify('XBMC', 'Server change ' + data, 'info');
+        });
+    });
+    $.get(WEBDIR + 'xbmc/getserver', function (data) {
+        if (data === null) return;
+        $.each(data.servers, function (i, item) {
+            server = $('<option>').text(item.name).val(item.id);
+            if (item.name == data.current) server.attr('selected', 'selected');
+            servers.append(server);
+        });
+    }, 'json');
+
+    // Enable player controls
+    $('[data-player-control]').click(function () {
+        var action = $(this).attr('data-player-control');
+        $.get(WEBDIR + 'xbmc/ControlPlayer?action=' + action);
+    });
+    $('#nowplaying #player-progressbar').click(function (e) {
+        pos = ((e.pageX - this.offsetLeft) / $(this).width() * 100).toFixed(2);
+        $.get(WEBDIR + 'xbmc/ControlPlayer?action=seek&value=' + pos);
+    });
+
+    // Toggle wether to show already seen episodes
+    $('#hidewatched').click(function (e) {
+        e.preventDefault();
+        hideWatched = $(this).toggleClass('active').hasClass('active') ? 1 : 0;
+        $(this).text(hideWatched ? ' Show Watched' : ' Hide Watched');
+        $(this).prepend('<i class="icon-eye-open"></i>');
+        $.get(WEBDIR + 'settings?xbmc_hide_watched=' + hideWatched);
+        reloadTab();
+    });
+
+    // Define sort method
+    $('[data-sort-method]').click(function (e) {
+        e.preventDefault();
+        sorting.method = $(this).attr('data-sort-method');
+        sorting.order = $(this).attr('data-sort-order');
+        $('[data-sort-method]').removeClass('active');
+        $(this).addClass('active');
+        reloadTab();
+    });
+
+    $('.myFilters li').click(function (e) {
+        e.preventDefault();
+        var v = $(this).text()[0]
+        $('.myFilterItems li').hide().filter(function(){
+            return $(this).text().toUpperCase()[0] == v;
+         }).show()
+     });
+
+    // Send notification to XBMC
+    $('#xbmc-notify').click(function () {
+        msg = prompt("Message");
+        if (msg) {
+            $.post(WEBDIR + 'xbmc/Notify', {
+                'text': msg
+            }, function (data) {
+                notify('XBMC', 'Notification sent successfully', 'info');
+            });
+        }
+    });
+
+    // Show subtitle selector if current has a subtitle track
+    var subtitles = $('#subtitles').change(function () {
+        $.get(WEBDIR + 'xbmc/Subtitles?subtitle=' + $(this).val(), function (data) {
+            notify('Subtitles', 'Change successful', 'info');
+        });
+    });
+    // Show audio selector if current has multiple subtitles tracks
+    var audio = $('#audio').change(function () {
+        $.get(WEBDIR + 'xbmc/Audio?audio=' + $(this).val(), function (data) {
+            notify('Audio', 'Change successful', 'info');
+        });
+    });
+
+    // Make the playlist sortable
+    $('#playlist-table tbody').sortable({
+        handle: ".handle",
+        containment: "parent",
+        start: function (event, ui) {
+            clearInterval(playerLoader);
+            position1 = ui.item.index();
+        },
+        stop: function (event, ui) {
+            $.get(WEBDIR + 'xbmc/PlaylistMove', {
+                position1: position1,
+                position2: ui.item.index()
+            }, function (data) {
+                nowPlayingId = null;
+                playerLoader = setInterval('loadNowPlaying()', 1000);
+            });
+        }
+    });
+
+    // Filter on searchfield changes
+    $("#search").on('input', function (e) {
+        searchString = $(this).val();
+        reloadTab();
+    });
+
+    // Load more titles on scroll
+    $(window).scroll(function () {
+        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 10) {
+            reloadTab();
+        }
+
+    });
+});
+
+var movieLoad = {
+    last: 0,
+    request: null,
+    limit: 50,
+    options: null
+};
+
+function loadMovies(options) {
+    var optionstr = JSON.stringify(options) + hideWatched + JSON.stringify(sorting);
+    if (movieLoad.options != optionstr) {
+        movieLoad.last = 0;
+        $('#movie-grid').empty();
+    }
+    movieLoad.options = optionstr;
+
+    var active = (movieLoad.request !== null && movieLoad.request.readyState !== 4);
+    if (active || movieLoad.last == -1) return;
+
+    var sendData = {
+        start: movieLoad.last,
+        end: (movieLoad.last + movieLoad.limit),
+        hidewatched: hideWatched,
+        sortmethod: sorting.method,
+        sortorder: sorting.order
+    };
+    $.extend(sendData, options);
+
+    $('.spinner').show();
+    movieLoad.request = $.ajax({
+        url: WEBDIR + 'xbmc/GetMovies',
+        type: 'get',
+        data: sendData,
+        dataType: 'json',
+        success: function (data) {
+            if (data === null) return errorHandler();
+
+            if (data.limits.end == data.limits.total) {
+                movieLoad.last = -1;
+            } else {
+                movieLoad.last += movieLoad.limit;
+            }
+
+            if (data.movies !== undefined) {
+                $.each(data.movies, function (i, movie) {
+                    var movieItem = $('<li>').attr('title', movie.title);
+
+                    var movieAnchor = $('<a>').attr('href', '#').click(function (e) {
+                        e.preventDefault();
+                        loadMovie(movie);
+                    });
+
+                    var src = 'holder.js/100x150/text:No artwork';
+                    if (movie.thumbnail !== '') {
+                        src = WEBDIR + 'xbmc/GetThumb?w=100&h=150&thumb=' + encodeURIComponent(movie.thumbnail);
+                    }
+                    movieAnchor.append($('<img>').attr('src', src).addClass('thumbnail'));
+
+                    if (movie.playcount >= 1) {
+                        movieAnchor.append($('<i>').attr('title', 'Watched').addClass('icon-white icon-ok-sign watched'));
+                    }
+
+                    movieAnchor.append($('<h6>').addClass('title').html(shortenText(movie.title, 12)));
+
+                    movieItem.append(movieAnchor);
+
+                    $('#movie-grid').append(movieItem);
+                });
+            }
+            Holder.run();
+        },
+        complete: function () {
+            $('.spinner').hide();
+        }
+    });
+}
+
+function loadMovie(movie) {
+    var poster = WEBDIR + 'xbmc/GetThumb?w=133&h=200&thumb=' + encodeURIComponent(movie.thumbnail);
+    var info = $('<div>').addClass('modal-movieinfo');
+    var footerbuttons = $('<div>').addClass('modal-footerbuttons');
+    var actors = "";
+    var castshow = $('<ul>').addClass('thumbnails');
+    var actorItem = "";    
+    var actors = [];
+    var director = "";
+    var writers = "";
+    var genre = "";
+    var path = "";
+    var country = "";
+    var studio = "";
+    var runtime = "";
+	var rating = "";
+    var moviethumb = "";
+    var mpaaicon = "";
+    var resolutionicon = "";
+    var sourceicon = "";
+    var aspecticon = "";
+    var videocodec ="";
+    var plot = movie.plot;
+    var actorthumb = "";
+    if (movie.mpaa) {
+        mpaaicon = "<img src='../img/media/usmpaa/" + movie.mpaa + ".png' class='modal-codec'>";
+    }
+            if (movie.cast) {
+                $.each(movie.cast, function (i, castmember) {
+                    var castItem = $('<li>').attr('title', castmember.name + ' --> ' + castmember.role);
+
+                    var castAnchor = $('<a>').attr('href', '#').click(function (e) {
+                        e.preventDefault();
+                        loadCast(castmember.name);
+                    });
+
+                    var src = 'holder.js/83x125/text:No artwork';
+                    if (castmember.thumbnail !== '') {
+                        src = WEBDIR + 'xbmc/GetThumb?w=83&h=125&thumb=' + encodeURIComponent(castmember.thumbnail);
+                    }
+                    castAnchor.append($('<img>').attr('src', src).addClass('thumbnail actor-thumb'));
+
+                    castAnchor.append($('<h6>').addClass('title').html(shortenText(castmember.name, 11)));
+
+                    castAnchor.append($('<h6>').addClass('title').html(shortenText(castmember.role, 11)));
+
+                    castItem.append(castAnchor);
+
+                    castshow.append(castItem);
+
+                    Holder.run();
+                });
+            }
+    if (movie.director) {
+        director = movie.director.join(', ');
+    }
+    if (movie.writer) {
+        writer = movie.writer.join(', ');
+    }
+    if (movie.genre) {
+        genre = movie.genre.join(', ');
+    }
+    if (movie.country) {
+        country = movie.country.join(', ');
+    }
+    if (movie.studio) {
+        studio = movie.studio.join(', ');
+    }
+    if (movie.streamdetails && movie.streamdetails.video[0]) {
+        runtime = parseSec(movie.streamdetails.video[0].duration);
+        var height = movie.streamdetails.video[0].height;
+        var width = movie.streamdetails.video[0].width;
+        if ((width == '1920') || (height == '1080')) {
+            resolutionicon = "<img src='../img/media/resolution/white_400x200/1080.png' class='modal-resolution'>";
+            sourceicon = "<img src='../img/media/videocodec/white_400x200/bluray.png' class='modal-source'>";
+        } else if ((width == '1280') || (height == '720')) {
+                resolutionicon = "<img src='../img/media/resolution/white_400x200/720.png' class='modal-resolution'>";
+                sourceicon = "<img src='../img/media/videocodec/white_400x200/bluray.png' class='modal-source'>";
+        } else {
+                resolutionicon = "<img src='../img/media/resolution/white_400x200/480.png' class='modal-resolution'>";
+                sourceicon = "<img src='../img/media/videocodec/white_400x200/dvd.png' class='modal-source'>";
+        }
+        var aspect = Math.round(movie.streamdetails.video[0].aspect*100)/100;
+        if ((aspect > 1.82) && (aspect < 1.88)) {
+            aspecticon = "<img src='../img/media/aspectratio/white_400x200/1.85.png' class='modal-aspect'>";
+         }
+        if ((aspect > 1.28) && (aspect < 1.36)) {
+            aspecticon = "<img src='../img/media/aspectratio/white_400x200/1.33.png' class='modal-aspect'>";
+        }
+        if ((aspect > 1.62) && (aspect < 1.70)) {
+            aspecticon = "<img src='../img/media/aspectratio/white_400x200/1.66.png' class='modal-aspect'>";
+        }
+        if ((aspect > 1.74) && (aspect < 1.82)) {
+            aspecticon = "<img src='../img/media/aspectratio/white_400x200/1.78.png' class='modal-aspect'>";
+        }
+        if ((aspect > 2.14) && (aspect < 2.26)) {
+            aspecticon = "<img src='../img/media/aspectratio/white_400x200/2.20.png' class='modal-aspect'>";
+        }
+        if ((aspect > 2.30) && (aspect < 2.45)) {
+            aspecticon = "<img src='../img/media/aspectratio/white_400x200/2.35.png' class='modal-aspect'>";
+        }
+        var codec = movie.streamdetails.video[0].codec;
+        videocodec = "<img src='../img/media/videocodec/white_400x200/" + codec + ".png' class='modal-codec'>";
+    }
+    if (movie.rating) {
+		rating = $('<span>').raty({
+        readOnly: true,
+        path: WEBDIR + 'img',
+        score: (movie.rating / 2)
+        })
+    }
+    var buttons = {
+        'Play': function () {
+            playItem(movie.movieid, 'movie');
+            hideModal();
+        },
+        'Cinema-X': function () {
+            executeAddon('script.cinema.experience', movie.movieid);
+            hideModal();
+        },
+        'Queue': function () {
+           queueItem(movie.movieid, 'movie');
+           hideModal();
+        },
+        'Remove': function () {
+            var confirmed = confirm('Are you sure? Remove: ' + movie.title + '? This will remove this entry forever!');
+            if (confirmed === true) {
+                removeLibraryItem(movie.movieid, 'movie');
+                reloadTab();
+                hideModal();
+            }
+        }
+     };
+    if (movie.imdbnumber) {
+        $.extend(buttons, {
+            'IMDb': function () {
+                window.open('http://www.imdb.com/title/' + movie.imdbnumber, 'IMDb');
+            }
+        });
+    }
+    if (movie.trailer) {
+        $.extend(buttons, {
+            'Trailer Here': function () {
+                var trailerid = movie.trailer.substr(movie.trailer.length - 11);
+                var src = 'http://www.youtube.com/embed/' + trailerid + '?rel=0&autoplay=1';
+                var youtube = $('<iframe>').attr('src', src).addClass('modal-youtube');
+                $('#modal_dialog .modal-body').html(youtube);
+            }
+        });
+    }
+    if (movie.trailer) {
+        $.extend(buttons, {
+            'Trailer XBMC': function () {
+                var trailerid = movie.trailer.substr(movie.trailer.length - 11);
+                //var url = encodeURIComponent('http://www.youtube.com/embed/' + trailerid + '?rel=0&autoplay=1');
+                ExecuteAddon(addon='plugin.video.youtube', cmd0=trailerid);
+            }
+        });
+    }
+    var stars = $('<p>').attr('id', 'modal-star-rating').addClass('modal-star-rating').append(rating);
+    var stream = "<span class='pull-right'>" + sourceicon + spacerh10 + resolutionicon + spacerh10  + mpaaicon + spacerh10 + aspecticon + spacerh10 + videocodec + spacerh10 +  spacerh10 + "</span>";
+    plot = $('<p>').html('<b>Plot:</b> ' + plot);
+    path = $('<div>').html('<b>Path:</b> ' + movie.file);
+    director = $('<p>').addClass('modal-info-item').html('<b>Director:</b> ' + director);
+    writer = $('<p>').addClass('modal-info-item').html('<b>Writer:</b> ' + writer);
+    genre = $('<p>').addClass('modal-info-item').html('<b>Genre:</b> ' + genre);
+    country = $('<p>').addClass('modal-info-item').html('<b>Country:</b> ' + country);
+    studio = $('<p>').addClass('modal-info-item').html('<b>Studio:</b> ' + studio);
+    runtime = $('<p>').addClass('modal-info-item').html('<b>Runtime:</b> ' + runtime);
+    moviethumb = $('<img>').attr('src', poster).addClass('thumbnail modal-movie-poster');
+    moviethumb = $('<p>').append(moviethumb);
+    
+    info.append(plot, director, writer, genre, country, studio, runtime);
+
+    var bodymiddleleft = $('<div>').addClass('pull-left modal-body-middle-left').append(moviethumb, stars);
+    var infocolumbleft = $('<div>').addClass('pull-left').append(director, genre, runtime);
+    var infocolumbright = $('<div>').addClass('pull-right').append(writer, country, studio);
+    var bodymiddlebottom = $('<div>').addClass('pull-left').append(path);
+    var bodymiddleright = $('<div>').addClass('modal-body-middle-right').append(plot, infocolumbleft, infocolumbright, bodymiddlebottom);
+    var bodymiddle = $('<div>').addClass('modal-body-middle').append(bodymiddleleft, bodymiddleright);
+    var bodybottom = $('<div>').addClass('modal-body-bottom pull-left').append(castshow);
+    var bodycontent = $('<div>').append(bodymiddle, bodybottom);
+
+
+    var head = movie.title + ' (' + movie.year + ')' + stream;
+    var body = $('<div>').append(bodycontent);
+    var foot = buttons;
+
+    showModal(head, body, foot);
+
+    $('.modal-fanart').css({
+        'background-image': 'url(' + WEBDIR + 'xbmc/GetThumb?w=950&h=450&o=10&thumb=' + encodeURIComponent(movie.fanart) + ')'
+    });
+}
+
+var showLoad = {
+    last: 0,
+    request: null,
+    limit: 50,
+    options: null
+};
+
+function loadShows(options) {
+    var optionstr = JSON.stringify(options) + hideWatched + JSON.stringify(sorting);
+    if (showLoad.options != optionstr) {
+        showLoad.last = 0;
+        $('#show-grid').empty();
+    }
+    showLoad.options = optionstr;
+
+    var active = (showLoad.request !== null && showLoad.request.readyState !== 4);
+    if (active || showLoad.last == -1) return;
+
+    var sendData = {
+        start: showLoad.last,
+        end: (showLoad.last + showLoad.limit),
+        hidewatched: hideWatched,
+        sortmethod: sorting.method,
+        sortorder: sorting.order
+    };
+    $.extend(sendData, options);
+
+    $('.spinner').show();
+    showLoad.request = $.ajax({
+        url: WEBDIR + 'xbmc/GetShows',
+        type: 'get',
+        data: sendData,
+        dataType: 'json',
+        success: function (data) {
+            if (data === null) return errorHandler();
+
+            if (data.limits.end == data.limits.total) {
+                showLoad.last = -1;
+            } else {
+                showLoad.last += showLoad.limit;
+            }
+
+            if (data.tvshows !== undefined) {
+                $.each(data.tvshows, function (i, show) {
+                    var showItem = $('<li>').attr('title', show.title);
+
+                    var showAnchor = $('<a>').attr('href', '#').click(function (e) {
+                        e.preventDefault();
+                        loadEpisodes({
+                            'tvshowid': show.tvshowid
+                        });
+                    });
+
+                    var src = 'holder.js/100x150/text:No artwork';
+                    if (show.thumbnail !== '') {
+                        src = WEBDIR + 'xbmc/GetThumb?w=100&h=150&thumb=' + encodeURIComponent(show.thumbnail);
+                    }
+                    showAnchor.append($('<img>').attr('src', src).addClass('thumbnail'));
+
+                    if (show.playcount >= 1) {
+                        showAnchor.append($('<i>').attr('title', 'Watched').addClass('icon-white icon-ok-sign watched'));
+                    }
+
+                    showAnchor.append($('<h6>').addClass('title').html(shortenText(show.title, 11)));
+
+                    showItem.append(showAnchor);
+
+                    $('#show-grid').append(showItem);
+                });
+            }
+            Holder.run();
+        },
+        complete: function () {
+            $('.spinner').hide();
+        }
+    });
+}
+
+var episodeLoad = {
+    last: 0,
+    request: null,
+    limit: 50,
+    options: null
+};
+var currentShow = null;
+
+function loadEpisodes(options) {
+    currentShow = options.tvshowid;
+    var optionstr = JSON.stringify(options) + hideWatched;
+    if (episodeLoad.options != optionstr) {
+        episodeLoad.last = 0;
+        $('#episode-grid').empty();
+    }
+    episodeLoad.options = optionstr;
+
+    var active = (episodeLoad.request !== null && episodeLoad.request.readyState !== 4);
+    if (active || episodeLoad.last == -1) return;
+
+    var sendData = {
+        start: episodeLoad.last,
+        end: (episodeLoad.last + episodeLoad.limit),
+        hidewatched: hideWatched
+    };
+    $.extend(sendData, options);
+
+    $('.spinner').show();
+    episodeLoad.request = $.ajax({
+        url: WEBDIR + 'xbmc/GetEpisodes',
+        type: 'get',
+        data: sendData,
+        dataType: 'json',
+        success: function (data) {
+            if (data === null || data.limits.total === 0) return;
+
+            if (data.limits.end == data.limits.total) {
+                episodeLoad.last = -1;
+            } else {
+                episodeLoad.last += episodeLoad.limit;
+            }
+
+            if (data.episodes !== undefined) {
+                $.each(data.episodes, function (i, episode) {
+                    var episodeItem = $('<li>').attr('title', episode.plot);
+
+                    var episodeAnchor = $('<a>').attr('href', '#').click(function (e) {
+                        e.preventDefault();
+                        playItem(episode.episodeid, 'episode');
+                    });
+
+                    var src = 'holder.js/150x85/text:No artwork';
+                    if (episode.thumbnail !== '') {
+                        src = WEBDIR + 'xbmc/GetThumb?w=150&h=85&thumb=' + encodeURIComponent(episode.thumbnail);
+                    }
+                    episodeAnchor.append($('<img>').attr('src', src).addClass('thumbnail'));
+
+                    if (episode.playcount >= 1) {
+                        episodeAnchor.append($('<i>').attr('title', 'Watched').addClass('icon-white icon-ok-sign watched'));
+                    }
+
+                    episodeAnchor.append($('<h6>').addClass('title').html(shortenText(episode.label, 18)));
+
+                    episodeItem.append(episodeAnchor);
+
+                    $('#episode-grid').append(episodeItem);
+                });
+            }
+            Holder.run();
+        },
+        complete: function () {
+            $('.spinner').hide();
+            $('a[href=#episodes]').tab('show');
+        }
+    });
+    $('#episode-grid').slideDown();
+}
+
+var artistLoad = {
+    last: 0,
+    request: null,
+    limit: 50,
+    options: null
+};
+
+function loadArtists(options) {
+    var optionstr = JSON.stringify(options);
+    if (artistLoad.options != optionstr) {
+        artistLoad.last = 0;
+        $('#artist-grid').empty();
+    }
+    artistLoad.options = optionstr;
+
+    var active = (artistLoad.request !== null && artistLoad.request.readyState !== 4);
+    if (active || artistLoad.last == -1) return;
+
+    var sendData = {
+        start: artistLoad.last,
+        end: (artistLoad.last + artistLoad.limit)
+    };
+    $.extend(sendData, options);
+
+      $('.spinner').show();
+    artistLoad.request = $.ajax({
+        url: WEBDIR + 'xbmc/GetArtists',
+        type: 'get',
+        data: sendData,
+        dataType: 'json',
+        success: function (data) {
+            if (data === null) return errorHandler();
+
+            if (data.limits.end == data.limits.total) {
+                artistLoad.last = -1;
+            } else {
+                artistLoad.last += artistLoad.limit;
+            }
+
+            if (data.artists !== undefined) {
+                $.each(data.artists, function (i, artist) {
+                    $('#artist-grid').append($('<tr>').append(
+                    $('<td>').append(
+                    $('<a>').attr('href', '#').attr('title', 'Play all').html('<i class="icon-play">').click(function (e) {
+                        e.preventDefault();
+                        playItem(artist.artistid, 'artist');
+                    }),
+                    $('<a>').attr('href', '#').attr('title', 'Enqueue all').html('<i class="icon-plus">').click(function (e) {
+                        e.preventDefault();
+                        queueItem(artist.artistid, 'artist');
+                    })),
+                    $('<td>').append($('<a>').attr('href',WEBDIR  + 'xbmc/ViewArtist?artist_id=' + artist.artistid + '&artist=' + encodeURIComponent(artist.artist)).addClass('artist-link').text(artist.artist))
+                    ));
+                });
+            }
+            Holder.run();
+        },
+        complete: function () {
+            $('.spinner').hide();
+        }
+    });
+}
+var albumLoad = {
+    last: 0,
+    request: null,
+    limit: 50,
+    options: null,
+    artist: null
+};
+
+function loadAlbums(options) {
+    var elem = $('#album-grid');
+    if (options && options.artistid !== undefined) {
+        $('.artist-albums:visible').slideUp(300, function () {
+            $(this).remove();
+        });
+        if (options.artistid == loadAlbums.artist) {
+            loadAlbums.artist = null;
+            return;
+        }
+        loadAlbums.artist = options.artistid;
+        elem = $('<ul>').addClass('artist-albums thumbnails').hide();
+    }
+
+    var optionstr = JSON.stringify(options);
+    if (albumLoad.options != optionstr) {
+        albumLoad.last = 0;
+        elem.empty();
+    }
+    albumLoad.option
