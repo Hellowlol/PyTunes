@@ -15,7 +15,6 @@ import pytunes
 #from pytunes import connector
 from pytunes.staticvars import get_var as html
 import logging
-import pwd, grp
 
 
 try:
@@ -23,8 +22,17 @@ try:
     importPsutil = True
 
 except ImportError:
-    logger.error("Could't import psutil. See http://psutil.googlecode.com/hg/INSTALL")
+    logger.error("Couldn't import psutil. See http://psutil.googlecode.com/hg/INSTALL")
     importPsutil = False
+
+ 
+try:
+    import pwd, grp
+    importPwd = True
+
+except ImportError:
+    logger.error("Couldn't import pwd/grp . The Users and Groups tab is not available.")
+    importPwd = True
 
  
 class Stats:
@@ -279,9 +287,12 @@ class Stats:
     def get_users(self):
         table = ''
         row6 = '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'
-        for p in pwd.getpwall():
-            table += row6 % (p[0], p[2], grp.getgrgid(p[3])[0], p[3], p[5], p[6])
-        return table
+        if importPwd:
+            for p in pwd.getpwall():
+                table += row6 % (p[0], p[2], grp.getgrgid(p[3])[0], p[3], p[5], p[6])
+            return table
+        else:
+            return '<tr><td>Users and Groups Not Available for Windows.</td></tr>'
 
     @cherrypy.expose()
     def get_user(self):
