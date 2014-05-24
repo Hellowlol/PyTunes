@@ -1,4 +1,5 @@
-# coding=utf-8
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import time
 import json
@@ -16,6 +17,8 @@ import pytunes
 from pytunes.staticvars import get_var as html
 import logging
 
+logger = logging.getLogger('modules.stats')
+
 
 try:
     import psutil
@@ -25,14 +28,14 @@ except ImportError:
     logger.error("Couldn't import psutil. See http://psutil.googlecode.com/hg/INSTALL")
     importPsutil = False
 
- 
+
 try:
     import pwd, grp
     importPwd = True
 
 except ImportError:
     logger.error("Couldn't import pwd/grp . The Users and Groups tab is not available.")
-    importPwd = True
+    importPwd = False
 
  
 class Stats:
