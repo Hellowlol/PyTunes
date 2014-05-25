@@ -259,7 +259,7 @@ class Stats:
         fstypes = ['ext', 'ext2', 'ext3', 'ext4', 'nfs', 'nfs4', 'fuseblk', 'cifs', 'msdos', 'ntfs', 'fat', 'fat32']
         try:
             for disk in psutil.disk_partitions(all=True):
-            	if 'cdrom' in disk.opts or disk.fstype == '' or disk.fstype not in fstypes:
+            	if 'cdrom' in disk.opts or disk.fstype == '' or disk.fstype.lower() not in fstypes:
                     pass
             	else:
                     usage = psutil.disk_usage(disk.mountpoint)
