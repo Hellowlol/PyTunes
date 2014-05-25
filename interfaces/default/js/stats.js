@@ -277,9 +277,11 @@ function reloadtabs() {
        get_diskinfo();
    });
     $('#processes_tab').click(function () {
-       processes();
+        $('#proc-table').empty();
+        processes();
    });
    $('#users_tab').click(function () {
+        $('#user-table').empty();
         get_users();
    });
 
