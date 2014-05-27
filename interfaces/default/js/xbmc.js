@@ -71,8 +71,15 @@ $(document).ready(function () {
 
     $('#ex1').slider({
 	    formater: function(value) {
-            $.get(WEBDIR + 'xbmc/ControlPlayer?action=volume&value='+value);		
-            return 'Volume: ' + value;
+            if (value === 0) {
+                $.get(WEBDIR + 'xbmc/NowPlaying', function(data) {    
+                    $('#ex1').slider('setValue', data.app.volume, []); 
+                });
+            } 
+            else {
+                $.get(WEBDIR + 'xbmc/ControlPlayer?action=volume&value='+value);		
+                return 'Volume: ' + value;
+            }
 	    }
     });
 
@@ -985,7 +992,16 @@ function loadNowPlaying() {
 
             var progressBar = $('#nowplaying #player-progressbar .bar');
             progressBar.css('width', data.playerInfo.percentage + '%');            
- 
+
+            //Fake update the slider
+            $('.slider-selection').css({
+                "width":data.app.volume+'%',
+                'left':'0%'
+            });
+            $('.slider-handle').css({
+                'left': data.app.volume+'%', 
+            });
+
             var select = $('#audio').html('');
             var current = "";
             select.parent().hide();

@@ -175,3 +175,4 @@ function checkUpdate() {
         setTimeout(checkUpdate, 1000);
     });
 }
+
