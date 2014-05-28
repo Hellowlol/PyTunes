@@ -1,5 +1,6 @@
 var searchString = '';
 var hideWatched = 0;
+var volume = 0;
 var playerLoader = null;
 var position1 = null;
 var sorting = {
@@ -73,11 +74,13 @@ $(document).ready(function () {
 	    formater: function(value) {
             if (value === 0) {
                 $.get(WEBDIR + 'xbmc/NowPlaying', function(data) {    
-                    $('#ex1').slider('setValue', data.app.volume, []); 
+                    $('#ex1').slider('setValue', data.app.volume, []);
+                    volume = data.app.volume; 
                 });
             } 
             else {
                 $.get(WEBDIR + 'xbmc/ControlPlayer?action=volume&value='+value);		
+                volume = value; 
                 return 'Volume: ' + value;
             }
 	    }
@@ -994,14 +997,17 @@ function loadNowPlaying() {
             progressBar.css('width', data.playerInfo.percentage + '%');            
 
             //Fake update the slider
-            $('.slider-selection').css({
-                "width":data.app.volume + '%',
-                'left':'0%'
-            });
-            $('.slider-handle').css({
-                'left': data.app.volume + '%', 
-            });
-            $('#ex1').slider('setValue', data.app.volume, []); 
+            if (volume != data.app.volume) {
+                $('.slider-selection').css({
+                    "width":data.app.volume + '%',
+                    'left':'0%'
+                });
+                $('.slider-handle').css({
+                    'left': data.app.volume + '%', 
+                });
+                $('#ex1').slider('setValue', data.app.volume, []);
+                volume = data.app.volume;
+            } 
 
             var select = $('#audio').html('');
             var current = "";
