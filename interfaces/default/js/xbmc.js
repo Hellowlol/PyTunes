@@ -9,7 +9,7 @@ var sorting = {
 var spacerh10 = "<img src='../img/spacer.png' class='spacer-h10'>";
 
 $(document).ready(function () {
-    playerLoader = setInterval('loadNowPlaying()', 1000);
+    playerLoader = setInterval('loadNowPlaying()', 5000);
     hideWatched = $('#hidewatched').hasClass('active') ? 1 : 0;
 
     // Load data on tab display
@@ -995,12 +995,13 @@ function loadNowPlaying() {
 
             //Fake update the slider
             $('.slider-selection').css({
-                "width":data.app.volume+'%',
+                "width":data.app.volume + '%',
                 'left':'0%'
             });
             $('.slider-handle').css({
-                'left': data.app.volume+'%', 
+                'left': data.app.volume + '%', 
             });
+            $('#ex1').slider('setValue', data.app.volume, []); 
 
             var select = $('#audio').html('');
             var current = "";
