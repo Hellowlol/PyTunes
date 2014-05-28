@@ -1,0 +1,8 @@
+.thumbnails>li {
+    position: relative;
+	float: left;    
+}
+
+@media (max-width: 767px) {
+    .thumbnails>li{margin-left:14px}
+}
