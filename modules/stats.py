@@ -25,7 +25,7 @@ try:
     importPsutil = True
 
 except ImportError:
-    logger.error("Couldn't import psutil. See http://psutil.googlecode.com/hg/INSTALL")
+    logger.error("Couldn't import psutil. See https://raw.githubusercontent.com/giampaolo/psutil/master/INSTALL.rst")
     importPsutil = False
 
 
