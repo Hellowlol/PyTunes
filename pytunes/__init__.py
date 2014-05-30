@@ -1,4 +1,7 @@
 """ Initiate global variables """
+FANART = '9d23d356939055ad201040db40296013'
+LASTFM = '21a8f8ee4dba2ed788a92fa6b69777b7'
+TMDB = 'd319d3963faf251d47f70e5199e1ff79'
 RUNDIR = None
 DATADIR = None
 DB = None

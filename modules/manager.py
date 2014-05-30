@@ -357,27 +357,6 @@ class Manager:
                     'label':'Music Destination Folder', 
                     'name':'music_out', 
                     'dir':True},
-                {'type':'text', 
-                    'label':'Fanart.tv Apikey', 
-                    'name':'fatv_apikey'},
-                {'type':'bool', 
-                    'label':'Fanart.tv Use SSL', 
-                    'name':'fatv_ssl'},
-                {'type':'text', 
-                    'label':'Last.fm Apikey', 
-                    'name':'lastfm_apikey'},
-                {'type':'text', 
-                    'label':'Last.fm Secret Key', 
-                    'name':'lastfm_secretkey'},
-                {'type':'bool', 
-                    'label':'Last.fm Use SSL', 
-                    'name':'lastfm_ssl'},
-                {'type':'text', 
-                    'label':'TMDB Apikey', 
-                    'name':'tmdb_apikey'},
-                {'type':'bool', 
-                    'label':'TMDB Use SSL', 
-                    'name':'tmdb_ssl'}
         ]})
 
 
