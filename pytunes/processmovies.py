@@ -191,14 +191,14 @@ def download(url, dest):
     except Exception:
         #import traceback
         #logger.error('urllib exception: ' + traceback.format_exc())
-        print 'IOError:', url
+        #print 'IOError:', url
         return 
 
 def streaminfo(file):
     try:
         info = enzyme.parse(file)
     except:
-        print 'Error Detecting Streams: ', file
+        #print 'Error Detecting Streams: ', file
         return 'Enzyme error'
     movieinfo = {
         'length':'',
@@ -315,8 +315,8 @@ def process():
                     matches[match] = [s['title'], s['id'], s['release_date'], mimetype, container, screenSize, videoCodec, format]
 
         if not matches and not search['results']:
-            print 'not matches and not search results check name'
-            print path
+            #print 'not matches and not search results check name'
+            #print path
             unmatched.append(guess['title'])
             if not os.path.exists(moviedir + 'failed'):
                 os.makedirs(moviedir + 'failed')
@@ -329,8 +329,8 @@ def process():
         if not matches and search['results']:
             #need to add another layer of sophistication here!
             #right now it's just a trap to log failed matches when there were search results
-            print 'not matches and search results'
-            print path
+            #print 'not matches and search results'
+            #print path
             unmatched.append(guess['title'])
             if not os.path.exists(moviedir + 'failed'):
                 os.makedirs(moviedir + 'failed')
@@ -380,7 +380,7 @@ def process():
         if fa_art:
             info = mergeart(info, fa_art)
         #print info
-        print filename,dirname
+        #print filename,dirname
         procpics(destdir + dirname, info) 
         shutil.move(movie['path'], destdir + dirname + '/' + filename)
         #buildnfo(destdir + dirname, info, stream)
