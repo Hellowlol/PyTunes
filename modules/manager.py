@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-A
 """ Module for Media Management  """
 import cherrypy
 import pytunes
@@ -134,6 +136,13 @@ class MoviesWanted(SQLObject):
     strRating = StringCol()
     strYear = StringCol()
     strGenre = StringCol()
+    strRuntime = StringCol()
+    strStudios = StringCol()
+    strCountry = StringCol()
+    strWriters = StringCol()
+    strDirectors = StringCol()
+    strActors = StringCol()
+
 
 """ SQLObject class for movie table """
 class Movie(SQLObject):
@@ -365,26 +374,6 @@ class Manager:
         """ Generate page from template """
         return pytunes.LOOKUP.get_template('manager.html').render(scriptname='manager')
 
-    @cherrypy.expose()
-    def FindMovie(self, tmdbid):
-        """ Add Movie To Wanted DB Table """
-        info = tmdb.MovieInfo(tmdbid)
-        if info:
-            if info['fanart']:
-                fanart = info['fanart'][0]
-            else: 
-                fanart = ''
-            if info['posters']:
-                poster = info['posters'][0]
-            else: 
-                poster = ''
-        #Check to see if it's already in the table
-        try:
-            check = MoviesWanted.selectBy(strTmdb=tmdbid).getOne()
-            if check:
-                return 'Already in the Want List'
-        except SQLObjectNotFound:
-            MoviesWanted(strTmdb=tmdbid, strImdb=info['imdb'], strTitle=info['title'], strFanart=fanart, strThumb=thumb, strRating=info['rating'], strPlot=info['plot'])
 
     @cherrypy.expose()
     def GetTVShow(self, tmdbid):
@@ -416,9 +405,13 @@ class Manager:
         else:
             writers = 'N/A'
         for each in info['cast']:
+            if each['thumb']:
+                thumb = each['thumb']
+            else:
+                thumb = pytunes.IMGURL + 'no_art_square.png'
             shortname = (each['name'][:14] + '..') if len(each['name']) > 16 else each['name']
             shortrole = (each['role'][:14] + '..') if len(each['role']) > 16 else each['role']
-            actors += html('actor_li') % (each['name'], each['role'], each['thumb'], shortname, shortrole)
+            actors += html('actor_li') % (each['name'], each['role'], thumb, shortname, shortrole)
         show['fanart'] = info['fanart']
         show['body'] = html('tmdb_tv_modal_middle') % (info['poster'], info['plot'], directors, info['genre'], info['status'], info['first_air'], info['last_air'], writers, info['country'], info['networks'], info['seasons'], info['episodes'], actors)
         show['head'] = info['name'] + '   ' + info['first_air']
@@ -426,31 +419,33 @@ class Manager:
         return json.dumps(show)
 
     @cherrypy.expose()
+    def AddMovie(self, tmdbid='', imdbid='', year='', title='', fanart='', thumb='', plot='', rating='', genre='', runtime='', writers='', country='', studios='', actors='', directors=''):
+        #print 'in add movie', tmdbid, imdbid, year, title
+        self.logger.debug("Saving wanted movie to the database: %s" % title)
+        try:
+            movie = MoviesWanted.selectBy(strTmdb=tmdbid).getOne()
+            self.logger.debug('Movie already in database: %s' % title)
+            msg = 'Movie already in database: %s' % title
+        except SQLObjectNotFound:
+            MoviesWanted(strYear=year, strTmdb=tmdbid, strImdb=imdbid, strTitle=title.encode('utf-8'), strFanart=fanart, strThumb=thumb, strPlot=plot.encode('utf-8'), strRating=rating, strGenre=genre, strRuntime=runtime, strWriters=writers.encode('utf-8'), strCountry=country.encode('utf-8'), strStudios=studios.encode('utf-8'), strActors=actors.encode('utf-8'), strDirectors=directors.encode('utf-8'))
+            self.logger.debug('Movie added to database: %s' % title)
+            msg = 'Movie added to database: %s' % title
+            print tmdbid, imdbid, year, title, fanart, thumb, plot, rating, genre, runtime, writers, country, studios, actors, directors
+
+        return msg
+        
+    @cherrypy.expose()
     def GetMovie(self, tmdbid):
         """ Get Movie info """
         movie = {}
         directors = []
         writers = []
         genres = []
+        wactors = []
         actors = ''
 
-        download = html('download_button') % tmdbid
-        print 'tmdbid', tmdbid
         info = tmdb.MovieInfo(tmdbid)
-        print 'title: ', info['title']
-        print 'release_date: ', info['release_date']
-        print 'trailers: ', info['trailers']
-        print 'plot: ', info['plot']
-        print 'popularity: ', info['popularity']
-        print 'year: ', info['year']
-        print 'imdb: ', info['imdb']
-        print 'genre: ', info['genre']
-        print 'tagline: ', info['tagline']
-        print 'runtime: ', info['runtime']
-        print 'original_title: ', info['original_title']
-        print 'rating: ', info['rating']
-        print 'country: ', info['country']
-        print 'language: ', info['language']
+        print info
         for each in info['directors']:
             directors.append(each['name'])
         if directors:
@@ -465,24 +460,35 @@ class Manager:
             writers = 'N/A'
         if info['posters']:
             poster = info['posters'][0]
+            wposter = info['posters'][0]
         else:
             poster = pytunes.IMGURL + 'no_art_square.png'
+            wposter = ''
         for each in info['cast']:
+            if each['thumb']:
+                thumb = each['thumb']
+            else:
+                thumb = pytunes.IMGURL + 'no_art_square.png'
             shortname = (each['name'][:14] + '..') if len(each['name']) > 16 else each['name']
             shortrole = (each['role'][:14] + '..') if len(each['role']) > 16 else each['role']
-            actors += html('actor_li') % (each['name'], each['role'], each['thumb'], shortname, shortrole)
+            actors += html('actor_li') % (each['name'], each['role'], thumb, shortname, shortrole)
+            wactors.append(each['name'])
         if info['trailers']:
             trailer  = html('trailer_button') % info['trailers'][0]
+            wtrailer = info['trailers'][0]
         else:
             trailer = ''
+            wtrailer = ''
         if info['imdb']:
             imdb = html('imdb') % info['imdb']
         else:
             imdb = ''
+            download = html('download_button') % (tmdbid, imdb, info['title'], info['year'])
         if info['fanart']:
             movie['fanart'] = info['fanart'][0]
         else:
             movie['fanart']  = ''
+        download = html('download_button') % (tmdbid, info['imdb'], info['title'], info['year'], movie['fanart'], wposter, info['plot'].replace("\"", "'"), 'rating', ", ".join(info['genre']), info['runtime'], writers, ", ".join(info['country']), ", ".join(info['studios']), ", ".join(wactors), directors)
         movie['body'] = html('tmdb_movie_modal_middle') % (poster, info['plot'], directors, ", ".join(info['genre']), info['runtime'], writers, ", ".join(info['country']), ", ".join(info['studios']), actors)
         movie['head'] = info['title'] + '   ' + info['release_date']
         movie['foot'] = imdb + trailer + download + html('close_button')
