@@ -149,6 +149,29 @@ function downLoad(tmdb, imdb, year, title, fanart, thumb, plot, rating, genre, r
     });
 }
 
+function loadWantedMovies() {
+    $('#movieswanted-grid').empty();
+    //alert("In Wanted Movies");
+    $.ajax({
+        url: WEBDIR + "manager/WantedMovies",
+        type: 'get',
+        dataType: 'html',
+        success: function (data) {
+            //alert("Movies Wanted: " + data);
+            if (data === null) return errorHandler();
+            $('#movieswanted-grid').append(data);
+        },
+        complete: function () {
+            $('.tmdb').click(function(e){
+                e.preventDefault();
+            //    alert('click');
+                loadMovie($(this).prop('id'));
+            });
+            $('.spinner').hide();
+        }
+    });
+}
+
 function loadPopularTV(page) {
     //alert("In Popular TV" + page);
     $.ajax({
@@ -308,6 +331,9 @@ function loadTab() {
     } 
     else if ($('#shows').is(':visible')) {
         loadShows();
+    } 
+    else if ($('#movieswanted').is(':visible')) {
+        loadWantedMovies();
     } 
     else if ($('#theaters').is(':visible')) {
         $('#theaters-grid').empty();

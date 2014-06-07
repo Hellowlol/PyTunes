@@ -328,7 +328,7 @@ class Manager:
     def __init__(self):
         """ Add module to list of modules on load and set required settings """
         self.logger = logging.getLogger('modules.manager')
-        Monitor(cherrypy.engine, scheduler.schedule, frequency=720).subscribe()
+        Monitor(cherrypy.engine, scheduler.schedule, frequency=120).subscribe()
         Album.createTable(ifNotExists=True)
         Discography.createTable(ifNotExists=True)
         Artist.createTable(ifNotExists=True)
@@ -430,12 +430,32 @@ class Manager:
             MoviesWanted(strYear=year, strTmdb=tmdbid, strImdb=imdbid, strTitle=title.encode('utf-8'), strFanart=fanart, strThumb=thumb, strPlot=plot.encode('utf-8'), strRating=rating, strGenre=genre, strRuntime=runtime, strWriters=writers.encode('utf-8'), strCountry=country.encode('utf-8'), strStudios=studios.encode('utf-8'), strActors=actors.encode('utf-8'), strDirectors=directors.encode('utf-8'))
             self.logger.debug('Movie added to database: %s' % title)
             msg = 'Movie added to database: %s' % title
-            print tmdbid, imdbid, year, title, fanart, thumb, plot, rating, genre, runtime, writers, country, studios, actors, directors
+            #print tmdbid, imdbid, year, title, fanart, thumb, plot, rating, genre, runtime, writers, country, studios, actors, directors
 
         return msg
         
     @cherrypy.expose()
-    def GetMovie(self, tmdbid):
+    def WantedMovies(self):
+        """ Get Wanted Movie info for interface """
+        movies = ''
+        for movie in MoviesWanted.select():
+            if movie.strThumb:
+                thumb = 'http://image.tmdb.org/t/p/original%s' % movie.strThumb
+            else:
+                thumb = pytunes.IMGURL + 'no_art_square.png'
+            shorttitle = (movie.strTitle[:14] + '..') if len(movie.strTitle) > 16 else movie.strTitle[:14]
+            shorttitle += '<br>' + movie.strYear
+            movies += html('tmdb_thumb_item') % (movie.strTitle, movie.strTmdb,  thumb, shorttitle) 
+            #print movie.strTitle
+        return movies
+        
+    @cherrypy.expose()
+    def Wanted():
+        """ Get Wanted Movie info for search"""
+        return 'Worked'
+
+    @cherrypy.expose()
+    def GetMovie(self, tmdbid, page=''):
         """ Get Movie info """
         movie = {}
         directors = []
@@ -491,7 +511,10 @@ class Manager:
         download = html('download_button') % (tmdbid, info['imdb'], info['title'], info['year'], movie['fanart'], wposter, info['plot'].replace("\"", "'"), 'rating', ", ".join(info['genre']), info['runtime'], writers, ", ".join(info['country']), ", ".join(info['studios']), ", ".join(wactors), directors)
         movie['body'] = html('tmdb_movie_modal_middle') % (poster, info['plot'], directors, ", ".join(info['genre']), info['runtime'], writers, ", ".join(info['country']), ", ".join(info['studios']), actors)
         movie['head'] = info['title'] + '   ' + info['release_date']
-        movie['foot'] = imdb + trailer + download + html('close_button')
+        if page == 'wantedmovie':
+            movie['foot'] = imdb + trailer + remove + html('close_button')
+        else:
+            movie['foot'] = imdb + trailer + download + html('close_button')
         return json.dumps(movie)
 
         

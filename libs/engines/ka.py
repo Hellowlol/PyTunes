@@ -14,7 +14,7 @@ def search(what, cat='all'):
     ret = []
     i = 1
     hits = 0
-    while True and i<11:
+    while True and i<6:
         results = []
         json_data = retrieve_url(url+'/json.php?q=%s&page=%d'%(what, i))
         try:
