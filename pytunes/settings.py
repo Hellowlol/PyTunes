@@ -71,3 +71,5 @@ class Settings:
             current = bool(theme == self.get('app_theme', 'default'))
             themes.append({'name': theme, 'value': theme, 'selected': current})
         return themes
+
+

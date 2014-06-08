@@ -3,7 +3,8 @@
 """ Module for Media Management  """
 import cherrypy
 import pytunes
-from pytunes import tmdb, staticvars, scheduler
+from qbittorrent import qbittorrent as qb
+from pytunes import tmdb, staticvars, scheduler, processmovies, processtv, processmusic, searcher
 from pytunes.staticvars import get_var as html
 from pytunes.proxy import get_image
 import time
@@ -21,6 +22,11 @@ from jsonrpclib import Server
 from sqlobject import SQLObject, SQLObjectNotFound
 from sqlobject.col import StringCol, IntCol, FloatCol
 import logging
+from random import randint
+from apscheduler.scheduler import Scheduler
+sched = Scheduler()
+sched.start() 
+settings = pytunes.settings
 
 musicvideo_schema_map = {
 'c00': 'strTitle',
@@ -328,7 +334,11 @@ class Manager:
     def __init__(self):
         """ Add module to list of modules on load and set required settings """
         self.logger = logging.getLogger('modules.manager')
-        Monitor(cherrypy.engine, scheduler.schedule, frequency=120).subscribe()
+        #Monitor(cherrypy.engine, scheduler.schedule, frequency=120).subscribe()
+        job1 = sched.add_cron_job(processmovies.process, minute="*/%s" % 15)
+        #job2 = sched.add_cron_job(processtv.process, minute="*/%s" % 15)
+        #job3 = sched.add_cron_job(processmusic.process, minute=randint(0,59))
+        job4 = sched.add_cron_job(searcher.FindMovies, minute="*/%s" % 5)
         Album.createTable(ifNotExists=True)
         Discography.createTable(ifNotExists=True)
         Artist.createTable(ifNotExists=True)
@@ -366,6 +376,18 @@ class Manager:
                     'label':'Music Destination Folder', 
                     'name':'music_out', 
                     'dir':True},
+                {'type':'select',
+                 'label':'Default Torrent Client',
+                 'name':'default_torr_id',
+                 'options':[],
+                    'desc':'Only Enabled Clients Will Show' 
+                },
+                {'type':'select',
+                 'label':'Default NZB Client',
+                 'name':'default_nzb_id',
+                 'options':[],
+                    'desc':'Only Enabled Clients Will Show' 
+                }
         ]})
 
 
@@ -450,9 +472,36 @@ class Manager:
         return movies
         
     @cherrypy.expose()
-    def Wanted():
-        """ Get Wanted Movie info for search"""
+    def ToClient(self, url, type):
+        """ Send torrent or nzb to the default client """
+        #if settings.get('deluge_enable', ''):
+        #if settings.get('utorrent_enable', ''):
+        #if settings.get('transmission_enable', ''):
+        #if settings.get('qbittorrent_enable', ''):
         return 'Worked'
+
+    @cherrypy.expose()
+    def GetClients(self):
+        torrents = ''
+        nzbs = ''
+        if settings.get('deluge_enable', ''):
+            torrents += '<option id="deluge">Deluge</option>'
+        if settings.get('utorrent_enable', ''):
+            torrents += '<option id="utorrent">uTorrent</option>'
+        if settings.get('transmission_enable', ''):
+            torrents += '<option id="transmission">Transmission</option>'
+        if settings.get('qbittorrent_enable', ''):
+            torrents += '<option id="qbittorrent">qBittorrent</option>'
+        if not torrents:
+            torrents = '<option>No Clients Enabled</option>'
+        if settings.get('nzbget_enable', ''):
+            nzbs += '<option id="nzbget">NZBget</option>'
+        if settings.get('sab_enable', ''):
+            nzbs += '<option id="sabnzbd">Sabnzbd+</option>'
+        if not nzbs:
+            nzbs = '<option>No Clients Enabled</option>'
+        return json.dumps({'torrents':torrents, 'nzbs':nzbs})
+
 
     @cherrypy.expose()
     def GetMovie(self, tmdbid, page=''):
