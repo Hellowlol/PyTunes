@@ -1,7 +1,7 @@
 import os
 import pytunes
 from fanart.movie import Movie
-fatv_apikey = pytunes.settings.get('fatv_apikey', '')
+fatv_apikey = pytunes.FANART
 os.environ.setdefault('FANART_APIKEY', fatv_apikey)
 def GetArt(id, type):
     fanart, arts, discs, banners, logos, hdlogos, posters, thumbs = [], [], [], [], [], [], [], []

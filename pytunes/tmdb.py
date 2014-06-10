@@ -1,7 +1,7 @@
 import pytunes
 from datetime import datetime
 from tmdbsimple import TMDB
-tmdb = TMDB(pytunes.settings.get('tmdb_apikey', ''))
+tmdb = TMDB(pytunes.TMDB)
 tmdb_url = 'http://image.tmdb.org/t/p/original'
 
 def TVInfo(tmdbid):

@@ -1,7 +1,10 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-A
 """ Module for Media Management  """
 import cherrypy
 import pytunes
-from pytunes import tmdb, staticvars, scheduler
+from qbittorrent import qbittorrent as qb
+from pytunes import tmdb, staticvars, scheduler, processmovies, processtv, processmusic, searcher
 from pytunes.staticvars import get_var as html
 from pytunes.proxy import get_image
 import time
@@ -19,6 +22,11 @@ from jsonrpclib import Server
 from sqlobject import SQLObject, SQLObjectNotFound
 from sqlobject.col import StringCol, IntCol, FloatCol
 import logging
+from random import randint
+from apscheduler.scheduler import Scheduler
+sched = Scheduler()
+sched.start() 
+settings = pytunes.settings
 
 musicvideo_schema_map = {
 'c00': 'strTitle',
@@ -134,6 +142,13 @@ class MoviesWanted(SQLObject):
     strRating = StringCol()
     strYear = StringCol()
     strGenre = StringCol()
+    strRuntime = StringCol()
+    strStudios = StringCol()
+    strCountry = StringCol()
+    strWriters = StringCol()
+    strDirectors = StringCol()
+    strActors = StringCol()
+
 
 """ SQLObject class for movie table """
 class Movie(SQLObject):
@@ -319,7 +334,11 @@ class Manager:
     def __init__(self):
         """ Add module to list of modules on load and set required settings """
         self.logger = logging.getLogger('modules.manager')
-        Monitor(cherrypy.engine, scheduler.schedule, frequency=30).subscribe()
+        #Monitor(cherrypy.engine, scheduler.schedule, frequency=120).subscribe()
+        job1 = sched.add_cron_job(processmovies.process, minute="*/%s" % 15)
+        #job2 = sched.add_cron_job(processtv.process, minute="*/%s" % 15)
+        #job3 = sched.add_cron_job(processmusic.process, minute=randint(0,59))
+        job4 = sched.add_cron_job(searcher.FindMovies, minute="*/%s" % 5)
         Album.createTable(ifNotExists=True)
         Discography.createTable(ifNotExists=True)
         Artist.createTable(ifNotExists=True)
@@ -357,27 +376,18 @@ class Manager:
                     'label':'Music Destination Folder', 
                     'name':'music_out', 
                     'dir':True},
-                {'type':'text', 
-                    'label':'Fanart.tv Apikey', 
-                    'name':'fatv_apikey'},
-                {'type':'bool', 
-                    'label':'Fanart.tv Use SSL', 
-                    'name':'fatv_ssl'},
-                {'type':'text', 
-                    'label':'Last.fm Apikey', 
-                    'name':'lastfm_apikey'},
-                {'type':'text', 
-                    'label':'Last.fm Secret Key', 
-                    'name':'lastfm_secretkey'},
-                {'type':'bool', 
-                    'label':'Last.fm Use SSL', 
-                    'name':'lastfm_ssl'},
-                {'type':'text', 
-                    'label':'TMDB Apikey', 
-                    'name':'tmdb_apikey'},
-                {'type':'bool', 
-                    'label':'TMDB Use SSL', 
-                    'name':'tmdb_ssl'}
+                {'type':'select',
+                 'label':'Default Torrent Client',
+                 'name':'default_torr_id',
+                 'options':[],
+                    'desc':'Only Enabled Clients Will Show' 
+                },
+                {'type':'select',
+                 'label':'Default NZB Client',
+                 'name':'default_nzb_id',
+                 'options':[],
+                    'desc':'Only Enabled Clients Will Show' 
+                }
         ]})
 
 
@@ -386,26 +396,6 @@ class Manager:
         """ Generate page from template """
         return pytunes.LOOKUP.get_template('manager.html').render(scriptname='manager')
 
-    @cherrypy.expose()
-    def FindMovie(self, tmdbid):
-        """ Add Movie To Wanted DB Table """
-        info = tmdb.MovieInfo(tmdbid)
-        if info:
-            if info['fanart']:
-                fanart = info['fanart'][0]
-            else: 
-                fanart = ''
-            if info['posters']:
-                poster = info['posters'][0]
-            else: 
-                poster = ''
-        #Check to see if it's already in the table
-        try:
-            check = MoviesWanted.selectBy(strTmdb=tmdbid).getOne()
-            if check:
-                return 'Already in the Want List'
-        except SQLObjectNotFound:
-            MoviesWanted(strTmdb=tmdbid, strImdb=info['imdb'], strTitle=info['title'], strFanart=fanart, strThumb=thumb, strRating=info['rating'], strPlot=info['plot'])
 
     @cherrypy.expose()
     def GetTVShow(self, tmdbid):
@@ -437,9 +427,13 @@ class Manager:
         else:
             writers = 'N/A'
         for each in info['cast']:
+            if each['thumb']:
+                thumb = each['thumb']
+            else:
+                thumb = pytunes.IMGURL + 'no_art_square.png'
             shortname = (each['name'][:14] + '..') if len(each['name']) > 16 else each['name']
             shortrole = (each['role'][:14] + '..') if len(each['role']) > 16 else each['role']
-            actors += html('actor_li') % (each['name'], each['role'], each['thumb'], shortname, shortrole)
+            actors += html('actor_li') % (each['name'], each['role'], thumb, shortname, shortrole)
         show['fanart'] = info['fanart']
         show['body'] = html('tmdb_tv_modal_middle') % (info['poster'], info['plot'], directors, info['genre'], info['status'], info['first_air'], info['last_air'], writers, info['country'], info['networks'], info['seasons'], info['episodes'], actors)
         show['head'] = info['name'] + '   ' + info['first_air']
@@ -447,31 +441,80 @@ class Manager:
         return json.dumps(show)
 
     @cherrypy.expose()
-    def GetMovie(self, tmdbid):
+    def AddMovie(self, tmdbid='', imdbid='', year='', title='', fanart='', thumb='', plot='', rating='', genre='', runtime='', writers='', country='', studios='', actors='', directors=''):
+        #print 'in add movie', tmdbid, imdbid, year, title
+        self.logger.debug("Saving wanted movie to the database: %s" % title)
+        try:
+            movie = MoviesWanted.selectBy(strTmdb=tmdbid).getOne()
+            self.logger.debug('Movie already in database: %s' % title)
+            msg = 'Movie already in database: %s' % title
+        except SQLObjectNotFound:
+            MoviesWanted(strYear=year, strTmdb=tmdbid, strImdb=imdbid, strTitle=title.encode('utf-8'), strFanart=fanart, strThumb=thumb, strPlot=plot.encode('utf-8'), strRating=rating, strGenre=genre, strRuntime=runtime, strWriters=writers.encode('utf-8'), strCountry=country.encode('utf-8'), strStudios=studios.encode('utf-8'), strActors=actors.encode('utf-8'), strDirectors=directors.encode('utf-8'))
+            self.logger.debug('Movie added to database: %s' % title)
+            msg = 'Movie added to database: %s' % title
+            #print tmdbid, imdbid, year, title, fanart, thumb, plot, rating, genre, runtime, writers, country, studios, actors, directors
+
+        return msg
+        
+    @cherrypy.expose()
+    def WantedMovies(self):
+        """ Get Wanted Movie info for interface """
+        movies = ''
+        for movie in MoviesWanted.select():
+            if movie.strThumb:
+                thumb = 'http://image.tmdb.org/t/p/original%s' % movie.strThumb
+            else:
+                thumb = pytunes.IMGURL + 'no_art_square.png'
+            shorttitle = (movie.strTitle[:14] + '..') if len(movie.strTitle) > 16 else movie.strTitle[:14]
+            shorttitle += '<br>' + movie.strYear
+            movies += html('tmdb_thumb_item') % (movie.strTitle, movie.strTmdb,  thumb, shorttitle) 
+            #print movie.strTitle
+        return movies
+        
+    @cherrypy.expose()
+    def ToClient(self, url, type):
+        """ Send torrent or nzb to the default client """
+        #if settings.get('deluge_enable', ''):
+        #if settings.get('utorrent_enable', ''):
+        #if settings.get('transmission_enable', ''):
+        #if settings.get('qbittorrent_enable', ''):
+        return 'Worked'
+
+    @cherrypy.expose()
+    def GetClients(self):
+        torrents = ''
+        nzbs = ''
+        if settings.get('deluge_enable', ''):
+            torrents += '<option id="deluge">Deluge</option>'
+        if settings.get('utorrent_enable', ''):
+            torrents += '<option id="utorrent">uTorrent</option>'
+        if settings.get('transmission_enable', ''):
+            torrents += '<option id="transmission">Transmission</option>'
+        if settings.get('qbittorrent_enable', ''):
+            torrents += '<option id="qbittorrent">qBittorrent</option>'
+        if not torrents:
+            torrents = '<option>No Clients Enabled</option>'
+        if settings.get('nzbget_enable', ''):
+            nzbs += '<option id="nzbget">NZBget</option>'
+        if settings.get('sab_enable', ''):
+            nzbs += '<option id="sabnzbd">Sabnzbd+</option>'
+        if not nzbs:
+            nzbs = '<option>No Clients Enabled</option>'
+        return json.dumps({'torrents':torrents, 'nzbs':nzbs})
+
+
+    @cherrypy.expose()
+    def GetMovie(self, tmdbid, page=''):
         """ Get Movie info """
         movie = {}
         directors = []
         writers = []
         genres = []
+        wactors = []
         actors = ''
 
-        download = html('download_button') % tmdbid
-        print 'tmdbid', tmdbid
         info = tmdb.MovieInfo(tmdbid)
-        print 'title: ', info['title']
-        print 'release_date: ', info['release_date']
-        print 'trailers: ', info['trailers']
-        print 'plot: ', info['plot']
-        print 'popularity: ', info['popularity']
-        print 'year: ', info['year']
-        print 'imdb: ', info['imdb']
-        print 'genre: ', info['genre']
-        print 'tagline: ', info['tagline']
-        print 'runtime: ', info['runtime']
-        print 'original_title: ', info['original_title']
-        print 'rating: ', info['rating']
-        print 'country: ', info['country']
-        print 'language: ', info['language']
+        print info
         for each in info['directors']:
             directors.append(each['name'])
         if directors:
@@ -486,27 +529,41 @@ class Manager:
             writers = 'N/A'
         if info['posters']:
             poster = info['posters'][0]
+            wposter = info['posters'][0]
         else:
             poster = pytunes.IMGURL + 'no_art_square.png'
+            wposter = ''
         for each in info['cast']:
+            if each['thumb']:
+                thumb = each['thumb']
+            else:
+                thumb = pytunes.IMGURL + 'no_art_square.png'
             shortname = (each['name'][:14] + '..') if len(each['name']) > 16 else each['name']
             shortrole = (each['role'][:14] + '..') if len(each['role']) > 16 else each['role']
-            actors += html('actor_li') % (each['name'], each['role'], each['thumb'], shortname, shortrole)
+            actors += html('actor_li') % (each['name'], each['role'], thumb, shortname, shortrole)
+            wactors.append(each['name'])
         if info['trailers']:
             trailer  = html('trailer_button') % info['trailers'][0]
+            wtrailer = info['trailers'][0]
         else:
             trailer = ''
+            wtrailer = ''
         if info['imdb']:
             imdb = html('imdb') % info['imdb']
         else:
             imdb = ''
+            download = html('download_button') % (tmdbid, imdb, info['title'], info['year'])
         if info['fanart']:
             movie['fanart'] = info['fanart'][0]
         else:
             movie['fanart']  = ''
+        download = html('download_button') % (tmdbid, info['imdb'], info['title'], info['year'], movie['fanart'], wposter, info['plot'].replace("\"", "'"), 'rating', ", ".join(info['genre']), info['runtime'], writers, ", ".join(info['country']), ", ".join(info['studios']), ", ".join(wactors), directors)
         movie['body'] = html('tmdb_movie_modal_middle') % (poster, info['plot'], directors, ", ".join(info['genre']), info['runtime'], writers, ", ".join(info['country']), ", ".join(info['studios']), actors)
         movie['head'] = info['title'] + '   ' + info['release_date']
-        movie['foot'] = imdb + trailer + download + html('close_button')
+        if page == 'wantedmovie':
+            movie['foot'] = imdb + trailer + remove + html('close_button')
+        else:
+            movie['foot'] = imdb + trailer + download + html('close_button')
         return json.dumps(movie)
 
         

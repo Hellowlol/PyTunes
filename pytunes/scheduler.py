@@ -1,4 +1,4 @@
-import processmovies, processtv, processmusic
+import processmovies, processtv, processmusic, searcher
 
 def CheckMovies():
     print 'Check Movies'
@@ -6,14 +6,19 @@ def CheckMovies():
 
 def CheckTV():
     print 'Check TV'
-    processtv.process()
+    #processtv.process()
 
 def CheckMusic():
     print 'Check Music'
-    processmusic.process()
+    #processmusic.process()
+
+def FindMovies():
+    print 'Check Music'
+    searcher.FindMovies()
 
 def schedule():
     CheckMovies()
+    searcher.FindMovies()
     #CheckTV()
     #CheckMusic()
 

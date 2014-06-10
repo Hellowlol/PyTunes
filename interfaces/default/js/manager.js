@@ -118,6 +118,60 @@ function loadTopRatedTV(page) {
     });
 }
 
+function downLoad(tmdb, imdb, year, title, fanart, thumb, plot, rating, genre, runtime, writers, country, studios, actors, directors) {
+    //alert("In Download" + tmdb + imdb + year + title + fanart + thumb + plot + rating + genre);
+    var sendData = {
+        tmdbid: tmdb,
+        imdbid: imdb,
+        year: year,
+        title: title,
+        fanart: fanart,
+        thumb: thumb,
+        plot: plot,
+        rating: rating,
+        genre: genre,
+        runtime: runtime,
+        writers: writers,
+        country: country,
+        studios: studios,
+        actors: actors,
+        directors: directors
+    };
+    $.ajax({
+        url: WEBDIR + "manager/AddMovie",
+        type: 'get',
+        data: sendData,
+        dataType: 'text',
+        success: function (data) {
+            notify("Add Movie To Watch List", data, 'success');
+            //if (data === null) return errorHandler();
+        }
+    });
+}
+
+function loadWantedMovies() {
+    $('#movieswanted-grid').empty();
+    //alert("In Wanted Movies");
+    $.ajax({
+        url: WEBDIR + "manager/WantedMovies",
+        type: 'get',
+        dataType: 'html',
+        success: function (data) {
+            //alert("Movies Wanted: " + data);
+            if (data === null) return errorHandler();
+            $('#movieswanted-grid').append(data);
+        },
+        complete: function () {
+            $('.tmdb').click(function(e){
+                e.preventDefault();
+            //    alert('click');
+                loadMovie($(this).prop('id'));
+            });
+            $('.spinner').hide();
+        }
+    });
+}
+
 function loadPopularTV(page) {
     //alert("In Popular TV" + page);
     $.ajax({
@@ -174,6 +228,10 @@ function loadMovie(id) {
 
             $('.modal-fanart').css({
                 'background-image': 'url(' + WEBDIR + 'manager/GetThumb?w=950&h=450&o=10&thumb=' + encodeURIComponent(data.fanart) + ')'
+            });
+
+            $('#download').click(function () {
+                downLoad($(this).attr('tmdb'), $(this).attr('imdb'), $(this).attr('year'), $(this).attr('name'), $(this).attr('fanart'), $(this).attr('thumb'), $(this).attr('plot'), $(this).attr('rating'), $(this).attr('genre'), $(this).attr('runtime'), $(this).attr('writers'), $(this).attr('country'), $(this).attr('studios'), $(this).attr('actors'), $(this).attr('directors'));
             });
             $('#youtube').click(function (e) {
                 //e.preventDefault();
@@ -273,6 +331,9 @@ function loadTab() {
     } 
     else if ($('#shows').is(':visible')) {
         loadShows();
+    } 
+    else if ($('#movieswanted').is(':visible')) {
+        loadWantedMovies();
     } 
     else if ($('#theaters').is(':visible')) {
         $('#theaters-grid').empty();
