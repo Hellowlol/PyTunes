@@ -1,61 +1,175 @@
-var profiles = $('<select>');
-$(document).ready(function () {
-    $(window).trigger('hashchange');
-    getMovieList();
-    getNotificationList();
-    getHistory();
-    $('#searchform').submit(function (e) {
-        e.preventDefault();
-        var search = $('#moviename').val();
-        if (search) searchMovie(search);
-    });
-    $.get(WEBDIR + 'couchpotato/GetProfiles', function (data) {
-        if (data === null) return;
-        $.each(data.list, function (i, item) {
-            if (!item.hide) profiles.append($('<option>').val(item.id).text(item.label));
-        });
-    });
-});
+var profiles = $('<select>')
+$(document).ready(function() {
+    $(window).trigger('hashchange')
+    getMovieLists()
+    getNotificationList()
+    getHistory()
+    $('#searchform').submit(function(e) {
+        e.preventDefault()
+        var search = $('#moviename').val()
+        if (search) searchMovie(search)
+    })
+    $.get(WEBDIR + 'couchpotato/GetProfiles', function(data) {
+        if (data === null) return
+        $.each(data.list, function(i, item) {
+            if (!item.hide) profiles.append($('<option>').val(item._id).text(item.label))
+        })
+    })
+})
 
-function getMovieList() {
-    var wanted = $('#wanted-grid').empty();
-    $('.spinner').show();
-    $.getJSON(WEBDIR + 'couchpotato/GetMovieList', function (result) {
-        $('.spinner').hide();
-        if (result === null || result.total === 0) {
-            wanted.append($('<li>').html('No wanted movies found'));
+
+function getMovies(strStatus, pHTMLElement) {
+    pHTMLElement.empty();
+    $(".spinner").show();
+
+    $.getJSON(WEBDIR + "couchpotato/GetMovieList/" + strStatus, function (pResult) {
+        $(".spinner").hide();
+
+        if (pResult === null || pResult.total === 0) {
+            pHTMLElement.append($("<li>").html("No " + strStatus + " movies found"));
             return;
         }
-        $.each(result.movies, function (i, movie) {
-            var link = $('<a>').attr('href', '#').click(function (e) {
-                e.preventDefault();
-                showMovie(movie);
+
+        $.each(pResult.movies, function(nIndex, pMovie) {
+            var strHTML = $("<a>").attr("href", "#").click(function(pEvent) {
+                pEvent.preventDefault();
+                showMovie(pMovie);
             });
-            var src = WEBDIR + 'couchpotato/GetImage?w=100&h=150&url=' + movie.library.info.images.poster[0];
-            link.append($('<img>').attr('src', src).addClass('thumbnail'));
-            if (movie.releases.length > 0) {
-                link.append($('<i>').attr('title', 'Download').addClass('icon-white icon-download status'));
+
+            if (pMovie.info.images.poster && pMovie.info.images.poster_original) {
+                strHTML.append($("<img>").attr("src", WEBDIR + "couchpotato/GetImage?w=100&h=150&url=" + pMovie.info.images.poster[0]).attr("width", "100").attr("height", "150").addClass("thumbnail"));
             }
-            var title = shortenText(movie.library.info.original_title, 12);
-            link.append($('<h6>').addClass('movie-title').html(title));
-            wanted.append($('<li>').attr('id', movie.id).append(link));
+
+            if (pMovie.releases.length > 0) {
+                strHTML.append($("<i>").attr("title", "Download").addClass("icon-white icon-download status"));
+            }
+
+            strHTML.append($("<h6>").addClass("movie-title").html(shortenText(pMovie.info.original_title, 12)));
+            pHTMLElement.append($("<li>").attr("id", pMovie.id).append(strHTML));
         });
     });
+    
 }
 
+function getMovieLists() {
+    getMovies("done", $("#library-grid"));
+    getMovies("active", $("#wanted-grid")); 
+}
+
+
+function addMovie(movieid, profile, title) {
+    var data = {
+        movieid: movieid,
+        profile: profile,
+        title: encodeURIComponent(title)
+    }
+    $.getJSON(WEBDIR + 'couchpotato/AddMovie', data, function (result) {
+        if (result.success) {
+            notify('CouchPotato', 'Added ' + title, 'info');
+            $('a[href=#wanted]').tab('show')
+        } else {
+            notify('CouchPotato', 'Failed to add ' + title, 'info')
+        }
+    })
+}
+function editMovie(id, profile, title) {
+    $.getJSON(WEBDIR + 'couchpotato/EditMovie', {
+        id: id,
+        profile: profile,
+        title: encodeURIComponent(title)
+    }, function (result) {
+        if (result.success) {
+            notify('CouchPotato', 'Profile changed', 'info')
+        } else {
+            notify('CouchPotato', 'An error occured.', 'error')
+        }
+    })
+}
+function deleteMovie(id, name) {
+    $.getJSON(WEBDIR + 'couchpotato/DeleteMovie', {id: id}, function (result) {
+        if (result.success) {
+            $('#' + id).fadeOut()
+            getMovieLists();
+        } else { 
+            notify('CouchPotato', 'An error occured.', 'error')
+        }
+    })
+}
+function refreshMovie(id, name) {
+    $.getJSON(WEBDIR + 'couchpotato/RefreshMovie', {id: id}, function (result) {
+        if (result.success) {
+            notify('CouchPotato', 'Refreshing: ' + name, 'info')
+        } else {
+            notify('CouchPotato', 'An error occured.', 'error')
+        }
+    })
+}
+function searchMovie(q) {
+    var grid = $('#result-grid').empty()
+    $('a[href=#result]').tab('show')
+    $('.spinner').show()
+    $.getJSON(WEBDIR + 'couchpotato/SearchMovie', {
+        q: encodeURIComponent(q)
+    }, function (result) {
+        $('.spinner').hide()
+        $.each(result.movies, function(i, movie) {
+            var link = $('<a>').attr('href', '#').click(function(e) {
+                e.preventDefault()
+                showMovie(movie)
+            })
+            var src = 'holder.js/100x150/text:No artwork'
+            if (movie.images.poster[0]) {
+                src = WEBDIR + 'couchpotato/GetImage?w=100&h=150&url=' + movie.images.poster[0]
+            }
+            link.append($('<img>').attr('src', src).addClass('thumbnail'))
+            var title = shortenText(movie.original_title, 12)
+            link.append($('<h6>').addClass('movie-title').html(title))
+            grid.append($('<li>').attr('id', movie.id).append(link))
+        })
+        Holder.run()
+    })
+}
+function getNotificationList() {
+    $.getJSON(WEBDIR + 'couchpotato/GetNotificationList', function (result) {
+        if (result == null) return
+        $.each(result.notifications, function(i, item) {
+            if (!item.read) notify('Notifications', item.message, 'info')
+        })
+    })
+}
+function getHistory() {
+    $.getJSON(WEBDIR + 'couchpotato/GetNotificationList', function (result) {
+        if (result == null) return
+        $.each(result.notifications, function(i, item) {
+            $('#history-grid').prepend(
+                $('<tr>').append(
+                    $('<td>').text(parseDate(item.added)),
+                    $('<td>').text(item.message)
+                )
+            )
+        })
+    })
+}
+
+
 function showMovie(movie) {
-    var info = '';
-    var plot = '';
-    var year = '';
-    if (movie.library) {
-        info = movie.library.info;
-        plot = movie.library.plot;
-        year = movie.library.year;
+    var plot;
+    var info;
+    var year;
+    var modalButtons;
+
+    //If true, it was not called from a search.
+    if (typeof movie.plot === 'undefined') {
+        plot = movie.info.plot;
+        info = movie.info;
+        year = movie.info.year;
+
     } else {
         info = movie;
         plot = movie.plot;
         year = movie.year;
     }
+
     var src = 'holder.js/154x231/text:No artwork';
     if (info.images.poster && info.images.poster[0]) {
         src = WEBDIR + 'couchpotato/GetImage?w=154&h=231&url=' + info.images.poster[0];
@@ -84,40 +198,45 @@ function showMovie(movie) {
     }
 
     var titles = $('<select>').attr('id', 'titles');
-    if (movie.library && movie.library.titles) {
-        $.each(movie.library.titles, function (i, item) {
-            titles.append($('<option>').text(item.title).val(item.title).prop('selected', item.
-            default));
-        });
+    if (typeof movie.plot === 'undefined') {
+        $.each(info.titles, function(i, item) {
+            titles.append($('<option>').text(item).val(item).prop('selected', item.default));
+        })
     } else {
         $.each(info.titles, function (i, item) {
             titles.append($('<option>').text(item).val(item));
         });
+
     }
+
+    
 
     profiles.unbind();
     var title = info.original_title + ' (' + year + ')';
-    var modalButtons = {};
-    if (movie.library) {
-        profiles.change(function () {
-            editMovie(movie.id, profiles.val(), titles.val());
-        }).val(movie.profile_id);
-        titles.change(function () {
-            editMovie(movie.id, profiles.val(), titles.val());
-        });
+    profiles.change(function () {
+        editMovie(movie._id, profiles.val(), titles.val());
+    }).val(movie.profile_id);
+    titles.change(function () {
+        editMovie(movie._id, profiles.val(), titles.val());
+    });
+
+
+    // If showmovie isnt called from a search
+    if (typeof movie.in_wanted === 'undefined' || typeof movie.in_library === 'undefined') {
         modalButtons = {
             'Delete': function () {
                 if (confirm('Do you want to delete: ' + title)) {
-                    deleteMovie(movie.id, title);
+                    deleteMovie(movie._id, title);
                     hideModal();
                 }
             },
                 'Refresh': function () {
-                refreshMovie(movie.id, title);
+                refreshMovie(movie._id, title);
                 hideModal();
             }
         };
     } else {
+        // Was called from search
         modalButtons = {
             'Add': function () {
                 addMovie(movie.imdb, profiles.val(), titles.val());
@@ -126,48 +245,69 @@ function showMovie(movie) {
         };
     }
     if (info.imdb) {
-        $.extend(modalButtons, {
-            'IMDb': function () {
-                window.open('http://www.imdb.com/title/' + info.imdb, 'IMDb');
+        $.extend(modalButtons,{
+            'IMDb' : function() {
+                window.open('http://www.imdb.com/title/'+info.imdb,'IMDb')
             }
-        });
+        })
     }
+
+    
+    //Make sure that this isnt a search call...
+    if (typeof movie.plot === 'undefined') {
+        //Loop all with movies with releases. Dont add button if its done.
+        if (movie.releases && movie.releases.length > 0) {
+            $.each(movie.releases, function (nIndex, rr) {
+                if (rr.status !== 'done') {
+                    $.extend(modalButtons, {
+                        'Releases': function () {
+                            $('.modal-body').html(strTable);
+                            }
+                        });
+                    }
+                });
+        }
+    }
+    
+
     modalInfo.append(titles, profiles);
+    if (movie.releases && movie.releases.length > 0 && movie.releases.status !== 'done') {
+        var strTable = $("<table>").addClass("table table-striped table-hover").append(
+        $("<tr>").append("<th>Action</th>").append("<th>Name</th>").append("<th>Score</th>").append("<th>Size</th>"));
 
-    if (movie.releases && movie.releases.length > 0) {
-        var releaseTable = $('<table>').addClass('table table-striped table-hover');
-        $.each(movie.releases, function (i, item) {
-            if (item.info.id === undefined) return;
-            releaseTable.append(
-            $('<tr>').append(
-            $('<td>').append(
-            $('<a>').attr('href', '#').append(
-            $('<i>').attr('title', 'Download').addClass('icon-download')).click(function (e) {
-                e.preventDefault();
-                hideModal();
-                $.getJSON('DownloadRelease/?id=' + item.id);
-            }),
-            $('<a>').attr('href', 'DownloadRelease?id=' + item.info.id).append(
-            $('<i>').attr('title', 'Ignore').addClass('icon-remove-sign')).click(function (e) {
-                e.preventDefault();
-                $(this).closest('tr').toggleClass('ignore');
-                $.getJSON('IgnoreRelease/?id=' + item.id);
-            })),
-            $('<td>').append(
-            $('<a>').attr('href', '#').text(item.info.name).click(function (e) {
-                e.preventDefault();
-                window.open(item.info.detail_url);
-            })),
-            $('<td>').html(bytesToSize(item.info.size * 1000000))).toggleClass('ignore', item.status_id == 3));
-        });
-        $.extend(modalButtons, {
-            'Releases': function () {
-                $('.modal-body').html(releaseTable);
-            }
-        });
+            $.each(movie.releases, function (nIndex, pRelease) {
+                if (pRelease.info === undefined || pRelease.info.id === undefined) {
+                    return;
+                }
+                
+                strTable.append(
+                $("<tr>").append(
+                $("<td>").append(
+                $("<a>").attr("href", "#").append(
+                $("<i>").attr("title", "Download").addClass("icon-download")).click(function (pEvent) {
+                    pEvent.preventDefault();
+                    hideModal();
+                    $.getJSON("DownloadRelease/?id=" + pRelease._id);
+                }),
+                $("<a>").attr("href", "#").append(
+                $("<i>").attr("title", "Ignore").addClass("icon-remove-sign")).click(function (pEvent) {
+                    pEvent.preventDefault();
+                    $(this).closest("tr").toggleClass("ignore");
+                    $.getJSON("IgnoreRelease/?id=" + pRelease._id);
+                })),
+                $("<td>").append(
+                $("<a>").attr("href", "#").text(pRelease.info.name).click(function (pEvent) {
+                    pEvent.preventDefault();
+                    window.open(pRelease.info.detail_url);
+                })),
+                $("<td>").append(pRelease.info.score),
+                $("<td>").html(bytesToSize(pRelease.info.size * 1000000))).toggleClass("ignore", pRelease.status_id == 3));
+
+            });
     }
+    
 
-    if (info.images.backdrop.length > 0) {
+    if (info.images.backdrop && info.images.backdrop.length > 0) {
         var backdrop = WEBDIR + 'couchpotato/GetImage?w=675&h=400&o=10&url=' + encodeURIComponent(info.images.backdrop);
         $('.modal-fanart').css({
             'background-image': 'url(' + backdrop + ')'
@@ -175,107 +315,6 @@ function showMovie(movie) {
     }
 
     var modalBody = $('<div>').append(modalImg, modalInfo);
-    showModal(title + ' (' + year + ')', modalBody, modalButtons);
+    showModal(title, modalBody, modalButtons);
     Holder.run();
-}
-
-function addMovie(movieid, profile, title) {
-    var data = {
-        movieid: movieid,
-        profile: profile,
-        title: encodeURIComponent(title)
-    };
-    $.getJSON(WEBDIR + 'couchpotato/AddMovie', data, function (result) {
-        if (result === null || result.success !== true) return;
-        setTimeout(function () {
-            getMovieList();
-            $('a[href=#wanted]').tab('show');
-        }, 1000);
-    });
-}
-
-function editMovie(id, profile, title) {
-    $.getJSON(WEBDIR + 'couchpotato/EditMovie', {
-        id: id,
-        profile: profile,
-        title: encodeURIComponent(title)
-    }, function (result) {
-        if (result.success) {
-            notify('CouchPotato', 'Profile changed', 'info');
-            getMovieList();
-        } else {
-            notify('CouchPotato', 'An error occured.', 'error');
-        }
-    });
-}
-
-function deleteMovie(id, name) {
-    $.getJSON(WEBDIR + 'couchpotato/DeleteMovie', {
-        id: id
-    }, function (result) {
-        if (result.success) {
-            $('#' + id).fadeOut();
-        } else {
-            notify('CouchPotato', 'An error occured.', 'error');
-        }
-    });
-}
-
-function refreshMovie(id, name) {
-    $.getJSON(WEBDIR + 'couchpotato/RefreshMovie', {
-        id: id
-    }, function (result) {
-        if (result.success) {
-            notify('CouchPotato', 'Refreshing: ' + name, 'info');
-        } else {
-            notify('CouchPotato', 'An error occured.', 'error');
-        }
-    });
-}
-
-function searchMovie(q) {
-    var grid = $('#result-grid').empty();
-    $('a[href=#result]').tab('show');
-    $('.spinner').show();
-    $.getJSON(WEBDIR + 'couchpotato/SearchMovie', {
-        q: encodeURIComponent(q)
-    }, function (result) {
-        $('.spinner').hide();
-        $.each(result.movies, function (i, movie) {
-            var link = $('<a>').attr('href', '#').click(function (e) {
-                e.preventDefault();
-                showMovie(movie);
-            });
-            var src = 'holder.js/100x150/text:No artwork';
-            if (movie.images.poster[0]) {
-                src = WEBDIR + 'couchpotato/GetImage?w=100&h=150&url=' + movie.images.poster[0];
-            }
-            link.append($('<img>').attr('src', src).addClass('thumbnail'));
-            var title = shortenText(movie.original_title, 12);
-            link.append($('<h6>').addClass('movie-title').html(title));
-            grid.append($('<li>').attr('id', movie.id).append(link));
-        });
-        Holder.run();
-    });
-}
-
-function getNotificationList() {
-    $.getJSON(WEBDIR + 'couchpotato/GetNotificationList', function (result) {
-        if (result === null) return;
-        $.each(result.notifications, function (i, item) {
-            if (!item.read) notify('Notifications', item.message, 'info');
-        });
-    });
-}
-
-function getHistory() {
-    $.getJSON(WEBDIR + 'couchpotato/GetNotificationList', function (result) {
-        if (result === null) return;
-        $.each(result.notifications, function (i, item) {
-            $('#history-grid').prepend(
-            $('<tr>').append(
-            $('<td>').text(parseDate(item.added)),
-            $('<td>').text(item.message)));
-        });
-    });
 }
