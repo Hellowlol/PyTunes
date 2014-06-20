@@ -1,5 +1,5 @@
 <%inherit file="base.html"/>
-<% settings = self.attr.settings %>
+<% settings = self.attr.settings%>
 <div class="container-fluid">
     <div class="content maincontent">
         <div class="page-header page-title">
@@ -9,8 +9,10 @@
         <form action="" id="searchform" class="form-inline">
             <input class="span2" id="query" name="query" type="text" value="" placeholder="Search term" />
             <select class="span2" name="engineid" id="engineid">
-                <option value="ka">KickassTorrents</option>
-            </select>
+                 % for p in torrentproviders:
+                    <option value="test">${p}</option>
+                % endfor
+                </select>
             <select class="span2" name="catid" id="catid">
                 <option value="all">Everything</option>
                 <option value="movies">Movies</option>

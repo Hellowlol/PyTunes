@@ -1,8 +1,9 @@
 
-function search(query, catid) {
+function search(query, engineid, catid) {
+    alert(engineid)
     if (query === undefined) return;
     $.ajax({
-        url: WEBDIR + 'torrents/search?q=' + query + '&cat=' + catid,
+        url: WEBDIR + 'torrents/search?q=' + query + '&engineid=' + engineid + '&cat=' + catid,
         type: 'get',
         dataType: 'html',
         timeout: 60000,
@@ -39,7 +40,7 @@ function search(query, catid) {
 
 $(document).ready(function () {
     $('#searchform').submit(function () {
-        search($('#query').val(), $('#catid').val());
+        search($('#query').val(), $('#engineid :selected').text(), $('#catid').val());
         return false;
     });
 });
