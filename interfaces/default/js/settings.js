@@ -9,6 +9,14 @@ $(document).ready(function () {
         var data = btn.parents('form:first').serialize();
         $.post(action, data, function (data) {
             btn.button('reset');
+            if ($('#couchpotato_name').is(":visible")) {
+                    if (data.success) {
+                        $('#couchpotato_apikey').val(data.api_key);
+                    } else {
+                        notify('Settings', 'Failed to get couchpotato apikey', 'error');
+                        btn.addClass('btn-danger').append(' ').append($('<i>').addClass('icon-white icon-exclamation-sign'));
+                    }
+            }
             if (data !== null) {
                 btn.addClass('btn-success').append(' ').append($('<i>').addClass('icon-white icon-ok'));
                 if (data['Network.MacAddress'] && data['Network.MacAddress'] != 'Busy') {
