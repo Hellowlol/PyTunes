@@ -4,7 +4,7 @@
 import cherrypy
 import pytunes
 from qbittorrent import qbittorrent as qb
-from pytunes import tmdb, staticvars, scheduler, processmovies, processtv, processmusic, searcher
+from pytunes import tmdb, staticvars, scheduler, processmovies, processtv, processmusic, searcher, imdbpy
 from pytunes.staticvars import get_var as html
 from pytunes.proxy import get_image
 import time
@@ -334,11 +334,11 @@ class Manager:
     def __init__(self):
         """ Add module to list of modules on load and set required settings """
         self.logger = logging.getLogger('modules.manager')
-        #Monitor(cherrypy.engine, scheduler.schedule, frequency=120).subscribe()
-        job1 = sched.add_cron_job(processmovies.process, minute="*/%s" % 15)
+        Monitor(cherrypy.engine, processmovies.process, frequency=900).subscribe()
+        #job1 = sched.add_cron_job(processmovies.process, minute="*/%s" % 15)
         #job2 = sched.add_cron_job(processtv.process, minute="*/%s" % 15)
         #job3 = sched.add_cron_job(processmusic.process, minute=randint(0,59))
-        job4 = sched.add_cron_job(searcher.FindMovies, minute="*/%s" % 5)
+        #job4 = sched.add_cron_job(searcher.FindMovies, minute="*/%s" % 5)
         Album.createTable(ifNotExists=True)
         Discography.createTable(ifNotExists=True)
         Artist.createTable(ifNotExists=True)
@@ -450,8 +450,8 @@ class Manager:
             msg = 'Movie already in database: %s' % title
         except SQLObjectNotFound:
             MoviesWanted(strYear=year, strTmdb=tmdbid, strImdb=imdbid, strTitle=title.encode('utf-8'), strFanart=fanart, strThumb=thumb, strPlot=plot.encode('utf-8'), strRating=rating, strGenre=genre, strRuntime=runtime, strWriters=writers.encode('utf-8'), strCountry=country.encode('utf-8'), strStudios=studios.encode('utf-8'), strActors=actors.encode('utf-8'), strDirectors=directors.encode('utf-8'))
-            self.logger.debug('Movie added to database: %s' % title)
-            msg = 'Movie added to database: %s' % title
+            self.logger.debug('Movie added to wanted database: %s' % title)
+            msg = 'Movie added to wanted database: %s' % title
             #print tmdbid, imdbid, year, title, fanart, thumb, plot, rating, genre, runtime, writers, country, studios, actors, directors
 
         return msg
@@ -468,6 +468,21 @@ class Manager:
             shorttitle = (movie.strTitle[:14] + '..') if len(movie.strTitle) > 16 else movie.strTitle[:14]
             shorttitle += '<br>' + movie.strYear
             movies += html('tmdb_thumb_item') % (movie.strTitle, movie.strTmdb,  thumb, shorttitle) 
+            #print movie.strTitle
+        return movies
+        
+    @cherrypy.expose()
+    def Top250Movies(self):
+        """ Get top 250 Movie info for interface """
+        movies = imdb.Top250()
+        for movie in movies:
+            if movie['thumb']:
+                thumb = movie['thumb']
+            else:
+                thumb = pytunes.IMGURL + 'no_art_square.png'
+            shorttitle = (movie['title'][:14] + '..') if len(movie['title']) > 16 else movie['title'][:14]
+            shorttitle += '<br>' + movie['year']
+            movies += html('tmdb_thumb_item') % (movie['title'], movie['imdbid'],  thumb, shorttitle) 
             #print movie.strTitle
         return movies
         

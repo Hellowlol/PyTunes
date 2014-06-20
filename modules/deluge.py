@@ -24,7 +24,7 @@ class Deluge:
             'id': 'deluge',
             'test': pytunes.WEBDIR + 'deluge/ping',
             'fields': [
-                {'type': 'bool', 'label': 'Enable', 'name': 'deluge_enable'},
+                {'type': 'bool', 'label': 'Enable', 'name': 'deluge_enable', 'desc': 'Change Requires Restart'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'deluge_name'},
                 {'type': 'text', 'label': 'IP / Host *', 'name': 'deluge_host'},
                 {'type': 'text', 'label': 'Port *', 'name': 'deluge_port'},
@@ -97,6 +97,7 @@ class Deluge:
             self.auth()
             response = self.read_data(data)
             self.logger.debug ("response is %s" %response)
+            print "response is %s" %response
         return response
 
     def auth(self):
@@ -105,7 +106,7 @@ class Deluge:
         
     def read_data(self,data):
         try:
-            self.logger.debug("Read data from server")
+            self.logger.debug("Read data from server. Data:%s" % data)
             
             host = pytunes.settings.get('deluge_host', '')
             port = str(pytunes.settings.get('deluge_port', ''))

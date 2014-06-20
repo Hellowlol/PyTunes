@@ -360,6 +360,8 @@ function loadTab() {
         $('#popular-grid').empty();
         loadPopular(page_counts['popular']);
         page_counts['popular'] += 1;
+        loadPopular(page_counts['popular']);
+        page_counts['popular'] += 1;
     } 
     else if ($('#topratedtv').is(':visible')) {
         $('#topratedtv-grid').empty();

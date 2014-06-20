@@ -127,13 +127,11 @@ $(document).ready(function () {
 });
 
 function loadClients() {
-            //notify('data');
     $.ajax({
         url: WEBDIR + 'manager/GetClients',
         type: 'get',
         dataType: 'json',
         success: function (data) {
-            //notify('data' + data.torrents);
             if (data === null) return errorHandler();
             $('#default_torr_id').append(data.torrents);
             $('#default_nzb_id').append(data.nzbs);
