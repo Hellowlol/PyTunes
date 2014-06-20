@@ -36,6 +36,8 @@ def parse_arguments():
                         help='Print debug text')
     parser.add_argument('--nopass', action='store_true', default=False,
                         help='Help with lost password')
+    parser.add_argument('--nossl', action='store_true', default=False,
+                        help='Help with ssl cert problems')
     parser.add_argument('--webdir', default=None,
                         help='Use a custom webdir')
     parser.add_argument('--loglevel', default='info',
@@ -101,8 +103,12 @@ def main():
     pytunes.settings = Settings()
 
     # Check for SSL
-    pytunes.SSLCERT = pytunes.settings.get('app_ssl_cert')
-    pytunes.SSLKEY = pytunes.settings.get('app_ssl_key')
+    if not args.nossl and pytunes.settings.get('enable_ssl'):
+        pytunes.SSLCERT = pytunes.settings.get('app_ssl_cert')
+        pytunes.SSLKEY = pytunes.settings.get('app_ssl_key')
+    else:
+        pytunes.SSLCERT = ''
+        pytunes.SSLKEY = ''
 
     pytunes.WEBDIR = pytunes.settings.get('app_webdir', '/')
     if args.webdir:

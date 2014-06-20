@@ -12,6 +12,8 @@ def start():
     """ Main function for starting PyTunes server """
     logger = logging.getLogger('pytunes.server')
     logger.debug("Setting up to start cherrypy")
+    ssl = ''
+    secure = ''
 
     # Set server ip, port and root
     cherrypy.config.update({
@@ -28,6 +30,8 @@ def start():
 
     # Enable SSL
     if pytunes.SSLCERT and pytunes.SSLKEY:
+        ssl = 's'
+        secure = 'Secure '
         cherrypy.config.update({
             'server.ssl_module': 'builtin',
             'server.ssl_certificate': pytunes.SSLCERT,
@@ -108,7 +112,7 @@ def start():
     # Start the CherryPy server (remove trailing slash from webdir)
     logger.info("Starting up webserver")
     print '******************************************************'
-    print 'Starting Pytunes on port ' + str(pytunes.PORT) + '.'
-    print 'Start your browser and go to http://localhost:' + str(pytunes.PORT) + '/' + pytunes.WEBDIR[:-1]
+    print 'Starting Pytunes on ' + secure + 'Port ' + str(pytunes.PORT) + '.'
+    print 'Start your browser and go to http' + ssl + '://localhost:' + str(pytunes.PORT) + '/' + pytunes.WEBDIR[:-1]
     print '******************************************************'
     cherrypy.quickstart(pytunes.ROOT, pytunes.WEBDIR[:-1], config=app_config)
