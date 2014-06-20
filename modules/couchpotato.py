@@ -1,9 +1,13 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import cherrypy
 import pytunes
 from pytunes.proxy import get_image
-from json import loads
+import json
 from urllib2 import urlopen
 import logging
+import hashlib
 
 
 class Couchpotato:
@@ -12,14 +16,16 @@ class Couchpotato:
         pytunes.MODULES.append({
             'name': 'CouchPotato',
             'id': 'couchpotato',
-            'test': pytunes.WEBDIR + 'couchpotato/ping',
+            'test': pytunes.WEBDIR + 'couchpotato/getapikey',
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'couchpotato_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'couchpotato_name', 'placeholder':''},
                 {'type': 'text', 'label': 'IP / Host *', 'name': 'couchpotato_host', 'placeholder':'localhost'},
+                {'type': 'text', 'label': 'Username *', 'name': 'couchpotato_username', 'placeholder':''},
+                {'type': 'text', 'label': 'Password *', 'name': 'couchpotato_password', 'placeholder':''},
                 {'type': 'text', 'label': 'Port *', 'name': 'couchpotato_port', 'placeholder':'', 'desc':'Default is 5050'},
                 {'type': 'text', 'label': 'Basepath', 'name': 'couchpotato_basepath'},
-                {'type': 'text', 'label': 'API key', 'name': 'couchpotato_apikey'},
+                {'type': 'text', 'label': 'API key', 'name': 'couchpotato_apikey', 'desc': 'Press test button to get apikey'},
                 {'type': 'bool', 'label': 'Use SSL', 'name': 'couchpotato_ssl'}
         ]})
 
@@ -49,11 +55,33 @@ class Couchpotato:
         ssl = 's' if couchpotato_ssl else ''
         url = 'http' + ssl + '://' + couchpotato_host + ':' + couchpotato_port + couchpotato_basepath + 'api/' + couchpotato_apikey
         try:
-            return loads(urlopen(url + '/app.available/', timeout=10).read())
+            return json.loads(urlopen(url + '/app.available/', timeout=10).read())
         except:
             self.logger.error("Unable to connect to couchpotato")
             self.logger.debug("connection-URL: " + url)
             return
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def getapikey(self, couchpotato_username, couchpotato_password, couchpotato_host, couchpotato_port, couchpotato_apikey, couchpotato_basepath, couchpotato_ssl=False, **kwargs):
+        self.logger.debug("Testing connectivity to couchpotato")
+        if couchpotato_password and couchpotato_username != '':
+            couchpotato_password = hashlib.md5(couchpotato_password).hexdigest()
+            couchpotato_username = hashlib.md5(couchpotato_username).hexdigest()
+            
+        getkey = 'getkey/?p=%s&u=%s' % (couchpotato_password, couchpotato_username)
+        
+        if not(couchpotato_basepath.endswith('/')):
+            couchpotato_basepath += "/"
+    
+        ssl = 's' if couchpotato_ssl else ''
+        url = 'http' + ssl + '://' + couchpotato_host + ':' + couchpotato_port + couchpotato_basepath + getkey
+        try:
+            return json.loads(urlopen(url, timeout=2).read())
+        except:
+            self.logger.error("Unable to connect to couchpotato")
+            self.logger.debug("connection-URL: " + url)
+            return json.loads(urlopen(url, timeout=2).read())
 
     @cherrypy.expose()
     def GetImage(self, url, h=None, w=None, o=100):
@@ -61,9 +89,13 @@ class Couchpotato:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def GetMovieList(self, limit=''):
+    def GetMovieList(self, status='', limit=''):
+        if status == 'done':
+            status += '&type=movie&release_status=done&status_or=1'
+            return self.fetch('movie.list/?status=' + status)
+
         self.logger.debug("Fetching Movies")
-        return self.fetch('movie.list/?status=active&limit_offset=' + limit)
+        return self.fetch('movie.list/?status=' + status + '&limit_offset=' + limit)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -105,6 +137,12 @@ class Couchpotato:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
+    def GetReleases(self, id=''):
+        self.logger.debug("Downloading movie")
+        return self.fetch('media.get/?id=' + id)
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
     def DownloadRelease(self, id=''):
         self.logger.debug("Downloading movie")
         return self.fetch('release.download/?id=' + id)
@@ -135,7 +173,7 @@ class Couchpotato:
             url = 'http' + ssl + '://' + host + ':' + port + basepath + 'api/' + apikey + '/' + path
 
             self.logger.debug("Fetching information from: " + url)
-            return loads(urlopen(url, timeout=10).read())
+            return json.loads(urlopen(url, timeout=10).read())
         except Exception, e:
             self.logger.debug("Exception: " + str(e))
             self.logger.error("Unable to fetch information")
