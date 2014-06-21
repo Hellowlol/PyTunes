@@ -151,7 +151,7 @@ def main():
     pytunes.PID = args.pid
 
     # Set Some Temp Vars
-    ssl = 's' if pytunes.SSLCERT and pytunes.SSLKEY else ''
+    ssl = 's' if pytunes.SSLCERT and pytunes.SSLKEY and pytunes.settings.get('enable_ssl')== 'on' else ''
     host = 'localhost' if pytunes.settings.get('app_host') == '0.0.0.0' else pytunes.settings.get('app_host')
 
     # Set Images URL

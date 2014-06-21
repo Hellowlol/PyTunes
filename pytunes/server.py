@@ -30,12 +30,14 @@ def start():
 
     # Enable SSL
     if pytunes.SSLCERT and pytunes.SSLKEY:
+        #cert_dir = os.path.join(pytunes.RUNDIR, "userdata/")
+        print os.path.join(pytunes.RUNDIR, "userdata/", pytunes.SSLCERT)
         ssl = 's'
         secure = 'Secure '
         cherrypy.config.update({
             'server.ssl_module': 'builtin',
-            'server.ssl_certificate': pytunes.SSLCERT,
-            'server.ssl_private_key': pytunes.SSLKEY
+            'server.ssl_certificate': os.path.join(pytunes.RUNDIR, "userdata/", pytunes.SSLCERT),
+            'server.ssl_private_key': os.path.join(pytunes.RUNDIR, "userdata/", pytunes.SSLKEY)
         })
 
     # Daemonize cherrypy if specified
