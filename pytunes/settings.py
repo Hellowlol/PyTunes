@@ -6,7 +6,8 @@ import logging
 from sqlobject import connectionForURI, sqlhub, SQLObject, SQLObjectNotFound
 from sqlobject.col import StringCol
 from random import randrange
-from OpenSSL import crypto, SSL
+from OpenSSL import crypto
+from certgen import * # yes yes, I know, I'm lazy
 from socket import gethostname
 from pprint import pprint
 from time import gmtime, mktime
@@ -82,37 +83,19 @@ class Settings:
         return themes
 
     def create_certs(self, key_file, cert_file):
+        cert_dir = os.path.join(pytunes.RUNDIR, "userdata/")
         """
         If key_file and cert_file don't exist in cert_dir, create a new
         self-signed cert and keypair and write them into that directory.
         """
-        cert_dir = os.path.join(pytunes.RUNDIR, "userdata/")
 
         if not exists(join(cert_dir, cert_file)) \
-                or not exists(join(cert_dir, key_file)):
+            or not exists(join(cert_dir, key_file)):
             
-            # create a key pair
-            k = crypto.PKey()
-            k.generate_key(crypto.TYPE_RSA, 1024)
-
-            # create a self-signed cert
-            cert = crypto.X509()
-            cert.get_subject().C = "RU"
-            cert.get_subject().ST = "My State"
-            cert.get_subject().L = "My Town"
-            cert.get_subject().O = "my company"
-            cert.get_subject().OU = "my organization"
-            cert.get_subject().CN = gethostname()
-            cert.set_serial_number(randrange(1000000000))
-            cert.gmtime_adj_notBefore(0)
-            cert.gmtime_adj_notAfter(10*365*24*60*60)
-            cert.set_issuer(cert.get_subject())
-            cert.set_pubkey(k)
-            cert.sign(k, 'sha1')
-
-            open(join(cert_dir, cert_file), "wt").write(
-                crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
-            open(join(cert_dir, key_file), "wt").write(
-                crypto.dump_privatekey(crypto.FILETYPE_PEM, k))
+            cakey = createKeyPair(TYPE_RSA, 1024)
+            careq = createCertRequest(cakey, CN=gethostname())
+            cacert = createCertificate(careq, (careq, cakey), 0, (0, 60*60*24*365*10)) # 10 years
+            open(join(cert_dir, key_file), 'w').write(crypto.dump_privatekey(crypto.FILETYPE_PEM, cakey))
+            open(join(cert_dir, cert_file), 'w').write(crypto.dump_certificate(crypto.FILETYPE_PEM, cacert))
 
 
