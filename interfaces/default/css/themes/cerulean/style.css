@@ -12,6 +12,95 @@ html, body {
     -moz-box-shadow: 0 1px 2px rgba(0,0,0,.15);
     box-shadow: 0 1px 2px rgba(0,0,0,.15);
 }
+.modal-fanart {
+    background: #fff top center no-repeat;
+    background-size: 100%;
+}
+.modal .movie-poster {
+    height: 200px;
+    width: 133px;
+}
+.modal .actor-thumb {
+    height: 125px;
+    width: 83px;
+}
+.modal .modal-movieinfo {
+    margin-left: 180px;
+    width: 770px;
+}
+.modal .modal-body-middle-right {
+    margin-left: 180px;
+    width: 770px;
+}
+
+.modal .modal-body-middle-bottom {
+    margin-left: 180px;
+    width: 770px;
+}
+
+.modal .modal-body-middle-left {
+    width: 150px;
+}
+
+.modal .modal-body-bottom {
+    margin-top: 15px;
+}
+
+.modal .modal-movie-poster {
+    width: 150px;
+}
+.modal .modal-info-item {
+    width: 350px;
+}
+.modal-star-rating {
+    margin-left: 30px;
+    margin-right: auto;
+}
+.modal .modal-youtube {
+    border: 0;
+    height: 425px;
+    width: 100%;
+    overflow: hidden;
+}
+.modal-h3 {
+    //color: #fff;
+}
+
+.spacer-h10 {
+    height: 5px;
+    width: 10px;
+}   
+.modal {
+    position: fixed;
+    top: 0px;
+    left: 300px;
+    width: 1000px;
+    height: 530px;
+}
+.modal-body {
+    width: 970px;
+    height: 500px;
+}
+.modal-codec {
+    border: 0;
+    height: 20px;
+}
+.modal-aspect {
+    border: 0;
+    height: 20px;
+}
+.modal-resolution {
+    border: 0;
+    height: 20px;
+}
+.modal-mpaa {
+    border: 0;
+    height: 20px;
+}
+.modal-source {
+    border: 0;
+    height: 20px;
+}
 @media (min-width: 980px) {
     .content {
         margin: 0 0 20px 0;
