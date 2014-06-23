@@ -14,6 +14,8 @@ function search(query, engineid, catid) {
         success: function (data) {
             if (data === null) return errorHandler();
             $('#results_table_body').append(data);
+            $('table').trigger("update");
+            $('table').trigger("sorton", [[[3,1], [4,1]]]);
             $('.download').click(function (e) {
                 var sendData = {
                     hash: $(this).attr('torr_link'),
@@ -39,6 +41,7 @@ function search(query, engineid, catid) {
 }
 
 $(document).ready(function () {
+    $('#torrent_search_table').tablesorter();
     $('#searchform').submit(function () {
         search($('#query').val(), $('#engineid :selected').text(), $('#catid').val());
         return false;
