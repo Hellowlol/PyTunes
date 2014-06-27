@@ -10,7 +10,7 @@
             <input class="span2" id="query" name="query" type="text" value="" placeholder="Search term" />
             <select class="span2" name="engineid" id="engineid">
                  % for p in torrentproviders:
-                    <option value="test">${p}</option>
+                    <option value="${p}">${p}</option>
                 % endfor
                 </select>
             <select class="span2" name="catid" id="catid">
@@ -42,5 +42,6 @@
             <tbody id="results_table_body"></tbody>
         </table>
         <div class="spinner"><img alt="spinner" class='pull-right' src="../img/loader.gif" style="float:left"/></div>
+        <div id="errormsg" class=""></div>
     </div>
 </div>

@@ -1,6 +1,5 @@
 
 function search(query, engineid, catid) {
-    alert(engineid)
     if (query === undefined) return;
     $.ajax({
         url: WEBDIR + 'torrents/search?q=' + query + '&engineid=' + engineid + '&cat=' + catid,
@@ -22,7 +21,6 @@ function search(query, engineid, catid) {
                     cmd: 'download'
                 };
                 $.ajax({
-                    //alert('load movie ' + id);
                     url: WEBDIR + "qbittorrent/command",
                     type: 'get',
                     data: sendData,
@@ -36,6 +34,9 @@ function search(query, engineid, catid) {
         },
         complete: function () {
             $('.spinner').hide();
+        },
+        error: function () {
+            //add error block
         }
     });
 }
@@ -43,7 +44,7 @@ function search(query, engineid, catid) {
 $(document).ready(function () {
     $('#torrent_search_table').tablesorter();
     $('#searchform').submit(function () {
-        search($('#query').val(), $('#engineid :selected').text(), $('#catid').val());
+        search($('#query').val(), $('#engineid').val(), $('#catid').val());
         return false;
     });
 });
