@@ -16,6 +16,7 @@ from engines import ka
 from engines import btn
 #from engines import piratebay
 from engines import fenopy
+from engines import yts
 import jsonrpclib
 from pytunes.staticvars import get_var as html
 
@@ -34,6 +35,7 @@ class Torrents:
                 {'type':'bool', 'label':'The Piratebay', 'name':'torrents_piratebay_enabled'},
                 {'type':'bool', 'label':'Fenopy', 'name':'torrents_fenopy_enabled'},
                 {'type':'bool', 'label':'Fenopy verified torrents only', 'name':'torrents_fenopy_enabled_verified'},
+                {'type':'bool', 'label':'Yts', 'name':'torrents_yts_enabled'},
         ]})
 
     def torrentproviders(self):
@@ -43,6 +45,9 @@ class Torrents:
 
         if pytunes.settings.get('torrents_fenopy_enabled') == 1:
             torrentproviders.append('fenopy')
+
+        if pytunes.settings.get('torrents_yts_enabled') == 1:
+            torrentproviders.append('yts')
 
         return torrentproviders
 
@@ -61,34 +66,59 @@ class Torrents:
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def search(self, q='', engineid='', cat='', **kwargs):
-
+        engineid = engineid.lower()
+        cat = cat.lower()
         print 'Searching with %s' % engineid
-        if engineid.lower() == 'kickasstorrents':
+        if engineid == 'kickasstorrents':
             return self.search_kickasstorrents(q, cat)
             
-        elif engineid.lower() == 'btn':
+        elif engineid == 'btn':
             return self.search_btn(q, cat)
 
-        elif engineid.lower() == 'the piratebay':
+        elif engineid == 'the piratebay':
             return self.search_piratebay(q)
 
-        elif engineid.lower() == 'fenopy':
-            return self.search_fenopy(q,cat)
+        elif engineid == 'fenopy':
+            return self.search_fenopy(q, cat)
+
+        elif engineid == 'yts':
+            return self.search_yts(q, cat)
         
-        elif engineid.lower() == 'all':
+        elif engineid == 'all':
             out = ''
-            out += self.search_btn(q, cat)
+
+            if pytunes.settings.get('torrents_btnapikey') and pytunes.settings.get('torrents_btn_enabled') == 1:
+                out += self.search_btn(q, cat)
+
+            if pytunes.settings.get('torrents_fenopy_enabled') == 1:
+                out += self.search_fenopy(q, cat)
+
+            #Default provider
             out += self.search_kickasstorrents(q, cat)
-            out += self.search_fenopy(q, cat)
+            
+            if pytunes.settings.get('torrents_yts_enabled') == 1:
+                out += self.search_yts(q, cat)
+            
             #out += self.search_piratebay(q)#Does not work
             return out
 
-    #Checkmulti call btn, should not run unless explisit btn provider or all and cat tv.
     def search_btn(self, q, cat):
         return btn.search(q, cat)
 
+    def search_yts(self, q, cat):
+        results = yts.search(q, cat)
+        out = ''
+        icon = "<img alt='icon' src='../img/yts.png'/>"
+        for r in results:
+            name = "<a href='" + r['MovieUrl'] + "' target='_blank'>" + r['MovieTitle'] + "</a>"
+            out += html('torrent_search_table') % (icon, name, r['Size'], r['TorrentSeeds'], r['TorrentPeers'], 'yts', r['TorrentUrl'])
+        return out
+        
+
     def search_kickasstorrents(self, q, cat):
         results =  ka.search(q, cat)
+        if not results:
+            return ''
         out = ''
         icon = "<img alt='icon' src='../img/kickasstorrents.png'/>"
         for r in results:
@@ -100,7 +130,7 @@ class Torrents:
     def search_fenopy(self, q, cat):
         results = fenopy.search(q, cat)
         out = ''
-        icon = "<img alt='icon' src='../img/kickasstorrents.png'/>"
+        icon = "<img alt='icon' src='../img/fenopy.png'/>"
         verified = pytunes.settings.get('torrents_fenopy_enabled_verified')
         for t in results:
             if verified and t['verified'] != 1:

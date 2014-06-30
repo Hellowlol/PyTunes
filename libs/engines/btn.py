@@ -14,6 +14,9 @@ def search(q, cat=None):
     result = btn.getTorrents(pytunes.settings.get('torrents_btnapikey', ''), q, 999)
     icon = "<img alt='icon' src='../img/btn.png'/>"
     out = ''
+    supported_cat = ['tv', 'all']
+    if cat not in supported_cat:
+        return ''
 
     try:
         if 'torrents' in result:
@@ -24,11 +27,11 @@ def search(q, cat=None):
             return out
         else:
             logger.info("Couldn't find %s on BTN" % q)
-            return []
+            return ''
 
     except Exception as e:
         logger.error('Failed to find %s on BTN %s' % (q, e))
-        return []
+        return ''
 
 def sizeof(num):
     for x in ['bytes','KB','MB','GB']:

@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import pytunes
 import urllib2
 import urllib
@@ -19,11 +22,16 @@ def search(q=None, cat=None):
     try:
         url = "http://fenopy.se/module/search/api.php?keyword=%s&sort=peer&format=json&limit=100&category=%s" % (urllib.quote_plus(q), d[cat])
         result = urllib2.urlopen(url).read()
+        if 'error: no match found' in result:
+            print "fucking error"
+            return ''
+
         r = json.JSONDecoder('UTF-8').decode(result)
         return r
 
     except Exception as e:
-        logger.error('Fenopy error while searching for %s %s' %(q, e))    
+        logger.error('Fenopy error while searching for %s %s' %(q, e))
+        return '' 
     
     
 
