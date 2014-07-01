@@ -7,7 +7,23 @@ $(document).ready(function() {
     $('#searchform').submit(function(e) {
         e.preventDefault()
         var search = $('#moviename').val()
-        if (search) searchMovie(search)
+
+        check = $("#mycheckbox").is(":checked");
+        if (check) {
+            if ($('#wanted-grid').is(':visible')) {
+            ele = $("#wanted-grid");
+            status = "active"
+        }
+        else if ($('#library-grid').is(':visible')) {
+            ele = $("#library-grid");
+            status = "done"
+        }
+            
+        } else {
+           if (search) searchMovie(search); 
+        }
+        
+        
     })
     $.get(WEBDIR + 'couchpotato/GetProfiles', function(data) {
         if (data === null) return
@@ -15,11 +31,73 @@ $(document).ready(function() {
             if (!item.hide) profiles.append($('<option>').val(item._id).text(item.label))
         })
     })
-})
+    $('.letters').click(function (e) {
+        e.preventDefault();
+        letter = $(this).text();
+        //alert(letter);
+        if ($('#wanted-grid').is(':visible')) {
+            ele = $("#wanted-grid");
+            status = "active"
+        }
+        else if ($('#library-grid').is(':visible')) {
+            ele = $("#library-grid");
+            status = "done"
+        }
+        sortMovies(letter, status, ele);  
+    });
+});
+
+function sortMovies(letters, status, ele) {
+    //pHTMLElement.empty();
+    ele.empty();
+    $(".spinner").show();
+    if (letters.length > 1) {
+        var data = {
+            search: letters,
+            status: status
+        }
+    } else {
+        var data = {
+            starts_with: letters,
+            status: status
+
+        }
+    }
+
+    $.getJSON(WEBDIR + "couchpotato/GetMovieList/", data, function (pResult) {
+        $(".spinner").hide();
+
+        if (pResult === null || pResult.total === 0) {
+            ele.append($("<li>").html("No movies that starts with letter " + letters + " is found"));
+            return;
+        }
+
+        $.each(pResult.movies, function(nIndex, pMovie) {
+            var strHTML = $("<a>").attr("href", "#").click(function(pEvent) {
+                pEvent.preventDefault();
+                showMovie(pMovie);
+            });
+
+            if (pMovie.info.images.poster && pMovie.info.images.poster_original) {
+                strHTML.append($("<img>").attr("src", WEBDIR + "couchpotato/GetImage?w=100&h=150&url=" + pMovie.info.images.poster[0]).attr("width", "100").attr("height", "150").addClass("thumbnail"));
+            }
+
+            if (pMovie.releases.length > 0) {
+                strHTML.append($("<i>").attr("title", "Download").addClass("icon-white icon-download status"));
+            }
+
+            strHTML.append($("<h6>").addClass("movie-title").html(shortenText(pMovie.info.original_title, 12)));
+            ele.append($("<li>").attr("id", pMovie.id).append(strHTML));
+        });
+    });
+    
+}
 
 
 function getMovies(strStatus, pHTMLElement) {
-    pHTMLElement.empty();
+    //pHTMLElement.empty();
+    $("#library-grid").empty
+    $("#wanted-grid").empty
     $(".spinner").show();
 
     $.getJSON(WEBDIR + "couchpotato/GetMovieList/" + strStatus, function (pResult) {
