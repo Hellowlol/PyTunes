@@ -1,8 +1,8 @@
 
-function search(query, catid) {
+function search(query, engineid, catid) {
     if (query === undefined) return;
     $.ajax({
-        url: WEBDIR + 'torrents/search?q=' + query + '&cat=' + catid,
+        url: WEBDIR + 'torrents/search?q=' + query + '&engineid=' + engineid + '&cat=' + catid,
         type: 'get',
         dataType: 'html',
         timeout: 60000,
@@ -13,13 +13,14 @@ function search(query, catid) {
         success: function (data) {
             if (data === null) return errorHandler();
             $('#results_table_body').append(data);
+            $('table').trigger("update");
+            $('table').trigger("sorton", [[[3,1], [4,1]]]);
             $('.download').click(function (e) {
                 var sendData = {
                     hash: $(this).attr('torr_link'),
                     cmd: 'download'
                 };
                 $.ajax({
-                    //alert('load movie ' + id);
                     url: WEBDIR + "qbittorrent/command",
                     type: 'get',
                     data: sendData,
@@ -33,13 +34,17 @@ function search(query, catid) {
         },
         complete: function () {
             $('.spinner').hide();
+        },
+        error: function () {
+            //add error block
         }
     });
 }
 
 $(document).ready(function () {
+    $('#torrent_search_table').tablesorter();
     $('#searchform').submit(function () {
-        search($('#query').val(), $('#catid').val());
+        search($('#query').val(), $('#engineid').val(), $('#catid').val());
         return false;
     });
 });

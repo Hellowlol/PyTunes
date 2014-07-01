@@ -1,5 +1,5 @@
 <%inherit file="base.html"/>
-<% settings = self.attr.settings %>
+<% settings = self.attr.settings%>
 <div class="container-fluid">
     <div class="content maincontent">
         <div class="page-header page-title">
@@ -9,8 +9,10 @@
         <form action="" id="searchform" class="form-inline">
             <input class="span2" id="query" name="query" type="text" value="" placeholder="Search term" />
             <select class="span2" name="engineid" id="engineid">
-                <option value="ka">KickassTorrents</option>
-            </select>
+                 % for p in torrentproviders:
+                    <option value="${p}">${p}</option>
+                % endfor
+                </select>
             <select class="span2" name="catid" id="catid">
                 <option value="all">Everything</option>
                 <option value="movies">Movies</option>
@@ -25,7 +27,7 @@
             <button type="submit" id="search_torr_button" class="btn btn-primary"><i class="icon-search icon-white"></i> Search</button>
         </form>
         </div>
-        <table class="table table-striped table-condensed table-hover table-responsive table-bordered">
+        <table id="torrent_search_table" class="table table-striped table-condensed table-sortable table-hover table-responsive table-bordered">
             <thead class='pt-thead'>
                 <tr>
                     <th>&nbsp;</th>
@@ -40,5 +42,6 @@
             <tbody id="results_table_body"></tbody>
         </table>
         <div class="spinner"><img alt="spinner" class='pull-right' src="../img/loader.gif" style="float:left"/></div>
+        <div id="errormsg" class=""></div>
     </div>
 </div>
