@@ -32,7 +32,7 @@ class Torrents:
                 {'type':'text', 'label':'Seeds', 'name':'torrents_seeds', 'value':'5', 'desc':'Minimum Number of Seeders'},
                 {'type':'bool', 'label':'Enable BTN', 'name':'torrents_btn_enabled'},
                 {'type':'text', 'label':'BTN APIKEY', 'name':'torrents_btnapikey'},
-                {'type':'bool', 'label':'The Piratebay', 'name':'torrents_piratebay_enabled'},
+                #{'type':'bool', 'label':'The Piratebay', 'name':'torrents_piratebay_enabled'},
                 {'type':'bool', 'label':'Fenopy', 'name':'torrents_fenopy_enabled'},
                 {'type':'bool', 'label':'Fenopy verified torrents only', 'name':'torrents_fenopy_enabled_verified'},
                 {'type':'bool', 'label':'Yts', 'name':'torrents_yts_enabled'},
