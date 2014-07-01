@@ -1,15 +1,49 @@
 <%inherit file="base.html"/>
-<% settings = self.attr.settings %>
+<% settings = self.attr.settings %> 
 <div class="container-fluid">
     <div class="content maincontent">
         <div class="page-header page-title">
-            <img src="../img/pytuneslogosm.png">
-            <img src="../img/Cpotato-logo_sm.png" class="pull-right>
+            <img src="../img/pytuneslogosm.png" class="">
+            <img src="../img/Cpotato-logo_sm.png" class="pull-right"><!--dsadasda-->
         </div>
-               <div id="searchform" class="form-inline" style="float:right">
-                    <input type="text" id="moviename" class="span2" placeholder="Add Movie"/>
-                    <button type="submit" class="btn btn-primary"><i class="icon-search"></i> Search</button>
-                </div>
+        
+            
+        <form id="searchform" class="form-inline"> <!--style="float:right"-->
+            <input type="text" id="moviename" class="span2" placeholder="Add Movie"/>
+            <button type="submit" class="btn btn-primary"><i class="icon-search"></i> Search</button>
+            <input type="checkbox" id="sortsearch"/>
+            <div class="" style="float:right">
+                <a class="letters" href="#">A</a>
+                <a class="letters" href="#">B</a>
+                <a class="letters" href="#">C</a>
+                <a class="letters" href="#">D</a>
+                <a class="letters" href="#">E</a>
+                <a class="letters" href="#">F</a>
+                <a class="letters" href="#">G</a>
+                <a class="letters" href="#">H</a>
+                <a class="letters" href="#">I</a>
+                <a class="letters" href="#">J</a>
+                <a class="letters" href="#">K</a>
+                <a class="letters" href="#">L</a>
+                <a class="letters" href="#">M</a>
+                <a class="letters" href="#">N</a>
+                <a class="letters" href="#">O</a>
+                <a class="letters" href="#">P</a>
+                <a class="letters" href="#">Q</a>
+                <a class="letters" href="#">R</a>
+                <a class="letters" href="#">S</a>
+                <a class="letters" href="#">T</a>
+                <a class="letters" href="#">U</a>
+                <a class="letters" href="#">W</a>
+                <a class="letters" href="#">X</a>
+                <a class="letters" href="#">Y</a>
+                <a class="letters" href="#">Z</a>
+            </div>
+        </form>
+        
+        
+            
+        
          <ul class="nav nav-tabs">
             <li><a href="#library" data-toggle="tab">Library</a></li>
             <li><a href="#wanted" data-toggle="tab">Wanted</a></li>
