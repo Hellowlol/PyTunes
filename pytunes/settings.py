@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """ Class for handling settings and generating settings page """
 import os
 import cherrypy
@@ -6,13 +9,16 @@ import logging
 from sqlobject import connectionForURI, sqlhub, SQLObject, SQLObjectNotFound
 from sqlobject.col import StringCol
 from random import randrange
-from OpenSSL import crypto
-from certgen import * # yes yes, I know, I'm lazy
 from socket import gethostname
 from pprint import pprint
 from time import gmtime, mktime
 from os.path import exists, join
 
+try:
+    from OpenSSL import crypto
+    from certgen import * # yes yes, I know, I'm lazy
+except Exception as e:
+    print 'Import error %s' % e
 
 class Setting(SQLObject):
     """ Class for generating settings database table """
