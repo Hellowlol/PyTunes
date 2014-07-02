@@ -17,11 +17,11 @@ function search(query, engineid, catid) {
             $('table').trigger("sorton", [[[3,1], [4,1]]]);
             $('.download').click(function (e) {
                 var sendData = {
-                    hash: $(this).attr('torr_link'),
-                    cmd: 'download'
+                    link: $(this).attr('torr_link'),
+                    link: $(this).attr('torr_client')
                 };
                 $.ajax({
-                    url: WEBDIR + "qbittorrent/command",
+                    url: WEBDIR + "torrents/download",
                     type: 'get',
                     data: sendData,
                     dataType: 'text',

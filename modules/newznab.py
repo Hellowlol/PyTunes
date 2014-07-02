@@ -16,9 +16,12 @@ class Newznab:
             'fields': [
                 {'type':'bool', 'label':'Enable', 'name':'newznab_enable'},
                 {'type':'text', 'label':'Menu name', 'name':'newznab_name', 'placeholder':'NZB Search'},
-                {'type':'text', 'label':'Host', 'name':'newznab_host'},
-                {'type':'text', 'label':'Apikey', 'name':'newznab_apikey'},
-                {'type':'bool', 'label':'Use SSL', 'name':'newznab_ssl'},
+                {'type':'select',
+                 'label':'Default NZB Client',
+                 'name':'default_nzb_id',
+                 'options':[],
+                    'desc':'Only Enabled Clients Will Show' 
+                },
                 {'type':'text', 'label':'Console Category', 'name':'newznab_console', 'desc':'From Sabnzbd Configuration'},
                 {'type':'text', 'label':'Movies Category', 'name':'newznab_movies', 'desc':'From Sabnzbd Configuration'},
                 {'type':'text', 'label':'Audio Category', 'name':'newznab_audio', 'desc':'From Sabnzbd Configuration'},
@@ -27,6 +30,23 @@ class Newznab:
                 {'type':'text', 'label':'XXX Category', 'name':'newznab_xxx', 'desc':'From Sabnzbd Configuration'},
                 {'type':'text', 'label':'Books Category', 'name':'newznab_books', 'desc':'From Sabnzbd Configuration'},
                 {'type':'text', 'label':'Other Category', 'name':'newznab_other', 'desc':'From Sabnzbd Configuration'}
+        ]})
+
+        pytunes.MODULES.append({
+            'name': 'Newznab Servers',
+            'id': 'newznab_update_server',
+            'action': pytunes.WEBDIR + 'newznab/setserver',
+            'test': pytunes.WEBDIR + 'newznab/ping',
+            'fields': [
+                {'type':'select',
+                 'label':'Server',
+                 'name':'newznab_server_id',
+                 'options':[
+                    {'name':'New', 'value':0}
+                ]},
+                {'type':'text', 'label':'Host', 'name':'newznab_host'},
+                {'type':'text', 'label':'Apikey', 'name':'newznab_apikey'},
+                {'type':'bool', 'label':'Use SSL', 'name':'newznab_ssl'}
         ]})
 
     @cherrypy.expose()

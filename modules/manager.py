@@ -375,19 +375,7 @@ class Manager:
                 {'type':'text', 
                     'label':'Music Destination Folder', 
                     'name':'music_out', 
-                    'dir':True},
-                {'type':'select',
-                 'label':'Default Torrent Client',
-                 'name':'default_torr_id',
-                 'options':[],
-                    'desc':'Only Enabled Clients Will Show' 
-                },
-                {'type':'select',
-                 'label':'Default NZB Client',
-                 'name':'default_nzb_id',
-                 'options':[],
-                    'desc':'Only Enabled Clients Will Show' 
-                }
+                    'dir':True}
         ]})
 
 
@@ -486,38 +474,6 @@ class Manager:
             #print movie.strTitle
         return movies
         
-    @cherrypy.expose()
-    def ToClient(self, url, type):
-        """ Send torrent or nzb to the default client """
-        #if settings.get('deluge_enable', ''):
-        #if settings.get('utorrent_enable', ''):
-        #if settings.get('transmission_enable', ''):
-        #if settings.get('qbittorrent_enable', ''):
-        return 'Worked'
-
-    @cherrypy.expose()
-    def GetClients(self):
-        torrents = ''
-        nzbs = ''
-        if settings.get('deluge_enable', ''):
-            torrents += '<option id="deluge">Deluge</option>'
-        if settings.get('utorrent_enable', ''):
-            torrents += '<option id="utorrent">uTorrent</option>'
-        if settings.get('transmission_enable', ''):
-            torrents += '<option id="transmission">Transmission</option>'
-        if settings.get('qbittorrent_enable', ''):
-            torrents += '<option id="qbittorrent">qBittorrent</option>'
-        if not torrents:
-            torrents = '<option>No Clients Enabled</option>'
-        if settings.get('nzbget_enable', ''):
-            nzbs += '<option id="nzbget">NZBget</option>'
-        if settings.get('sab_enable', ''):
-            nzbs += '<option id="sabnzbd">Sabnzbd+</option>'
-        if not nzbs:
-            nzbs = '<option>No Clients Enabled</option>'
-        return json.dumps({'torrents':torrents, 'nzbs':nzbs})
-
-
     @cherrypy.expose()
     def GetMovie(self, tmdbid, page=''):
         """ Get Movie info """

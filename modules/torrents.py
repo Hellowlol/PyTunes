@@ -30,6 +30,12 @@ class Torrents:
                 {'type':'bool', 'label':'Enable', 'name':'torrents_enable'},
                 {'type':'text', 'label':'Menu name', 'name':'torrents_name'},
                 {'type':'text', 'label':'Seeds', 'name':'torrents_seeds', 'value':'5', 'desc':'Minimum Number of Seeders'},
+                {'type':'select',
+                 'label':'Default Torrent Client',
+                 'name':'default_torr_id',
+                 'options':[],
+                    'desc':'Only Enabled Clients Will Show' 
+                },
                 {'type':'bool', 'label':'Enable BTN', 'name':'torrents_btn_enabled'},
                 {'type':'text', 'label':'BTN APIKEY', 'name':'torrents_btnapikey'},
                 #{'type':'bool', 'label':'The Piratebay', 'name':'torrents_piratebay_enabled'},
@@ -54,6 +60,38 @@ class Torrents:
     @cherrypy.expose()
     def index(self, query='', **kwargs):
         return pytunes.LOOKUP.get_template('torrents.html').render(scriptname='torrents', torrentproviders=self.torrentproviders())
+
+    @cherrypy.expose()
+    def ToClient(self, url, type):
+        """ Send torrent or nzb to the default client """
+        #if settings.get('deluge_enable', ''):
+        #if settings.get('utorrent_enable', ''):
+        #if settings.get('transmission_enable', ''):
+        #if settings.get('qbittorrent_enable', ''):
+        return 'Worked'
+
+    @cherrypy.expose()
+    def GetClients(self):
+        torrents = ''
+        nzbs = ''
+        if settings.get('deluge_enable', ''):
+            torrents += '<option id="deluge">Deluge</option>'
+        if settings.get('utorrent_enable', ''):
+            torrents += '<option id="utorrent">uTorrent</option>'
+        if settings.get('transmission_enable', ''):
+            torrents += '<option id="transmission">Transmission</option>'
+        if settings.get('qbittorrent_enable', ''):
+            torrents += '<option id="qbittorrent">qBittorrent</option>'
+        if not torrents:
+            torrents = '<option>No Clients Enabled</option>'
+        if settings.get('nzbget_enable', ''):
+            nzbs += '<option id="nzbget">NZBget</option>'
+        if settings.get('sab_enable', ''):
+            nzbs += '<option id="sabnzbd">Sabnzbd+</option>'
+        if not nzbs:
+            nzbs = '<option>No Clients Enabled</option>'
+        return json.dumps({'torrents':torrents, 'nzbs':nzbs})
+
 
     @cherrypy.expose()
     def sizeof(self, num):
