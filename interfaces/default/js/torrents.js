@@ -18,7 +18,7 @@ function search(query, engineid, catid) {
             $('.download').click(function (e) {
                 var sendData = {
                     link: $(this).attr('torr_link'),
-                    link: $(this).attr('torr_client')
+                    client: $(this).attr('torr_client')
                 };
                 $.ajax({
                     url: WEBDIR + "torrents/download",
@@ -26,7 +26,7 @@ function search(query, engineid, catid) {
                     data: sendData,
                     dataType: 'text',
                     success: function (data) {
-                        notify(data, 'Sent to qBittorrent', 'success', '');
+                        notify(data, 'Sent to ' + $(this).attr('torr_client'), 'success', '');
                     }
 
                 });

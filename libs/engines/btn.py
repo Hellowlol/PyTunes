@@ -21,9 +21,10 @@ def search(q, cat=None):
     try:
         if 'torrents' in result:
             for k,v in result['torrents'].iteritems():
-                link = 'https://broadcasthe.net/torrents.php?id=%s&torrentid=%s' % (v['GroupID'], v['TorrentID'])
-                name = "<a href='" + link + "' target='_blank'>" + v['ReleaseName'] + "</a>"
-                out += html('torrent_search_table') % (icon, name, sizeof(int(v['Size'])), v['Seeders'], v['Leechers'], 'BTN', v['DownloadURL'])
+                if v['Seeders'] >= pytunes.settings.get('torrents_seeds', ''):
+                    link = 'https://broadcasthe.net/torrents.php?id=%s&torrentid=%s' % (v['GroupID'], v['TorrentID'])
+                    name = "<a href='" + link + "' target='_blank'>" + v['ReleaseName'] + "</a>"
+                    out += html('torrent_search_table') % (icon, name, sizeof(int(v['Size'])), v['Seeders'], v['Leechers'], 'BTN', v['DownloadURL'], pytunes.settings.get('default_torr_id'))
             return out
         else:
             logger.info("Couldn't find %s on BTN" % q)
