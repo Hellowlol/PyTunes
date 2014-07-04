@@ -6,6 +6,7 @@ import pytunes
 from pytunes.proxy import get_image
 import json
 from urllib2 import urlopen
+from urllib import quote_plus
 import logging
 import hashlib
 
@@ -89,13 +90,18 @@ class Couchpotato:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def GetMovieList(self, status='', limit=''):
-        if status == 'done':
-            status += '&type=movie&release_status=done&status_or=1'
-            return self.fetch('movie.list/?status=' + status)
-
+    def GetMovieList(self, status='', limit='', search='', starts_with=''):
         self.logger.debug("Fetching Movies")
-        return self.fetch('movie.list/?status=' + status + '&limit_offset=' + limit)
+        if status == 'done':
+            status = 'done&release_status=done&status_or=1'
+        if search:
+            search = '&search=%s' % quote_plus(search)
+        if starts_with:
+            starts_with = '&starts_with=%s' % starts_with
+        status = 'type=movie&status=%s&limit_offset=%s%s%s' % (status, limit, search, starts_with)
+        return self.fetch('movie.list/?' + status)
+
+        
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -173,8 +179,9 @@ class Couchpotato:
             url = 'http' + ssl + '://' + host + ':' + port + basepath + 'api/' + apikey + '/' + path
 
             self.logger.debug("Fetching information from: " + url)
-            return json.loads(urlopen(url, timeout=10).read())
+            return json.loads(urlopen(url, timeout=30).read())
         except Exception, e:
             self.logger.debug("Exception: " + str(e))
+            self.logger.debug(path)
             self.logger.error("Unable to fetch information")
             return
