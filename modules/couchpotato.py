@@ -179,8 +179,9 @@ class Couchpotato:
             url = 'http' + ssl + '://' + host + ':' + port + basepath + 'api/' + apikey + '/' + path
 
             self.logger.debug("Fetching information from: " + url)
-            return json.loads(urlopen(url, timeout=10).read())
+            return json.loads(urlopen(url, timeout=30).read())
         except Exception, e:
             self.logger.debug("Exception: " + str(e))
+            self.logger.debug(path)
             self.logger.error("Unable to fetch information")
             return
