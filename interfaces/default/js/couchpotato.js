@@ -7,15 +7,93 @@ $(document).ready(function() {
     $('#searchform').submit(function(e) {
         e.preventDefault()
         var search = $('#moviename').val()
-        if (search) searchMovie(search)
+
+        check = $("#sortsearch").is(":checked");
+        if (check) {
+            if ($('#wanted-grid').is(':visible')) {
+            ele = $("#wanted-grid");
+            status = "active"
+            if (search ) sortMovies(search, status);
+        }
+        else if ($('#library-grid').is(':visible')) {
+            ele = $("#library-grid");
+            status = "done"
+            if (search) sortMovies(search, status);
+        }
+            
+        } else {
+           if (search) searchMovie(search); 
+        }
+        
+        
     })
     $.get(WEBDIR + 'couchpotato/GetProfiles', function(data) {
-        if (data === null) return
+        if (data === null) return;
         $.each(data.list, function(i, item) {
             if (!item.hide) profiles.append($('<option>').val(item._id).text(item.label))
         })
     })
-})
+    $('.letters').click(function (e) {
+        e.preventDefault();
+        letter = $(this).text();
+        //alert(letter);
+        if ($('#wanted-grid').is(':visible')) {
+            ele = $("#wanted-grid");
+            status = "active"
+        }
+        else if ($('#library-grid').is(':visible')) {
+            ele = $("#library-grid");
+            status = "done"
+        }
+        sortMovies(letter, status);  
+    });
+});
+
+function sortMovies(letters, status) {
+    var ele = $('#result-grid').empty();
+    $('a[href=#result]').tab('show');
+    $(".spinner").show();
+    if (letters.length > 1) {
+        var data = {
+            search: letters,
+            status: status
+        }
+    } else {
+        var data = {
+            starts_with: letters,
+            status: status
+
+        }
+    }
+
+    $.getJSON(WEBDIR + "couchpotato/GetMovieList/", data, function (pResult) {
+        $(".spinner").hide();
+
+        if (pResult === null || pResult.total === 0) {
+            ele.append($("<li>").html("No movies that starts with " + letters + " is found"));
+            return;
+        }
+
+        $.each(pResult.movies, function(nIndex, pMovie) {
+            var strHTML = $("<a>").attr("href", "#").click(function(pEvent) {
+                pEvent.preventDefault();
+                showMovie(pMovie);
+            });
+
+            if (pMovie.info.images.poster && pMovie.info.images.poster_original) {
+                strHTML.append($("<img>").attr("src", WEBDIR + "couchpotato/GetImage?w=100&h=150&url=" + pMovie.info.images.poster[0]).attr("width", "100").attr("height", "150").addClass("thumbnail"));
+            }
+
+            if (pMovie.releases.length > 0) {
+                strHTML.append($("<i>").attr("title", "Download").addClass("icon-white icon-download status"));
+            }
+
+            strHTML.append($("<h6>").addClass("movie-title").html(shortenText(pMovie.info.original_title, 12)));
+            ele.append($("<li>").attr("id", pMovie.id).append(strHTML));
+        });
+    });
+    
+}
 
 
 function getMovies(strStatus, pHTMLElement) {
@@ -36,8 +114,10 @@ function getMovies(strStatus, pHTMLElement) {
                 showMovie(pMovie);
             });
 
-            if (pMovie.info.images.poster && pMovie.info.images.poster_original) {
+            if (pMovie.info.images.poster[0] && jQuery.isEmptyObject(pMovie.info.images.poster_original[0])) {
                 strHTML.append($("<img>").attr("src", WEBDIR + "couchpotato/GetImage?w=100&h=150&url=" + pMovie.info.images.poster[0]).attr("width", "100").attr("height", "150").addClass("thumbnail"));
+            } else {
+                strHTML.append($("<img>").attr("src", WEBDIR + "couchpotato/GetImage?w=100&h=150&url=" + pMovie.info.images.poster_original[0]).attr("width", "100").attr("height", "150").addClass("thumbnail"));
             }
 
             if (pMovie.releases.length > 0) {
