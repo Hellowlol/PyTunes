@@ -487,8 +487,10 @@ class Xbmc:
             return xbmc.Addons.ExecuteAddon(addon, cmd)
         elif addon == 'script.cdartmanager':
             return xbmc.Addons.ExecuteAddon('addonid=' + addon, cmd0)
+        elif addon == 'plugin.video.twitch':
+            return xbmc.Addons.ExecuteAddon(addonid=addon)
         else:
-            return xbmc.Addons.ExecuteAddon('addonid=' + addon, 'searchstring='+ cmd1)
+            return xbmc.Addons.ExecuteAddon(addonid=addon)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
