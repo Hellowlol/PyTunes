@@ -13,6 +13,8 @@ $(document).ready(function () {
     playerLoader = setInterval('loadNowPlaying()', 5000);
     hideWatched = $('#hidewatched').hasClass('active') ? 1 : 0;
 
+    GetAddons();
+
     // Load data on tab display
     $('a[data-toggle="tab"]').click(function (e) {
         $('#search').val('');
@@ -178,6 +180,41 @@ var movieLoad = {
     limit: 50,
     options: null
 };
+
+function GetAddons() {
+    $.ajax({
+        'url': WEBDIR + 'xbmc/GetAddons',
+            'dataType': 'json',
+            'success': function (response) {
+                $('#addons-grid').html("");
+
+                $.each(response, function (i, addon) {
+                    var row = $('<li>').attr('title', addon.name);
+                    var addonAnchor = $('<a>').attr('href', '#').click(function (e) {
+                        e.preventDefault();
+                        alert(addon.addonid);
+                        if (addon.addonid == 'script.globalsearch' || addon.addonid == 'plugin.video.youtube') {
+                            search = $('#filter').val()
+                            alert(search)
+                            executeAddon2(addon.addonid, 'searchstring' , search);
+                        } else {
+                            executeAddon2(addon.addonid, '', '');
+                        }
+                    });
+                    var src = 'holder.js/100x150/text:No artwork';
+                    if (addon.thumbnail !== '') {
+                        src = WEBDIR + 'xbmc/GetThumb?w=100&h=150&thumb=' + encodeURIComponent(addon.thumbnail);
+                    }
+                    addonAnchor.append($('<img>').attr('src', src).addClass('thumbnail'));
+                    addonAnchor.append($('<h6>').addClass('title').html(shortenText(addon.name, 11)));
+                    row.append(addonAnchor);
+                    $('#addons-grid').append(row);
+
+                });
+                $('.spinner').hide();
+            }
+    });
+}
 
 function loadMovies(options) {
     var optionstr = JSON.stringify(options) + hideWatched + JSON.stringify(sorting);
@@ -1106,6 +1143,10 @@ function loadPlaylist(type) {
 function playItem(item, type) {
     type = typeof type !== 'undefined' ? '&type=' + type : '';
     $.get(WEBDIR + 'xbmc/PlayItem?item=' + item + type);
+}
+
+function executeAddon2(addon, cmd0, cmd1) {
+    $.get(WEBDIR + 'xbmc/ExecuteAddon?addon='+ addon + '&cmd0=' + cmd0 + '&cmd1=' + cmd1);
 }
 
 function executeAddon(addon, cmd0, cmd1) {

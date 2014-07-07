@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """ Module for connecting to XBMC """
 import cherrypy
 import pytunes
@@ -466,12 +469,13 @@ class Xbmc:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def ExecuteAddon(self, addon, cmd0, cmd1):
+    def ExecuteAddon(self, addon, cmd0='', cmd1=''):
         """ Execute an XBMC addon """
         self.logger.debug("Execute '" + addon + "' with commands '" + cmd0 + "' and '" + cmd1 +"'")
+        print 'calling %s with parm %s and %s' % (addon, cmd0, cmd1)
         xbmc = Server(self.url('/jsonrpc', True))
         if addon == 'script.artwork.downloader':
-            return xbmc.Addons.ExecuteAddon('addonid=' + addon)
+            return xbmc.Addons.ExecuteAddon(addonid=addon, params=['tvshow', 'movie', 'musicvideos'])
         elif addon == 'script.cinema.experience':
             cmd = 'movieid=' + int(cmd0)
             return xbmc.Addons.ExecuteAddon(addon, cmd)
@@ -483,6 +487,17 @@ class Xbmc:
             return xbmc.Addons.ExecuteAddon(addon, cmd)
         elif addon == 'script.cdartmanager':
             return xbmc.Addons.ExecuteAddon('addonid=' + addon, cmd0)
+        else:
+            return xbmc.Addons.ExecuteAddon('addonid=' + addon, 'searchstring='+ cmd1)
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def GetAddons(self):
+        xbmc = Server(self.url('/jsonrpc', True))
+        prop = ['name', 'thumbnail', 'description']
+        addons = xbmc.Addons.GetAddons(enabled=True, properties=prop)['addons']
+        return addons
+
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
