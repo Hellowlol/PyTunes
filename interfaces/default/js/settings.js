@@ -98,6 +98,10 @@ $(document).ready(function () {
                 xbmc_update_servers(0);
                 this.reset();
             }
+            if ($('#newznab_server_id').is(":visible")) {
+                newznab_update_servers(0);
+                this.reset();
+            }
         });
     });
     $('input.enable-module').change(function () {
@@ -158,3 +162,16 @@ function xbmc_update_servers(id) {
         });
     }, 'json');
 }
+
+function newznab_update_servers(id) {
+    $.get(WEBDIR + 'newznab/getserver', function (data) {
+        if (data === null) return;
+        var servers = $('#newznab_server_id').empty().append($('<option>').text('New').val(0));
+        $.each(data.servers, function (i, item) {
+            var option = $('<option>').text(item.name).val(item.id);
+            if (id == item.id) option.attr('selected', 'selected');
+            servers.append(option);
+        });
+    }, 'json');
+}
+
