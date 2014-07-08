@@ -115,7 +115,7 @@ $(document).ready(function () {
         var item = $(this);
         var id = item.val();
         if (id === 0) $('button:reset:visible').trigger('click');
-        $.get(WEBDIR + 'xbmc/getserver?id=' + id, function (data) {
+        $.get(WEBDIR + 'settings/getxbmcserver?id=' + id, function (data) {
             if (data === null) return;
             $('#xbmc_server_name').val(data.name);
             $('#xbmc_server_host').val(data.host);
@@ -126,7 +126,7 @@ $(document).ready(function () {
             $("button:reset:visible").html('Delete').addClass('btn-danger').click(function (e) {
                 var name = item.find('option:selected').text();
                 if (!confirm('Delete ' + name)) return;
-                $.get(WEBDIR + 'xbmc/delserver?id=' + id, function (data) {
+                $.get(WEBDIR + 'settings/delxbmcserver?id=' + id, function (data) {
                     notify('Settings', 'Server deleted', 'info');
                     $(this).val(0);
                     item.find('option[value=' + id + ']').remove();
@@ -152,7 +152,7 @@ function loadClients() {
 }
 
 function xbmc_update_servers(id) {
-    $.get(WEBDIR + 'xbmc/getserver', function (data) {
+    $.get(WEBDIR + 'settings/getxbmcserver', function (data) {
         if (data === null) return;
         var servers = $('#xbmc_server_id').empty().append($('<option>').text('New').val(0));
         $.each(data.servers, function (i, item) {
@@ -164,7 +164,7 @@ function xbmc_update_servers(id) {
 }
 
 function newznab_update_servers(id) {
-    $.get(WEBDIR + 'newznab/getserver', function (data) {
+    $.get(WEBDIR + 'settings/getnewzserver', function (data) {
         if (data === null) return;
         var servers = $('#newznab_server_id').empty().append($('<option>').text('New').val(0));
         $.each(data.servers, function (i, item) {

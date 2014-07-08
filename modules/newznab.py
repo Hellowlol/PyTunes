@@ -8,20 +8,10 @@ from sqlobject import SQLObject, SQLObjectNotFound
 from sqlobject.col import StringCol, IntCol, BoolCol
 import logging
 
-
-class NewznabServers(SQLObject):
-    """ SQLObject class for newznab_servers table """
-    name = StringCol()
-    host = StringCol()
-    apikey = StringCol()
-    username = StringCol(default=None)
-    password = StringCol(default=None)
-    ssl = BoolCol(default=False)
-
 class Newznab:
     def __init__(self):
         self.logger = logging.getLogger('modules.newznab')
-        NewznabServers.createTable(ifNotExists=True)
+        #NewznabServers.createTable(ifNotExists=True)
         pytunes.MODULES.append({
             'name': 'NZB Search',
             'id': 'newznab',
@@ -47,7 +37,7 @@ class Newznab:
         pytunes.MODULES.append({
             'name': 'Newznab Servers',
             'id': 'newznab_update_server',
-            'action': pytunes.WEBDIR + 'newznab/setserver',
+            'action': pytunes.WEBDIR + 'settings/setnewzserver',
             #'test': pytunes.WEBDIR + 'newznab/ping',
             'fields': [
                 {'type':'select',
@@ -69,8 +59,6 @@ class Newznab:
                  'name':'newznab_server_password'},
                 {'type':'bool', 'label':'Use SSL', 'name':'newznab_server_ssl'}
         ]})
-        server = pytunes.settings.get('newznab_current_server', 0)
-        self.changeserver(server)
 
     @cherrypy.expose()
     def index(self, query='', **kwargs):
@@ -84,90 +72,6 @@ class Newznab:
         self.logger.debug("Pinging newznab-host")
         return 1
     """
-
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def getserver(self, id=None):
-        if id:
-            """ Get XBMC server info """
-            try:
-                server = NewznabServers.selectBy(id=id).getOne()
-                return dict((c, getattr(server, c)) for c in server.sqlmeta.columns)
-            except SQLObjectNotFound:
-                return
-
-        """ Get a list of all servers and the current server """
-        servers = []
-        for s in NewznabServers.select():
-            servers.append({'id': s.id, 'name': s.name})
-        if len(servers) < 1:
-            return
-        try:
-            current = self.current.name
-        except AttributeError:
-            current = None
-        return {'current': current, 'servers': servers}
-
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def setserver(self, newznab_server_id, newznab_server_name, newznab_server_host,
-            newznab_server_username=None, newznab_server_password=None, newznab_server_ssl=False):
-        """ Create a server if id=0, else update a server """
-        if newznab_server_id == "0":
-            self.logger.debug("Creating Newznab-Server in database")
-            try:
-                id = NewznabServers(name=newznab_server_name,
-                        host=newznab_server_host,
-                        apikey=newznab_server_apikey,
-                        username=newznab_server_username,
-                        password=newznab_server_password,
-                        ssl=newznab_server_ssl)
-                self.setcurrent(id)
-                return 1
-            except Exception, e:
-                self.logger.debug("Exception: " + str(e))
-                self.logger.error("Unable to create Newznab-Server in database")
-                return 0
-        else:
-            self.logger.debug("Updating Newznab-Server " + newznab_server_name + " in database")
-            try:
-                server = NewznabServers.selectBy(id=newznab_server_id).getOne()
-                server.name = newznab_server_name
-                server.host = newznab_server_host
-                server.apikey = newznab_server_apikey
-                server.username = newznab_server_username
-                server.password = newznab_server_password
-                server.ssl = newznab_server_ssl
-                return 1
-            except SQLObjectNotFound, e:
-                self.logger.error("Unable to update XBMC-Server " + server.name + " in database")
-                return 0
-
-    @cherrypy.expose()
-    def delserver(self, id):
-        """ Delete a server """
-        self.logger.debug("Deleting Newznab server " + str(id))
-        NewznabServers.delete(id)
-        self.changeserver()
-        return
-
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def changeserver(self, id=0):
-        try:
-            self.current = NewznabServers.selectBy(id=id).getOne()
-            pytunes.settings.set('newznab_current_server', id)
-            self.logger.info("Selecting Newznab server: " + id)
-            return "success"
-        except SQLObjectNotFound:
-            try:
-                self.current = NewznabServers.select(limit=1).getOne()
-                self.logger.error("Invalid Newzbab server. Selecting first Available.")
-                return "success"
-            except SQLObjectNotFound:
-                self.current = None
-                self.logger.warning("No configured Newznab-Servers.")
-                return "No valid servers"
 
     @cherrypy.expose()
     def thumb(self, url, h=None, w=None, o=100):

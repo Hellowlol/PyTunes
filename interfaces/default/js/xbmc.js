@@ -47,11 +47,11 @@ $(document).ready(function () {
 
     // Load serverlist and send command on change.
     var servers = $('#servers').change(function () {
-        $.get(WEBDIR + 'xbmc/changeserver?id=' + $(this).val(), function (data) {
+        $.get(WEBDIR + 'settings/changexbmcserver?id=' + $(this).val(), function (data) {
             notify('XBMC', 'Server change ' + data, 'info');
         });
     });
-    $.get(WEBDIR + 'xbmc/getserver', function (data) {
+    $.get(WEBDIR + 'settings/getxbmcserver', function (data) {
         if (data === null) return;
         $.each(data.servers, function (i, item) {
             server = $('<option>').text(item.name).val(item.id);

@@ -9,28 +9,20 @@ import simplejson
 from itertools import chain
 from urllib2 import quote, unquote
 from jsonrpclib import Server
-from sqlobject import SQLObject, SQLObjectNotFound
-from sqlobject.col import StringCol, IntCol
+#from sqlobject import SQLObject, SQLObjectNotFound
+#from sqlobject.col import StringCol, IntCol
 from pytunes.proxy import get_image
 import logging
-
-
-class XbmcServers(SQLObject):
-    """ SQLObject class for xbmc_servers table """
-    name = StringCol()
-    host = StringCol()
-    port = IntCol()
-    username = StringCol(default=None)
-    password = StringCol(default=None)
-    mac = StringCol(default=None)
 
 
 class Xbmc:
     def __init__(self):
         """ Add module to list of modules on load and set required settings """
         self.logger = logging.getLogger('modules.xbmc')
+        print "server: ", pytunes.settings.get('xbmc_current_server', 0)
+        self.current = pytunes.settings.get_current_xbmc(pytunes.settings.get('xbmc_current_server', 0))
 
-        XbmcServers.createTable(ifNotExists=True)
+        #XbmcServers.createTable(ifNotExists=True)
         pytunes.MODULES.append({
             'name': 'XBMC',
             'id': 'xbmc',
@@ -52,7 +44,7 @@ class Xbmc:
         pytunes.MODULES.append({
             'name': 'XBMC Servers',
             'id': 'xbmc_update_server',
-            'action': pytunes.WEBDIR + 'xbmc/setserver',
+            'action': pytunes.WEBDIR + 'settings/setxbmcserver',
             'test': pytunes.WEBDIR + 'xbmc/ping',
             'fields': [
                 {'type':'select',
@@ -83,8 +75,6 @@ class Xbmc:
                  'label':'Mac addr.',
                  'name':'xbmc_server_mac'}
         ]})
-        server = pytunes.settings.get('xbmc_current_server', 0)
-        self.changeserver(server)
 
     @cherrypy.expose()
     def index(self):
@@ -113,90 +103,6 @@ class Xbmc:
             self.logger.debug("Exception: " + str(e))
             self.logger.error("Unable to contact XBMC via " + url)
             return
-
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def getserver(self, id=None):
-        if id:
-            """ Get XBMC server info """
-            try:
-                server = XbmcServers.selectBy(id=id).getOne()
-                return dict((c, getattr(server, c)) for c in server.sqlmeta.columns)
-            except SQLObjectNotFound:
-                return
-
-        """ Get a list of all servers and the current server """
-        servers = []
-        for s in XbmcServers.select():
-            servers.append({'id': s.id, 'name': s.name})
-        if len(servers) < 1:
-            return
-        try:
-            current = self.current.name
-        except AttributeError:
-            current = None
-        return {'current': current, 'servers': servers}
-
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def setserver(self, xbmc_server_id, xbmc_server_name, xbmc_server_host, xbmc_server_port,
-            xbmc_server_username=None, xbmc_server_password=None, xbmc_server_mac=None):
-        """ Create a server if id=0, else update a server """
-        if xbmc_server_id == "0":
-            self.logger.debug("Creating XBMC-Server in database")
-            try:
-                id = XbmcServers(name=xbmc_server_name,
-                        host=xbmc_server_host,
-                        port=int(xbmc_server_port),
-                        username=xbmc_server_username,
-                        password=xbmc_server_password,
-                        mac=xbmc_server_mac)
-                self.setcurrent(id)
-                return 1
-            except Exception, e:
-                self.logger.debug("Exception: " + str(e))
-                self.logger.error("Unable to create XBMC-Server in database")
-                return 0
-        else:
-            self.logger.debug("Updating XBMC-Server " + xbmc_server_name + " in database")
-            try:
-                server = XbmcServers.selectBy(id=xbmc_server_id).getOne()
-                server.name = xbmc_server_name
-                server.host = xbmc_server_host
-                server.port = int(xbmc_server_port)
-                server.username = xbmc_server_username
-                server.password = xbmc_server_password
-                server.mac = xbmc_server_mac
-                return 1
-            except SQLObjectNotFound, e:
-                self.logger.error("Unable to update XBMC-Server " + server.name + " in database")
-                return 0
-
-    @cherrypy.expose()
-    def delserver(self, id):
-        """ Delete a server """
-        self.logger.debug("Deleting server " + str(id))
-        XbmcServers.delete(id)
-        self.changeserver()
-        return
-
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
-    def changeserver(self, id=0):
-        try:
-            self.current = XbmcServers.selectBy(id=id).getOne()
-            pytunes.settings.set('xbmc_current_server', id)
-            self.logger.info("Selecting XBMC server: " + id)
-            return "success"
-        except SQLObjectNotFound:
-            try:
-                self.current = XbmcServers.select(limit=1).getOne()
-                self.logger.error("Invalid server. Selecting first Available.")
-                return "success"
-            except SQLObjectNotFound:
-                self.current = None
-                self.logger.warning("No configured XBMC-Servers.")
-                return "No valid servers"
 
     @cherrypy.expose()
     def ViewAlbum(self, album_id, source):
