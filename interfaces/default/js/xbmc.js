@@ -192,13 +192,12 @@ function GetAddons() {
                     var row = $('<li>').attr('title', addon.name);
                     var addonAnchor = $('<a>').attr('href', '#').click(function (e) {
                         e.preventDefault();
-                        alert(addon.addonid);
-                        if (addon.addonid == 'script.globalsearch' || addon.addonid == 'plugin.video.youtube') {
-                            search = $('#filter').val()
-                            alert(search)
-                            executeAddon2(addon.addonid, 'searchstring' , search);
+                        //alert(addon.addonid);
+                        search = $('#filter').val()
+                        if (search.length >= 1) {
+                            executeAddon2(addon.addonid, search);
                         } else {
-                            executeAddon2(addon.addonid, '', '');
+                            executeAddon2(addon.addonid);
                         }
                     });
                     var src = 'holder.js/100x150/text:No artwork';
@@ -1146,7 +1145,9 @@ function playItem(item, type) {
 }
 
 function executeAddon2(addon, cmd0, cmd1) {
+    confirm('Execute: ' + addon + ' with cmd0: ' + cmd0 + ' and cmd1: ' + cmd1);
     $.get(WEBDIR + 'xbmc/ExecuteAddon?addon='+ addon + '&cmd0=' + cmd0 + '&cmd1=' + cmd1);
+    $('#filter').val('');
 }
 
 function executeAddon(addon, cmd0, cmd1) {
