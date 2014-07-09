@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """ Module for connecting to XBMC """
 import cherrypy
 import pytunes
@@ -7,6 +10,7 @@ import struct
 import json
 import simplejson
 from itertools import chain
+from urllib import quote_plus
 from urllib2 import quote, unquote
 from jsonrpclib import Server
 from sqlobject import SQLObject, SQLObjectNotFound
@@ -466,12 +470,16 @@ class Xbmc:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def ExecuteAddon(self, addon, cmd0, cmd1):
+    def ExecuteAddon(self, addon, cmd0='', cmd1=''):
+        if cmd0 == 'undefined':
+            cmd0 = ''
+        if cmd1 == 'undefined':
+            cmd1 = ''
         """ Execute an XBMC addon """
-        self.logger.debug("Execute '" + addon + "' with commands '" + cmd0 + "' and '" + cmd1 +"'")
+        self.logger.debug("Execute '" + addon + "' with commands cmd0 '" + cmd0 + "' and cmd1 '" + cmd1 +"'")
         xbmc = Server(self.url('/jsonrpc', True))
         if addon == 'script.artwork.downloader':
-            return xbmc.Addons.ExecuteAddon('addonid=' + addon)
+            return xbmc.Addons.ExecuteAddon(addonid=addon, params=['tvshow', 'movie', 'musicvideos'])
         elif addon == 'script.cinema.experience':
             cmd = 'movieid=' + int(cmd0)
             return xbmc.Addons.ExecuteAddon(addon, cmd)
@@ -483,6 +491,29 @@ class Xbmc:
             return xbmc.Addons.ExecuteAddon(addon, cmd)
         elif addon == 'script.cdartmanager':
             return xbmc.Addons.ExecuteAddon('addonid=' + addon, cmd0)
+        elif addon == 'plugin.video.twitch':
+            if cmd0: # If search
+                return xbmc.Addons.ExecuteAddon(addon, '/searchresults/'+ cmd0 + '/0' )
+            else: # Open plugin
+                return xbmc.Addons.ExecuteAddon(addon, '/')
+        elif addon == 'plugin.video.nrk':
+            if cmd0:
+                #Does not work in xbmc or via this one, think its a addon problem
+                cmd = 'path=/search/%s/1' % cmd0
+                return xbmc.Addons.ExecuteAddon(addon, cmd)
+            else:
+                return xbmc.Addons.ExeceuteAddon(addonid=addon)   
+        else:
+            return xbmc.Addons.ExecuteAddon(addonid=addon)
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def GetAddons(self):
+        xbmc = Server(self.url('/jsonrpc', True))
+        prop = ['name', 'thumbnail', 'description']
+        addons = xbmc.Addons.GetAddons(enabled=True, properties=prop)['addons']
+        return addons
+
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
