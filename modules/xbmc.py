@@ -9,8 +9,6 @@ import simplejson
 from itertools import chain
 from urllib2 import quote, unquote
 from jsonrpclib import Server
-#from sqlobject import SQLObject, SQLObjectNotFound
-#from sqlobject.col import StringCol, IntCol
 from pytunes.proxy import get_image
 import logging
 
@@ -19,8 +17,6 @@ class Xbmc:
     def __init__(self):
         """ Add module to list of modules on load and set required settings """
         self.logger = logging.getLogger('modules.xbmc')
-        print "server: ", pytunes.settings.get('xbmc_current_server', 0)
-        self.current = pytunes.settings.get_current_xbmc(pytunes.settings.get('xbmc_current_server', 0))
 
         #XbmcServers.createTable(ifNotExists=True)
         pytunes.MODULES.append({
@@ -568,6 +564,7 @@ class Xbmc:
     def Wake(self):
         """ Send WakeOnLan package """
         self.logger.info("Waking up XBMC-System")
+        self.current = pytunes.settings.get_current_xbmc(pytunes.settings.get('xbmc_current_server', 0))
         try:
             addr_byte = self.current.mac.split(':')
             hw_addr = struct.pack('BBBBBB',
@@ -666,6 +663,7 @@ class Xbmc:
     def url(self, path='', auth=False):
         """ Generate a URL for the RPC based on XBMC settings """
         self.logger.debug("Generate URL to call XBMC")
+        self.current = pytunes.settings.get_current_xbmc(pytunes.settings.get('xbmc_current_server', 0))
         url = self.current.host + ':' + str(self.current.port) + path
         if auth and self.current.username and self.current.password:
             url = self.current.username + ':' + self.current.password + '@' + url

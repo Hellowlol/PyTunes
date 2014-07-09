@@ -136,6 +136,7 @@ $(document).ready(function () {
         });
     });
     xbmc_update_servers(0);
+    //newznab_update_servers(0);
 });
 
 function loadClients() {

@@ -20,10 +20,15 @@ function getCategories() {
 
 function search(query, catid) {
     if (query === undefined) return;
+    var sendData = {
+        q: query,
+        cat: catid
+    };
     $.ajax({
-        url: WEBDIR + 'newznab/search?q=' + query + '&cat=' + catid,
+        url: WEBDIR + 'newznab/search',
         type: 'get',
         dataType: 'text',
+        data: sendData,
         beforeSend: function () {
             $('#results_table_body').empty();
             $('.spinner').show();
@@ -49,7 +54,24 @@ $(document).ready(function () {
         search($('#query').val(), $('#catid').val());
         return false;
     });
+
     if ($('#query').val()) $('#searchform').submit();
     getCategories();
+    // Load serverlist and send command on change.
+
+    var servers = $('#servers').change(function () {
+        $.get(WEBDIR + 'settings/changenewzserver?id=' + $(this).val(), function (data) {
+            notify('XBMC', 'Server change ' + data, 'info');
+        });
+    });
+
+    $.get(WEBDIR + 'settings/getnewzserver', function (data) {
+        if (data === null) return;
+        $.each(data.servers, function (i, item) {
+            server = $('<option>').text(item.name).val(item.id);
+            if (item.name == data.current) server.attr('selected', 'selected');
+            servers.append(server);
+        });
+    }, 'json');
 });
 

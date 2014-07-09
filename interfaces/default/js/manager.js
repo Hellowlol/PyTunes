@@ -174,10 +174,15 @@ function loadWantedMovies() {
 
 function loadPopularTV(page) {
     //alert("In Popular TV" + page);
+    var sendData = {
+        source: 'popular',
+        page: page
+    };
     $.ajax({
-        url: WEBDIR + "manager/Tmdb?source=populartv&page=" + page,
+        url: WEBDIR + "manager/Tmdb",
         type: 'get',
         dataType: 'html',
+        data: sendData,
         success: function (data) {
             //alert("Popular: " page_counts.popular);
             if (data === null) return errorHandler();

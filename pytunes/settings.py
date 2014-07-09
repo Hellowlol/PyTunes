@@ -298,6 +298,6 @@ class Settings:
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def get_current_xbmc(self, id):
-        print 'current: ', self.current
+        #print 'current: ', self.current
         return self.current
 

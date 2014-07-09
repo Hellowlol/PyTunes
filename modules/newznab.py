@@ -4,14 +4,11 @@ import math
 from pytunes.proxy import get_image
 from urllib2 import urlopen, quote
 from json import loads
-from sqlobject import SQLObject, SQLObjectNotFound
-from sqlobject.col import StringCol, IntCol, BoolCol
 import logging
 
 class Newznab:
     def __init__(self):
         self.logger = logging.getLogger('modules.newznab')
-        #NewznabServers.createTable(ifNotExists=True)
         pytunes.MODULES.append({
             'name': 'NZB Search',
             'id': 'newznab',
