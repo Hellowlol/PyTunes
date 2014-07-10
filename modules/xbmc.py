@@ -510,8 +510,8 @@ class Xbmc:
     @cherrypy.tools.json_out()
     def GetAddons(self):
         xbmc = Server(self.url('/jsonrpc', True))
-        prop = ['name', 'thumbnail', 'description']
-        addons = xbmc.Addons.GetAddons(enabled=True, properties=prop)['addons']
+        prop = ['name', 'thumbnail', 'description', 'author', 'version', 'enabled', 'rating']
+        addons = xbmc.Addons.GetAddons(content='unknown', enabled='all', properties=prop)['addons']
         return addons
 
 
