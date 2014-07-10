@@ -38,7 +38,7 @@ class Newznab:
             #'test': pytunes.WEBDIR + 'newznab/ping',
             'fields': [
                 {'type':'select',
-                 'label':'Server',
+                 'label':'Newznab Servers',
                  'name':'newznab_server_id',
                  'options':[
                     {'name':'New', 'value':0}
@@ -128,7 +128,7 @@ class Newznab:
         if cat:
             cat = '&cat=' + cat
         res = self.fetch('search&q=' + quote(q) + cat + '&extended=1')
-        link = "<a href='/sabnzbd/AddNzbFromUrl?nzb_url=%s&nzb_category=%s' class='ajax-link' title='Send To Sabnzbd+' cat='%s'><i class='icon-download-alt'></i></a>"
+        link = "<a href='/newznab/AddNzbFromUrl?nzb_url=%s&nzb_category=%s' class='ajax-link' title='Download' cat='%s'><i class='icon-download-alt'></i></a>"
         try:
             results = res['channel']['item']
         except:
@@ -150,6 +150,13 @@ class Newznab:
             ret += row % (title, category, size, files, grabs, dl)
         return ret
 
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def AddNzbFromUrl(self, nzb_url, nzb_category=''):
+        self.logger.debug("Adding nzb from url")
+        if nzb_category:
+            nzb_category = '&cat=' + nzb_category
+        return self.send('&mode=addurl&name=' + quote(nzb_url) + nzb_category)
 
     def fetch(self, cmd):
         try:
@@ -162,4 +169,25 @@ class Newznab:
             return loads(urlopen(url, timeout=10).read())
         except:
             self.logger.error("Unable to fetch information from: %s" % url)
+            return
+
+    def send(self, link):
+        self.current = pytunes.settings.get_current_newznab(pytunes.settings.get('xbmc_current_server', 0))
+        try:
+            host = pytunes.settings.get('sabnzbd_host', '')
+            port = str(pytunes.settings.get('sabnzbd_port', ''))
+            apikey = pytunes.settings.get('sabnzbd_apikey', '')
+            sabnzbd_basepath = pytunes.settings.get('sabnzbd_basepath', '/sabnzbd/')
+            ssl = 's' if pytunes.settings.get('sabnzbd_ssl', 0) else ''
+
+            if(sabnzbd_basepath == ""):
+                sabnzbd_basepath = "/sabnzbd/"
+            if not(sabnzbd_basepath.endswith('/')):
+                sabnzbd_basepath += "/"
+
+            url = 'http' + ssl + '://' + host + ':' + port + sabnzbd_basepath + 'api?output=json&apikey=' + apikey + link
+            self.logger.debug("Sending NZB to: %s: " % url)
+            return loads(urlopen(url, timeout=10).read())
+        except:
+            self.logger.error("Cannot contact sabnzbd")
             return

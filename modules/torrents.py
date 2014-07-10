@@ -44,6 +44,10 @@ class Torrents:
                 {'type':'bool', 'label':'Yts', 'name':'torrents_yts_enabled'},
         ]})
 
+    @cherrypy.expose()
+    def index(self, query='', **kwargs):
+        return pytunes.LOOKUP.get_template('torrents.html').render(scriptname='torrents', torrentproviders=self.torrentproviders())
+
     def torrentproviders(self):
         torrentproviders = ['kickasstorrents','ALL']
         if pytunes.settings.get('torrents_btnapikey') and pytunes.settings.get('torrents_btn_enabled') == 1:
@@ -52,14 +56,11 @@ class Torrents:
         if pytunes.settings.get('torrents_fenopy_enabled') == 1:
             torrentproviders.append('fenopy')
 
+
         if pytunes.settings.get('torrents_yts_enabled') == 1:
             torrentproviders.append('yts')
 
         return torrentproviders
-
-    @cherrypy.expose()
-    def index(self, query='', **kwargs):
-        return pytunes.LOOKUP.get_template('torrents.html').render(scriptname='torrents', torrentproviders=self.torrentproviders())
 
     @cherrypy.expose()
     def ToClient(self, url, type):
@@ -69,29 +70,6 @@ class Torrents:
         #if settings.get('transmission_enable', ''):
         #if settings.get('qbittorrent_enable', ''):
         return 'Worked'
-
-    @cherrypy.expose()
-    def GetClients(self):
-        torrents = ''
-        nzbs = ''
-        if settings.get('deluge_enable', ''):
-            torrents += '<option id="deluge">Deluge</option>'
-        if settings.get('utorrent_enable', ''):
-            torrents += '<option id="utorrent">uTorrent</option>'
-        if settings.get('transmission_enable', ''):
-            torrents += '<option id="transmission">Transmission</option>'
-        if settings.get('qbittorrent_enable', ''):
-            torrents += '<option id="qbittorrent">qBittorrent</option>'
-        if not torrents:
-            torrents = '<option>No Clients Enabled</option>'
-        if settings.get('nzbget_enable', ''):
-            nzbs += '<option id="nzbget">NZBget</option>'
-        if settings.get('sab_enable', ''):
-            nzbs += '<option id="sabnzbd">Sabnzbd+</option>'
-        if not nzbs:
-            nzbs = '<option>No Clients Enabled</option>'
-        return json.dumps({'torrents':torrents, 'nzbs':nzbs})
-
 
     @cherrypy.expose()
     def sizeof(self, num):

@@ -164,7 +164,7 @@ class Settings:
                         username=newznab_server_username,
                         password=newznab_server_password,
                         ssl=newznab_server_ssl)
-                self.setcurrent(id)
+                self.changenewzserver(id)
                 return 1
             except Exception, e:
                 self.logger.debug("Exception: " + str(e))
@@ -182,15 +182,15 @@ class Settings:
                 server.ssl = newznab_server_ssl
                 return 1
             except SQLObjectNotFound, e:
-                self.logger.error("Unable to update XBMC-Server " + server.name + " in database")
+                self.logger.error("Unable to update Newznab Server " + server.name + " in database")
                 return 0
 
     @cherrypy.expose()
     def delnewzserver(self, id):
         """ Delete a server """
-        self.logger.debug("Deleting Newznab server " + str(id))
+        self.logger.debug("Deleting Newznab server: %s " % str(id))
         NewznabServers.delete(id)
-        self.changeserver()
+        self.changenewzserver()
         return
 
     @cherrypy.expose()
@@ -207,7 +207,7 @@ class Settings:
                 self.logger.error("Invalid Newznab server. Selecting first Available.")
                 return "success"
             except SQLObjectNotFound:
-                self.current = None
+                self.current_newznab = None
                 self.logger.warning("No configured Newznab-Servers.")
                 return "No valid servers"
 
@@ -248,7 +248,7 @@ class Settings:
                         username=xbmc_server_username,
                         password=xbmc_server_password,
                         mac=xbmc_server_mac)
-                self.setcurrent(id)
+                self.changexbmcserver(id)
                 return 1
             except Exception, e:
                 self.logger.debug("Exception: " + str(e))
@@ -274,7 +274,7 @@ class Settings:
         """ Delete a server """
         self.logger.debug("Deleting server " + str(id))
         XbmcServers.delete(id)
-        self.changeserver()
+        self.changexbmcserver()
         return
 
     @cherrypy.expose()
@@ -291,13 +291,45 @@ class Settings:
                 self.logger.error("Invalid server. Selecting first Available.")
                 return "success"
             except SQLObjectNotFound:
-                self.current = None
+                self.current_xbmc = None
                 self.logger.warning("No configured XBMC-Servers.")
                 return "No valid servers"
+
+    @cherrypy.expose()
+    def NzbClients(self):
+        nzbs = ''
+        if settings.get('nzbget_enable', ''):
+            nzbs += '<option id="nzbget">NZBget</option>'
+        if settings.get('sab_enable', ''):
+            nzbs += '<option id="sabnzbd">Sabnzbd+</option>'
+        if not nzbs:
+            nzbs = '<option id="">No Clients Enabled</option>'
+        return nzbs
+
+    @cherrypy.expose()
+    def TorrClients(self):
+        torrents = ''
+        nzbs = ''
+        if settings.get('deluge_enable', ''):
+            torrents += '<option id="deluge">Deluge</option>'
+        if settings.get('utorrent_enable', ''):
+            torrents += '<option id="utorrent">uTorrent</option>'
+        if settings.get('transmission_enable', ''):
+            torrents += '<option id="transmission">Transmission</option>'
+        if settings.get('qbittorrent_enable', ''):
+            torrents += '<option id="qbittorrent">qBittorrent</option>'
+        if not torrents:
+            torrents = '<option>No Clients Enabled</option>'
+        return torrents
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def get_current_newznab(self, id):
+        #print 'current: ', self.current
+        return self.current_newznab
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def get_current_xbmc(self, id):
         #print 'current: ', self.current
-        return self.current
+        return self.current_xbmc
 

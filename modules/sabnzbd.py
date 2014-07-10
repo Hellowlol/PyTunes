@@ -76,14 +76,6 @@ class Sabnzbd:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def AddNzbFromUrl(self, nzb_url, nzb_category=''):
-        self.logger.debug("Adding nzb from url")
-        if nzb_category:
-            nzb_category = '&cat=' + nzb_category
-        return self.fetch('&mode=addurl&name=' + quote(nzb_url) + nzb_category)
-
-    @cherrypy.expose()
-    @cherrypy.tools.json_out()
     def UploadNzb(self, nzb_url, nzb_category=''):
         self.logger.debug("Upload nzb from afar")
         if nzb_category:
@@ -145,3 +137,4 @@ class Sabnzbd:
         except:
             self.logger.error("Cannot contact sabnzbd")
             return
+

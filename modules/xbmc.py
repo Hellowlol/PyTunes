@@ -44,7 +44,7 @@ class Xbmc:
             'test': pytunes.WEBDIR + 'xbmc/ping',
             'fields': [
                 {'type':'select',
-                 'label':'Server',
+                 'label':'XBMC Servers',
                  'name':'xbmc_server_id',
                  'options':[
                     {'name':'New', 'value':0}
