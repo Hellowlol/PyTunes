@@ -26,18 +26,18 @@ $(document).ready(function () {
     $(document).keydown(function (e) {
         if (!$('input').is(":focus")) {
             arrow = {
-                8: 'back',
-                27: 'back',
-                13: 'select',
-                37: 'left',
-                38: 'up',
-                39: 'right',
-                40: 'down',
-                88: 'stop',
-                32: 'playpause',
-                67: 'contextmenu',
-                73: 'info',
-                77: 'mute'
+                8: 'back', //backspace
+                27: 'back', // Esc
+                13: 'select', //Enter
+                37: 'left', //left arrow
+                38: 'up', // up arrow
+                39: 'right', // right arrow
+                40: 'down', // down arrow
+                88: 'stop', // x
+                32: 'playpause', // Space
+                67: 'contextmenu', // C
+                73: 'info', // I
+                77: 'mute' // M
             };
             command = arrow[e.which];
             if (command) {
@@ -181,6 +181,12 @@ var movieLoad = {
     options: null
 };
 
+function Enable_DisableAddon(addonid, enabled) {
+    $.get(WEBDIR + 'xbmc/Enable_DisableAddon/'+ addonid + '/' + enabled, function(i){ 
+    });
+    
+}
+
 function GetAddons() {
     $.ajax({
         'url': WEBDIR + 'xbmc/GetAddons',
@@ -192,13 +198,14 @@ function GetAddons() {
                     var row = $('<li>').attr('title', addon.name);
                     var addonAnchor = $('<a>').attr('href', '#').click(function (e) {
                         e.preventDefault();
+                        loadAddons(addon); // test
                         //alert(addon.addonid);
-                        search = $('#filter').val()
-                        if (search.length >= 1) {
-                            executeAddon2(addon.addonid, search);
-                        } else {
-                            executeAddon2(addon.addonid);
-                        }
+                        search = $('#filter').val() // not use atm, will be removed, may filter addons
+                        //if (search.length >= 1) {
+                        //    executeAddon2(addon.addonid, search);
+                        //} else {
+                        //    executeAddon2(addon.addonid);
+                        //}
                     });
                     var src = 'holder.js/100x150/text:No artwork';
                     if (addon.thumbnail !== '') {
@@ -213,6 +220,82 @@ function GetAddons() {
                 $('.spinner').hide();
             }
     });
+}
+
+function loadAddons(addon) {
+    var head = addon.name;
+    var poster = WEBDIR + 'xbmc/GetThumb?w=133&h=200&thumb=' + encodeURIComponent(addon.thumbnail);
+    var info = $('<div>')
+    var description = $('<p>').html('<b>Description:</b> ' + addon.description);
+    var type = $('<p>').html('<b>Type:</b> ' + addon.type);
+    var author = $('<p>').html('<b>Author:</b> ' + addon.author);
+    var version = $('<p>').html('<b>Version:</b> ' + addon.version);
+    var rating = $('<p>').html('<b>Rating:</b> ' + addon.rating);
+    var summary = $('<p>').html('<b>Summary:</b> ' + addon.summary);
+    var search = $('<input>').html('<input name="search" id="modal_addon_search" placeholder="search" type="text">');
+    var searchform = $('<form>').attr('id', 'modal_addon_searchform').html('<input name="search" id="modal_addon_search" placeholder="search" type="text">');
+    var img = $('<img>').attr('src', poster).addClass('thumbnail, modal-movie-poster pull-left');
+    var content = $('<div>');
+    var buttontxt = '';
+
+    if (addon.enabled == true) {
+        buttontxt = 'Disable addon';
+    } else {
+        buttontxt = 'Enable addon';
+    }
+
+    $('#modal_addon_searchform').bind('submit', function (e) {
+        alert("Handler for .submit() called.");
+        return false;
+    }); // does not work for now, tried prevent ref, and return false
+
+
+
+    info.append(
+        img,
+        description,
+        type,
+        author,
+        version,
+        summary,
+        rating,
+        searchform
+        );
+
+    var buttons = {
+        'Open': function () {
+            executeAddon2(addon.addonid);
+            hideModal();
+        }
+    }
+
+    if (addon.enabled === true) {
+        $.extend(buttons, {
+            'Disable addon': function () {
+                Enable_DisableAddon(addon.addonid, 'false')
+                hideModal();
+            }
+        });
+    } else {
+        $.extend(buttons, {
+            'Enable addon': function () {
+                Enable_DisableAddon(addon.addonid, 'true')
+                hideModal();
+            }
+        });
+
+    }
+
+    $.extend(buttons, {
+        'Close': function () {
+            hideModal();
+        } 
+
+    });
+      
+    content.append(img, info);
+    showModal(head, content, buttons);
+
 }
 
 function loadMovies(options) {
@@ -1261,6 +1344,11 @@ function reloadTab() {
         $('#sort').hide();
     }
     else if ($('#nowplaying').is(':visible')) {
+        //hide filter and sort
+        $('#filter').hide();
+        $('#sort').hide();
+    }
+    else if ($('#addons').is(':visible')) {
         //hide filter and sort
         $('#filter').hide();
         $('#sort').hide();

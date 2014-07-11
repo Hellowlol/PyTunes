@@ -510,10 +510,19 @@ class Xbmc:
     @cherrypy.tools.json_out()
     def GetAddons(self):
         xbmc = Server(self.url('/jsonrpc', True))
-        prop = ['name', 'thumbnail', 'description', 'author', 'version', 'enabled', 'rating']
+        prop = ['name', 'thumbnail', 'description', 'author', 'version', 'enabled', 'rating', 'summary']
         addons = xbmc.Addons.GetAddons(content='unknown', enabled='all', properties=prop)['addons']
         return addons
 
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def Enable_DisableAddon(self, addonid=None, enabled=None):
+        xbmc = Server(self.url('/jsonrpc', True))
+        if enabled == 'true':
+            enabled = True
+        else:
+            enabled = False
+        return xbmc.Addons.SetAddonEnabled(addonid=addonid, enabled=enabled)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -590,16 +599,11 @@ class Xbmc:
             elif action == 'party':
                 return xbmc.Player.Open(item={'partymode': 'audio'})
             elif action == 'getsub':
-                try:
-                    #Frodo
+                version = xbmc.Application.GetProperties(properties=['version'])['version']['major']
+                if version < 12: # Eden
                     return xbmc.Addons.ExecuteAddon(addonid='script.xbmc.subtitles')
-                except:
-                    pass
-                try:
-                    #Gotham
+                else: #Frodo
                     return xbmc.GUI.ActivateWindow(window='subtitlesearch')
-                except:
-                    pass
             elif action == 'volume':
                 return xbmc.Application.SetVolume(volume=int(value))
             elif action == 'fullscreen':
