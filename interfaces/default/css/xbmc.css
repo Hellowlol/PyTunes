@@ -6,6 +6,9 @@ img.remote-image {
     margin-left: auto;
     margin-right: auto;
 }
+.modal-body {
+    overflow: hidden;
+}
 #movie-grid img.thumbnail,
 #show-grid img.thumbnail {
     height: 150px;

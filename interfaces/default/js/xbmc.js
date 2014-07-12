@@ -26,14 +26,14 @@ $(document).ready(function () {
     $(document).keydown(function (e) {
         if (!$('input').is(":focus")) {
             arrow = {
-                8: 'back', //backspace
+                8: 'back', //Backspace
                 27: 'back', // Esc
-                13: 'select', //Enter
-                37: 'left', //left arrow
-                38: 'up', // up arrow
-                39: 'right', // right arrow
-                40: 'down', // down arrow
-                88: 'stop', // x
+                13: 'select', // Enter
+                37: 'left', //Left arrow
+                38: 'up', // Up arrow
+                39: 'right', // Right arrow
+                40: 'down', // Down arrow
+                88: 'stop', // X
                 32: 'playpause', // Space
                 67: 'contextmenu', // C
                 73: 'info', // I
@@ -198,14 +198,7 @@ function GetAddons() {
                     var row = $('<li>').attr('title', addon.name);
                     var addonAnchor = $('<a>').attr('href', '#').click(function (e) {
                         e.preventDefault();
-                        loadAddons(addon); // test
-                        //alert(addon.addonid);
-                        search = $('#filter').val() // not use atm, will be removed, may filter addons
-                        //if (search.length >= 1) {
-                        //    executeAddon2(addon.addonid, search);
-                        //} else {
-                        //    executeAddon2(addon.addonid);
-                        //}
+                        loadAddons(addon);
                     });
                     var src = 'holder.js/100x150/text:No artwork';
                     if (addon.thumbnail !== '') {
@@ -233,24 +226,11 @@ function loadAddons(addon) {
     var rating = $('<p>').html('<b>Rating:</b> ' + addon.rating);
     var summary = $('<p>').html('<b>Summary:</b> ' + addon.summary);
     var search = $('<input>').html('<input name="search" id="modal_addon_search" placeholder="search" type="text">');
-    var searchform = $('<form>').attr('id', 'modal_addon_searchform').html('<input name="search" id="modal_addon_search" placeholder="search" type="text">');
+    var searchform = $('<form>').attr('id', 'modal_addon_searchform').html('<input name="search" id="modal_addon_search" placeholder="search" type="text" data-addonid=' + addon.addonid +'>');
     var img = $('<img>').attr('src', poster).addClass('thumbnail, modal-movie-poster pull-left');
     var content = $('<div>');
     var buttontxt = '';
-
-    if (addon.enabled == true) {
-        buttontxt = 'Disable addon';
-    } else {
-        buttontxt = 'Enable addon';
-    }
-
-    $('#modal_addon_searchform').bind('submit', function (e) {
-        alert("Handler for .submit() called.");
-        return false;
-    }); // does not work for now, tried prevent ref, and return false
-
-
-
+  
     info.append(
         img,
         description,
@@ -280,6 +260,7 @@ function loadAddons(addon) {
         $.extend(buttons, {
             'Enable addon': function () {
                 Enable_DisableAddon(addon.addonid, 'true')
+                reloadTab();
                 hideModal();
             }
         });
@@ -294,7 +275,7 @@ function loadAddons(addon) {
     });
       
     content.append(img, info);
-    showModal(head, content, buttons);
+    showModal(head, content.addClass('modal-body-addon'), buttons);
 
 }
 
@@ -1349,9 +1330,23 @@ function reloadTab() {
         $('#sort').hide();
     }
     else if ($('#addons').is(':visible')) {
+        GetAddons();
         //hide filter and sort
         $('#filter').hide();
         $('#sort').hide();
     }
 }
+
+$(document).on("submit","#modal_addon_searchform",function (e) {
+    e.preventDefault();
+    search = $('#modal_addon_search').val()
+    addonid = $('#modal_addon_search').attr('data-addonid');
+    if (search.length >= 1) {
+        executeAddon2(addonid, search);
+        search.val('');
+    } else {
+        executeAddon2(addonid);
+    }
+});
+
 

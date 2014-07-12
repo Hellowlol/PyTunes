@@ -498,11 +498,16 @@ class Xbmc:
                 return xbmc.Addons.ExecuteAddon(addon, '/')
         elif addon == 'plugin.video.nrk':
             if cmd0:
-                #Does not work in xbmc or via this one, think its a addon problem
-                cmd = 'path=/search/%s/1' % cmd0
+                #Does not work in directly in xbmc or via this one, think its a addon problem
+                cmd = '/search/%s/1' % cmd0
                 return xbmc.Addons.ExecuteAddon(addon, cmd)
             else:
-                return xbmc.Addons.ExeceuteAddon(addonid=addon)   
+                return xbmc.Addons.ExeceuteAddon(addonid=addon)
+        elif addon == 'script.globalsearch':
+            xbmc.Addons.ExecuteAddon(addon, '/searchstring/'+ cmd0)
+            return xbmc.Input.SendText(text=cmd0)
+
+
         else:
             return xbmc.Addons.ExecuteAddon(addonid=addon)
 
