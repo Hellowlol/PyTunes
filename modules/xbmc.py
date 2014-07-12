@@ -498,11 +498,16 @@ class Xbmc:
                 return xbmc.Addons.ExecuteAddon(addon, '/')
         elif addon == 'plugin.video.nrk':
             if cmd0:
-                #Does not work in xbmc or via this one, think its a addon problem
-                cmd = 'path=/search/%s/1' % cmd0
+                #Does not work in directly in xbmc or via this one, think its a addon problem
+                cmd = '/search/%s/1' % cmd0
                 return xbmc.Addons.ExecuteAddon(addon, cmd)
             else:
-                return xbmc.Addons.ExeceuteAddon(addonid=addon)   
+                return xbmc.Addons.ExeceuteAddon(addonid=addon)
+        elif addon == 'script.globalsearch':
+            xbmc.Addons.ExecuteAddon(addon, '/searchstring/'+ cmd0)
+            return xbmc.Input.SendText(text=cmd0)
+
+
         else:
             return xbmc.Addons.ExecuteAddon(addonid=addon)
 
@@ -510,10 +515,19 @@ class Xbmc:
     @cherrypy.tools.json_out()
     def GetAddons(self):
         xbmc = Server(self.url('/jsonrpc', True))
-        prop = ['name', 'thumbnail', 'description']
-        addons = xbmc.Addons.GetAddons(enabled=True, properties=prop)['addons']
+        prop = ['name', 'thumbnail', 'description', 'author', 'version', 'enabled', 'rating', 'summary']
+        addons = xbmc.Addons.GetAddons(content='unknown', enabled='all', properties=prop)['addons']
         return addons
 
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def Enable_DisableAddon(self, addonid=None, enabled=None):
+        xbmc = Server(self.url('/jsonrpc', True))
+        if enabled == 'true':
+            enabled = True
+        else:
+            enabled = False
+        return xbmc.Addons.SetAddonEnabled(addonid=addonid, enabled=enabled)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -590,16 +604,11 @@ class Xbmc:
             elif action == 'party':
                 return xbmc.Player.Open(item={'partymode': 'audio'})
             elif action == 'getsub':
-                try:
-                    #Frodo
+                version = xbmc.Application.GetProperties(properties=['version'])['version']['major']
+                if version < 12: # Eden
                     return xbmc.Addons.ExecuteAddon(addonid='script.xbmc.subtitles')
-                except:
-                    pass
-                try:
-                    #Gotham
+                else: #Frodo
                     return xbmc.GUI.ActivateWindow(window='subtitlesearch')
-                except:
-                    pass
             elif action == 'volume':
                 return xbmc.Application.SetVolume(volume=int(value))
             elif action == 'fullscreen':
