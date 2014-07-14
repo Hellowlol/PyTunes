@@ -24,7 +24,7 @@ def search(q, cat=None):
                 if v['Seeders'] >= pytunes.settings.get('torrents_seeds', ''):
                     link = 'https://broadcasthe.net/torrents.php?id=%s&torrentid=%s' % (v['GroupID'], v['TorrentID'])
                     name = "<a href='" + link + "' target='_blank'>" + v['ReleaseName'] + "</a>"
-                    out += html('torrent_search_table') % (icon, name, sizeof(int(v['Size'])), v['Seeders'], v['Leechers'], 'BTN', v['DownloadURL'], pytunes.settings.get('default_torr_id'))
+                    out += html('torrent_search_table') % (icon, name, sizeof(int(v['Size'])), v['Seeders'], v['Leechers'], 'BTN', v['DownloadURL'])
             return out
         else:
             logger.info("Couldn't find %s on BTN" % q)

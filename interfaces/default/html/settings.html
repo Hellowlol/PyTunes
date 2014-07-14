@@ -8,12 +8,11 @@
     </div>
         <div class="tabbable tabs-left">
             <ul class="nav nav-tabs">
-                <% l = [] %>
-                <% l.append({'name': 'General(restart required)', 'id': 'general'})%>
-                <% l.append({'name': 'Style', 'id': 'style'})%>
-                <% l.append({'name': 'Dashboard', 'id': 'dashboard'})%>
-                <% tabssort = pytunes.MODULES + l %>
-                % for m in sorted(tabssort, key=lambda d: d['name']):
+                <li class="active"><a href="#general" data-toggle="tab">General</a></li>
+                <li><a href="#dashboard" data-toggle="tab">Dashboard</a></li>
+                <li><a href="#style" data-toggle="tab">Style</a></li>
+                <li class="divider"></li>
+                % for m in sorted(pytunes.MODULES, key=lambda d: d['name']):
                     <li><a href="#${m.get('id')}" data-toggle="tab">${m.get('name')}</a></li>
                 % endfor
             </ul>

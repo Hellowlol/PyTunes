@@ -604,7 +604,7 @@ class Xbmc:
     def Wake(self):
         """ Send WakeOnLan package """
         self.logger.info("Waking up XBMC-System")
-        self.current = pytunes.settings.get_current_xbmc(pytunes.settings.get('xbmc_current_server', 0))
+        self.current = pytunes.settings.get_current_xbmc()
         try:
             addr_byte = self.current.mac.split(':')
             hw_addr = struct.pack('BBBBBB',
@@ -703,7 +703,7 @@ class Xbmc:
     def url(self, path='', auth=False):
         """ Generate a URL for the RPC based on XBMC settings """
         self.logger.debug("Generate URL to call XBMC")
-        self.current = pytunes.settings.get_current_xbmc(pytunes.settings.get('xbmc_current_server', 0))
+        self.current = pytunes.settings.get_current_xbmc()
         url = self.current.host + ':' + str(self.current.port) + path
         if auth and self.current.username and self.current.password:
             url = self.current.username + ':' + self.current.password + '@' + url

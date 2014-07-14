@@ -5,14 +5,21 @@
         <div class="page-header page-title">
             <img alt="PyTunes" src="../img/pytuneslogosm.png"/><img alt="Bittorrent Logo" class='pull-right' src="../img/btorrent.png"/>
         </div>
-        <div class="pull-right">
-        <form action="" id="searchform" class="form-inline">
+        <div class="pull-left" class="form-inline">
+        <form action="" id="deftorr" class="form-inline">
+            <select class="span2" name="defclient" id="defclient">
+                <!--<option value=""></option>-->
+            </select>
+        </form>
+        </div>
+        <div class="pull-right" class="form-inline">
+        <form action="" id="searchform">
             <input class="span2" id="query" name="query" type="text" value="" placeholder="Search term" />
             <select class="span2" name="engineid" id="engineid">
-                 % for p in torrentproviders:
+                % for p in torrentproviders:
                     <option value="${p}">${p}</option>
                 % endfor
-                </select>
+            </select>
             <select class="span2" name="catid" id="catid">
                 <option value="all">Everything</option>
                 <option value="movies">Movies</option>

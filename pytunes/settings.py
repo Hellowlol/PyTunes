@@ -229,7 +229,7 @@ class Settings:
         if len(servers) < 1:
             return
         try:
-            current = self.current.name
+            current = self.current_xbmc.name
         except AttributeError:
             current = None
         return {'current': current, 'servers': servers}
@@ -281,13 +281,13 @@ class Settings:
     @cherrypy.tools.json_out()
     def changexbmcserver(self, id=0):
         try:
-            self.current = XbmcServers.selectBy(id=id).getOne()
+            self.current_xbmc = XbmcServers.selectBy(id=id).getOne()
             self.set('xbmc_current_server', id)
             self.logger.info("Selecting XBMC server: " + id)
             return "success"
         except SQLObjectNotFound:
             try:
-                self.current = XbmcServers.select(limit=1).getOne()
+                self.current_xbmc = XbmcServers.select(limit=1).getOne()
                 self.logger.error("Invalid server. Selecting first Available.")
                 return "success"
             except SQLObjectNotFound:
@@ -325,11 +325,10 @@ class Settings:
     @cherrypy.tools.json_out()
     def get_current_newznab(self, id):
         #print 'current: ', self.current
-        return self.current_newznab
+        return self.get('newznab_current_server', 0)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def get_current_xbmc(self, id):
-        #print 'current: ', self.current
-        return self.current_xbmc
+    def get_current_xbmc(self):
+        return XbmcServers.selectBy(id=self.get('xbmc_current_server', 0)).getOne()
 

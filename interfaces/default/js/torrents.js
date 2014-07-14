@@ -1,6 +1,7 @@
 
 function search(query, engineid, catid) {
     if (query === undefined) return;
+    alert(engineid);
     $.ajax({
         url: WEBDIR + 'torrents/search?q=' + query + '&engineid=' + engineid + '&cat=' + catid,
         type: 'get',
