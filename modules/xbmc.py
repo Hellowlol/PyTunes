@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """ Module for connecting to XBMC """
 import cherrypy
 import pytunes
@@ -7,6 +10,7 @@ import struct
 import json
 import simplejson
 from itertools import chain
+from urllib import quote_plus
 from urllib2 import quote, unquote
 from jsonrpclib import Server
 from pytunes.proxy import get_image
@@ -368,12 +372,16 @@ class Xbmc:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def ExecuteAddon(self, addon, cmd0, cmd1):
+    def ExecuteAddon(self, addon, cmd0='', cmd1=''):
+        if cmd0 == 'undefined':
+            cmd0 = ''
+        if cmd1 == 'undefined':
+            cmd1 = ''
         """ Execute an XBMC addon """
-        self.logger.debug("Execute '" + addon + "' with commands '" + cmd0 + "' and '" + cmd1 +"'")
+        self.logger.debug("Execute '" + addon + "' with commands cmd0 '" + cmd0 + "' and cmd1 '" + cmd1 +"'")
         xbmc = Server(self.url('/jsonrpc', True))
         if addon == 'script.artwork.downloader':
-            return xbmc.Addons.ExecuteAddon('addonid=' + addon)
+            return xbmc.Addons.ExecuteAddon(addonid=addon, params=['tvshow', 'movie', 'musicvideos'])
         elif addon == 'script.cinema.experience':
             cmd = 'movieid=' + int(cmd0)
             return xbmc.Addons.ExecuteAddon(addon, cmd)
@@ -385,6 +393,43 @@ class Xbmc:
             return xbmc.Addons.ExecuteAddon(addon, cmd)
         elif addon == 'script.cdartmanager':
             return xbmc.Addons.ExecuteAddon('addonid=' + addon, cmd0)
+        elif addon == 'plugin.video.twitch':
+            if cmd0: # If search
+                return xbmc.Addons.ExecuteAddon(addon, '/searchresults/'+ cmd0 + '/0' )
+            else: # Open plugin
+                return xbmc.Addons.ExecuteAddon(addon, '/')
+        elif addon == 'plugin.video.nrk':
+            if cmd0:
+                #Does not work in directly in xbmc or via this one, think its a addon problem
+                cmd = '/search/%s/1' % cmd0
+                return xbmc.Addons.ExecuteAddon(addon, cmd)
+            else:
+                return xbmc.Addons.ExeceuteAddon(addonid=addon)
+        elif addon == 'script.globalsearch':
+            xbmc.Addons.ExecuteAddon(addon, '/searchstring/'+ cmd0)
+            return xbmc.Input.SendText(text=cmd0)
+
+
+        else:
+            return xbmc.Addons.ExecuteAddon(addonid=addon)
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def GetAddons(self):
+        xbmc = Server(self.url('/jsonrpc', True))
+        prop = ['name', 'thumbnail', 'description', 'author', 'version', 'enabled', 'rating', 'summary']
+        addons = xbmc.Addons.GetAddons(content='unknown', enabled='all', properties=prop)['addons']
+        return addons
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def Enable_DisableAddon(self, addonid=None, enabled=None):
+        xbmc = Server(self.url('/jsonrpc', True))
+        if enabled == 'true':
+            enabled = True
+        else:
+            enabled = False
+        return xbmc.Addons.SetAddonEnabled(addonid=addonid, enabled=enabled)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -461,16 +506,11 @@ class Xbmc:
             elif action == 'party':
                 return xbmc.Player.Open(item={'partymode': 'audio'})
             elif action == 'getsub':
-                try:
-                    #Frodo
+                version = xbmc.Application.GetProperties(properties=['version'])['version']['major']
+                if version < 12: # Eden
                     return xbmc.Addons.ExecuteAddon(addonid='script.xbmc.subtitles')
-                except:
-                    pass
-                try:
-                    #Gotham
+                else: #Frodo
                     return xbmc.GUI.ActivateWindow(window='subtitlesearch')
-                except:
-                    pass
             elif action == 'volume':
                 return xbmc.Application.SetVolume(volume=int(value))
             elif action == 'fullscreen':
