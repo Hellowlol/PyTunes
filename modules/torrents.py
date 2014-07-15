@@ -9,7 +9,7 @@ import sys
 from pytunes import staticvars
 from pytunes.proxy import get_image
 from urllib2 import urlopen, quote
-from json import loads
+from json import loads, dumps
 import logging
 import xml.etree.ElementTree as xml
 from engines import ka
@@ -63,13 +63,12 @@ class Torrents:
         return torrentproviders
 
     @cherrypy.expose()
-    def ToClient(self, url, type):
-        """ Send torrent or nzb to the default client """
-        #if settings.get('deluge_enable', ''):
-        #if settings.get('utorrent_enable', ''):
-        #if settings.get('transmission_enable', ''):
-        #if settings.get('qbittorrent_enable', ''):
-        return 'Worked'
+    def getdefclient(self, link):
+        """ Send the js the default client """
+        defclient = {'client':'qBittorrent',
+                    'path': 'qbittorrent/command?cmd=download&hash=%s' % link
+                    }
+        return dumps(defclient)
 
     @cherrypy.expose()
     def sizeof(self, num):

@@ -1,7 +1,8 @@
 
 function search(query, engineid, catid) {
+    //alert(query);
     if (query === undefined) return;
-    alert(engineid);
+    //alert(engineid);
     $.ajax({
         url: WEBDIR + 'torrents/search?q=' + query + '&engineid=' + engineid + '&cat=' + catid,
         type: 'get',
@@ -16,18 +17,28 @@ function search(query, engineid, catid) {
             $('#results_table_body').append(data);
             $('table').trigger("update");
             $('table').trigger("sorton", [[[3,1], [4,1]]]);
-            $('.download').click(function (e) {
-                var sendData = {
-                    link: $(this).attr('torr_link'),
-                    client: $(this).attr('torr_client')
-                };
+            $('.download').click(function () {
+                var link = $(this).attr('torr_link');
+                var sendData = {'link': link};
                 $.ajax({
-                    url: WEBDIR + "torrents/download",
+                    url: WEBDIR + "torrents/getdefclient",
                     type: 'get',
                     data: sendData,
-                    dataType: 'text',
+                    dataType: 'json',
                     success: function (data) {
-                        notify(data, 'Sent to ' + $(this).attr('torr_client'), 'success', '');
+                        //var path = data.path;
+                alert(data.path);
+                        //var client = data["client"];
+                //alert(data.client);
+                        $.ajax({
+                            url: WEBDIR + data.path,
+                            type: 'get',
+                            dataType: 'text',
+                            success: function (data2) {
+                alert(data2);
+                                notify('Torrent Download', 'Sent to ' + data.client, 'success', '');
+                            }
+                        });
                     }
 
                 });
@@ -45,6 +56,8 @@ function search(query, engineid, catid) {
 $(document).ready(function () {
     $('#torrent_search_table').tablesorter();
     $('#searchform').submit(function () {
+        //alert('search');
+        //e.preventDefault();
         search($('#query').val(), $('#engineid').val(), $('#catid').val());
         return false;
     });

@@ -106,17 +106,18 @@ class qbittorrent:
             url += 'command/%s/' % cmd
             data = {}
         
-            if cmd == 'delete' or cmd == 'deletePerm':
-                data['hashes'] = hash
+            if cmd == 'resumeall' or cmd == 'pauseall':
+                urllib2.urlopen(url)   
+                return  'pause/resume'      
             elif cmd == 'download':
                 data['urls'] = hash
+            elif cmd == 'delete' or cmd == 'deletePerm':
+                data['hashes'] = hash
             else:
                 data['hash'] = hash        
-            if cmd == 'resumeall' or 'pauseall':
-                r = urllib2.urlopen(url + cmd)   
             data = urllib.urlencode(data)        
             result = urllib2.urlopen(url, data).read()
-            return cmd + result        
+            return cmd      
         except Exception as e:
             self.logger.error("Failed at %s %s %s %s" % (cmd, name, hash ,e))
             return cmd + 'Failed'
@@ -139,3 +140,19 @@ class qbittorrent:
             result = urllib2.urlopen(url, data)         
         except Exception as e:
             self.logger.error("Failed to set %s to %s %s"% (type, speed, e))
+
+    #Torrent search send to client
+    @cherrypy.expose()
+    def to_client(self, link, torrentname, **kwargs):
+        try:
+            url = self.qbturl()
+            url += 'command/download/'
+            data = {}
+            data['urls'] = link
+            params = urllib.urlencode(data)
+            result = urllib2.urlopen(url, params).read()
+            self.logger.info('%s %s was sent to qBittorrent' % (torrentname, link))
+        except Exception as e:
+            self.logger.error('Failed to send %s %s to qBittorrent %s' % (link, torrentname, e))
+    
+
