@@ -1,3 +1,15 @@
+function loadClients() {
+    $.ajax({
+        url: WEBDIR + 'newznab/GetClients',
+        type: 'get',
+        dataType: 'text',
+        success: function (data) {
+            if (data === null) return errorHandler();
+            $('#default_nzb_id').append(data);
+        }
+    });
+}
+
 
 function getCategories() {
     $.ajax({

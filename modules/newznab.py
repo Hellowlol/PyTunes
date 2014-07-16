@@ -191,3 +191,16 @@ class Newznab:
         except:
             self.logger.error("Cannot contact sabnzbd")
             return
+
+    @cherrypy.expose()
+    def GetClients(self):
+        nzbs = ''
+        if pytunes.settings.get('nzbget_enable', ''):
+            nzbs += '<option id="nzbget">NZBget</option>'
+        if pytunes.settings.get('sab_enable', ''):
+            nzbs += '<option id="sabnzbd">Sabnzbd+</option>'
+        if not nzbs:
+            nzbs = '<option>No Clients Enabled</option>'
+        #return json.dumps({'nzbs':nzbs})
+        return nzbs
+

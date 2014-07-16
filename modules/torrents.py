@@ -65,10 +65,13 @@ class Torrents:
     @cherrypy.expose()
     def getdefclient(self, link):
         """ Send the js the default client """
-        defclient = {'client':'qBittorrent',
+        if pytunes.settings.get('default_torr_id'):
+            defclient = {'client':'qBittorrent',
                     'path': 'qbittorrent/command?cmd=download&hash=%s' % link
                     }
-        return dumps(defclient)
+            return dumps(defclient)
+        else:
+            return 'no default clients defined'
 
     @cherrypy.expose()
     def sizeof(self, num):
@@ -167,4 +170,21 @@ class Torrents:
             out += html('torrent_search_table') % (icon, name, r['size'], r['seeds'], r['leech'], r['engine_url'], r['link'])
         return out
     '''
+
+    @cherrypy.expose()
+    def GetClients(self):
+        torrents = ''
+        if pytunes.settings.get('deluge_enable', ''):
+            torrents += '<option id="deluge">Deluge</option>'
+        if pytunes.settings.get('utorrent_enable', ''):
+            torrents += '<option id="utorrent">uTorrent</option>'
+        if pytunes.settings.get('transmission_enable', ''):
+            torrents += '<option id="transmission">Transmission</option>'
+        if pytunes.settings.get('qbittorrent_enable', ''):
+            torrents += '<option id="qbittorrent">qBittorrent</option>'
+        if not torrents:
+            torrents = '<option>No Clients Enabled</option>'
+        return torrents
+
+
 

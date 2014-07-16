@@ -128,6 +128,33 @@ $(document).ready(function () {
                 if (!confirm('Delete ' + name)) return;
                 $.get(WEBDIR + 'settings/delxbmcserver?id=' + id, function (data) {
                     notify('Settings', 'Server deleted', 'info');
+
+                    $(this).val(0);
+                    item.find('option[value=' + id + ']').remove();
+                    $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
+                });
+            });
+        });
+    });
+    $('#newznab_server_id').change(function () {
+        $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
+        var item = $(this);
+        var id = item.val();
+        if (id === 0) $('button:reset:visible').trigger('click');
+        $.get(WEBDIR + 'settings/getnewzserver?id=' + id, function (data) {
+            if (data === null) return;
+            $('#newznab_server_name').val(data.name);
+            $('#newznab_server_host').val(data.host);
+            $('#newznab_server_apikey').val(data.apikey);
+            $('#newznab_server_username').val(data.username);
+            $('#newznab_server_password').val(data.password);
+            $('#newznab_server_ssl').val(data.ssl);
+            $("button:reset:visible").html('Delete').addClass('btn-danger').click(function (e) {
+                var name = item.find('option:selected').text();
+                if (!confirm('Delete ' + name)) return;
+                $.get(WEBDIR + 'settings/delnewzserver?id=' + id, function (data) {
+                    notify('Settings', 'Server deleted', 'info');
+
                     $(this).val(0);
                     item.find('option[value=' + id + ']').remove();
                     $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
@@ -136,18 +163,26 @@ $(document).ready(function () {
         });
     });
     xbmc_update_servers(0);
-    //newznab_update_servers(0);
+    newznab_update_servers(0);
 });
 
 function loadClients() {
     $.ajax({
-        url: WEBDIR + 'manager/GetClients',
+        url: WEBDIR + 'torrents/GetClients',
         type: 'get',
-        dataType: 'json',
+        dataType: 'text',
         success: function (data) {
             if (data === null) return errorHandler();
-            $('#default_torr_id').append(data.torrents);
-            $('#default_nzb_id').append(data.nzbs);
+            $('#default_torr_id').append(data);
+        }
+    });
+    $.ajax({
+        url: WEBDIR + 'newznab/GetClients',
+        type: 'get',
+        dataType: 'text',
+        success: function (data) {
+            if (data === null) return errorHandler();
+            $('#default_nzb_id').append(data);
         }
     });
 }

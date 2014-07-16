@@ -1,8 +1,18 @@
 
+function loadClients() {
+    $.ajax({
+        url: WEBDIR + 'torrents/GetClients',
+        type: 'get',
+        dataType: 'text',
+        success: function (data) {
+            if (data === null) return errorHandler();
+            $('#default_torr_id').append(data);
+        }
+    });
+}
+
 function search(query, engineid, catid) {
-    //alert(query);
     if (query === undefined) return;
-    //alert(engineid);
     $.ajax({
         url: WEBDIR + 'torrents/search?q=' + query + '&engineid=' + engineid + '&cat=' + catid,
         type: 'get',
@@ -25,17 +35,11 @@ function search(query, engineid, catid) {
                     type: 'get',
                     data: sendData,
                     dataType: 'json',
-                    success: function (data) {
-                        //var path = data.path;
-                alert(data.path);
-                        //var client = data["client"];
-                //alert(data.client);
                         $.ajax({
                             url: WEBDIR + data.path,
                             type: 'get',
                             dataType: 'text',
-                            success: function (data2) {
-                alert(data2);
+                            success: function () {
                                 notify('Torrent Download', 'Sent to ' + data.client, 'success', '');
                             }
                         });
