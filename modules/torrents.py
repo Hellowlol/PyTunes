@@ -14,6 +14,7 @@ import logging
 import xml.etree.ElementTree as xml
 from engines import ka
 from engines import btn
+from engines import norbits
 #from engines import piratebay
 from engines import fenopy
 from engines import yts
@@ -36,6 +37,9 @@ class Torrents:
                 {'type':'bool', 'label':'Fenopy', 'name':'torrents_fenopy_enabled'},
                 {'type':'bool', 'label':'Fenopy verified torrents only', 'name':'torrents_fenopy_enabled_verified'},
                 {'type':'bool', 'label':'Yts', 'name':'torrents_yts_enabled'},
+                {'type':'bool', 'label':'Norbits', 'name':'torrents_norbits_enabled'},
+                {'type':'text', 'label':'Norbits username', 'name':'torrents_norbits_username'},
+                {'type':'text', 'label':'Norbits passkey', 'name':'torrents_norbits_passkey'}
         ]})
 
     def torrentproviders(self):
@@ -48,6 +52,9 @@ class Torrents:
 
         if pytunes.settings.get('torrents_yts_enabled') == 1:
             torrentproviders.append('yts')
+
+        if pytunes.settings.get('torrents_norbits_enabled') == 1 and pytunes.settings.get('torrents_norbits_passkey'):
+            torrentproviders.append('norbits')
 
         return torrentproviders
 
@@ -83,6 +90,9 @@ class Torrents:
 
         elif engineid == 'yts':
             return self.search_yts(q, cat)
+
+        elif engineid == 'norbits':
+            return self.search_norbits(q, cat)
         
         elif engineid == 'all':
             out = ''
@@ -137,7 +147,20 @@ class Torrents:
                 continue
             name = "<a href='" + t['page'] + "' target='_blank'>" + t['name'] + "</a>"
             out += html('torrent_search_table') % (icon, name, self.sizeof(t['size']), t['seeder'], t['leecher'], 'Fenopy', t['torrent'])
-        return out 
+        return out
+
+    def search_norbits(self, q, cat):
+        nb = norbits.norbits()
+        results = nb.search(q, cat)
+        print results
+        #results = nb.search(q, cat)
+        out = ''
+        icon = "<img alt='icon' src='../img/fenopy.png'/>"
+        #for r in results:
+        #    print r
+        return out
+
+
 
     ''' #does not work
     def search_piratebay(self, q):
