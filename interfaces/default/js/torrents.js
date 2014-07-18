@@ -1,12 +1,12 @@
-
 function loadClients() {
+    alert('clients');
     $.ajax({
         url: WEBDIR + 'torrents/GetClients',
         type: 'get',
         dataType: 'text',
         success: function (data) {
             if (data === null) return errorHandler();
-            $('#default_torr_id').append(data);
+            $('#defclient').append(data);
         }
     });
 }
@@ -26,15 +26,23 @@ function search(query, engineid, catid) {
             if (data === null) return errorHandler();
             $('#results_table_body').append(data);
             $('table').trigger("update");
-            $('table').trigger("sorton", [[[3,1], [4,1]]]);
+            $('table').trigger("sorton", [
+                [
+                    [3, 1],
+                    [4, 1]
+                ]
+            ]);
             $('.download').click(function () {
                 var link = $(this).attr('torr_link');
-                var sendData = {'link': link};
+                var sendData = {
+                    'link': link
+                };
                 $.ajax({
                     url: WEBDIR + "torrents/getdefclient",
                     type: 'get',
                     data: sendData,
                     dataType: 'json',
+                    success: function () {
                         $.ajax({
                             url: WEBDIR + data.path,
                             type: 'get',
@@ -65,5 +73,5 @@ $(document).ready(function () {
         search($('#query').val(), $('#engineid').val(), $('#catid').val());
         return false;
     });
+    loadClients();
 });
-

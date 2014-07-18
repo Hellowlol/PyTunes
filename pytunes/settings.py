@@ -27,7 +27,7 @@ class NewznabServers(SQLObject):
     apikey = StringCol()
     username = StringCol(default=None)
     password = StringCol(default=None)
-    ssl = BoolCol(default=False)
+    ssl = StringCol(default=None)
 
 
 class Setting(SQLObject):
@@ -152,8 +152,9 @@ class Settings:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def setnewzserver(self, newznab_server_id, newznab_server_name, newznab_server_host,
+    def setnewzserver(self, newznab_server_id, newznab_server_name, newznab_server_host, newznab_server_apikey,
             newznab_server_username=None, newznab_server_password=None, newznab_server_ssl=False):
+        print 'id: ', newznab_server_id
         """ Create a server if id=0, else update a server """
         if newznab_server_id == "0":
             self.logger.debug("Creating Newznab-Server in database")
@@ -168,7 +169,7 @@ class Settings:
                 return 1
             except Exception, e:
                 self.logger.debug("Exception: " + str(e))
-                self.logger.error("Unable to create Newznab-Server in database")
+                self.logger.error("Unable to create Newznab-Server in database: " + str(e))
                 return 0
         else:
             self.logger.debug("Updating Newznab-Server " + newznab_server_name + " in database")
@@ -182,7 +183,7 @@ class Settings:
                 server.ssl = newznab_server_ssl
                 return 1
             except SQLObjectNotFound, e:
-                self.logger.error("Unable to update Newznab Server " + server.name + " in database")
+                self.logger.error("Unable to update Newznab Server " + server.name + " in database: " + e)
                 return 0
 
     @cherrypy.expose()
@@ -252,7 +253,7 @@ class Settings:
                 return 1
             except Exception, e:
                 self.logger.debug("Exception: " + str(e))
-                self.logger.error("Unable to create XBMC-Server in database")
+                self.logger.error("Unable to create XBMC-Server in database:" + str(e))
                 return 0
         else:
             self.logger.debug("Updating XBMC-Server " + xbmc_server_name + " in database")
@@ -295,32 +296,6 @@ class Settings:
                 self.logger.warning("No configured XBMC-Servers.")
                 return "No valid servers"
 
-    @cherrypy.expose()
-    def NzbClients(self):
-        nzbs = ''
-        if settings.get('nzbget_enable', ''):
-            nzbs += '<option id="nzbget">NZBget</option>'
-        if settings.get('sab_enable', ''):
-            nzbs += '<option id="sabnzbd">Sabnzbd+</option>'
-        if not nzbs:
-            nzbs = '<option id="">No Clients Enabled</option>'
-        return nzbs
-
-    @cherrypy.expose()
-    def TorrClients(self):
-        torrents = ''
-        nzbs = ''
-        if settings.get('deluge_enable', ''):
-            torrents += '<option id="deluge">Deluge</option>'
-        if settings.get('utorrent_enable', ''):
-            torrents += '<option id="utorrent">uTorrent</option>'
-        if settings.get('transmission_enable', ''):
-            torrents += '<option id="transmission">Transmission</option>'
-        if settings.get('qbittorrent_enable', ''):
-            torrents += '<option id="qbittorrent">qBittorrent</option>'
-        if not torrents:
-            torrents = '<option>No Clients Enabled</option>'
-        return torrents
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def get_current_newznab(self, id):

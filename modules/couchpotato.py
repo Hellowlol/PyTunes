@@ -21,7 +21,7 @@ class Couchpotato:
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'couchpotato_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'couchpotato_name', 'placeholder':''},
-                {'type': 'text', 'label': 'IP / Host *', 'name': 'couchpotato_host', 'placeholder':'localhost'},
+                {'type': 'text', 'label': 'IP / Host *', 'name': 'couchpotato_host', 'placeholder':''},
                 {'type': 'text', 'label': 'Username *', 'name': 'couchpotato_username', 'placeholder':''},
                 {'type': 'text', 'label': 'Password *', 'name': 'couchpotato_password', 'placeholder':''},
                 {'type': 'text', 'label': 'Port *', 'name': 'couchpotato_port', 'placeholder':'', 'desc':'Default is 5050'},

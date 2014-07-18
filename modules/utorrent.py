@@ -99,8 +99,8 @@ class UTorrent:
 		'test': pytunes.WEBDIR + 'utorrent/ping',
 		'fields': [
 			{'type': 'bool', 'label': 'Enable', 'name': 'utorrent_enable'},
-			{'type': 'text', 'label': 'Menu name', 'name': 'utorrent_name', 'placeholder':'uTorrent'},
-			{'type': 'text', 'label': 'IP / Host *', 'name': 'utorrent_host', 'placeholder':'localhost'},
+			{'type': 'text', 'label': 'Menu name', 'name': 'utorrent_name', 'placeholder':''},
+			{'type': 'text', 'label': 'IP / Host *', 'name': 'utorrent_host', 'placeholder':''},
 			{'type': 'text', 'label': 'Port *', 'name': 'utorrent_port', 'desc':''},
 			{'type': 'text', 'label': 'Username', 'name': 'utorrent_username'},
 			{'type': 'password', 'label': 'Password', 'name': 'utorrent_password'}

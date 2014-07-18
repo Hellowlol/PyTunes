@@ -16,9 +16,9 @@ class Sickbeard:
             'test': pytunes.WEBDIR + 'sickbeard/ping',
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'sickbeard_enable'},
-                {'type': 'text', 'label': 'Menu name', 'name': 'sickbeard_name', 'placeholder':'Sickbeard'},
-                {'type': 'text', 'label': 'IP / Host *', 'name': 'sickbeard_host', 'placeholder':'localhost'},
-                {'type': 'text', 'label': 'Port *', 'name': 'sickbeard_port', 'placeholder':'8081', 'desc':'Default is 8081'},
+                {'type': 'text', 'label': 'Menu name', 'name': 'sickbeard_name', 'placeholder':''},
+                {'type': 'text', 'label': 'IP / Host *', 'name': 'sickbeard_host', 'placeholder':''},
+                {'type': 'text', 'label': 'Port *', 'name': 'sickbeard_port', 'placeholder':'', 'desc':'Default is 8081'},
                 {'type': 'text', 'label': 'Basepath', 'name': 'sickbeard_basepath'},
                 {'type': 'text', 'label': 'API key', 'name': 'sickbeard_apikey'},
                 {'type': 'bool', 'label': 'Use SSL', 'name': 'sickbeard_ssl'}

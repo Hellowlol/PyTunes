@@ -5,7 +5,7 @@ function loadClients() {
         dataType: 'text',
         success: function (data) {
             if (data === null) return errorHandler();
-            $('#default_nzb_id').append(data);
+            $('#default_nzb_client').append(data);
         }
     });
 }
@@ -52,7 +52,7 @@ function search(query, catid) {
             $('a.ajax-link').click(function (e) {
                 e.preventDefault();
                 var link = $(this);
-                 $.getJSON(link.attr('href'), function () {
+                $.getJSON(link.attr('href'), function () {
                     notify('', 'Sent to Sabnzbd+  Category: ' + link.attr('cat'), 'success');
                 });
             });
@@ -62,6 +62,7 @@ function search(query, catid) {
 
 
 $(document).ready(function () {
+    loadClients();
     $('#searchform').submit(function () {
         search($('#query').val(), $('#catid').val());
         return false;
@@ -71,9 +72,9 @@ $(document).ready(function () {
     getCategories();
     // Load serverlist and send command on change.
 
-    var servers = $('#servers').change(function () {
+    var servers = $('#default_newznab_server').change(function () {
         $.get(WEBDIR + 'settings/changenewzserver?id=' + $(this).val(), function (data) {
-            notify('XBMC', 'Server change ' + data, 'info');
+            notify('Newznab', 'Server change ' + data, 'info');
         });
     });
 
@@ -86,4 +87,3 @@ $(document).ready(function () {
         });
     }, 'json');
 });
-

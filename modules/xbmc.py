@@ -33,7 +33,7 @@ class Xbmc:
                 {'type':'text',
                  'label':'Menu name',
                  'name':'xbmc_name', 
-                 'placeholder':'XBMC'},
+                 'placeholder':''},
                 {'type':'bool',
                  'label':'Enable PVR',
                  'name':'xbmc_enable_pvr'},

@@ -197,10 +197,9 @@ class Newznab:
         nzbs = ''
         if pytunes.settings.get('nzbget_enable', ''):
             nzbs += '<option id="nzbget">NZBget</option>'
-        if pytunes.settings.get('sab_enable', ''):
+        if pytunes.settings.get('sabnzbd_enable', ''):
             nzbs += '<option id="sabnzbd">Sabnzbd+</option>'
         if not nzbs:
             nzbs = '<option>No Clients Enabled</option>'
-        #return json.dumps({'nzbs':nzbs})
         return nzbs
 
