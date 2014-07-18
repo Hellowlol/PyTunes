@@ -5,7 +5,6 @@ import pytunes
 import json
 import logging
 import requests
-import logging
 
 def search(q, cat):
     logger = logging.getLogger('modules.torrents')
