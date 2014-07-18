@@ -53,7 +53,7 @@ class Torrents:
         if pytunes.settings.get('torrents_yts_enabled') == 1:
             torrentproviders.append('yts')
 
-        if pytunes.settings.get('torrents_norbits_enabled') == 1 and pytunes.settings.get('torrents_norbits_passkey'):
+        if pytunes.settings.get('torrents_norbits_enabled') == 1 and pytunes.settings.get('torrents_norbits_passkey') and pytunes.settings.get('torrents_norbits_username'):
             torrentproviders.append('norbits')
 
         return torrentproviders
@@ -108,6 +108,9 @@ class Torrents:
             
             if pytunes.settings.get('torrents_yts_enabled') == 1:
                 out += self.search_yts(q, cat)
+
+            if pytunes.settings.get('torrents_norbits_enabled') == 1 and pytunes.settings.get('torrents_norbits_passkey') and pytunes.settings.get('torrents_norbits_username'):
+                out += self.search_norbits(q, cat)    
             
             #out += self.search_piratebay(q)#Does not work
             return out
@@ -150,16 +153,18 @@ class Torrents:
         return out
 
     def search_norbits(self, q, cat):
-        nb = norbits.norbits()
-        results = nb.search(q, cat)
-        print results
-        #results = nb.search(q, cat)
+        results = norbits.search(q, cat)
         out = ''
-        icon = "<img alt='icon' src='../img/fenopy.png'/>"
-        #for r in results:
-        #    print r
+        passkey = pytunes.settings.get('torrents_norbits_passkey', '')
+        icon = "<img alt='icon' src='../img/norbits.png'/>"
+        if int(results['data']['total']) == 0:
+            self.logger.info('Failed to find any torrents on Norbits with nam %s' % q)
+        elif results['data']['torrents']:
+            for t in results['data']['torrents']:
+                downloadurl = 'https://norbits.net/download.php?id=%s&passkey=%s' % (t['id'], passkey)
+                name = "<a href='https://norbits.net/details.php?id=" + t['id'] + "' target='_blank'>" + t['name'] + "</a>"
+                out += html('torrent_search_table') % (icon, name, self.sizeof(int(t['size'])), t['seeders'], t['leechers'], 'Norbits', downloadurl)
         return out
-
 
 
     ''' #does not work
