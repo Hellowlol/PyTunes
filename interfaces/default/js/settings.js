@@ -211,3 +211,37 @@ function newznab_update_servers(id) {
     }, 'json');
 }
 
+$(document).on('click', '.delete_cache', function(e){
+    $.ajax({
+        'url': WEBDIR + 'settings/delete_cache',
+        'dataType': 'json',
+        'success': function(response) {
+            if (response.success) {
+                $('.delete_cache').addClass('btn-success').removeClass('btn-danger');
+                notify('Info', 'Cache folder was deleted', 'success', 5);
+
+            } else {
+                $('.delete_cache').addClass('btn-danger').removeClass('btn-success');
+                notify('Error', 'Failed to delete cache folder', 'error', 5);
+            }
+        }
+    });
+});
+
+$(document).on('click', '.delete_cache', function(e){
+    $.ajax({
+        'url': WEBDIR + 'settings/delete_cache',
+        'dataType': 'json',
+        'success': function(response) {
+            if (response.success) {
+                $('.delete_cache').addClass('btn-success').removeClass('btn-danger');
+                notify('Info', 'Cache folder was deleted', 'success', 5);
+
+            } else {
+                $('.delete_cache').addClass('btn-danger').removeClass('btn-success');
+                notify('Error', 'Failed to delete cache folder', 'error', 5);
+            }
+        }
+    });
+});
+

@@ -13,6 +13,7 @@ from socket import gethostname
 from pprint import pprint
 from time import gmtime, mktime
 from os.path import exists, join
+import shutil
 
 try:
     from OpenSSL import crypto
@@ -125,6 +126,21 @@ class Settings:
             cacert = createCertificate(careq, (careq, cakey), 0, (0, 60*60*24*365*10)) # 10 years
             open(join(cert_dir, key_file), 'w').write(crypto.dump_privatekey(crypto.FILETYPE_PEM, cakey))
             open(join(cert_dir, cert_file), 'w').write(crypto.dump_certificate(crypto.FILETYPE_PEM, cacert))
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def delete_cache(self):
+        try:
+            cache_folder = os.path.join(pytunes.DATADIR, 'images/')
+            if os.path.exists(cache_folder):
+                self.logger.info('Cache folder was deleted')
+                shutil.rmtree(cache_folder)
+                return {'success': 'true'}
+            return {'failed': 'cache folder does not exist'}
+        except Exception as e:
+            self.logger.error('Failed to delete cache folder ', e)
+            return {'failed': e}
+
 
 
     @cherrypy.expose()
