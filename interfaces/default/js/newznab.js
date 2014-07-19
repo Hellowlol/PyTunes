@@ -87,3 +87,20 @@ $(document).ready(function () {
         });
     }, 'json');
 });
+
+    var clients = $('#default_newznab_client').change(function () {
+        $.get(WEBDIR + 'settings/changenewzclient?id=' + $(this).val(), function (data) {
+            notify('Newznab', 'Client change ' + data, 'info');
+        });
+    });
+
+    $.get(WEBDIR + 'settings/getnewzserver', function (data) {
+        if (data === null) return;
+        $.each(data.servers, function (i, item) {
+            server = $('<option>').text(item.name).val(item.id);
+            if (item.name == data.current) server.attr('selected', 'selected');
+            servers.append(server);
+        });
+    }, 'json');
+});
+

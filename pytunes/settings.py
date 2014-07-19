@@ -170,18 +170,18 @@ class Settings:
     @cherrypy.tools.json_out()
     def setnewzserver(self, newznab_server_id, newznab_server_name, newznab_server_host, newznab_server_apikey,
             newznab_server_username=None, newznab_server_password=None, newznab_server_ssl=False):
-        print 'id: ', newznab_server_id
+        #print 'id: ', newznab_server_id
         """ Create a server if id=0, else update a server """
         if newznab_server_id == "0":
             self.logger.debug("Creating Newznab-Server in database")
             try:
-                id = NewznabServers(name=newznab_server_name,
+                new = NewznabServers(name=newznab_server_name,
                         host=newznab_server_host,
                         apikey=newznab_server_apikey,
                         username=newznab_server_username,
                         password=newznab_server_password,
                         ssl=newznab_server_ssl)
-                self.changenewzserver(id)
+                self.changenewzserver(str(new.id))
                 return 1
             except Exception, e:
                 self.logger.debug("Exception: " + str(e))
@@ -209,6 +209,19 @@ class Settings:
         NewznabServers.delete(id)
         self.changenewzserver()
         return
+
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def changenewzclient(self, id=0):
+        try:
+            #self.current_newznab_client = NewznabServers.selectBy(id=id).getOne()
+            self.set('default_nzb_id', id)
+            self.logger.info("Setting default Newznab client: " + id)
+            return "success"
+        except :
+            self.logger.error("Failed Newznab client.")
+            return "success"
+
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -259,13 +272,13 @@ class Settings:
         if xbmc_server_id == "0":
             self.logger.debug("Creating XBMC-Server in database")
             try:
-                id = XbmcServers(name=xbmc_server_name,
+                new = XbmcServers(name=xbmc_server_name,
                         host=xbmc_server_host,
                         port=int(xbmc_server_port),
                         username=xbmc_server_username,
                         password=xbmc_server_password,
                         mac=xbmc_server_mac)
-                self.changexbmcserver(id)
+                self.changexbmcserver(str(new.id))
                 return 1
             except Exception, e:
                 self.logger.debug("Exception: " + str(e))
@@ -314,9 +327,9 @@ class Settings:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def get_current_newznab(self, id):
+    def get_current_newznab(self):
         #print 'current: ', self.current
-        return self.get('newznab_current_server', 0)
+        return NewznabServers.selectBy(id=self.get('newznab_current_server', 0)).getOne()
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()

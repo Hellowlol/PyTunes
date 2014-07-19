@@ -19,7 +19,7 @@ class Newznab:
                  'label':'Default NZB Client',
                  'name':'default_nzb_id',
                  'options':[],
-                    'desc':'Only Enabled Clients Will Show' 
+                 'desc':'Only Enabled Clients Will Show' 
                 },
                 {'type':'text', 'label':'Console Category', 'name':'newznab_console', 'desc':'From Sabnzbd Configuration'},
                 {'type':'text', 'label':'Movies Category', 'name':'newznab_movies', 'desc':'From Sabnzbd Configuration'},
@@ -172,7 +172,7 @@ class Newznab:
             return
 
     def send(self, link):
-        self.current = pytunes.settings.get_current_newznab(pytunes.settings.get('xbmc_current_server', 0))
+        self.current = pytunes.settings.get_current_newznab(pytunes.settings.get('newznab_current_server', 0))
         try:
             host = pytunes.settings.get('sabnzbd_host', '')
             port = str(pytunes.settings.get('sabnzbd_port', ''))

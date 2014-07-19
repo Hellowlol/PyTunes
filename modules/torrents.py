@@ -34,7 +34,7 @@ class Torrents:
                  'label':'Default Torrent Client',
                  'name':'default_torr_id',
                  'options':[],
-                    'desc':'Only Enabled Clients Will Show' 
+                 'desc':'Only Enabled Clients Will Show' 
                 },
                 {'type':'bool', 'label':'Enable BTN', 'name':'torrents_btn_enabled'},
                 {'type':'text', 'label':'BTN APIKEY', 'name':'torrents_btnapikey'},
@@ -175,13 +175,25 @@ class Torrents:
     def GetClients(self):
         torrents = ''
         if pytunes.settings.get('deluge_enable', ''):
-            torrents += '<option id="deluge">Deluge</option>'
+            if pytunes.settings.get('deluge_name', '') == pytunes.settings.get('default_torr_id', ''):
+                torrents += '<option id="deluge" selected>Deluge</option>'
+            else:
+                torrents += '<option id="deluge">Deluge</option>'
         if pytunes.settings.get('utorrent_enable', ''):
-            torrents += '<option id="utorrent">uTorrent</option>'
+            if pytunes.settings.get('utorrent_name', '') == pytunes.settings.get('default_torr_id', ''):
+                torrents += '<option id="utorrent" selected>uTorrent</option>'
+            else:
+                torrents += '<option id="utorrent">uTorrent</option>'
         if pytunes.settings.get('transmission_enable', ''):
-            torrents += '<option id="transmission">Transmission</option>'
+            if pytunes.settings.get('transmission_name', '') == pytunes.settings.get('default_torr_id', ''):
+                torrents += '<option id="transmission" selected>Transmission</option>'
+            else:
+                torrents += '<option id="transmission">Transmission</option>'
         if pytunes.settings.get('qbittorrent_enable', ''):
-            torrents += '<option id="qbittorrent">qBittorrent</option>'
+            if pytunes.settings.get('qbittorrent_name', '') == pytunes.settings.get('default_torr_id', ''):
+                torrents += '<option id="qbittorrent" selected>qBittorrent</option>'
+            else:
+                torrents += '<option id="qbittorrent">qBittorrent</option>'
         if not torrents:
             torrents = '<option>No Clients Enabled</option>'
         return torrents

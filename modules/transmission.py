@@ -62,6 +62,17 @@ class Transmission:
             return False
         return self.fetch('torrent-stop', {'ids': torrentId})
 
+    #For torrent search
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def to_client(self, link, torrentname, **kwargs):
+        try:
+            self.logger.info('Added %s to uTorrent' % torrentname)
+            return self.fetch('torrent-add', {'filename': link})
+        except Exception as e:
+            self.logger.debug('Failed to add %s to uTorrent %s %s'(torrentname, link, e))
+
+
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def remove(self, torrentId):

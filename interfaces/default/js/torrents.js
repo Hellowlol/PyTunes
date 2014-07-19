@@ -1,5 +1,5 @@
 function loadClients() {
-    alert('clients');
+    //alert('clients');
     $.ajax({
         url: WEBDIR + 'torrents/GetClients',
         type: 'get',
@@ -74,4 +74,26 @@ $(document).ready(function () {
         return false;
     });
     loadClients();
+    // Client change. send command, reload options.
+    $('#defclient').change(function () {
+        $.ajax({
+            sendData = {client: $(this).val()}
+            url: WEBDIR + 'settings/SetTorrClient',
+            type: 'get',
+            dataType: 'text',
+            success: function (data) {
+                $.ajax({
+                    url: WEBDIR + 'torrents/GetClients',
+                    type: 'get',
+                    dataType: 'text',
+                    success: function (data) {
+                        if (data === null) return errorHandler();
+                        $('#defclient').empty();//combine these two
+                        $('#defclient').append(data);
+            notify('XBMC', 'Server change ' + data, 'info');
+                    }
+                });
+            }
+        });
+    });
 });
