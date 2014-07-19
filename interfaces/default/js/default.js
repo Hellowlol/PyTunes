@@ -41,6 +41,9 @@ $(document).ready(function () {
             });
         }
     });
+     $('a.settingsdisabled').click(function(e) {
+        e.preventDefault();
+     });
     $('a.confirm').click(function (e) {
         return (confirm($(this).attr('title') + '?'));
     });
