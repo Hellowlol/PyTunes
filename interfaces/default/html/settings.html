@@ -6,6 +6,7 @@
     <div class="page-header page-title">
         <img alt="PyTunes" src="../img/pytuneslogosm.png"/><img class="pull-right" alt="Settings" src="../img/settings.png"/>
     </div>
+        % if not pytunes.KIOSK:
         <div class="tabbable tabs-left">
             <ul class="nav nav-tabs">
                 <li class="active"><a href="#general" data-toggle="tab">General</a></li>
@@ -89,6 +90,9 @@
             ])}
             </div>
         </div>
+        % else:
+            <div class="alert alert block">Settings page is disabled. Run Pytunes without arg --kiosk</div>
+        % endif
     <div id="fileBrowserDialog" style="display:hidden"></div>
     </div>
 </div>
