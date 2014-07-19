@@ -304,3 +304,7 @@ table th.tablesorter-header {
         padding-top: 60px;
     }
 }
+
+#query {
+    margin-top: 10px !important;
+}

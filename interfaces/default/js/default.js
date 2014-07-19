@@ -146,6 +146,7 @@ function notify(title, text, type, time) {
 
 function showModal(title, content, buttons) {
     $('#modal_dialog .modal-h3').html(title);
+    $('#modal_dialog').attr('tabindex', '-1');
     $('#modal_dialog .modal-body').html(content);
     var footer = $('#modal_dialog .modal-footer').empty();
     $.extend(buttons, {
@@ -159,7 +160,8 @@ function showModal(title, content, buttons) {
     });
     $('#modal_dialog').modal({
         show: true,
-        backdrop: true
+        backdrop: true,
+        keyboard: true
     });
 }
 
