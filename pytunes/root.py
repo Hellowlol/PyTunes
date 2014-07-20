@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """
 Root for webserver. Specifies frontpage, errorpage (default),
 and pages for restarting and shutting down server.
@@ -8,6 +11,7 @@ import cherrypy
 import pytunes
 import logging
 from threading import Thread
+from cherrypy.lib.auth2 import AuthController, require, member_of, name_is
 
 
 def do_restart():
@@ -28,7 +32,13 @@ class Root:
         self.logger = logging.getLogger('pytunes.root')
         pass
 
+    cp_config = {
+        'tools.sessions.on': True,
+        'tools.auth.on': True
+    }
+    auth = AuthController()
     @cherrypy.expose()
+    @require()
     def index(self):
         """ Load template for frontpage """
         return pytunes.LOOKUP.get_template('dash.html').render(scriptname='dash')

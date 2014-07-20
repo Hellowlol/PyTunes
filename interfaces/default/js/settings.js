@@ -98,6 +98,11 @@ $(document).ready(function () {
                 xbmc_update_servers(0);
                 this.reset();
             }
+            if ($('#users_user_id').is(":visible")) {
+                users_update_user(0);
+                //xbmc_update_servers(0);
+                this.reset();
+            }
         });
     });
     $('input.enable-module').change(function () {
@@ -132,7 +137,35 @@ $(document).ready(function () {
         });
     });
     xbmc_update_servers(0);
+    $('input.enable-module').trigger('change');
+    $('#users_user_id').change(function () {
+        $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
+        var item = $(this);
+        var id = item.val();
+        if (id === 0) $('button:reset:visible').trigger('click');
+        $.get(WEBDIR + 'users/getuser?id=' + id, function (data) {
+            if (data === null) return;
+            //$('#xbmc_server_name').val(data.name);
+            //$('#xbmc_server_host').val(data.host);
+            //$('#xbmc_server_port').val(data.port);
+            $('#users_user_username').val(data.username);
+            $('#users_users_password').val(data.password);
+            $('#users_users_role').val(data.role);
+            $("button:reset:visible").html('Delete').addClass('btn-danger').click(function (e) {
+                var name = item.find('option:selected').text();
+                if (!confirm('Delete ' + name)) return;
+                $.get(WEBDIR + 'users/deluser?id=' + id, function (data) {
+                    notify('Settings', 'User deleted', 'info');
+                    $(this).val(0);
+                    item.find('option[value=' + id + ']').remove();
+                    $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
+                });
+            });
+        });
+    });
+    users_update_user(0);
 });
+
 
 function loadClients() {
     $.ajax({
@@ -155,6 +188,19 @@ function xbmc_update_servers(id) {
             var option = $('<option>').text(item.name).val(item.id);
             if (id == item.id) option.attr('selected', 'selected');
             servers.append(option);
+        });
+    }, 'json');
+}
+
+function users_update_user(id) {
+    $.get(WEBDIR + 'users/getuser', function (data) {
+        if (data === null) return;
+        //alert(data);
+        var users = $('#users_user_id').empty().append($('<option>').text('New').val(0));
+        $.each(data.users, function (i, item) {
+            var option = $('<option>').text(item.name).val(item.id);
+            if (id == item.id) option.attr('selected', 'selected');
+            users.append(option);
         });
     }, 'json');
 }

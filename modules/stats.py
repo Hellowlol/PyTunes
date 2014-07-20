@@ -12,6 +12,7 @@ import ConfigParser
 import urllib2
 import platform
 import cherrypy
+from cherrypy.lib.auth2 import AuthController, require, member_of, name_is
 import pytunes
 #from pytunes import connector
 from pytunes.staticvars import get_var as html
@@ -52,6 +53,7 @@ class Stats:
         ]})
 
     @cherrypy.expose()
+    @require()
     def index(self):
         #Since many linux repos still have psutil version 0.5
         if psutil.version_info >= (0, 7):
@@ -63,6 +65,7 @@ class Stats:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
+    @require()
     def ping(self):
         """ Tests For Installation of psutil """
         self.logger.debug("Testing Stats connectivity")
@@ -81,6 +84,7 @@ class Stats:
         return str(f)[:slen]
 
     @cherrypy.expose()
+    @require()
     def uptime2(self):
         try:
             if psutil.version_info >= (2, 0, 0):
@@ -99,6 +103,7 @@ class Stats:
             
 
     @cherrypy.expose()
+    @require()
     def disk_usage(self):
         disks = []        
         try:
@@ -135,6 +140,7 @@ class Stats:
         return json.dumps(disks)
 
     @cherrypy.expose()
+    @require()
     def disk_usage2(self):
         disks = []
         fstypes = ['ext', 'ext2', 'ext3', 'ext4', 'nfs', 'nfs4', 'fuseblk', 'cifs', 'msdos', 'ntfs', 'fat', 'fat32']
@@ -161,6 +167,7 @@ class Stats:
 
 
     @cherrypy.expose()
+    @require()
     def processes(self):
         out = ''
         procs = []
@@ -198,6 +205,7 @@ class Stats:
 
 
     @cherrypy.expose()
+    @require()
     def cpu_percent(self):
         jcpu = None
         try:
@@ -211,6 +219,7 @@ class Stats:
 
     # Not in use atm.
     @cherrypy.expose()
+    @require()
     def cpu_times(self):
         rr = None
         try:
@@ -224,6 +233,7 @@ class Stats:
     
     #Not in use as it returns threads aswell on windows
     @cherrypy.expose()
+    @require()
     def num_cpu(self):
         try:
             
@@ -237,6 +247,7 @@ class Stats:
             self.logger.error("Error trying to pull cpu cores %s" % e)
 
     @cherrypy.expose()
+    @require()
     def sizeof(self, num):
         for x in ['bytes','KB','MB','GB', 'TB']:
             if num < 1024.0:
@@ -275,6 +286,7 @@ class Stats:
         return json.dumps(dash)
 
     @cherrypy.expose()
+    @require()
     def ShowProcess(self, pid):
         cpu = psutil.NUM_CPUS
         p = psutil.Process(int(pid))
@@ -287,6 +299,7 @@ class Stats:
         return json.dumps(proc)
 
     @cherrypy.expose()
+    @require()
     def get_users(self):
         table = ''
         row6 = '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'
@@ -298,6 +311,7 @@ class Stats:
             return '<tr><td>Users and Groups Not Available for Windows.</td></tr>'
 
     @cherrypy.expose()
+    @require()
     def get_user(self):
         l =[]
         d = {}
@@ -320,6 +334,7 @@ class Stats:
         return rr
 
     @cherrypy.expose()
+    @require()
     def get_local_ip(self):
         # added a small delay since getting local is faster then network usage (Does not render in the html)
         time.sleep(0.1)
@@ -337,6 +352,7 @@ class Stats:
 
     
     @cherrypy.expose()
+    @require()
     def get_external_ip(self):
         d = {}
         rr = None
@@ -350,6 +366,7 @@ class Stats:
             self.logger.error("Pulling external ip %s" % e)
 
     @cherrypy.expose()
+    @require()
     def sys_info(self):
         d = {}
         
@@ -369,6 +386,7 @@ class Stats:
 
     #get network usage
     @cherrypy.expose()
+    @require()
     def network_usage(self):
         
         try:
@@ -381,6 +399,7 @@ class Stats:
             self.logger.error("Pulling network info %s" % e)
             
     @cherrypy.expose()
+    @require()
     def virtual_memory(self):
         d = {}
         
@@ -393,6 +412,7 @@ class Stats:
             self.logger.error("Pulling physical memory %s" % e)
 
     @cherrypy.expose()
+    @require()
     def swap_memory(self):
         d = {}
         
@@ -406,6 +426,7 @@ class Stats:
             self.logger.error("Pulling swap memory %s" % e)
     
     @cherrypy.expose()
+    @require()
     def return_settings(self):
         d = {}
         try:
@@ -423,6 +444,7 @@ class Stats:
     
 
     @cherrypy.expose()
+    @require()
     def command(self, cmd=None, pid=None, signal=None):
         #pid = int(json.loads(pid))
         print 'in command', cmd, pid
@@ -473,6 +495,7 @@ class Stats:
 
 
     @cherrypy.expose()
+    @require()
     def cmdpopen(self, cmd=None, popen=None):
         d = {}
         msg = None
@@ -489,6 +512,4 @@ class Stats:
             msg = 'Shell commands disabled. PyTunes is started with --noshell\n'
             self.logger.error(msg)
             return msg
-            
-  
 

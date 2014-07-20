@@ -1,11 +1,15 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 """ Initiate the HTTP server according to settings """
 import os
 import sys
 import cherrypy
 import pytunes
 import logging
+from cherrypy.lib.auth2 import AuthController, require, member_of, name_is
 from cherrypy.process.plugins import Daemonizer, PIDFile
-from cherrypy.lib.auth_digest import get_ha1_dict_plain
+#from cherrypy.lib.auth_digest import get_ha1_dict_plain
 
 
 def start():
@@ -60,7 +64,9 @@ def start():
             'tools.staticdir.root': webdir,
             'tools.encode.on': True,
             'tools.encode.encoding': 'utf-8',
-            'tools.gzip.on': True
+            'tools.gzip.on': True,
+            'tools.sessions.on': True,
+            'tools.auth.on': True
         },
         '/js': {
             'tools.caching.on': True,
@@ -99,6 +105,10 @@ def start():
             'tools.staticfile.filename': favicon
         },
     }
+
+    auth = AuthController()
+    
+    #restricted = RestrictedArea()
     # Require username and password if they are set
     if pytunes.USERNAME and pytunes.PASSWORD:
         logger.info("Enabling username/password access")

@@ -1,0 +1,80 @@
+<%!
+    import pytunes
+    settings = pytunes.settings
+    webdir = pytunes.WEBDIR
+    %>
+<% s = self.attr.settings %>
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>PyTunes Media Server Manager</title>
+        <link href="${pytunes.WEBDIR}img/favicon.ico" type="image/x-icon" rel="icon">
+        <link rel="apple-touch-icon" href="${pytunes.WEBDIR}img/ios/homescreen.png">
+        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
+        <link href="${pytunes.WEBDIR}css/themes/${s.get('app_theme','default')}/bootstrap.min.css" rel="stylesheet" />
+        <link href="${pytunes.WEBDIR}css/bootstrap-slider.css" rel="stylesheet" />
+        <link href="${pytunes.WEBDIR}css/bootstrap-responsive.min.css" rel="stylesheet" />
+        <link href="${pytunes.WEBDIR}css/jquery-ui.min.css" rel="stylesheet" />
+        <link href="${pytunes.WEBDIR}css/jquery.pnotify.default.css" rel="stylesheet" />
+        <link href="${pytunes.WEBDIR}css/base.css" rel="stylesheet" />
+        <link href="${pytunes.WEBDIR}css/themes/${s.get('app_theme','default')}/style.css" rel="stylesheet" />
+        <link href="${pytunes.WEBDIR}css/font-awesome.min.css" rel="stylesheet" />
+        <link href="${self.attr.webdir}css/${scriptname}.css" rel="stylesheet" />
+        <!--<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
+<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>-->
+        <script type="text/javascript">var WEBDIR="${pytunes.WEBDIR}";</script>
+    </head>
+    <body>
+<div class="container">
+    <div class="row">
+		<div class="span12">
+			<form class="form-horizontal" action='/auth/login' method="POST">
+			  <fieldset>
+			    <div id="legend">
+			      <legend class="">Login</legend>
+			    </div>
+			    <div class="control-group">
+			      <!-- Username -->
+			      <label class="control-label"  for="username">Username</label>
+			      <div class="controls">
+			        <input type="text" id="username" name="username" placeholder="" class="input-xlarge">
+			      </div>
+			    </div>
+			    <div class="control-group">
+			      <!-- Password-->
+			      <label class="control-label" for="password">Password</label>
+			      <div class="controls">
+			        <input type="password" id="password" name="password" placeholder="" class="input-xlarge">
+			      </div>
+			    </div>
+			    <div class="control-group">
+			      <!-- Button -->
+			      <div class="controls">
+			        <button class="btn btn-success">Login</button>
+			      </div>
+			    </div>
+			  </fieldset>
+			</form>
+		</div>
+	</div>
+</div>
+     <script src="${pytunes.WEBDIR}js/libs/jquery.min.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/jquery-ui.min.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/jquery.form.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/jquery.cookie.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/jquery.metadata.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/jquery.tablesorter.min.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/jquery.raty.min.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/jquery.pnotify.min.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/jquery.pager.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/bootstrap.min.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/bootstrap-paginator.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/bootstrap-slider.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/holder.js"></script>
+        <script src="${pytunes.WEBDIR}js/elfinder.min.js"></script>
+        <script src="${pytunes.WEBDIR}js/default.js"></script>
+        <script src="${pytunes.WEBDIR}js/${scriptname}.js"></script>
+    </body>
+</html>
