@@ -1,4 +1,7 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-A
 """
 This is the main executable of PyTunes. It parses the
@@ -10,7 +13,6 @@ import inspect
 import sys
 import pytunes
 import webbrowser
-
 
 def parse_arguments():
     """ Get variables from commandline """

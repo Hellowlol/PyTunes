@@ -14,34 +14,16 @@ def check_credentials(username, password):
     Returns None on success or a string describing the error on failure"""
     # Adapt to your needs
     try:
-        #y = Manageusers.selectBy(id='users_user_username').getOne()
-        for u in Manageusers.select():
-            print u
-        uu = Manageusers.selectBy(username=username).getOne()
-        print uu
-        if uu:
-            print 'its there'
+        #Select  one item with in username col with username (there is only one as its unique)
+        userexist = Manageusers.selectBy(username=username).getOne()
+        
+        if userexist and userexist.password == password: 
             return None
         else:
             return u"Incorrect username or password."
-        #print y
     except Exception as e:
         return u"Incorrect username or password."
 
-    #this is the original
-    '''
-    if username in ('joe', 'steve', 'xbmc') and password == 'secret':
-        return None
-    else:
-        return u"Incorrect username or password."
-    '''
-    
-    # An example implementation which uses an ORM could be:
-    # u = User.get(username)
-    # if u is None:
-    #     return u"Username %s is unknown to me." % username
-    # if u.password != md5.new(password).hexdigest():
-    #     return u"Incorrect password"
 
 def check_auth(*args, **kwargs):
     """A tool that looks in config for 'auth.require'. If found and it
@@ -60,6 +42,7 @@ def check_auth(*args, **kwargs):
             raise cherrypy.HTTPRedirect("/auth/login")
     
 cherrypy.tools.auth = cherrypy.Tool('before_handler', check_auth)
+
 
 def require(*conditions):
     """A decorator that appends conditions to the auth.require config
@@ -84,6 +67,7 @@ def require(*conditions):
 def member_of(groupname):
     def check():
         # replace with actual check if <username> is in <groupname>
+        #userexist = Manageusers.selectBy(username=username).getOne()
         return cherrypy.request.login == 'joe' and groupname == 'admin'
     return check
 
@@ -114,31 +98,20 @@ def all_of(*conditions):
 
 
 # Controller to provide login and logout actions
-
 class AuthController(object):
-    
+
     def on_login(self, username):
-        """Called on successful login"""
+        print """Called on successful login"""
     
     def on_logout(self, username):
-        """Called on logout"""
+        print "dicks"
+        print """Called on logout"""
+        raise cherrypy.HTTPRedirect("/auth/login")
     
     def get_loginform(self, username, msg="Enter login information", from_page="/"):
-        #return """<!DOCTYPE html><html><head><title></title></head><body><div class="container row span12"><form action='' class="form-horizontal" method="post"><fieldset><div id="legend"><legend class="">Login</legend></div><div class="control-group"><label class="control-label" for="username">Username</label><div class="controls"><input class="input-xlarge" id="username" name="username" placeholder="" type="text"></div></div><div class="control-group"><label class="control-label" for="password">Password</label><div class="controls"><input class="input-xlarge" id="password" name="password" placeholder="" type="password"></div></div><div class="control-group controls"><button class="btn btn-success">Login</button></div></fieldset></form></div></body></html>"""
-        return pytunes.LOOKUP.get_template('loginform.html').render(scriptname='formlogin')
-    '''
-    def get_loginform(self, username, msg="Enter login information", from_page="/"):
-        return """<html><body>
-            <form method="post" action="/auth/login">
-            <input type="hidden" name="from_page" value="%(from_page)s" />
-            %(msg)s<br />
-            Username: <input type="text" name="username" value="%(username)s" /><br />
-            Password: <input type="password" name="password" /><br />
-            <input type="submit" value="Log in" />
-        </body></html>""" % locals()
-    '''
-    
-    @cherrypy.expose
+        return pytunes.LOOKUP.get_template('loginform2.html').render(scriptname='formlogin',from_page=from_page, msg=msg)
+
+    @cherrypy.expose()
     def login(self, username=None, password=None, from_page="/"):
         if username is None or password is None:
             return self.get_loginform("", from_page=from_page)
@@ -150,13 +123,3 @@ class AuthController(object):
             cherrypy.session[SESSION_KEY] = cherrypy.request.login = username
             self.on_login(username)
             raise cherrypy.HTTPRedirect(from_page or "/")
-    
-    @cherrypy.expose
-    def logout(self, from_page="/"):
-        sess = cherrypy.session
-        username = sess.get(SESSION_KEY, None)
-        sess[SESSION_KEY] = None
-        if username:
-            cherrypy.request.login = None
-            self.on_logout(username)
-        raise cherrypy.HTTPRedirect(from_page or "/")

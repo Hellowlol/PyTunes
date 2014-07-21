@@ -11,23 +11,19 @@ from sqlobject.col import StringCol
 
 class Manageusers(SQLObject):
     """ SQLObject class for users table """
-    #id = StringCol()
-    username = StringCol(default=None)
+    username = StringCol(default=None, unique=True)
     password = StringCol(default=None)
     role = StringCol(default=None)
 
 
 class Users:
     def __init__(self):
-        """ Add module to list of modules on load and set required settings """
         self.logger = logging.getLogger('modules.users')
-
         Manageusers.createTable(ifNotExists=True)
         pytunes.MODULES.append({
             'name': 'Manage users',
             'id': 'users',
             'action': pytunes.WEBDIR + 'users/setusers',
-            #'test': pytunes.WEBDIR + 'xbmc/ping',
             'fields': [
                 {'type':'select',
                  'label':'User',
@@ -35,9 +31,6 @@ class Users:
                  'options':[
                     {'name':'New', 'value':0}
                 ]},
-                #{'type':'text',
-                 #'label':'User',
-                 #'name':'xbmc_server_name'},
                 {'type':'text',
                  'label':'Username',
                  'name':'users_user_username'},
@@ -84,29 +77,21 @@ class Users:
     @cherrypy.tools.json_out()
     def getuser(self, id=None):
         if id:
-            """ Get XBMC server info """
+            """ Get user info, used by settings """
             try:
                 user = Manageusers.selectBy(id=id).getOne()
-                print 'if id'
-                print dict((c, getattr(user, c)) for c in user.sqlmeta.columns)
                 return dict((c, getattr(user, c)) for c in user.sqlmeta.columns)
             except SQLObjectNotFound:
                 return
 
-        """ Get a list of all servers and the current server """
+        """ Get a list of all users"""
         users = []
         for s in Manageusers.select():
             users.append({'id': s.id, 'name': s.username})
         if len(users) < 1:
             return
         print users
-        try:
-            current = 'dick'
-            #current = self.current.name
-        except AttributeError:
-            current = None
         return {'users': users}
-        #return {'current': current, 'users': users}
 
 
     @cherrypy.expose()
@@ -114,5 +99,4 @@ class Users:
         """ Delete a user """
         self.logger.debug("Deleting user " + str(id))
         Manageusers.delete(id)
-        #self.changeserver()
         return

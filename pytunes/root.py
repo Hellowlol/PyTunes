@@ -11,7 +11,7 @@ import cherrypy
 import pytunes
 import logging
 from threading import Thread
-from cherrypy.lib.auth2 import AuthController, require, member_of, name_is
+from cherrypy.lib.auth2 import *
 
 
 def do_restart():
@@ -31,12 +31,9 @@ class Root:
         """ Do nothing on load """
         self.logger = logging.getLogger('pytunes.root')
         pass
-
-    cp_config = {
-        'tools.sessions.on': True,
-        'tools.auth.on': True
-    }
+  
     auth = AuthController()
+    
     @cherrypy.expose()
     @require()
     def index(self):
@@ -67,3 +64,12 @@ class Root:
         self.logger.info("Restarting PyTunes.")
         Thread(target=do_restart).start()
         return "Restart in progress."
+
+    @cherrypy.expose
+    def logout(self, from_page="/"):
+        sess = cherrypy.session
+        username = sess.get(SESSION_KEY, None)
+        sess[SESSION_KEY] = None
+        if username:
+            cherrypy.request.login = None
+        raise cherrypy.HTTPRedirect(from_page or "/")
