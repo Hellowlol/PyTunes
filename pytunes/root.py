@@ -25,6 +25,14 @@ def do_restart():
     cherrypy.engine.exit()
     os.execv(sys.executable, arguments)
 
+class RestrictedArea:
+    # all methods in this controller (and subcontrollers) is
+    # open only to members of the admin group
+    _cp_config = {
+        'auth.require': [member_of('admin')]
+    }
+    
+
 class Root:
     """ Root class """
     def __init__(self):
@@ -33,6 +41,7 @@ class Root:
         pass
   
     auth = AuthController()
+    restricted = RestrictedArea()
     
     @cherrypy.expose()
     @require()

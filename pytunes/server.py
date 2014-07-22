@@ -8,6 +8,7 @@ import cherrypy
 import pytunes
 import logging
 from modules.users import Manageusers
+from sqlobject import SQLObjectNotFound
 from cherrypy.lib.auth2 import AuthController, require, member_of, name_is
 from cherrypy.process.plugins import Daemonizer, PIDFile
 #from cherrypy.lib.auth_digest import get_ha1_dict_plain
@@ -31,18 +32,18 @@ def start():
     # Enable auth if username and pass is set, add to db as admin
     if pytunes.USERNAME and pytunes.PASSWORD:
         logger.info("Enabling Auth for user control")
-        logger.debug('%s', pytunes.USERNAME)
-        print 'there is a username and password'
-        """ Lets add that do the db """ #TODO
+        """ Lets see if the that username and password is already in the db"""
+        try:
+            user = Manageusers.selectBy(username=pytunes.USERNAME).getOne()
+        except SQLObjectNotFound:
+            Manageusers(username=pytunes.USERNAME, password=pytunes.PASSWORD, role='admin')
+            print 'no username in the db.'
+        logger.debug('Updating cherrypy config, activing sessions and auth')
         cherrypy.config.update({
             'tools.sessions.on': True,
             'tools.auth.on': True,
             'tools.sessions.timeout':20
         })
-        """ Lets see if the that username and password is already in the db"""
-        user = Manageusers.selectBy(username=pytunes.USERNAME).getOne()
-        if not user and user.password != pytunes.PASSWORD:
-            Manageusers(username=pytunes.USERNAME, password=pytunes.PASSWORD, role='admin')
     
 
     # Set server ip, port and root

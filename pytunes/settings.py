@@ -13,6 +13,7 @@ from socket import gethostname
 from pprint import pprint
 from time import gmtime, mktime
 from os.path import exists, join
+from cherrypy.lib.auth2 import *
 
 try:
     from OpenSSL import crypto
@@ -37,6 +38,7 @@ class Settings:
         Setting.createTable(ifNotExists=True)
 
     @cherrypy.expose()
+    @require(member_of("admin")) 
     def index(self, **kwargs):
         """ Set keys if settings are received. Show settings page """
         if kwargs:
@@ -44,6 +46,8 @@ class Settings:
                 if kwargs['enable_ssl'] == 'on' and kwargs['app_ssl_cert'] and kwargs['app_ssl_key']:
                     self.create_certs(kwargs['app_ssl_cert'], kwargs['app_ssl_key'])
             for key, val in kwargs.items():
+                #print key
+                #print val
                 self.set(key, val)
         return pytunes.LOOKUP.get_template('settings.html').render(scriptname='settings', pytunes=pytunes)
 

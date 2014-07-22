@@ -8,7 +8,6 @@ from sqlobject import SQLObject, SQLObjectNotFound
 from sqlobject.col import StringCol
 
 
-
 class Manageusers(SQLObject):
     """ SQLObject class for users table """
     username = StringCol(default=None, unique=True)
@@ -42,7 +41,6 @@ class Users:
                  'name': 'users_user_role',
                  'options': [
                     {'name': 'user', 'value':'user'},
-                    {'name':'operator', 'value': 'operator'},
                     {'name':'admin', 'value': 'admin'}
                     ]}
         ]})
