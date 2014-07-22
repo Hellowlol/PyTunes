@@ -170,7 +170,6 @@ class Torrents:
                     continue
                 name = "<a href='" + t['page'] + "' target='_blank'>" + t['name'] + "</a>"
                 out += html('torrent_search_table') % (icon, name, self.sizeof(t['size']), t['seeder'], t['leecher'], 'Fenopy', t['torrent'])
-        return out 
             if verified and t['verified'] != 1:
                 continue
             name = "<a href='" + t['page'] + "' target='_blank'>" + t['name'] + "</a>"

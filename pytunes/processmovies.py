@@ -342,8 +342,12 @@ def process():
                 shutil.move(path, moviedir + '/failed/' + movie)
         if len(matches) == 1:
             #print 'len matches 1'
-            dt = datetime.strptime(matches[1][2], '%Y-%m-%d')
-            matched.append({'title':matches[1][0], 'tmdbid':matches[1][1], 'path':moviepath, 'year':dt.year, 'mimetype':matches[1][3], 'container':matches[1][4], 'screenSize':matches[1][5], 'videoCodec':matches[1][6], 'format':matches[1][7]})
+            if matches[1][2]:
+                dt = datetime.strptime(matches[1][2], '%Y-%m-%d')
+                year = dt.year
+            else:
+                year = ''
+            matched.append({'title':matches[1][0], 'tmdbid':matches[1][1], 'path':moviepath, 'year':year, 'mimetype':matches[1][3], 'container':matches[1][4], 'screenSize':matches[1][5], 'videoCodec':matches[1][6], 'format':matches[1][7]})
             hits += 1
         if len(matches) > 1:
             #print 'len matches >1'
@@ -351,8 +355,12 @@ def process():
             for each in matches:
                 testeach = stripall(matches[each][0])
                 if testeach == testguess:
-                    dt = datetime.strptime(matches[each][2], '%Y-%m-%d')
-                    matched.append({'title':matches[each][0], 'tmdbid':matches[each][1], 'path':moviepath, 'year':dt.year, 'mimetype':matches[each][3], 'container':matches[each][4], 'screenSize':matches[each][5], 'videoCodec':matches[each][6], 'format':matches[each][7]})
+                    if matches[1][2]:
+                        dt = datetime.strptime(matches[each][2], '%Y-%m-%d')
+                        year = dt.year
+                    else:
+                        year = ''
+                    matched.append({'title':matches[each][0], 'tmdbid':matches[each][1], 'path':moviepath, 'year':year, 'mimetype':matches[each][3], 'container':matches[each][4], 'screenSize':matches[each][5], 'videoCodec':matches[each][6], 'format':matches[each][7]})
                     hits += 1
                     break
                 else:

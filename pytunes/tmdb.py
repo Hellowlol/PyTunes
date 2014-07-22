@@ -142,8 +142,11 @@ def MovieInfo(tmdbid):
         genre.append(genres['name'])
     for languages in movie_info['spoken_languages']:
         language.append(languages['name'])
-    #print movie_info
-    dt = datetime.strptime(movie_info['release_date'], '%Y-%m-%d')
+    print movie_info
+    if movie_info['release_date']:
+        dt = datetime.strptime(movie_info['release_date'], '%Y-%m-%d')
+        year = dt.year
+    else: year = ''
     info = {
         'discs':[],
         'arts':[],
@@ -163,7 +166,7 @@ def MovieInfo(tmdbid):
         'cast':actors,
         'studios':studios,
         'genre':genre,
-        'year':dt.year,
+        'year':year,
         'rating':movie_info['vote_average'],
         'fanart':fanart,
         'posters':posters,

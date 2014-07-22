@@ -334,7 +334,7 @@ class Manager:
     def __init__(self):
         """ Add module to list of modules on load and set required settings """
         self.logger = logging.getLogger('modules.manager')
-        Monitor(cherrypy.engine, processmovies.process, frequency=900).subscribe()
+        Monitor(cherrypy.engine, processmovies.process, frequency=180).subscribe()
         #job1 = sched.add_cron_job(processmovies.process, minute="*/%s" % 15)
         #job2 = sched.add_cron_job(processtv.process, minute="*/%s" % 15)
         #job3 = sched.add_cron_job(processmusic.process, minute=randint(0,59))
@@ -362,20 +362,20 @@ class Manager:
                     'label':'Movie Source Folder', 
                     'name':'movie_in',
                     'desc':'Where Movies Are Downloaded', 
-                    'dir':True},
+                    'dir':False},
                 {'type':'text', 
                     'label':'Movie Destination Folder', 
                     'name':'movie_out', 
-                    'dir':True},
+                    'dir':False},
                 {'type':'text', 
                     'label':'Music Source Folder', 
                     'name':'music_in', 
                     'desc':'Where Music is Downloaded', 
-                    'dir':True},
+                    'dir':False},
                 {'type':'text', 
                     'label':'Music Destination Folder', 
                     'name':'music_out', 
-                    'dir':True}
+                    'dir':False}
         ]})
 
 
