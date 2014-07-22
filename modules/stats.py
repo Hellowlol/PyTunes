@@ -12,7 +12,7 @@ import ConfigParser
 import urllib2
 import platform
 import cherrypy
-from cherrypy.lib.auth2 import AuthController, require, member_of, name_is
+from cherrypy.lib.auth2 import require
 import pytunes
 #from pytunes import connector
 from pytunes.staticvars import get_var as html
@@ -256,6 +256,7 @@ class Stats:
         return "%3.2f%s" % (num, 'TB')
 
     @cherrypy.expose()
+    @require()
     def Dash(self):
         dash = {
         'total':0.0,

@@ -50,16 +50,19 @@ class Root:
         return pytunes.LOOKUP.get_template('dash.html').render(scriptname='dash')
 
     @cherrypy.expose()
+    @require()
     def default(self, *args, **kwargs):
         """ Show error if no matching page can be found """
         return "An error occured"
 
     @cherrypy.expose()
+    @require()
     def notices(self):
         """ Show notices """
         return "Notice"
 
     @cherrypy.expose()
+    @require()
     def shutdown(self):
         """ Shutdown CherryPy and exit script """
         self.logger.info("Shutting down PyTunes.")
@@ -68,6 +71,7 @@ class Root:
 
     @cherrypy.tools.json_out()
     @cherrypy.expose()
+    @require()
     def restart(self):
         """ Shutdown script and rerun with the same variables """
         self.logger.info("Restarting PyTunes.")
@@ -75,6 +79,7 @@ class Root:
         return "Restart in progress."
 
     @cherrypy.expose
+    @require()
     def logout(self, from_page="/"):
         sess = cherrypy.session
         username = sess.get(SESSION_KEY, None)

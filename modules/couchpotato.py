@@ -9,6 +9,7 @@ from urllib2 import urlopen
 from urllib import quote_plus
 import logging
 import hashlib
+from cherrypy.lib.auth2 import require
 
 
 class Couchpotato:
@@ -31,10 +32,12 @@ class Couchpotato:
         ]})
 
     @cherrypy.expose()
+    @require()
     def index(self):
         return pytunes.LOOKUP.get_template('couchpotato.html').render(scriptname='couchpotato')
 
     @cherrypy.expose()
+    @require()
     def webinterface(self):
         """ Generate page from template """
         ssl = 's' if pytunes.settings.get('couchpotato_ssl', 0) else ''
@@ -47,6 +50,7 @@ class Couchpotato:
         raise cherrypy.HTTPRedirect(url)
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def ping(self, couchpotato_host, couchpotato_port, couchpotato_apikey, couchpotato_basepath, couchpotato_ssl=False, **kwargs):
         self.logger.debug("Testing connectivity to couchpotato")
@@ -63,6 +67,7 @@ class Couchpotato:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def getapikey(self, couchpotato_username, couchpotato_password, couchpotato_host, couchpotato_port, couchpotato_apikey, couchpotato_basepath, couchpotato_ssl=False, **kwargs):
         self.logger.debug("Testing connectivity to couchpotato")
@@ -85,10 +90,12 @@ class Couchpotato:
             return json.loads(urlopen(url, timeout=2).read())
 
     @cherrypy.expose()
+    @require()
     def GetImage(self, url, h=None, w=None, o=100):
         return get_image(url, h, w, o)
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetMovieList(self, status='', limit='', search='', starts_with=''):
         self.logger.debug("Fetching Movies")
@@ -104,6 +111,7 @@ class Couchpotato:
         
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetNotificationList(self, limit='20'):
         self.logger.debug("Fetching Notification")
@@ -112,54 +120,63 @@ class Couchpotato:
         return data
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def SearchMovie(self, q=''):
         self.logger.debug("Searching for movie")
         return self.fetch('movie.search/?q=' + q)
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def AddMovie(self, movieid, profile, title):
         self.logger.debug("Adding movie")
         return self.fetch('movie.add/?profile_id=' + profile + '&identifier=' + movieid + '&title=' + title)
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def EditMovie(self, id, profile, title):
         self.logger.debug("Editing movie")
         return self.fetch('movie.edit/?id=' + id + '&profile_id=' + profile + '&default_title=' + title)
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def RefreshMovie(self, id):
         self.logger.debug("Refreshing movie")
         return self.fetch('movie.refresh/?id=' + id)
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def DeleteMovie(self, id=''):
         self.logger.debug("Deleting movie")
         return self.fetch('movie.delete/?id=' + id)
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetReleases(self, id=''):
         self.logger.debug("Downloading movie")
         return self.fetch('media.get/?id=' + id)
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def DownloadRelease(self, id=''):
         self.logger.debug("Downloading movie")
         return self.fetch('release.download/?id=' + id)
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def IgnoreRelease(self, id=''):
         self.logger.debug("Downloading movie")
         return self.fetch('release.ignore/?id=' + id)
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetProfiles(self):
         self.logger.debug("Fetching available profiles")

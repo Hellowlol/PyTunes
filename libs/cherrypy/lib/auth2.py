@@ -3,13 +3,14 @@
 
 import cherrypy
 import pytunes
-from modules.users import Manageusers
+from pytunes.manageusers import Manageusers
 from sqlobject import SQLObject, SQLObjectNotFound
 from sqlobject.col import StringCol
 
 SESSION_KEY = '_cp_username'
 
 def check_credentials(username, password):
+    from modules.users import Manageusers
     """Verifies credentials for username and password.
     Returns None on success or a string describing the error on failure"""
     # Adapt to your needs
@@ -66,6 +67,7 @@ def require(*conditions):
 
 def member_of(groupname):
     def check():
+        from modules.users import Manageusers
         # replace with actual check if <username> is in <groupname>
         userexist = Manageusers.selectBy(username=cherrypy.request.login).getOne()
         if userexist and userexist.role == groupname:

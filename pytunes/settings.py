@@ -46,8 +46,6 @@ class Settings:
                 if kwargs['enable_ssl'] == 'on' and kwargs['app_ssl_cert'] and kwargs['app_ssl_key']:
                     self.create_certs(kwargs['app_ssl_cert'], kwargs['app_ssl_key'])
             for key, val in kwargs.items():
-                #print key
-                #print val
                 self.set(key, val)
         return pytunes.LOOKUP.get_template('settings.html').render(scriptname='settings', pytunes=pytunes)
 

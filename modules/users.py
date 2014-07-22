@@ -6,14 +6,8 @@ import cherrypy
 import logging
 from sqlobject import SQLObject, SQLObjectNotFound
 from sqlobject.col import StringCol
-
-
-class Manageusers(SQLObject):
-    """ SQLObject class for users table """
-    username = StringCol(default=None, unique=True)
-    password = StringCol(default=None)
-    role = StringCol(default=None)
-
+from cherrypy.lib.auth2 import require, member_of
+from pytunes.manageusers import Manageusers
 
 class Users:
     def __init__(self):
@@ -46,10 +40,12 @@ class Users:
         ]})
 
     @cherrypy.expose()
+    @require(member_of("admin")) 
     def index(self):
         return pytunes.LOOKUP.get_template('manageusers.html').render(scriptname='manageusers')
 
     @cherrypy.expose()
+    @require(member_of("admin")) 
     def setusers(self, users_user_id, users_user_username, users_user_password, users_user_role):
         if users_user_id == "0":
             self.logger.debug('Creating Manage users in db')
@@ -72,6 +68,7 @@ class Users:
                 return False # Should be 0
 
     @cherrypy.expose()
+    @require(member_of("admin")) 
     @cherrypy.tools.json_out()
     def getuser(self, id=None):
         if id:
@@ -93,6 +90,7 @@ class Users:
 
 
     @cherrypy.expose()
+    @require(member_of("admin")) 
     def delusers(self, id):
         """ Delete a user """
         self.logger.debug("Deleting user " + str(id))

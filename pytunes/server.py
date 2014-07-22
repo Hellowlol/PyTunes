@@ -7,9 +7,9 @@ import sys
 import cherrypy
 import pytunes
 import logging
-from modules.users import Manageusers
+from pytunes.manageusers import Manageusers
 from sqlobject import SQLObjectNotFound
-from cherrypy.lib.auth2 import AuthController, require, member_of, name_is
+from cherrypy.lib.auth2 import AuthController, require, member_of
 from cherrypy.process.plugins import Daemonizer, PIDFile
 #from cherrypy.lib.auth_digest import get_ha1_dict_plain
 
@@ -20,14 +20,6 @@ def start():
     logger.debug("Setting up to start cherrypy")
     ssl = ''
     secure = ''
-
-    #cp_config = {
-    #    'tools.sessions.on': True,
-    #    'tools.auth.on': True
-    #}
-    
-    #auth = AuthController()
-
     
     # Enable auth if username and pass is set, add to db as admin
     if pytunes.USERNAME and pytunes.PASSWORD:
@@ -37,7 +29,6 @@ def start():
             user = Manageusers.selectBy(username=pytunes.USERNAME).getOne()
         except SQLObjectNotFound:
             Manageusers(username=pytunes.USERNAME, password=pytunes.PASSWORD, role='admin')
-            print 'no username in the db.'
         logger.debug('Updating cherrypy config, activing sessions and auth')
         cherrypy.config.update({
             'tools.sessions.on': True,
@@ -132,21 +123,6 @@ def start():
             'tools.staticfile.filename': favicon
         },
     }
-
-    
-    # Require username and password if they are set
-    """
-    if pytunes.USERNAME and pytunes.PASSWORD:
-        logger.info("Enabling username/password access")
-        userpassdict = {pytunes.USERNAME: pytunes.PASSWORD}
-        get_ha1 = get_ha1_dict_plain(userpassdict)
-        app_config['/'].update({
-            'tools.auth_digest.on': True,
-            'tools.auth_digest.realm': "PyTunes",
-            'tools.auth_digest.get_ha1': get_ha1,
-            'tools.auth_digest.key': 'a565c27146791cfb'
-        })
-    """
 
     # Start the CherryPy server (remove trailing slash from webdir)
     logger.info("Starting up webserver")
