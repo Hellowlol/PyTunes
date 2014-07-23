@@ -50,7 +50,6 @@ class Root:
         return pytunes.LOOKUP.get_template('dash.html').render(scriptname='dash')
 
     @cherrypy.expose()
-    @require()
     def default(self, *args, **kwargs):
         """ Show error if no matching page can be found """
         return "An error occured"

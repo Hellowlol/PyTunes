@@ -13,7 +13,7 @@ from socket import gethostname
 from pprint import pprint
 from time import gmtime, mktime
 from os.path import exists, join
-from cherrypy.lib.auth2 import *
+from cherrypy.lib.auth2 import require, member_of
 
 try:
     from OpenSSL import crypto

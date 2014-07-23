@@ -53,19 +53,20 @@ class Users:
                 Manageusers(username=users_user_username,
                     password=users_user_password,
                     role=users_user_role)
-                return 'hack'#True #  should be 1
+                return 'hack'
             except Exception, e:
-                print e
+                self.logger.debug('Failed to create %s %s' % (users_user_username, e))
+                return
         else:
             try:
-                users = Manageusers.selectBy(id=users_user_username).getOne()
+                users = Manageusers.selectBy(username=users_user_username).getOne()
                 users.username = users_user_username
                 users.password = users_user_password
                 users.role = users_user_role
-                return 1
+                return 'hack'
             except SQLObjectNotFound, e:
-                print 'set user error', e
-                return False # Should be 0
+                self.logger.debug('Failed to update username on %s' % users_user_username)
+                return
 
     @cherrypy.expose()
     @require(member_of("admin")) 
@@ -85,7 +86,6 @@ class Users:
             users.append({'id': s.id, 'name': s.username})
         if len(users) < 1:
             return
-        print users
         return {'users': users}
 
 

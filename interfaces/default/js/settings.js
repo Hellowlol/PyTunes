@@ -145,12 +145,9 @@ $(document).ready(function () {
         if (id === 0) $('button:reset:visible').trigger('click');
         $.get(WEBDIR + 'users/getuser?id=' + id, function (data) {
             if (data === null) return;
-            //$('#xbmc_server_name').val(data.name);
-            //$('#xbmc_server_host').val(data.host);
-            //$('#xbmc_server_port').val(data.port);
             $('#users_user_username').val(data.username);
-            $('#users_users_password').val(data.password);
-            $('#users_users_role').val(data.role);
+            $('#users_user_password').val(data.password);
+            $('#users_user_role').val(data.role);
             $("button:reset:visible").html('Delete').addClass('btn-danger').click(function (e) {
                 var name = item.find('option:selected').text();
                 if (!confirm('Delete ' + name)) return;

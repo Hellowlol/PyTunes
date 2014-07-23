@@ -7,56 +7,54 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="utf-8" />
+        <meta charset=UTF-8">
         <title>PyTunes Media Server Manager</title>
         <link href="${pytunes.WEBDIR}img/favicon.ico" type="image/x-icon" rel="icon">
         <link rel="apple-touch-icon" href="${pytunes.WEBDIR}img/ios/homescreen.png">
         <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1.0, user-scalable=no">
-        <link href="${pytunes.WEBDIR}css/themes/${s.get('app_theme','default')}/bootstrap.min.css" rel="stylesheet" />
-        <link href="${pytunes.WEBDIR}css/bootstrap-slider.css" rel="stylesheet" />
-        <link href="${pytunes.WEBDIR}css/bootstrap-responsive.min.css" rel="stylesheet" />
-        <link href="${pytunes.WEBDIR}css/jquery-ui.min.css" rel="stylesheet" />
-        <link href="${pytunes.WEBDIR}css/jquery.pnotify.default.css" rel="stylesheet" />
-        <link href="${pytunes.WEBDIR}css/base.css" rel="stylesheet" />
-        <link href="${pytunes.WEBDIR}css/themes/${s.get('app_theme','default')}/style.css" rel="stylesheet" />
-        <link href="${pytunes.WEBDIR}css/font-awesome.min.css" rel="stylesheet" />
-        <link href="${self.attr.webdir}css/${scriptname}.css" rel="stylesheet" />
-        <script type="text/javascript">var WEBDIR="${pytunes.WEBDIR}";</script>
+        <link href="${pytunes.WEBDIR}css/themes/${s.get('app_theme','default')}/bootstrap.min.css" rel="stylesheet">
+        <link href="${pytunes.WEBDIR}css/bootstrap-slider.css" rel="stylesheet">
+        <link href="${pytunes.WEBDIR}css/bootstrap-responsive.min.css" rel="stylesheet">
+        <link href="${pytunes.WEBDIR}css/jquery-ui.min.css" rel="stylesheet">
+        <link href="${pytunes.WEBDIR}css/jquery.pnotify.default.css" rel="stylesheet">
+        <link href="${pytunes.WEBDIR}css/base.css" rel="stylesheet">
+        <link href="${pytunes.WEBDIR}css/themes/${s.get('app_theme','default')}/style.css" rel="stylesheet">
+        <link href="${pytunes.WEBDIR}css/font-awesome.min.css" rel="stylesheet">
+        <link href="${self.attr.webdir}css/${scriptname}.css" rel="stylesheet">
+        <script type="text/javascript">var WEBDIR="${pytunes.WEBDIR}"</script>
     </head>
     <body>
 		<div class="container">
     		<div class="row">
 				<div class="span4 offset4 well">
 					<legend>Pytunes login</legend>
-          		<div class="alert alert-error">
-                	<a class="close" data-dismiss="alert" href="#">x</a>${msg}
-            	</div>
-				<form method="POST" action="/auth/login">
-					<input type="hidden" name="from_page" value="${from_page}"/>
-					<input type="text" id="username" class="span4" name="username" placeholder="Username">
-					<input type="password" id="password" class="span4" name="password" placeholder="Password">
-					<button class="btn btn-info btn-block">Sign in</button>
-				</form>    
-				</div>
-				</div>
-			</div>
+          		    <div class="alert alert-error">
+                	   <a class="close" data-dismiss="alert" href="#">x</a>${msg}
+            	    </div>
+				    <form method="POST" action="/auth/login" accept-charset="UTF-8">
+					   <input type="hidden" name="from_page" value="${from_page}">
+					   <input type="text" id="username" class="span4" name="username" placeholder="Username">
+					   <input type="password" id="password" class="span4" name="password" placeholder="Password">
+					   <button class="btn btn-info btn-block">Sign in</button>
+				    </form>    
+			         </div>
+		        </div>
 		</div>
-		</div>
-    <script src="${pytunes.WEBDIR}js/libs/jquery.min.js"></script>
-    	<script src="${pytunes.WEBDIR}js/libs/jquery-ui.min.js"></script>
-        <script src="${pytunes.WEBDIR}js/libs/jquery.form.js"></script>
-        <script src="${pytunes.WEBDIR}js/libs/jquery.cookie.js"></script>
-        <script src="${pytunes.WEBDIR}js/libs/jquery.metadata.js"></script>
-        <script src="${pytunes.WEBDIR}js/libs/jquery.tablesorter.min.js"></script>
-        <script src="${pytunes.WEBDIR}js/libs/jquery.raty.min.js"></script>
-        <script src="${pytunes.WEBDIR}js/libs/jquery.pnotify.min.js"></script>
-        <script src="${pytunes.WEBDIR}js/libs/jquery.pager.js"></script>
-        <script src="${pytunes.WEBDIR}js/libs/bootstrap.min.js"></script>
-        <script src="${pytunes.WEBDIR}js/libs/bootstrap-paginator.js"></script>
-        <script src="${pytunes.WEBDIR}js/libs/bootstrap-slider.js"></script>
-        <script src="${pytunes.WEBDIR}js/libs/holder.js"></script>
-        <script src="${pytunes.WEBDIR}js/elfinder.min.js"></script>
-        <script src="${pytunes.WEBDIR}js/default.js"></script>
-        <script src="${pytunes.WEBDIR}js/${scriptname}.js"></script>
+        <script type="text/javascript" src="${pytunes.WEBDIR}js/libs/jquery.min.js"></script>
+    	<script type="text/javascript" src="${pytunes.WEBDIR}js/libs/jquery-ui.min.js"></script>
+        <script type="text/javascript" src="${pytunes.WEBDIR}js/libs/jquery.form.js"></script>
+        <script type="text/javascript" src="${pytunes.WEBDIR}js/libs/jquery.cookie.js"></script>
+        <script type="text/javascript" src="${pytunes.WEBDIR}js/libs/jquery.metadata.js"></script>
+        <script type="text/javascript" src="${pytunes.WEBDIR}js/libs/jquery.tablesorter.min.js"></script>
+        <script type="text/javascript" src="${pytunes.WEBDIR}js/libs/jquery.raty.min.js"></script>
+        <script type="text/javascript" src="${pytunes.WEBDIR}js/libs/jquery.pnotify.min.js"></script>
+        <script type="text/javascript" src="${pytunes.WEBDIR}js/libs/jquery.pager.js"></script>
+        <script type="text/javascript" src="${pytunes.WEBDIR}js/libs/bootstrap.min.js"></script>
+        <script type="text/javascript" src="${pytunes.WEBDIR}js/libs/bootstrap-paginator.js"></script>
+        <script type="text/javascript" src="${pytunes.WEBDIR}js/libs/bootstrap-slider.js"></script>
+        <script type="text/javascript" src="${pytunes.WEBDIR}js/libs/holder.js"></script>
+        <script type="text/javascript" src="${pytunes.WEBDIR}js/elfinder.min.js"></script>
+        <script type="text/javascript" src="${pytunes.WEBDIR}js/default.js"></script>
+        <script type="text/javascript" src="${pytunes.WEBDIR}js/${scriptname}.js"></script>
     </body>
 </html>

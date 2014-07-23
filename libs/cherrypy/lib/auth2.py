@@ -66,11 +66,9 @@ def require(*conditions):
 
 def member_of(groupname):
     def check():
-        # replace with actual check if <username> is in <groupname>
         userexist = Manageusers.selectBy(username=cherrypy.request.login).getOne()
         if userexist and userexist.role == groupname:
             return cherrypy.request.login == userexist.username and groupname == userexist.role
-        #return cherrypy.request.login == 'joe' and groupname == 'admin'
     return check
 
 def name_is(reqd_username):
@@ -102,13 +100,7 @@ def all_of(*conditions):
 # Controller to provide login and logout actions
 class AuthController(object):
 
-    def on_login(self, username):
-        print """Called on successful login"""
-    
-    def on_logout(self, username):
-        print """Called on logout"""
-        raise cherrypy.HTTPRedirect("/auth/login")
-    
+
     def get_loginform(self, username, msg="Enter login information", from_page="/"):
         return pytunes.LOOKUP.get_template('loginform.html').render(scriptname='formlogin', from_page=from_page, msg=msg)
 
@@ -123,5 +115,4 @@ class AuthController(object):
         else:
             cherrypy.session.regenerate()
             cherrypy.session[SESSION_KEY] = cherrypy.request.login = username
-            self.on_login(username)
             raise cherrypy.HTTPRedirect(from_page or "/")
