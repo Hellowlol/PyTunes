@@ -80,14 +80,18 @@
                             <!--<li class="pull-right visible-desktop">-->
                             <div class="btn-group pull-right visible-desktop">
                                 <button class="btn btn-primary dropdown-toggle btn-xs" data-toggle="dropdown">
-                        <i class="icon-th-list"></i>
-                                Options
-                                <span class="caret"></span>
+                                    <i class="icon-th-list"></i>Options<span class="caret"></span>
                                 </button>
                                 <ul class="dropdown-menu pull-right">
                                     <li><a href="http://github.com/madclicker/PyTunes"><i class="icon-github"></i> Github project</a></li>
                                     <li><a href="#" id="btn-check-update"><i class="icon-eye-open"></i> Check for updates</a></li>
-                                    <li><a href="${pytunes.WEBDIR}settings/" id="btn-settings"><i class="icon-cog"></i> Settings</a></li>
+                                    % if not pytunes.KIOSK:
+                                        <li><a href="${pytunes.WEBDIR}settings/" id="btn-settings"><i class="icon-cog"></i> Settings</a></li>
+                                    % else:
+                                        <li class="disabled"><a tabindex="-1" class="settingsdisabled" href="${pytunes.WEBDIR}settings/" id="btn-settings"><i class="icon-cog"></i> Settings</a></li>
+                                    % endif
+
+
                                     <li><a href="${pytunes.WEBDIR}log/" id="btn-log"><i class="icon-list"></i> Log</a></li>
                                     <li><a href="${pytunes.WEBDIR}restart" class="ajax-confirm" title="Restart PyTunes"><i class="icon-refresh"></i> Restart PyTunes</a></li>
                                     <li><a href="${pytunes.WEBDIR}shutdown" class="confirm" title="Shutdown PyTunes"><i class="icon-off"></i> Shutdown PyTunes</a></li>

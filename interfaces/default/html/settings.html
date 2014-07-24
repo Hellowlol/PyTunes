@@ -6,14 +6,17 @@
     <div class="page-header page-title">
         <img alt="PyTunes" src="../img/pytuneslogosm.png"/><img class="pull-right" alt="Settings" src="../img/settings.png"/>
     </div>
+        % if not pytunes.KIOSK:
         <div class="tabbable tabs-left">
             <ul class="nav nav-tabs">
-                <li class="active"><a href="#general" data-toggle="tab">General(restart required)</a></li>
-                % for m in pytunes.MODULES:
-                <li><a href="#${m.get('id')}" data-toggle="tab">${m.get('name')}</a></li>
+                <% l = [] %>
+                <% l.append({'name': 'General(restart required)', 'id': 'general'})%>
+                <% l.append({'name': 'Style', 'id': 'style'})%>
+                <% l.append({'name': 'Dashboard', 'id': 'dashboard'})%>
+                <% tabssort = pytunes.MODULES + l %>
+                % for m in sorted(tabssort, key=lambda d: d['name']):
+                    <li><a href="#${m.get('id')}" data-toggle="tab">${m.get('name')}</a></li>
                 % endfor
-                <li><a href="#dashboard" data-toggle="tab">Dashboard</a></li>
-                <li><a href="#style" data-toggle="tab">Style</a></li>
             </ul>
 
             <div class="tab-content">
@@ -28,7 +31,12 @@
                 {'type':'text', 'label':'SSL Key', 'name':'app_ssl_key', 'desc':'File Name. ex: server.key', 'value':settings.get('app_ssl_key')},
                 {'type':'bool', 'label':'Open Browser at Startup', 'name':'browser', 'checked':bool(settings.get('browser', 0))},
                 {'type':'text', 'label':'Git Path', 'name':'git_path', 'value':settings.get('git_path', 'git')}
+            ], buttons=[
+                        {'name':'Save', 'type':'submit', 'classes':'btn-primary'},
+                        {'name':'Clear', 'type':'reset'},
+                        {'name':'Delete cache folder', 'type':'button', 'classes':'delete_cache'}
             ])}
+
             % for m in pytunes.MODULES:
                 % if m.get('test'):
                     ${form.buildForm(action=m.get('action'), id=m.get('id'), classes='form-horizontal tab-pane', legend=m.get('name'),
@@ -83,6 +91,9 @@
             ])}
             </div>
         </div>
+        % else:
+            <div class="alert alert block">Settings page is disabled. Run Pytunes without arg --kiosk</div>
+        % endif
     <div id="fileBrowserDialog" style="display:hidden"></div>
     </div>
 </div>

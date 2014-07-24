@@ -38,6 +38,8 @@ def parse_arguments():
                         help='Help with lost password')
     parser.add_argument('--nossl', action='store_true', default=False,
                         help='Help with ssl cert problems')
+    parser.add_argument('--kiosk', action='store_true', default=False,
+                        help='Disable settings page')
     parser.add_argument('--webdir', default=None,
                         help='Use a custom webdir')
     parser.add_argument('--loglevel', default='info',
@@ -149,6 +151,10 @@ def main():
 
     # Set Application PID
     pytunes.PID = args.pid
+
+    # Set Kiosk mode
+    if args.kiosk:
+        pytunes.KIOSK = args.kiosk
 
     # Set Some Temp Vars
     ssl = 's' if pytunes.SSLCERT and pytunes.SSLKEY and pytunes.settings.get('enable_ssl')== 'on' else ''

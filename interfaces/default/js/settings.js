@@ -100,7 +100,6 @@ $(document).ready(function () {
             }
             if ($('#users_user_id').is(":visible")) {
                 users_update_user(0);
-                //xbmc_update_servers(0);
                 this.reset();
             }
         });
@@ -192,7 +191,6 @@ function xbmc_update_servers(id) {
 function users_update_user(id) {
     $.get(WEBDIR + 'users/getuser', function (data) {
         if (data === null) return;
-        //alert(data);
         var users = $('#users_user_id').empty().append($('<option>').text('New').val(0));
         $.each(data.users, function (i, item) {
             var option = $('<option>').text(item.name).val(item.id);
@@ -201,3 +199,21 @@ function users_update_user(id) {
         });
     }, 'json');
 }
+
+$(document).on('click', '.delete_cache', function(e){
+    $.ajax({
+        'url': WEBDIR + 'settings/delete_cache',
+        'dataType': 'json',
+        'success': function(response) {
+            if (response.success) {
+                $('.delete_cache').addClass('btn-success').removeClass('btn-danger');
+                notify('Info', 'Cache folder was deleted', 'success', 5);
+
+            } else {
+                $('.delete_cache').addClass('btn-danger').removeClass('btn-success');
+                notify('Error', 'Failed to delete cache folder', 'error', 5);
+            }
+        }
+    });
+});
+

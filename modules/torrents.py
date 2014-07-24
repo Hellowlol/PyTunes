@@ -14,6 +14,7 @@ import logging
 import xml.etree.ElementTree as xml
 from engines import ka
 from engines import btn
+from engines import norbits
 #from engines import piratebay
 from engines import fenopy
 from engines import yts
@@ -37,6 +38,9 @@ class Torrents:
                 {'type':'bool', 'label':'Fenopy', 'name':'torrents_fenopy_enabled'},
                 {'type':'bool', 'label':'Fenopy verified torrents only', 'name':'torrents_fenopy_enabled_verified'},
                 {'type':'bool', 'label':'Yts', 'name':'torrents_yts_enabled'},
+                {'type':'bool', 'label':'Norbits', 'name':'torrents_norbits_enabled'},
+                {'type':'text', 'label':'Norbits username', 'name':'torrents_norbits_username'},
+                {'type':'text', 'label':'Norbits passkey', 'name':'torrents_norbits_passkey'}
         ]})
 
     def torrentproviders(self):
@@ -49,6 +53,9 @@ class Torrents:
 
         if pytunes.settings.get('torrents_yts_enabled') == 1:
             torrentproviders.append('yts')
+
+        if pytunes.settings.get('torrents_norbits_enabled') == 1 and pytunes.settings.get('torrents_norbits_passkey') and pytunes.settings.get('torrents_norbits_username'):
+            torrentproviders.append('norbits')
 
         return torrentproviders
 
@@ -87,6 +94,9 @@ class Torrents:
 
         elif engineid == 'yts':
             return self.search_yts(q, cat)
+
+        elif engineid == 'norbits':
+            return self.search_norbits(q, cat)
         
         elif engineid == 'all':
             out = ''
@@ -102,6 +112,9 @@ class Torrents:
             
             if pytunes.settings.get('torrents_yts_enabled') == 1:
                 out += self.search_yts(q, cat)
+
+            if pytunes.settings.get('torrents_norbits_enabled') == 1 and pytunes.settings.get('torrents_norbits_passkey') and pytunes.settings.get('torrents_norbits_username'):
+                out += self.search_norbits(q, cat)    
             
             #out += self.search_piratebay(q)#Does not work
             return out
@@ -141,7 +154,22 @@ class Torrents:
                 continue
             name = "<a href='" + t['page'] + "' target='_blank'>" + t['name'] + "</a>"
             out += html('torrent_search_table') % (icon, name, self.sizeof(t['size']), t['seeder'], t['leecher'], 'Fenopy', t['torrent'])
-        return out 
+        return out
+
+    def search_norbits(self, q, cat):
+        results = norbits.search(q, cat)
+        out = ''
+        passkey = pytunes.settings.get('torrents_norbits_passkey', '')
+        icon = "<img alt='icon' src='../img/norbits.png'/>"
+        if int(results['data']['total']) == 0:
+            self.logger.info('Failed to find any torrents on Norbits with nam %s' % q)
+        elif results['data']['torrents']:
+            for t in results['data']['torrents']:
+                downloadurl = 'https://norbits.net/download.php?id=%s&passkey=%s' % (t['id'], passkey)
+                name = "<a href='https://norbits.net/details.php?id=" + t['id'] + "' target='_blank'>" + t['name'] + "</a>"
+                out += html('torrent_search_table') % (icon, name, self.sizeof(int(t['size'])), t['seeders'], t['leechers'], 'Norbits', downloadurl)
+        return out
+
 
     ''' #does not work
     def search_piratebay(self, q):
