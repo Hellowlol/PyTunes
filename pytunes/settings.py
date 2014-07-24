@@ -145,7 +145,7 @@ class Settings:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def getnewzserver(self, id=None):
+    def GetNewzServers(self, id=None):
         if id:
             """ Get Newznab servers info """
             try:
@@ -155,16 +155,18 @@ class Settings:
                 return
 
         """ Get a list of all servers and the current server """
-        servers = []
+        servers = ''
+        option = '<option value="%s" %s>%s</option>'
         for s in NewznabServers.select():
-            servers.append({'id': s.id, 'name': s.name})
+            if self.get('default_nzb_id', 0) == s.id:
+                servers += option % (s.id, 'selected="selected"',s.name)
+            else:
+                servers += option % (s.id, '',s.name)
+            #servers.append({'id': s.id, 'name': s.name})
         if len(servers) < 1:
-            return
-        try:
-            current = self.current.name
-        except AttributeError:
-            current = None
-        return {'current': current, 'servers': servers}
+            return '<option value="None">No Servers Registered</option>'
+        #print servers
+        return servers
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -210,6 +212,7 @@ class Settings:
         self.changenewzserver()
         return
 
+    #for the future
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def changenewzclient(self, id=0):
@@ -227,13 +230,13 @@ class Settings:
     @cherrypy.tools.json_out()
     def changenewzserver(self, id=0):
         try:
-            self.current = NewznabServers.selectBy(id=id).getOne()
+            self.current_newznab = NewznabServers.selectBy(id=id).getOne()
             self.set('newznab_current_server', id)
             self.logger.info("Selecting Newznab server: " + id)
             return "success"
         except SQLObjectNotFound:
             try:
-                self.current = NewznabServers.select(limit=1).getOne()
+                self.current_newznab = NewznabServers.select(limit=1).getOne()
                 self.logger.error("Invalid Newznab server. Selecting first Available.")
                 return "success"
             except SQLObjectNotFound:

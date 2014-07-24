@@ -194,12 +194,13 @@ class Newznab:
 
     @cherrypy.expose()
     def GetClients(self):
-        nzbs = ''
+        nzbclients = ''
         if pytunes.settings.get('nzbget_enable', ''):
-            nzbs += '<option id="nzbget">NZBget</option>'
+            nzbclients += '<option id="nzbget">NZBget</option>'
         if pytunes.settings.get('sabnzbd_enable', ''):
-            nzbs += '<option id="sabnzbd">Sabnzbd+</option>'
-        if not nzbs:
-            nzbs = '<option>No Clients Enabled</option>'
-        return nzbs
+            nzbclients += '<option id="sabnzbd">Sabnzbd+</option>'
+        if not nzbclients:
+            nzbclients = '<option>No Clients Enabled</option>'
+        print nzbclients
+        return nzbclients
 

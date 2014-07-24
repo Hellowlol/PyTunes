@@ -163,7 +163,7 @@ $(document).ready(function () {
         });
     });
     xbmc_update_servers(0);
-    newznab_update_servers(0);
+    loadNzbServers();
 });
 
 function loadClients() {
@@ -176,15 +176,16 @@ function loadClients() {
             $('#default_torr_id').append(data);
         }
     });
-    $.ajax({
-        url: WEBDIR + 'newznab/GetClients',
-        type: 'get',
-        dataType: 'text',
-        success: function (data) {
-            if (data === null) return errorHandler();
-            $('#default_nzb_id').append(data);
-        }
-    });
+    //For the future
+    //$.ajax({
+    //    url: WEBDIR + 'newznab/GetClients',
+    //    type: 'get',
+    //    dataType: 'text',
+    //    success: function (data) {
+    //        if (data === null) return errorHandler();
+    //        $('#default_nzb_id').append(data);
+    //    }
+    //});
 }
 
 function xbmc_update_servers(id) {
@@ -199,17 +200,18 @@ function xbmc_update_servers(id) {
     }, 'json');
 }
 
-function newznab_update_servers(id) {
-    $.get(WEBDIR + 'settings/getnewzserver', function (data) {
-        if (data === null) return;
-        var servers = $('#newznab_server_id').empty().append($('<option>').text('New').val(0));
-        $.each(data.servers, function (i, item) {
-            var option = $('<option>').text(item.name).val(item.id);
-            if (id == item.id) option.attr('selected', 'selected');
-            servers.append(option);
-        });
-    }, 'json');
+function loadNzbServers() {
+    $.ajax({
+        url: WEBDIR + 'settings/GetNewzServers',
+        type: 'get',
+        dataType: 'text',
+        success: function (data) {
+            if (data === null) return errorHandler();
+            $('#newznab_server_id').append(data);
+        }
+    });
 }
+
 
 $(document).on('click', '.delete_cache', function(e){
     $.ajax({
