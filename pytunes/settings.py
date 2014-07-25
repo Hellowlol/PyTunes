@@ -26,8 +26,6 @@ class NewznabServers(SQLObject):
     name = StringCol()
     host = StringCol()
     apikey = StringCol()
-    username = StringCol(default=None)
-    password = StringCol(default=None)
     ssl = StringCol(default=None)
 
 
@@ -153,12 +151,11 @@ class Settings:
                 print server
                 return dict((c, getattr(server, c)) for c in server.sqlmeta.columns)
             except SQLObjectNotFound:
-                #return
-                return 'failed', id
+                return
 
         """ Get a list of all servers and the current server """
         servers = ''
-        option = '<option value="%s" %s>%s</option>'
+        option = "<option value='%s' %s>%s</option>"
         for s in NewznabServers.select():
             if self.get('default_nzb_id', 0) == s.id:
                 servers += option % (s.id, 'selected="selected"',s.name)
@@ -166,14 +163,13 @@ class Settings:
                 servers += option % (s.id, '',s.name)
             #servers.append({'id': s.id, 'name': s.name})
         if len(servers) < 1:
-            return '<option value="None">No Servers Registered</option>'
+            return "<option value='None'>No Servers Registered</option>"
         #print servers
         return servers
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def setnewzserver(self, newznab_server_id, newznab_server_name, newznab_server_host, newznab_server_apikey,
-            newznab_server_username=None, newznab_server_password=None, newznab_server_ssl=False):
+    def setnewzserver(self, newznab_server_id, newznab_server_name, newznab_server_host, newznab_server_apikey, newznab_server_ssl=False):
         #print 'id: ', newznab_server_id
         """ Create a server if id=0, else update a server """
         if newznab_server_id == "0":
@@ -182,10 +178,8 @@ class Settings:
                 new = NewznabServers(name=newznab_server_name,
                         host=newznab_server_host,
                         apikey=newznab_server_apikey,
-                        username=newznab_server_username,
-                        password=newznab_server_password,
                         ssl=newznab_server_ssl)
-                self.changenewzserver(str(new.id))
+                self.changenewzserver(int(new.id))
                 return 1
             except Exception, e:
                 self.logger.debug("Exception: " + str(e))
@@ -194,12 +188,10 @@ class Settings:
         else:
             self.logger.debug("Updating Newznab-Server " + newznab_server_name + " in database")
             try:
-                server = NewznabServers.selectBy(id=newznab_server_id).getOne()
+                server = NewznabServers.selectBy(id=int(newznab_server_id)).getOne()
                 server.name = newznab_server_name
                 server.host = newznab_server_host
                 server.apikey = newznab_server_apikey
-                server.username = newznab_server_username
-                server.password = newznab_server_password
                 server.ssl = newznab_server_ssl
                 return 1
             except SQLObjectNotFound, e:
@@ -220,7 +212,7 @@ class Settings:
     def changenewzclient(self, id=0):
         try:
             #self.current_newznab_client = NewznabServers.selectBy(id=id).getOne()
-            self.set('default_nzb_id', id)
+            self.set('default_nzb_id', str(id))
             self.logger.info("Setting default Newznab client: " + id)
             return "success"
         except :
@@ -332,7 +324,7 @@ class Settings:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def get_current_newznab(self):
+    def get_current_newznab_host(self):
         #print 'current: ', self.current
         return NewznabServers.selectBy(id=self.get('newznab_current_server', 0)).getOne()
 

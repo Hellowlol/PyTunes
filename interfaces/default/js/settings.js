@@ -142,13 +142,10 @@ $(document).ready(function () {
         var id = item.val();
         if (id === 0) $('button:reset:visible').trigger('click');
         $.get(WEBDIR + 'settings/GetNewzServers?id=' + id, function (data) {
-            alert('id ' +id + data);
             if (data === null) return;
             $('#newznab_server_name').val(data.name);
             $('#newznab_server_host').val(data.host);
             $('#newznab_server_apikey').val(data.apikey);
-            $('#newznab_server_username').val(data.username);
-            $('#newznab_server_password').val(data.password);
             $('#newznab_server_ssl').val(data.ssl);
             $("button:reset:visible").html('Delete').addClass('btn-danger').click(function (e) {
                 var name = item.find('option:selected').text();

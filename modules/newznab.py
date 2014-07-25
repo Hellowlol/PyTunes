@@ -48,12 +48,6 @@ class Newznab:
                  'name':'newznab_server_name'},
                 {'type':'text', 'label':'Host', 'name':'newznab_server_host'},
                 {'type':'text', 'label':'Apikey', 'name':'newznab_server_apikey'},
-                {'type':'text',
-                 'label':'Username',
-                 'name':'newznab_server_username'},
-                {'type':'password',
-                 'label':'Password',
-                 'name':'newznab_server_password'},
                 {'type':'bool', 'label':'Use SSL', 'name':'newznab_server_ssl'}
         ]})
 
@@ -84,16 +78,19 @@ class Newznab:
     @cherrypy.expose()
     def getcategories(self, **kwargs):
         self.logger.debug("Fetching available categories")
+        ret = ''
         try:
             settings = pytunes.settings
-            host = settings.get('newznab_host', '').replace('http://', '').replace('https://', '')
-            ssl = 's' if settings.get('newznab_ssl', 0) else ''
-            apikey = settings.get('newznab_apikey', '')
+            self.current = settings.get_current_newznab_host()
+            print self.current
+            host = self.current.host.replace('http://', '').replace('https://', '')
+            ssl = '' if self.current.ssl == '0' else 's'
+            apikey = self.current.apikey
             url = 'http' + ssl + '://' + host + '/api?t=caps&o=xml'
+            print url
             self.logger.debug("Fetching Cat information from: " + url)
             caps = urlopen(url, timeout=10).read()
             lines = caps.split('\n')
-            ret = ''
             opt_line = '<option value="%s">%s</option>'
             for line in lines:
                 if 'category' in line and 'genre' not in line and not '/cat' in line:
@@ -107,7 +104,7 @@ class Newznab:
                     name = main_name + ' > ' + subcat[1].split('"')[1]
                     ret += opt_line % (id, name)
         except:
-            self.logger.error("Unable to fetch categories from: %s" % url)
+            self.logger.error('Unable to fetch categories from: %s' % url)
         return ret
 
     @cherrypy.expose()
@@ -161,6 +158,7 @@ class Newznab:
     def fetch(self, cmd):
         try:
             settings = pytunes.settings
+            self.current = settings.get_current_newznab()
             host = settings.get('newznab_host', '').replace('http://', '').replace('https://', '')
             ssl = 's' if settings.get('newznab_ssl', 0) else ''
             apikey = settings.get('newznab_apikey', '')
@@ -172,7 +170,6 @@ class Newznab:
             return
 
     def send(self, link):
-        self.current = pytunes.settings.get_current_newznab(pytunes.settings.get('newznab_current_server', 0))
         try:
             host = pytunes.settings.get('sabnzbd_host', '')
             port = str(pytunes.settings.get('sabnzbd_port', ''))
@@ -192,6 +189,7 @@ class Newznab:
             self.logger.error("Cannot contact sabnzbd")
             return
 
+    #Future use...use staticvars
     @cherrypy.expose()
     def GetClients(self):
         nzbclients = ''
