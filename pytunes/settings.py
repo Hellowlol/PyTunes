@@ -143,7 +143,7 @@ class Settings:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def GetNewzServers(self, id=None):
+    def GetNewzServers(self, id=None, selected=True):
         if id:
             """ Get Newznab servers info """
             try:
@@ -155,10 +155,11 @@ class Settings:
 
         """ Get a list of all servers and the current server """
         servers = ''
-        option = "<option value='%s' %s>%s</option>"
+        option = "<option value='%s'%s>%s</option>"
         for s in NewznabServers.select():
-            if self.get('default_nzb_id', 0) == s.id:
-                servers += option % (s.id, 'selected="selected"',s.name)
+            print 'default', self.get('newznab_current_server')
+            if selected == True and (self.get('newznab_current_server') == str(s.id)):
+                servers += option % (s.id, ' selected',s.name)
             else:
                 servers += option % (s.id, '',s.name)
             #servers.append({'id': s.id, 'name': s.name})
@@ -170,7 +171,6 @@ class Settings:
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def setnewzserver(self, newznab_server_id, newznab_server_name, newznab_server_host, newznab_server_apikey, newznab_server_ssl=False):
-        #print 'id: ', newznab_server_id
         """ Create a server if id=0, else update a server """
         if newznab_server_id == "0":
             self.logger.debug("Creating Newznab-Server in database")
@@ -179,7 +179,7 @@ class Settings:
                         host=newznab_server_host,
                         apikey=newznab_server_apikey,
                         ssl=newznab_server_ssl)
-                self.changenewzserver(int(new.id))
+                #self.changenewzserver(str(new.id))
                 return 1
             except Exception, e:
                 self.logger.debug("Exception: " + str(e))
@@ -222,16 +222,17 @@ class Settings:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def changenewzserver(self, id=0):
+    def changenewzserver(self, id='0'):
         try:
-            self.current_newznab = NewznabServers.selectBy(id=id).getOne()
+            self.current_newznab = NewznabServers.selectBy(id=int(id)).getOne()
             self.set('newznab_current_server', id)
             self.logger.info("Selecting Newznab server: " + id)
             return "success"
         except SQLObjectNotFound:
             try:
-                self.current_newznab = NewznabServers.select(limit=1).getOne()
-                self.logger.error("Invalid Newznab server. Selecting first Available.")
+                self.current_newznab = NewznabServers.selectBy(id=self.get('newznab_current_server')).getOne()
+                self.set('newznab_current_server', str(self.current_newznab.id))
+                self.logger.error("Invalid Newznab server. Selecting Default Server.")
                 return "success"
             except SQLObjectNotFound:
                 self.current_newznab = None

@@ -125,6 +125,7 @@ class Newznab:
         if cat:
             cat = '&cat=' + cat
         res = self.fetch('search&q=' + quote(q) + cat + '&extended=1')
+        #put in staticvars
         link = "<a href='/newznab/AddNzbFromUrl?nzb_url=%s&nzb_category=%s' class='ajax-link' title='Download' cat='%s'><i class='icon-download-alt'></i></a>"
         try:
             results = res['channel']['item']
@@ -158,16 +159,20 @@ class Newznab:
     def fetch(self, cmd):
         try:
             settings = pytunes.settings
-            self.current = settings.get_current_newznab()
-            host = settings.get('newznab_host', '').replace('http://', '').replace('https://', '')
-            ssl = 's' if settings.get('newznab_ssl', 0) else ''
-            apikey = settings.get('newznab_apikey', '')
+            self.current = settings.get_current_newznab_host()
+            print 'in fetch',self.current
+            host = self.current.host.replace('http://', '').replace('https://', '')
+            ssl = 's' if settings.get('newznab_ssl') == 'on' else ''
+            apikey = self.current.apikey
             url = 'http' + ssl + '://' + host + '/api?o=json&apikey=' + apikey + '&t=' + cmd
             self.logger.debug("Fetching information from: %s" % url)
-            return loads(urlopen(url, timeout=10).read())
-        except:
-            self.logger.error("Unable to fetch information from: %s" % url)
-            return
+            return loads(urlopen(url, timeout=30).read())
+        except Exception, e:
+            self.logger.debug("Exception: " + str(e))
+            self.logger.error("Unable to fetch information from: newznab" + str(e))
+        #except:
+        #    self.logger.error("Unable to fetch information from: %s" % url)
+        #    return
 
     def send(self, link):
         try:

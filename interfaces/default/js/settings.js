@@ -199,9 +199,12 @@ function xbmc_update_servers(id) {
 }
 
 function loadNzbServers() {
+    //alert('load');
+    var sendData = {selected: 'False'};
     $.ajax({
         url: WEBDIR + 'settings/GetNewzServers',
         type: 'get',
+        data: sendData,
         dataType: 'text',
         success: function (data) {
             if (data === null) return errorHandler();
