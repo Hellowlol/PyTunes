@@ -17,6 +17,7 @@ from sqlobject import SQLObject, SQLObjectNotFound
 from sqlobject.col import StringCol, IntCol
 from pytunes.proxy import get_image
 import logging
+from cherrypy.lib.auth2 import require
 
 
 class XbmcServers(SQLObject):
@@ -91,16 +92,19 @@ class Xbmc:
         self.changeserver(server)
 
     @cherrypy.expose()
+    @require()
     def index(self):
         """ Generate page from template """
         return pytunes.LOOKUP.get_template('xbmc.html').render(scriptname='xbmc')
 
     @cherrypy.expose()
+    @require()
     def webinterface(self):
         """ Generate page from template """
         raise cherrypy.HTTPRedirect(self.url('', True))
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def ping(self, xbmc_server_host='', xbmc_server_port='',
             xbmc_server_username='', xbmc_server_password='', **kwargs):
@@ -119,6 +123,7 @@ class Xbmc:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def getserver(self, id=None):
         if id:
@@ -142,6 +147,7 @@ class Xbmc:
         return {'current': current, 'servers': servers}
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def setserver(self, xbmc_server_id, xbmc_server_name, xbmc_server_host, xbmc_server_port,
             xbmc_server_username=None, xbmc_server_password=None, xbmc_server_mac=None):
@@ -177,6 +183,7 @@ class Xbmc:
                 return 0
 
     @cherrypy.expose()
+    @require()
     def delserver(self, id):
         """ Delete a server """
         self.logger.debug("Deleting server " + str(id))
@@ -185,6 +192,7 @@ class Xbmc:
         return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def changeserver(self, id=0):
         try:
@@ -203,6 +211,7 @@ class Xbmc:
                 return "No valid servers"
 
     @cherrypy.expose()
+    @require()
     def ViewAlbum(self, album_id, source):
         #try:
         #    xbmc = Server(self.url('/jsonrpc', True))
@@ -215,6 +224,7 @@ class Xbmc:
         )
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetArtist(self, artist_id):
         """ Get data of a specific artist """
@@ -230,6 +240,7 @@ class Xbmc:
 
 
     @cherrypy.expose()
+    @require()
     def ViewArtist(self, artist_id, artist):
         """ Load artist template """
         self.logger.debug("Get data of a specific artist")
@@ -241,6 +252,7 @@ class Xbmc:
         )
 
     @cherrypy.expose()
+    @require()
     def GetTotals(self):
         #properties = ['year']
         #sort = {'order': None, 'method': None, 'ignorearticle': False}
@@ -249,6 +261,7 @@ class Xbmc:
         return
 
     @cherrypy.expose()
+    @require()
     def GetThumb(self, thumb=None, h=None, w=None, o=100):
         """ Parse thumb to get the url and send to pytunes.proxy.get_image """
         url = self.url('/images/DefaultVideo.png')
@@ -259,6 +272,7 @@ class Xbmc:
         return get_image(url, h, w, o, self.auth())
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetMovies(self, start=0, end=0, sortmethod='title', sortorder='ascending', hidewatched=0, filter=''):
         """ Get a list of all movies """
@@ -279,6 +293,7 @@ class Xbmc:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetShows(self, start=0, end=0, sortmethod='title', sortorder='ascending', hidewatched=0, filter=''):
         """ Get a list of all the TV Shows """
@@ -299,6 +314,7 @@ class Xbmc:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetEpisodes(self, start=0, end=0, sortmethod='episode', sortorder='ascending', tvshowid=None, hidewatched=False, filter=''):
         """ Get information about a single TV Show """
@@ -317,6 +333,7 @@ class Xbmc:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetArtists(self, start=0, end=0, sortmethod='artist', sortorder='ascending', filter=''):
         """ Get a list of all artists """
@@ -334,6 +351,7 @@ class Xbmc:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetAlbums(self, start=0, end=0, sortmethod='label', sortorder='ascending', artistid=None, filter=''):
         """ Get a list of all albums for artist """
@@ -355,6 +373,7 @@ class Xbmc:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetSongs(self, start=0, end=0, sortmethod='title', sortorder='ascending', albumid=None, artistid=None, filter='', *args, **kwargs):
         """ Get a list of all songs """
@@ -380,6 +399,7 @@ class Xbmc:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetChannelGroups(self, type='tv'):
         """ Get PVR channel list from xbmc """
@@ -393,6 +413,7 @@ class Xbmc:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetChannels(self, type='tv', group=2):
         """ Get PVR channel list from xbmc """
@@ -406,6 +427,7 @@ class Xbmc:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def PlayItem(self, item=None, type=None):
         """ Play a file in XBMC """
@@ -427,6 +449,7 @@ class Xbmc:
             return xbmc.Player.Open(item={'file': item})
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def QueueItem(self, item, type):
         """ Queue a file in XBMC """
@@ -446,6 +469,7 @@ class Xbmc:
             return xbmc.Playlist.Add(playlistid=0, item={'songid': int(item)})
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def RemoveItem(self, item, playlistid=0):
         """ Remove a file from the playlist """
@@ -454,6 +478,7 @@ class Xbmc:
         return xbmc.Playlist.Remove(playlistid=playlistid, position=int(item))
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def LibraryRemoveItem(self, libraryid, media):
         """ Remove an entry from the database """
@@ -469,6 +494,7 @@ class Xbmc:
             return xbmc.VideoLibrary.RemoveEpisode(episodeid=int(libraryid))
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def ExecuteAddon(self, addon, cmd0='', cmd1=''):
         if cmd0 == 'undefined':
@@ -512,6 +538,7 @@ class Xbmc:
             return xbmc.Addons.ExecuteAddon(addonid=addon)
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetAddons(self):
         xbmc = Server(self.url('/jsonrpc', True))
@@ -520,6 +547,7 @@ class Xbmc:
         return addons
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def Enable_DisableAddon(self, addonid=None, enabled=None):
         xbmc = Server(self.url('/jsonrpc', True))
@@ -530,6 +558,7 @@ class Xbmc:
         return xbmc.Addons.SetAddonEnabled(addonid=addonid, enabled=enabled)
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def PlaylistMove(self, position1, position2, playlistid=0):
         """ Swap files in playlist """
@@ -544,6 +573,7 @@ class Xbmc:
         return "Moved from " + str(position1) + " to " + str(position2)
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def Playlist(self, type='audio'):
         """ Get a playlist from XBMC """
@@ -555,6 +585,7 @@ class Xbmc:
         return xbmc.Playlist.GetItems(playlistid=0, properties=['artist', 'title', 'album', 'duration'])
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def NowPlaying(self):
         """ Get information about current playing item """
@@ -589,6 +620,7 @@ class Xbmc:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def ControlPlayer(self, action, value=''):
         """ Various commands to control XBMC Player """
@@ -622,6 +654,7 @@ class Xbmc:
 
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def SendText(self, text):
         """ Send text to XBMC """
@@ -630,6 +663,7 @@ class Xbmc:
         return xbmc.Input.SendText(text=text)
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def Subtitles(self, subtitle='off'):
         """ Change the subtitles """
@@ -650,6 +684,7 @@ class Xbmc:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def Audio(self, audio):
         """ Change the audio stream  """
@@ -664,6 +699,7 @@ class Xbmc:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def System(self, action=''):
         """ Various system commands """
@@ -698,6 +734,7 @@ class Xbmc:
             return 'Rebooting XBMC.'
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def Wake(self):
         """ Send WakeOnLan package """
@@ -723,6 +760,7 @@ class Xbmc:
             return "Unable to send WOL packet"
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def Notify(self, text):
         """ Create popup in XBMC """
@@ -732,6 +770,7 @@ class Xbmc:
         return xbmc.GUI.ShowNotification(title='PyTunes', message=text, image=image)
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetRecentMovies(self, limit=20):
         """ Get a list of recently added movies """
@@ -748,6 +787,7 @@ class Xbmc:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetRecentShows(self, limit=10):
         """ Get a list of recently added TV Shows """
@@ -764,6 +804,7 @@ class Xbmc:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetRecentAlbums(self, limit=5):
         """ Get a list of recently added music """
@@ -779,6 +820,7 @@ class Xbmc:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def Library(self, do='scan', lib='video'):
         xbmc = Server(self.url('/jsonrpc', True))

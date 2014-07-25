@@ -1,5 +1,6 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-A
+# -*- coding: utf-8 -*-
+
 """ Module for Media Management  """
 import cherrypy
 import pytunes
@@ -24,6 +25,7 @@ from sqlobject.col import StringCol, IntCol, FloatCol
 import logging
 from random import randint
 from apscheduler.scheduler import Scheduler
+from cherrypy.lib.auth2 import require
 sched = Scheduler()
 sched.start() 
 settings = pytunes.settings
@@ -392,12 +394,14 @@ class Manager:
 
 
     @cherrypy.expose()
+    @require()
     def index(self):
         """ Generate page from template """
         return pytunes.LOOKUP.get_template('manager.html').render(scriptname='manager')
 
 
     @cherrypy.expose()
+    @require()
     def GetTVShow(self, tmdbid):
         """ Get Movie info """
         show = {}
@@ -441,6 +445,7 @@ class Manager:
         return json.dumps(show)
 
     @cherrypy.expose()
+    @require()
     def AddMovie(self, tmdbid='', imdbid='', year='', title='', fanart='', thumb='', plot='', rating='', genre='', runtime='', writers='', country='', studios='', actors='', directors=''):
         #print 'in add movie', tmdbid, imdbid, year, title
         self.logger.debug("Saving wanted movie to the database: %s" % title)
@@ -457,6 +462,7 @@ class Manager:
         return msg
         
     @cherrypy.expose()
+    @require()
     def WantedMovies(self):
         """ Get Wanted Movie info for interface """
         movies = ''
@@ -472,6 +478,7 @@ class Manager:
         return movies
         
     @cherrypy.expose()
+    @require()
     def Top250Movies(self):
         """ Get top 250 Movie info for interface """
         movies = imdb.Top250()
@@ -487,6 +494,7 @@ class Manager:
         return movies
         
     @cherrypy.expose()
+    @require()
     def ToClient(self, url, type):
         """ Send torrent or nzb to the default client """
         #if settings.get('deluge_enable', ''):
@@ -496,6 +504,7 @@ class Manager:
         return 'Worked'
 
     @cherrypy.expose()
+    @require()
     def GetClients(self):
         torrents = ''
         nzbs = ''
@@ -519,6 +528,7 @@ class Manager:
 
 
     @cherrypy.expose()
+    @require()
     def GetMovie(self, tmdbid, page=''):
         """ Get Movie info """
         movie = {}
@@ -583,6 +593,7 @@ class Manager:
 
         
     @cherrypy.expose()
+    @require()
     def GetMovies(self, offset, limit):
         """ Generate page from template """
         table = ''
@@ -644,6 +655,7 @@ class Manager:
         return table
 
     @cherrypy.expose()
+    @require()
     def RebuildDB(self, action):
         """ Generate page from template """
         if action == "movies":
@@ -667,6 +679,7 @@ class Manager:
         return pytunes.LOOKUP.get_template('manager.html').render(scriptname='manager')
 
     @cherrypy.expose()
+    @require()
     def ViewAlbum(self, album_id):
         response = self.fetch('getAlbum&id=%s' % album_id)
 
@@ -691,6 +704,7 @@ class Manager:
         )
 
     @cherrypy.expose()
+    @require()
     def Tmdb(self, source, page):
         #print 'TMDB: ', source, page
         self.logger.debug("Get list of %s movies from TMDB" % source)
@@ -735,6 +749,7 @@ class Manager:
         return movies
 
     @cherrypy.expose()
+    @require()
     def Carousel(self, carousel, page=1):
         limit = 1
         self.logger.debug("Get list of movies for %s" % carousel)
@@ -767,6 +782,7 @@ class Manager:
         return movies
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetArtist(self, artist_id):
         """ Get data of a specific artist """
@@ -782,6 +798,7 @@ class Manager:
 
 
     @cherrypy.expose()
+    @require()
     def ViewArtist(self, artist_id, artist):
         """ Load artist template """
         self.logger.debug("Get data of a specific artist")
@@ -793,6 +810,7 @@ class Manager:
         )
 
     @cherrypy.expose()
+    @require()
     def GetThumb(self, thumb=None, h=None, w=None, o=100):
         """ Parse thumb to get the url and send to pytunes.proxy.get_image """
         if h and w:
@@ -810,6 +828,7 @@ class Manager:
         return get_image(url, h, w, o, "")
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetShows(self, offset, limit):
         """ Get a list of all the TV Shows """
@@ -830,6 +849,7 @@ class Manager:
         return table
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetEpisodes(self, start=0, end=0, sortmethod='episode', sortorder='ascending', tvshowid=None, hidewatched=False, filter=''):
         """ Get information about a single TV Show """
@@ -848,6 +868,7 @@ class Manager:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetArtists(self, start=0, end=0, sortmethod='artist', sortorder='ascending', filter=''):
         """ Get a list of all artists """
@@ -865,6 +886,7 @@ class Manager:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetAlbums(self, start=0, end=0, sortmethod='label', sortorder='ascending', artistid=None, filter=''):
         """ Get a list of all albums for artist """
@@ -886,6 +908,7 @@ class Manager:
             return
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetSongs(self, start=0, end=0, albumid=None, artistid=None, filter='', *args, **kwargs):
         """ Get a list of all songs """
@@ -912,6 +935,7 @@ class Manager:
 
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def RemoveItem(self, item, playlistid=0):
         """ Remove a file from the playlist """
@@ -920,6 +944,7 @@ class Manager:
         return xbmc.Playlist.Remove(playlistid=playlistid, position=int(item))
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def LibraryRemoveItem(self, libraryid, media):
         """ Remove an entry from the database """
@@ -935,6 +960,7 @@ class Manager:
             return xbmc.VideoLibrary.RemoveEpisode(episodeid=int(libraryid))
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def ExecuteAddon(self, addon, cmd0, cmd1):
         """ Execute an XBMC addon """
@@ -947,6 +973,7 @@ class Manager:
             return xbmc.Addons.ExecuteAddon(addon, cmd)
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def PlaylistMove(self, position1, position2, playlistid=0):
         """ Swap files in playlist """
@@ -961,6 +988,7 @@ class Manager:
         return "Moved from " + str(position1) + " to " + str(position2)
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def Playlist(self, type='audio'):
         """ Get a playlist from XBMC """
@@ -973,6 +1001,7 @@ class Manager:
 
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def ControlPlayer(self, action, value=''):
         """ Various commands to control XBMC Player """
@@ -998,6 +1027,7 @@ class Manager:
 
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def SendText(self, text):
         """ Send text to XBMC """
@@ -1007,6 +1037,7 @@ class Manager:
 
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def System(self, action=''):
         """ Various system commands """
@@ -1041,6 +1072,7 @@ class Manager:
             return 'Rebooting XBMC.'
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def Wake(self):
         """ Send WakeOnLan package """
@@ -1066,6 +1098,7 @@ class Manager:
             return "Unable to send WOL packet"
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def Notify(self, text):
         """ Create popup in XBMC """
@@ -1075,6 +1108,7 @@ class Manager:
         return xbmc.GUI.ShowNotification(title='PyTunes', message=text, image=image)
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def GetRecentMovies(self, limit=5):
         """ Get a list of recently added movies """
@@ -1092,6 +1126,7 @@ class Manager:
 
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def Library(self, do='scan', lib='video'):
         xbmc = Server(self.url('/jsonrpc', True))
