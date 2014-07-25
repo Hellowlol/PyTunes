@@ -13,6 +13,7 @@ from socket import gethostname
 from pprint import pprint
 from time import gmtime, mktime
 from os.path import exists, join
+from cherrypy.lib.auth2 import require, member_of
 import shutil
 
 try:
@@ -58,6 +59,7 @@ class Settings:
         self.changexbmcserver(self.get('xbmc_current_server', 0))
 
     @cherrypy.expose()
+    @require(member_of("admin")) 
     def index(self, **kwargs):
         """ Set keys if settings are received. Show settings page """
         if kwargs:
@@ -126,6 +128,7 @@ class Settings:
             open(join(cert_dir, cert_file), 'w').write(crypto.dump_certificate(crypto.FILETYPE_PEM, cacert))
 
     @cherrypy.expose()
+    @require(member_of("admin")) 
     @cherrypy.tools.json_out()
     def delete_cache(self):
         try:

@@ -20,6 +20,7 @@ from engines import fenopy
 from engines import yts
 import jsonrpclib
 from pytunes.staticvars import get_var as html
+from cherrypy.lib.auth2 import require
 
 class Torrents:
     def __init__(self):
@@ -70,17 +71,12 @@ class Torrents:
         return torrentproviders
 
     @cherrypy.expose()
-    def getdefclient(self, link):
-        """ Send the js the default client """
-        if pytunes.settings.get('default_torr_id'):
-            defclient = {'client':'qBittorrent',
-                    'path': 'qbittorrent/command?cmd=download&hash=%s' % link
-                    }
-            return dumps(defclient)
-        else:
-            return 'no default clients defined'
+    @require()
+    def index(self, query='', **kwargs):
+        return pytunes.LOOKUP.get_template('torrents.html').render(scriptname='torrents', torrentproviders=self.torrentproviders())
 
     @cherrypy.expose()
+    @require()
     def sizeof(self, num):
         for x in ['bytes','KB','MB','GB']:
             if num < 1024.0:
@@ -89,6 +85,7 @@ class Torrents:
         return "%3.1f %s" % (num, 'TB')
 
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def search(self, q='', engineid='', cat='', **kwargs):
         engineid = engineid.lower()

@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
 import cherrypy
 import pytunes
 import math
@@ -5,6 +8,7 @@ from pytunes.proxy import get_image
 from urllib2 import urlopen, quote
 from json import loads
 import logging
+from cherrypy.lib.auth2 import require
 
 class Newznab:
     def __init__(self):
@@ -52,12 +56,14 @@ class Newznab:
         ]})
 
     @cherrypy.expose()
+    @require()
     def index(self, query='', **kwargs):
         return pytunes.LOOKUP.get_template('newznab.html').render(query=query, scriptname='newznab')
 
     """
     NOT IMPLEMENTET
     @cherrypy.expose()
+    @require()
     @cherrypy.tools.json_out()
     def ping(self, newznab_host, newznab_apikey, **kwargs):
         self.logger.debug("Pinging newznab-host")
@@ -65,6 +71,7 @@ class Newznab:
     """
 
     @cherrypy.expose()
+    @require()
     def thumb(self, url, h=None, w=None, o=100):
         if url.startswith('rageid'):
             settings = pytunes.settings
@@ -76,6 +83,7 @@ class Newznab:
         return get_image(url, h, w, o)
 
     @cherrypy.expose()
+    @require()
     def getcategories(self, **kwargs):
         self.logger.debug("Fetching available categories")
         ret = ''
@@ -108,6 +116,7 @@ class Newznab:
         return ret
 
     @cherrypy.expose()
+    @require()
     def search(self, q='', cat='', **kwargs):
         ret = ''
         row = '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'

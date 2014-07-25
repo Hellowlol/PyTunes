@@ -1,4 +1,5 @@
-# coding=utf-8
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 import pytunes
 import cherrypy
@@ -6,6 +7,7 @@ import urllib2
 import urllib
 import json
 import logging
+from cherrypy.lib.auth2 import require
 
 class qbittorrent:
     def __init__(self):
@@ -25,11 +27,13 @@ class qbittorrent:
         ]})
         
     @cherrypy.expose()
+    @require()
     def index(self):
         return pytunes.LOOKUP.get_template('qbittorrent.html').render(scriptname='qbittorrent')
     
     #Get url from settings and handles auth
     @cherrypy.expose()
+    @require()
     def qbturl(self):
         host = pytunes.settings.get('qbittorrent_host', '')
         port = pytunes.settings.get('qbittorrent_port',  '')
@@ -46,6 +50,7 @@ class qbittorrent:
         
     #Fetches torrentlist from the client
     @cherrypy.expose()
+    @require()
     def fetch(self):
         self.logger.debug("Trying to get torrents")       
         try:
@@ -56,6 +61,7 @@ class qbittorrent:
     
     # Gets total download and upload speed
     @cherrypy.expose()
+    @require()
     def get_speed(self):
         try:
             url = self.qbturl()
@@ -87,6 +93,7 @@ class qbittorrent:
     
     # Gets total download and upload speed limits
     @cherrypy.expose()
+    @require()
     def get_limits(self):
         try:
             d={}
@@ -98,7 +105,8 @@ class qbittorrent:
             self.logger.error("Couldn't get total download and uploads speed limits %s" % e)
     
     # Handles pause, resume, delete, download single torrents
-    @cherrypy.expose
+    @cherrypy.expose()
+    @require()
     def command(self, cmd=None, hash=None, name=None):
         try:
             self.logger.debug("%s %s" %(cmd, name))
@@ -123,7 +131,8 @@ class qbittorrent:
             return cmd + 'Failed'
     
     # Sets global upload and download speed
-    @cherrypy.expose
+    @cherrypy.expose()
+    @require()
     def set_speedlimit(self, type=None, speed=None):
         try:
             self.logger.debug("Setting %s to %s"% (type, speed))
