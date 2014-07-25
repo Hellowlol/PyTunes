@@ -141,7 +141,8 @@ $(document).ready(function () {
         var item = $(this);
         var id = item.val();
         if (id === 0) $('button:reset:visible').trigger('click');
-        $.get(WEBDIR + 'settings/getnewzserver?id=' + id, function (data) {
+        $.get(WEBDIR + 'settings/GetNewzServers?id=' + id, function (data) {
+            alert('id ' +id + data);
             if (data === null) return;
             $('#newznab_server_name').val(data.name);
             $('#newznab_server_host').val(data.host);

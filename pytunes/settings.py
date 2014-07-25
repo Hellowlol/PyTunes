@@ -150,9 +150,11 @@ class Settings:
             """ Get Newznab servers info """
             try:
                 server = NewznabServers.selectBy(id=id).getOne()
+                print server
                 return dict((c, getattr(server, c)) for c in server.sqlmeta.columns)
             except SQLObjectNotFound:
-                return
+                #return
+                return 'failed', id
 
         """ Get a list of all servers and the current server """
         servers = ''
