@@ -10,6 +10,7 @@ function loadServers() {
     });
 }
 
+//Future Use
 function loadClients() {
     $.ajax({
         url: WEBDIR + 'newznab/GetNewzClients',
