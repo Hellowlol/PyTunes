@@ -72,11 +72,6 @@ class Torrents:
 
     @cherrypy.expose()
     @require()
-    def index(self, query='', **kwargs):
-        return pytunes.LOOKUP.get_template('torrents.html').render(scriptname='torrents', torrentproviders=self.torrentproviders())
-
-    @cherrypy.expose()
-    @require()
     def sizeof(self, num):
         for x in ['bytes','KB','MB','GB']:
             if num < 1024.0:
@@ -202,29 +197,33 @@ class Torrents:
     @cherrypy.expose()
     def GetClients(self):
         torrents = ''
-        if pytunes.settings.get('deluge_enable', ''):
-            if pytunes.settings.get('deluge_name', '') == pytunes.settings.get('default_torr_id', ''):
-                torrents += '<option id="deluge" selected>Deluge</option>'
+        if pytunes.settings.get('deluge_enable'):
+            if pytunes.settings.get('default_torr_id') == 'Deluge':
+                torrents += '<option value="deluge/to_client" selected>Deluge</option>'
             else:
-                torrents += '<option id="deluge">Deluge</option>'
-        if pytunes.settings.get('utorrent_enable', ''):
-            if pytunes.settings.get('utorrent_name', '') == pytunes.settings.get('default_torr_id', ''):
-                torrents += '<option id="utorrent" selected>uTorrent</option>'
+                torrents += '<option value="deluge/to_client">Deluge</option>'
+        if pytunes.settings.get('utorrent_enable'):
+            if pytunes.settings.get('default_torr_id') == 'uTorrent':
+                torrents += '<option value="utorrent/to_client" selected>uTorrent</option>'
             else:
-                torrents += '<option id="utorrent">uTorrent</option>'
-        if pytunes.settings.get('transmission_enable', ''):
-            if pytunes.settings.get('transmission_name', '') == pytunes.settings.get('default_torr_id', ''):
-                torrents += '<option id="transmission" selected>Transmission</option>'
+                torrents += '<option value="utorrent/to_client">uTorrent</option>'
+        if pytunes.settings.get('transmission_enable'):
+            if pytunes.settings.get('default_torr_id') == 'Transmission':
+                torrents += '<option value="transmission/to_client" selected>Transmission</option>'
             else:
-                torrents += '<option id="transmission">Transmission</option>'
-        if pytunes.settings.get('qbittorrent_enable', ''):
-            if pytunes.settings.get('qbittorrent_name', '') == pytunes.settings.get('default_torr_id', ''):
-                torrents += '<option id="qbittorrent" selected>qBittorrent</option>'
+                torrents += '<option value="transmission/to_client">Transmission</option>'
+        if pytunes.settings.get('qbittorrent_enable'):
+            if pytunes.settings.get('default_torr_id') == 'qBittorrent':
+                torrents += '<option value="qbittorrent/to_client" selected>qBittorrent</option>'
             else:
-                torrents += '<option id="qbittorrent">qBittorrent</option>'
+                torrents += '<option value="qbittorrent/to_client">qBittorrent</option>'
         if not torrents:
             torrents = '<option>No Clients Enabled</option>'
         return torrents
+
+
+
+
 
 
 

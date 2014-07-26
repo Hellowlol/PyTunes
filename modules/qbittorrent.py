@@ -117,8 +117,6 @@ class qbittorrent:
             if cmd == 'resumeall' or cmd == 'pauseall':
                 urllib2.urlopen(url)   
                 return  'pause/resume'      
-            elif cmd == 'download':
-                data['urls'] = hash
             elif cmd == 'delete' or cmd == 'deletePerm':
                 data['hashes'] = hash
             else:
@@ -152,7 +150,7 @@ class qbittorrent:
 
     #Torrent search send to client
     @cherrypy.expose()
-    def to_client(self, link, torrentname, **kwargs):
+    def to_client(self, link):
         try:
             url = self.qbturl()
             url += 'command/download/'
@@ -160,8 +158,8 @@ class qbittorrent:
             data['urls'] = link
             params = urllib.urlencode(data)
             result = urllib2.urlopen(url, params).read()
-            self.logger.info('%s %s was sent to qBittorrent' % (torrentname, link))
+            self.logger.info('%s was sent to qBittorrent' % link)
         except Exception as e:
-            self.logger.error('Failed to send %s %s to qBittorrent %s' % (link, torrentname, e))
+            self.logger.error('Failed to send %s to qBittorrent %s' % (link, e))
     
 

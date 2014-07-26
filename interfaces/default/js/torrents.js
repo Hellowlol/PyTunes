@@ -33,24 +33,19 @@ function search(query, engineid, catid) {
                 ]
             ]);
             $('.download').click(function () {
-                var link = $(this).attr('torr_link');
+                //var link = $(this).attr('torr_link');
                 var sendData = {
-                    'link': link
+                    link: $(this).attr('torr_link')
+                //    client: $('#defclient').val(),
                 };
+                //alert('download' + $(this).attr('torr_link') + $('#defclient').val() + $( "#defclient option:selected" ).text());
                 $.ajax({
-                    url: WEBDIR + "torrents/getdefclient",
+                    url: WEBDIR + $('#defclient').val(),
                     type: 'get',
                     data: sendData,
-                    dataType: 'json',
+                    dataType: 'text',
                     success: function () {
-                        $.ajax({
-                            url: WEBDIR + data.path,
-                            type: 'get',
-                            dataType: 'text',
-                            success: function () {
-                                notify('Torrent Download', 'Sent to ' + data.client, 'success', '');
-                            }
-                        });
+                        notify('Torrent Download', 'Sent to ' + $("#defclient option:selected").text(), 'success', '');
                     }
 
                 });
@@ -66,33 +61,26 @@ function search(query, engineid, catid) {
 }
 
 $(document).ready(function () {
+    //alert('ready');
     $('#torrent_search_table').tablesorter();
-    $('#searchform').submit(function () {
+    $('#searchform').submit(function (e) {
         //alert('search');
-        //e.preventDefault();
-        search($('#query').val(), $('#engineid').val(), $('#catid').val());
+        e.preventDefault();
+        search($('#query').val(), $('#engineid').val(),         $('#catid').val());
         return false;
     });
     loadClients();
     // Client change. send command, reload options.
     $('#defclient').change(function () {
+        alert('change');
+        sendData = {client: $("#defclient option:selected").text()};
         $.ajax({
-            sendData = {client: $(this).val()}
             url: WEBDIR + 'settings/SetTorrClient',
             type: 'get',
+            data: sendData,
             dataType: 'text',
             success: function (data) {
-                $.ajax({
-                    url: WEBDIR + 'torrents/GetClients',
-                    type: 'get',
-                    dataType: 'text',
-                    success: function (data) {
-                        if (data === null) return errorHandler();
-                        $('#defclient').empty();//combine these two
-                        $('#defclient').append(data);
-            notify('XBMC', 'Server change ' + data, 'info');
-                    }
-                });
+                notify('Torrents', 'Client change ' + $("#defclient option:selected").text() + data, 'info');
             }
         });
     });

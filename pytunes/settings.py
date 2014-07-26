@@ -337,3 +337,15 @@ class Settings:
     def get_current_xbmc(self):
         return XbmcServers.selectBy(id=self.get('xbmc_current_server', 0)).getOne()
 
+    @cherrypy.expose()
+    def SetTorrClient(self, client):
+        print self.get('default_torr_id')
+        self.set('default_torr_id', client)
+        print self.get('default_torr_id')
+        return
+
+
+
+
+
+

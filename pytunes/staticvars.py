@@ -412,8 +412,8 @@ ${arts}
 <tr><td><b>Started</b></td><td>%s</td><td><b>Run time</b></td><td>%s</td></tr>
 </table>
     """
-    #vars['torrent_search_table'] = '<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td></tr>'
+
     vars['torrent_search_table'] = "<tr><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td><button class='btn btn-mini download' torr_link=%s title='Send to Download'><i class=icon-download-alt></button></td></tr>"
-    # "<button class='btn btn-mini download' torr_link='%s' title='Send to Download'><i class='icon-download-alt'></button>"
+
     return vars[var]
 

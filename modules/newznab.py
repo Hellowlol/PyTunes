@@ -141,6 +141,7 @@ class Newznab:
         except:
             results = res
         grabs = '0'
+        print results
         for each in results:
             files = str(each['attr'][4]['@attributes']['value'])
             grabs = str(each['attr'][6]['@attributes']['value'])
