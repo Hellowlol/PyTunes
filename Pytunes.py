@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-#start cli tutorial
+
 """
 This is the main executable of PyTunes. It parses the
 command line arguments, sets globals variables and calls the
