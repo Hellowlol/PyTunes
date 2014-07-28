@@ -33,12 +33,9 @@ function search(query, engineid, catid) {
                 ]
             ]);
             $('.download').click(function () {
-                //var link = $(this).attr('torr_link');
                 var sendData = {
                     link: $(this).attr('torr_link')
-                //    client: $('#defclient').val(),
                 };
-                //alert('download' + $(this).attr('torr_link') + $('#defclient').val() + $( "#defclient option:selected" ).text());
                 $.ajax({
                     url: WEBDIR + $('#defclient').val(),
                     type: 'get',
@@ -61,10 +58,8 @@ function search(query, engineid, catid) {
 }
 
 $(document).ready(function () {
-    //alert('ready');
     $('#torrent_search_table').tablesorter();
     $('#searchform').submit(function (e) {
-        //alert('search');
         e.preventDefault();
         search($('#query').val(), $('#engineid').val(),         $('#catid').val());
         return false;
@@ -72,7 +67,6 @@ $(document).ready(function () {
     loadClients();
     // Client change. send command, reload options.
     $('#defclient').change(function () {
-        alert('change');
         sendData = {client: $("#defclient option:selected").text()};
         $.ajax({
             url: WEBDIR + 'settings/SetTorrClient',

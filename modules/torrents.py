@@ -85,7 +85,6 @@ class Torrents:
     def search(self, q='', engineid='', cat='', **kwargs):
         engineid = engineid.lower()
         cat = cat.lower()
-        print 'Searching with %s' % engineid
         if engineid == 'kickasstorrents':
             return self.search_kickasstorrents(q, cat)
             

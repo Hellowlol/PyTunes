@@ -1,6 +1,18 @@
 
+function loadClients() {
+    //alert('clients');
+    $.ajax({
+        url: WEBDIR + 'torrents/GetClients',
+        type: 'get',
+        dataType: 'text',
+        success: function (data) {
+            if (data === null) return errorHandler();
+            $('#defclient').append(data);
+        }
+    });
+}
+
 function loadMovie(id) {
-    //alert('load movie ' + id);
     var sendData = {
         yifyid: id
     };
@@ -10,8 +22,6 @@ function loadMovie(id) {
         data: sendData,
         dataType: 'json',
         success: function (data) {
-            //alert('webdir' + WEBDIR);
-            //alert(data);
             $('#modal_dialog .modal-h3').html(data.head);
             $('#modal_dialog .modal-body').html(data.body);
             $('#modal_dialog .modal-footer').html(data.foot);
@@ -24,36 +34,32 @@ function loadMovie(id) {
             $('.modal-fanart').css({
                 'background-image': 'url(' + WEBDIR + 'manager/GetThumb?w=950&h=450&o=10&thumb=' + data.fanart + ')'
             });
-            $('#download').click(function (e) {
+
+            $('#download').click(function () {
                 var sendData = {
-                    hash: $(this).attr('yify_link'),
-                    cmd: 'download'
+                    link: $(this).attr('yify_link')
                 };
                 $.ajax({
-                    //alert('load movie ' + id);
-                    url: WEBDIR + "qbittorrent/command",
+                    url: WEBDIR + $('#defclient').val(),
                     type: 'get',
                     data: sendData,
                     dataType: 'text',
-                    success: function (data) {
-                        notify(data, 'Sent to qBittorrent', 'success', '');
+                    success: function () {
+                        notify('Torrent Download', 'Sent to ' + $("#defclient option:selected").text(), 'success', '');
                     }
-
                 });
             });
 
             $('#youtube').click(function (e) {
                 var src = 'http://www.youtube.com/embed/' + $(this).attr('ytid') + '?rel=0&autoplay=1';
                 var youtube = $('<iframe allowfullscreen>').attr('src', src).addClass('modal-youtube');
-                //alert($(this).prop('ytid'));
-                $('#modal_dialog .modal-body').html(youtube);
+               $('#modal_dialog .modal-body').html(youtube);
             });
         }
     });
 }
 
 function search(set, keywords, quality, genre, rating, sort, order, append) {
-    //alert('search ' + keywords);
     var sendData = {
         set: set,
         keywords: keywords,
@@ -76,14 +82,12 @@ function search(set, keywords, quality, genre, rating, sort, order, append) {
             //for some reason the .empty method didn't work
             //$('#yify-grid').empty;
             $('.spinner').show();
-            //alert('search ' + data);
             if (data === null) return errorHandler();
             $('#yify-grid').append(data);
         },
         complete: function () {
             $('.yify').click(function(e){
                 e.preventDefault();
-                //alert('click');
                 loadMovie($(this).prop('id'));
             });
             $('.spinner').hide();
@@ -99,7 +103,6 @@ $(document).ready(function () {
     $('.spinner').hide();
     $('#searchform').submit(function () {
         //e.preventDefault();
-        //alert('search  submit' );
         set = 1;
         search(set, $('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val(),$('#order').val(), 0);
         return false;
@@ -111,6 +114,19 @@ $(document).ready(function () {
             search(set, $('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val(),$('#order').val(), 1);
         }
     });
-
+    loadClients();
+    // Client change. send command, reload options.
+    $('#defclient').change(function () {
+        sendData = {client: $("#defclient option:selected").text()};
+        $.ajax({
+            url: WEBDIR + 'settings/SetTorrClient',
+            type: 'get',
+            data: sendData,
+            dataType: 'text',
+            success: function (data) {
+                notify('Torrents', 'Client change ' + $("#defclient option:selected").text() + data, 'info');
+            }
+        });
+    });
 });
 
