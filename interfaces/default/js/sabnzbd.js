@@ -71,21 +71,43 @@ $(function () {
 });
 
 function removeHistoryItem(id) {
-    if (confirm('Are you sure?')) {
-        $.ajax({
-            url: WEBDIR + 'sabnzbd/DeleteHistory?id=' + id,
-            type: 'get',
-            dataType: 'json',
-            success: function (data) {
-                loadQueue(1);
-                loadHistory();
-            }
-        });
+    bootbox.confirm("Are you sure?", function (result) {
+        if (result) {
+            $.ajax({
+                url: WEBDIR + 'sabnzbd/DeleteHistory?id=' + id,
+                type: 'get',
+                dataType: 'json',
+                success: function (data) {
+                    loadQueue(1);
+                    loadHistory();
+                }
+            });
+        }
     }
+    );
 }
 
+
 function retryHistoryItem(id) {
-    if (confirm('Are you sure?')) {
+    bootbox.confirm('Are you sure retry?', function (result) {
+        bootbox.classes('ConfirmModal');
+        if (result) {
+            $.ajax({
+                url: WEBDIR + 'sabnzbd/Retry?id=' + id,
+                type: 'get',
+                dataType: 'json',
+                success: function (data) {
+                    loadQueue(1);
+                    loadHistory();
+                }
+            });
+        }
+    });
+}
+
+/*
+function retryHistoryItem(id) {
+    if (ConfirmModal('Are you sure?')) {
         $.ajax({
             url: WEBDIR + 'sabnzbd/Retry?id=' + id,
             type: 'get',
@@ -97,6 +119,7 @@ function retryHistoryItem(id) {
         });
     }
 }
+*/
 
 function loadHistory() {
     $.ajax({
@@ -151,18 +174,23 @@ function loadHistory() {
     });
 }
 
+
+
 function removeQueueItem(id) {
-    if (confirm('Are you sure?')) {
-        $.ajax({
-            url: WEBDIR + 'sabnzbd/DeleteNzb?id=' + id,
-            type: 'get',
-            dataType: 'json',
-            success: function (data) {
-                loadQueue(1);
-                loadHistory();
-            }
-        });
-    }
+    bootbox.confirm('Are you want to remove ' + id + ' from que?', function (result) {
+        bootbox.classes('ConfirmModal');
+        if (result) {
+            $.ajax({
+                url: WEBDIR + 'sabnzbd/DeleteNzb?id=' + id,
+                type: 'get',
+                dataType: 'json',
+                success: function (data) {
+                    loadQueue(1);
+                    loadHistory();
+                }
+            });
+        }
+    });
 }
 
 function changeCategory(id, cat) {
