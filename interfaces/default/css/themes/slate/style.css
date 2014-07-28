@@ -129,15 +129,15 @@ table th.tablesorter-header {
     width: 10px;
 }   
 .modal {
-    position: fixed;
-    top: 0px;
-    left: 300px;
-    width: 1000px;
-    height: 530px;
+    //position: fixed;
+    //top: 0px;
+    //left: 300px;
+    //width: 1000px;
+    //height: 530px;
 }
 .modal-body {
-    width: 970px;
-    height: 500px;
+    //width: 970px;
+    //height: 500px;
 }
 .modal-codec {
     border: 0;
@@ -169,4 +169,16 @@ table th.tablesorter-header {
 
 #query {
     margin-top: 10px !important;
+}
+
+
+
+.ConfirmModal {
+    //width: inherit !important;
+    //height: inherit !important;
+}
+
+.AlertModal {
+    //width: inherit !important;
+    //height: inherit !important;
 }
