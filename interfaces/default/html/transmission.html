@@ -3,12 +3,15 @@
 <div class="container-fluid">
     <div class="content">
       <div class="page-header page-title">
-            <img alt="PyTunes" src="../img/pytuneslogosm.png"/><img alt="qBt Logo" class="pull-right" src="../img/transmission_logo_sm.png"/>
+            <img alt="PyTunes" src="../img/pytuneslogosm.png"/><img alt="Transmission Logo" class="pull-right" src="../img/transmission_logo_sm.png"/>
       </div>
 <span style="float:right">
-
-          <form  id="add_trans_form" method="post" class="form-inline" action="" style="">
-<input type="submit" class="btn btn-primary" id="add-torrent" value="Add Torrent" onclick="" />  <button class="btn" id="trans_pause_button"><i class="icon-pause"></i> Pause</button>
+		<form enctype="multipart/form-data">
+			<input name="file" type="file" />
+			<input type="button" class="btn btn-primary" value="Upload" />
+		</form>
+        <form  id="add_trans_form" method="post" class="form-inline" action="" style="">
+			<button class="btn" id="trans_pause_button"><i class="icon-pause"></i> Pause</button>
             <input type="text" class="span1" id="nzb_get_speed" placeholder="200 Kb/s" value="" />
             <button class="btn" id="nzb_set_speed"><i class="icon-cog"></i> Set speed</button>&nbsp;
           <div class="btn-group pull-right">

@@ -25,7 +25,16 @@ class Transmission:
                 {'type': 'text', 'label': 'IP / Host *', 'name': 'transmission_host', 'placeholder':''},
                 {'type': 'text', 'label': 'Port *', 'name': 'transmission_port', 'placeholder':'', 'desc':'Default is 9091'},
                 {'type': 'text', 'label': 'Username', 'name': 'transmission_username'},
-                {'type': 'password', 'label': 'Password', 'name': 'transmission_password'}
+                {'type': 'password', 'label': 'Password', 'name': 'transmission_password'},
+                {'type': 'text', 'label': 'Default', 'name': 'transmission_cat_all'},
+                {'type': 'text', 'label': 'Movies', 'name': 'transmission_cat_movies'},
+                {'type': 'text', 'label': 'Music', 'name': 'transmission_cat_music'},
+                {'type': 'text', 'label': 'TV', 'name': 'transmission_cat_tv'},
+                {'type': 'text', 'label': 'Books', 'name': 'transmission_cat_books'},
+                {'type': 'text', 'label': 'Anime', 'name': 'transmission_cat_anime'},
+                {'type': 'text', 'label': 'Pictures', 'name': 'transmission_cat_pictures'},
+                {'type': 'text', 'label': 'Games', 'name': 'transmission_cat_games'},
+                {'type': 'text', 'label': 'Software', 'name': 'transmission_cat_software'}
         ]})
 
     @cherrypy.expose()
@@ -38,7 +47,7 @@ class Transmission:
     @require()
     @cherrypy.tools.json_out()
     def queue(self):
-        fields = ['id', 'name', 'status', 'comment', 'downloadDir', 'downloadDir', 'percentDone', 'isFinished', 'eta', 'rateDownload', 'rateUpload', 'uploadRatio']
+        fields = ['id', 'name', 'status', 'comment', 'downloadDir', 'percentDone', 'isFinished', 'eta', 'rateDownload', 'rateUpload', 'uploadRatio', 'peers', 'seeders']
         return self.fetch('torrent-get', {'fields': fields})
 
     @cherrypy.expose()
@@ -78,6 +87,16 @@ class Transmission:
         try:
             self.logger.info('Added torrent link to Transmission')
             return self.fetch('torrent-add', {'filename': link})
+        except Exception as e:
+            self.logger.debug('Failed to add torrent %s link to Transmission %s' % (link, e))
+
+    #For torrent upload have to base 64 encode
+    @cherrypy.expose()
+    @cherrypy.tools.json_out()
+    def to_client2(self, info):
+        try:
+            self.logger.info('Added torrent infp to Transmission from file')
+            return self.fetch('torrent-add', {'metainfo': info})
         except Exception as e:
             self.logger.debug('Failed to add torrent %s link to Transmission %s' % (link, e))
 
