@@ -105,21 +105,6 @@ function retryHistoryItem(id) {
     });
 }
 
-/*
-function retryHistoryItem(id) {
-    if (ConfirmModal('Are you sure?')) {
-        $.ajax({
-            url: WEBDIR + 'sabnzbd/Retry?id=' + id,
-            type: 'get',
-            dataType: 'json',
-            success: function (data) {
-                loadQueue(1);
-                loadHistory();
-            }
-        });
-    }
-}
-*/
 
 function loadHistory() {
     $.ajax({
