@@ -472,8 +472,6 @@ function loadMovie(movie) {
            hideModal();
         },
         'Remove': function () {
-            // test
-            
             bootbox.confirm('Are you sure you want to remove: ' + movie.title + '? This will remove this entry forever!', function (result) {
             bootbox.classes('ConfirmModal ');
             if (result) {
