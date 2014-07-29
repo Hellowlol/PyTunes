@@ -5,7 +5,6 @@ $.ajaxSetup({
 $(document).ready(function () {
     path = window.location.pathname.split('/');
     $('#nav-' + path[1]).addClass('active');
-
     $('.carousel').carousel();
     $(".table-sortable").tablesorter();
     $('.tabs').tab();
@@ -143,6 +142,38 @@ function notify(title, text, type, time) {
         }
     });
 }
+
+
+// "Stolen from Maraschino"
+function byteSizeOrdering() {
+    jQuery.tablesorter.addParser(
+    {
+      id: 'filesize',
+      is: function (s)
+      {
+        return s.match(new RegExp(/[0-9]+(\.[0-9]+)?\ (KB|B|GB|MB|TB)/i));
+      },
+      format: function (s)
+      {
+        var suf = s.match(new RegExp(/(KB|B|GB|MB|TB)$/i))[1];
+        var num = parseFloat(s.match(new RegExp(/^[0-9]+(\.[0-9]+)?/))[0]);
+        switch (suf)
+        {
+          case 'B':
+            return num;
+          case 'KB':
+            return num * 1024;
+          case 'MB':
+            return num * 1024 * 1024;
+          case 'GB':
+            return num * 1024 * 1024 * 1024;
+          case 'TB':
+            return num * 1024 * 1024 * 1024 * 1024;
+        }
+      },
+      type: 'numeric'
+    });
+  }
 
 function showModal(title, content, buttons) {
     $('#modal_dialog .modal-h3').html(title);
