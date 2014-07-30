@@ -32,20 +32,34 @@ $(document).ready(function () {
             notify(link.text(), data, 'success');
         });
     });
-    $('a.ajax-confirm').click(function (e) {
-        e.preventDefault();
-        var link = $(this);
-        if (confirm(link.attr('title') + '?')) {
-            $.getJSON(link.attr('href'), function (data) {
-                notify(link.attr('title'), data, 'info');
-            });
-        }
-    });
+   $('a.ajax-confirm').click(function (e) {
+     e.preventDefault();
+     var link = $(this);
+     bootbox.confirm(link.attr('title') + '?', function (result) {
+        bootbox.classes('ConfirmModal');
+         if (result) {
+             $.getJSON(link.attr('href'), function (data) {
+                 notify(link.attr('title'), data, 'info');
+             });
+         }
+     });
+ });
      $('a.settingsdisabled').click(function(e) {
         e.preventDefault();
      });
     $('a.confirm').click(function (e) {
-        return (confirm($(this).attr('title') + '?'));
+        e.preventDefault();
+        var t = $(this).attr('title') + ' ?';
+        var href = $(this).attr('href');
+        alert(href);
+        bootbox.confirm('Are you sure ' + t + '', function (result) {
+            bootbox.classes('ConfirmModal');
+            if (result) {
+                alert('confirm is true');
+                window.location.replace = href;
+                //window.location.reload(true);
+            }
+        });
     });
 
     $('#btn-check-update').click(function (e) {
@@ -60,10 +74,10 @@ $(document).ready(function () {
                 if ($.isNumeric(data.versionsBehind) && data.versionsBehind === 0) {
                     notify('Update', 'Already running latest version.', 'success');
                 } else if (data.updateNeeded) {
-                    if (confirm('You are ' + data.versionsBehind + ' versions behind. Update needed. Update to latest version?')) {
+                    if (ConfirmModal('You are ' + data.versionsBehind + ' versions behind. Update needed. Update to latest version?')) {
                         $.post(WEBDIR + 'update/', function (data) {
                             if (data == 1) {
-                                showModal('Installing update', '<div class="progress progress-striped active"><div class="bar" style="width:100%"></div></div>', '');
+                                showModal('Installing update', '<div class="progress progress-striped active"><div class="bar" style="width:100%"></div></div>', '', '', 'modal_update_body');
                             } else {
                                 notify('Update', 'An error occured while updating!', 'error');
                             }
@@ -144,13 +158,14 @@ function notify(title, text, type, time) {
     });
 }
 
-function showModal(title, content, buttons) {
+function showModal(title, content, buttons, modal_dialog, modal_body) {
     $('#modal_dialog .modal-h3').html(title);
-    $('#modal_dialog').attr('tabindex', '-1');
+    $('#modal_dialog').attr('tabindex', '-1').addClass(modal_dialog);
     $('#modal_dialog .modal-body').html(content);
+    $('#modal-body').addClass(modal_body);
     var footer = $('#modal_dialog .modal-footer').empty();
     $.extend(buttons, {
-        'Close': hideModal
+        'Close': hideModal()
     });
     $.each(buttons, function (name, action) {
         footer.append(
@@ -189,3 +204,4 @@ $('.dropdown-toggle').click(function(e) {
     }
   }, this), 0);
 });
+

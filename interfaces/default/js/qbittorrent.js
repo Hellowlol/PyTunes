@@ -159,23 +159,29 @@ function generateTorrentActionButton(torrent) {
 }
 
 
-// remove torrent file
+// remove torrent
 $(document).on('click', '.qbt_removetorrent', function () {
-    var confirmed = confirm('Remove the torrent file?');
-    if (confirmed === true) {
-        $.get(WEBDIR + 'qbittorrent/command/' + $(this).attr('data-action') + '/' + $(this).attr('data-hash') + '/' + $(this).attr('data-name') + '/', function () {});
-        get_torrents();
-    }
+      var r = $(this);
+    bootbox.confirm('Are you sure you want to delete torrent' + r.attr('data-name'), function (result) {
+        bootbox.classes('ConfirmModal');
+        if (result) {
+            $.get(WEBDIR + 'qbittorrent/command/' + r.attr('data-action') + '/' + r.attr('data-hash') + '/' + r.attr('data-name') + '/', function () {});
+            get_torrents();
+        }
+    });
 
 });
 
 // remove torrent and all files
 $(document).on('click', '.qbt_deletetorrent', function () {
-    var confirmed = confirm('Delete the torrent and all associated files?');
-    if (confirmed === true) {
-        $.get(WEBDIR + 'qbittorrent/command/' + $(this).attr('data-action') + '/' + $(this).attr('data-hash') + '/' + $(this).attr('data-name') + '/', function () {});
-        get_torrents();
-    }
+    var r = $(this);
+    bootbox.confirm('Are you sure you want to delete the file and torrent ' + r.attr('data-name'), function (result) {
+        bootbox.classes('ConfirmModal');
+        if (result) {
+            $.get(WEBDIR + 'qbittorrent/command/' + r.attr('data-action') + '/' + r.attr('data-hash') + '/' + r.attr('data-name') + '/', function () {});
+            get_torrents();
+        }
+    });
 
 });
 

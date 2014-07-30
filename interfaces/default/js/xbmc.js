@@ -472,12 +472,15 @@ function loadMovie(movie) {
            hideModal();
         },
         'Remove': function () {
-            var confirmed = confirm('Are you sure? Remove: ' + movie.title + '? This will remove this entry forever!');
-            if (confirmed === true) {
+            bootbox.confirm('Are you sure you want to remove: ' + movie.title + '? This will remove this entry forever!', function (result) {
+            bootbox.classes('ConfirmModal ');
+            if (result) {
                 removeLibraryItem(movie.movieid, 'movie');
                 reloadTab();
                 hideModal();
-            }
+                }
+            });
+            
         }
      };
     if (movie.imdbnumber) {
@@ -1209,16 +1212,24 @@ function playItem(item, type) {
 }
 
 function executeAddon2(addon, cmd0, cmd1) {
-    confirm('Execute: ' + addon + ' with cmd0: ' + cmd0 + ' and cmd1: ' + cmd1);
-    $.get(WEBDIR + 'xbmc/ExecuteAddon?addon='+ addon + '&cmd0=' + cmd0 + '&cmd1=' + cmd1);
-    $('#filter').val('');
+    bootbox.confirm('Execute: ' + addon + 'with cmd0: ' + cmd0 + 'and cmd1: ' + cmd1, function (result) {
+        bootbox.classes('ConfirmModal ');
+        if (result) {
+            $.get(WEBDIR + 'xbmc/ExecuteAddon?addon=' + addon + ' & cmd0 = ' + cmd0 + ' & cmd1 = ' + cmd1);
+            $('#filter ').val('');
+        }
+    });
 }
 
-function executeAddon(addon, cmd0, cmd1) {
-    confirm('Execute: ' + addon + ' with cmd0: ' + cmd0 + ' and cmd1: ' + cmd1);
-    cmd0 = typeof cmd0 !== 'undefined' ? '&cmd0=' + cmd0 : '';
-    cmd1 = typeof cmd1 !== 'undefined' ? '&cmd1=' + cmd1 : '';
-    $.get(WEBDIR + 'xbmc/ExecuteAddon?addon=' + addon + cmd0 + cmd1);
+function executeAddon2(addon, cmd0, cmd1) {
+    bootbox.confirm('Execute: ' + addon + 'with cmd0: ' + cmd0 + 'and cmd1: ' + cmd1, function (result) {
+        bootbox.classes('ConfirmModal ');
+        if (result) {
+            cmd0 = typeof cmd0 !== 'undefined' ? '&cmd0=' + cmd0 : '';
+            cmd1 = typeof cmd1 !== 'undefined' ? '&cmd1=' + cmd1 : '';
+            $.get(WEBDIR + 'xbmc/ExecuteAddon?addon=' + addon + cmd0 + cmd1);
+        }
+    });
 }
 
 function queueItem(item, type) {
