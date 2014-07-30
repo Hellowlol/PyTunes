@@ -224,27 +224,30 @@ function forceFullUpdate(tvdbid, name) {
 }
 
 function removeShow(tvdbid, name) {
-    if (confirm('Are you sure? Remove: ' + name + '? This will remove this entry forever!')) {
-        $.ajax({
-            url: WEBDIR + 'sickbeard/RemoveShow?tvdbid=' + tvdbid,
-            type: 'get',
-            dataType: 'json',
-            timeout: 15000,
-            success: function (data) {
-                if (data.result == 'success') {
-                    notify('OK', data.message, 'success');
-                    return;
-                } 
-                else {
-                    notify('Error', data.message, 'error');
-                     return;
+    bootbox.confirm('Are you sure you want to delete ' + name , function (result) {
+        bootbox.classes('ConfirmModal');
+        if (result) {
+            $.ajax({
+                url: WEBDIR + 'sickbeard/RemoveShow?tvdbid=' + tvdbid,
+                type: 'get',
+                dataType: 'json',
+                timeout: 15000,
+                success: function (data) {
+                    if (data.result == 'success') {
+                        notify('OK', data.message, 'success');
+                        return;
+                    } else {
+                        notify('Error', data.message, 'error');
+                        return;
+                    }
+                },
+                error: function (data) {
+                    notify('Error', 'Unable to queue tv show for full update.', 'error', 1);
                 }
-            },
-            error: function (data) {
-                notify('Error', 'Unable to queue tv show for full update.', 'error', 1);
-            }
-        });
-    }
+            });
+
+        }
+    });
 }
 
 function rescanFiles(tvdbid, name) {
