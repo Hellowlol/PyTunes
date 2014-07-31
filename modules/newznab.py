@@ -19,12 +19,12 @@ class Newznab:
             'fields': [
                 {'type':'bool', 'label':'Enable', 'name':'newznab_enable'},
                 {'type':'text', 'label':'Menu name', 'name':'newznab_name', 'placeholder':''},
-                {'type':'select',
-                 'label':'Default NZB Client',
-                 'name':'default_nzb_id',
-                 'options':[],
-                 'desc':'Only Enabled Clients Will Show' 
-                },
+                #{'type':'select',
+                # 'label':'Default NZB Client',
+                # 'name':'default_nzb_id',
+                # 'options':[],
+                # 'desc':'Only Enabled Clients Will Show' 
+                #},
                 {'type':'text', 'label':'Console Category', 'name':'newznab_console', 'desc':'From Sabnzbd Configuration'},
                 {'type':'text', 'label':'Movies Category', 'name':'newznab_movies', 'desc':'From Sabnzbd Configuration'},
                 {'type':'text', 'label':'Audio Category', 'name':'newznab_audio', 'desc':'From Sabnzbd Configuration'},
@@ -90,12 +90,10 @@ class Newznab:
         try:
             settings = pytunes.settings
             self.current = settings.get_current_newznab_host()
-            print self.current
             host = self.current.host.replace('http://', '').replace('https://', '')
             ssl = '' if self.current.ssl == '0' else 's'
             apikey = self.current.apikey
             url = 'http' + ssl + '://' + host + '/api?t=caps&o=xml'
-            print url
             self.logger.debug("Fetching Cat information from: " + url)
             caps = urlopen(url, timeout=10).read()
             lines = caps.split('\n')
@@ -141,7 +139,6 @@ class Newznab:
         except:
             results = res
         grabs = '0'
-        print results
         for each in results:
             files = str(each['attr'][4]['@attributes']['value'])
             grabs = str(each['attr'][6]['@attributes']['value'])
@@ -170,7 +167,6 @@ class Newznab:
         try:
             settings = pytunes.settings
             self.current = settings.get_current_newznab_host()
-            print 'in fetch',self.current
             host = self.current.host.replace('http://', '').replace('https://', '')
             ssl = 's' if settings.get('newznab_ssl') == 'on' else ''
             apikey = self.current.apikey
@@ -180,9 +176,6 @@ class Newznab:
         except Exception, e:
             self.logger.debug("Exception: " + str(e))
             self.logger.error("Unable to fetch information from: newznab" + str(e))
-        #except:
-        #    self.logger.error("Unable to fetch information from: %s" % url)
-        #    return
 
     def send(self, link):
         try:
@@ -214,6 +207,5 @@ class Newznab:
             nzbclients += '<option id="sabnzbd">Sabnzbd+</option>'
         if not nzbclients:
             nzbclients = '<option>No Clients Enabled</option>'
-        print nzbclients
         return nzbclients
 
