@@ -32,12 +32,12 @@ class Torrents:
                 {'type':'bool', 'label':'Enable', 'name':'torrents_enable'},
                 {'type':'text', 'label':'Menu name', 'name':'torrents_name'},
                 {'type':'text', 'label':'Seeds', 'name':'torrents_seeds', 'value':'5', 'desc':'Minimum Number of Seeders'},
-                {'type':'select',
-                 'label':'Default Torrent Client',
-                 'name':'default_torr_id',
-                 'options':[],
-                 'desc':'Only Enabled Clients Will Show' 
-                },
+                #{'type':'select',
+                # 'label':'Default Torrent Client',
+                # 'name':'default_torr_id',
+                # 'options':[],
+                # 'desc':'Only Enabled Clients Will Show' 
+                #},
                 {'type':'bool', 'label':'Enable BTN', 'name':'torrents_btn_enabled'},
                 {'type':'text', 'label':'BTN APIKEY', 'name':'torrents_btnapikey'},
                 #{'type':'bool', 'label':'The Piratebay', 'name':'torrents_piratebay_enabled'},

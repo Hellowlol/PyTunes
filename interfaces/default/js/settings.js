@@ -99,16 +99,22 @@ $(document).ready(function () {
                 this.reset();
             }
             if ($('#newznab_server_id').is(":visible")) {
-                newznab_update_servers(0);
+                //newznab_update_servers(0);
+                this.reset();
+            }
+            if ($('#users_user_id').is(":visible")) {
+                users_update_user(0);
                 this.reset();
             }
         });
     });
+
     $('input.enable-module').change(function () {
         var disabled = !$(this).is(':checked');
         $(this).parents('fieldset:first').find('input, radio, select').not(this)
             .attr('readonly', disabled).attr('disabled', disabled);
     });
+
     $('input.enable-module').trigger('change');
     $('#xbmc_server_id').change(function () {
         $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
@@ -128,16 +134,19 @@ $(document).ready(function () {
                 bootbox.confirm('Delete ' + name, function (result) {
                     bootbox.classes('ConfirmModal');
                     if (!result) return;
-                $.get(WEBDIR + 'settings/delxbmcserver?id=' + id, function (data) {
-                    notify('Settings', 'Server deleted', 'info');
-
-                    $(this).val(0);
-                    item.find('option[value=' + id + ']').remove();
-                    $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
+                    $.get(WEBDIR + 'settings/delxbmcserver?id=' + id, function (data) {
+                        notify('Settings', 'Server deleted', 'info');
+                        $(this).val(0);
+                        item.find('option[value=' + id + ']').remove();
+                        $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
+                    });
                 });
             });
         });
     });
+    xbmc_update_servers(0);
+
+    $('input.enable-module').trigger('change');
     $('#newznab_server_id').change(function () {
         $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
         var item = $(this);
@@ -154,7 +163,6 @@ $(document).ready(function () {
                 if (!confirm('Delete ' + name)) return;
                 $.get(WEBDIR + 'settings/delnewzserver?id=' + id, function (data) {
                         notify('Settings', 'Server deleted', 'info');
-
                         $(this).val(0);
                         item.find('option[value=' + id + ']').remove();
                         $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
@@ -162,9 +170,9 @@ $(document).ready(function () {
                 });
             });
         });
-    });
-    xbmc_update_servers(0);
-    loadNzbServers();
+        loadNzbServers();
+
+    
     $('input.enable-module').trigger('change');
     $('#users_user_id').change(function () {
         $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
@@ -188,12 +196,12 @@ $(document).ready(function () {
                         $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
                     });
                 });
-
             });
-        });
-        users_update_user(0);
+        }); 
     });
+    users_update_user(0);
 });
+
 
 
 function loadClients() {
@@ -231,7 +239,6 @@ function xbmc_update_servers(id) {
 }
 
 function loadNzbServers() {
-    //alert('load');
     var sendData = {selected: 'False'};
     $.ajax({
         url: WEBDIR + 'settings/GetNewzServers',
@@ -273,4 +280,3 @@ $(document).on('click', '.delete_cache', function(e){
         }
     });
 });
-

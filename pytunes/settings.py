@@ -159,7 +159,6 @@ class Settings:
         servers = ''
         option = "<option value='%s'%s>%s</option>"
         for s in NewznabServers.select():
-            print 'default', self.get('newznab_current_server')
             if selected == True and (self.get('newznab_current_server') == str(s.id)):
                 servers += option % (s.id, ' selected',s.name)
             else:
@@ -167,7 +166,6 @@ class Settings:
             #servers.append({'id': s.id, 'name': s.name})
         if len(servers) < 1:
             return "<option value='None'>No Servers Registered</option>"
-        #print servers
         return servers
 
     @cherrypy.expose()
@@ -328,7 +326,6 @@ class Settings:
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def get_current_newznab_host(self):
-        #print 'current: ', self.current
         return NewznabServers.selectBy(id=self.get('newznab_current_server', 0)).getOne()
 
     @cherrypy.expose()
@@ -338,9 +335,7 @@ class Settings:
 
     @cherrypy.expose()
     def SetTorrClient(self, client):
-        print self.get('default_torr_id')
         self.set('default_torr_id', client)
-        print self.get('default_torr_id')
         return
 
 
