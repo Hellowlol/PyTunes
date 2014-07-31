@@ -95,39 +95,6 @@ $(document).ready(function () {
             });
         });
 
-
-    //Org
-    /*
-    $('#btn-check-update').click(function (e) {
-        e.preventDefault();
-        notify('Update', 'Checking for update.', 'info');
-        $.ajax({
-            dataType: "json",
-            timeout: 10000,
-            url: WEBDIR + 'update/',
-            success: function (data) {
-                if ($.isNumeric(data.versionsBehind) && data.versionsBehind === 0) {
-                    notify('Update', 'Already running latest version.', 'success');
-                } else if (data.updateNeeded) {
-                    if (ConfirmModal('You are ' + data.versionsBehind + ' versions behind. Update needed. Update to latest version?')) {
-                        $.post(WEBDIR + 'update/', function (data) {
-                            if (data == 1) {
-                                showModal('Installing update', '<div class="progress progress-striped active"><div class="bar" style="width:100%"></div></div>', '', '', 'modal_update_body');
-                            } else {
-                                notify('Update', 'An error occured while updating!', 'error');
-                            }
-                        }, 'json').always(function () {
-                            checkUpdate();
-                        });
-                    }
-                } else {
-                    notify('Update', 'Failed. Check errorlog.', 'error');
-                }
-            }
-        });
-    });
-*/
-
     $('#modal_dialog').on('hidden', function () {
         $('#modal_dialog .modal-body').empty();
         $('#modal_dialog .trans').removeClass('trans');
