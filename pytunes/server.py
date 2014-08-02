@@ -82,9 +82,8 @@ def start():
             'tools.staticdir.root': webdir,
             'tools.encode.on': True,
             'tools.encode.encoding': 'utf-8',
-            'tools.gzip.on': True
-            #'tools.sessions.on': True,
-            #'tools.auth.on': True
+            'tools.gzip.on': True,
+            'tools.gzip.mime_types': ['text/html', 'text/plain', 'text/css', 'text/javascript']
         },
         '/js': {
             'tools.caching.on': True,
