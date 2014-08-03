@@ -5,10 +5,10 @@ $.ajaxSetup({
 $(document).ready(function () {
     path = window.location.pathname.split('/');
     $('#nav-' + path[1]).addClass('active');
-
     $('.carousel').carousel();
     $(".table-sortable").tablesorter();
     $('.tabs').tab();
+
     $(window).on('hashchange', function () {
         if (location.hash) {
             $('a[href=' + location.hash + ']').tab('show');
@@ -22,9 +22,11 @@ $(document).ready(function () {
         location.hash = $(e.target).attr('href');
         $(window).scrollTop(yScroll);
     });
+
     $('form.disabled').submit(function (e) {
         e.preventDefault();
     });
+
     $('a.ajax-link').click(function (e) {
         e.preventDefault();
         var link = $(this);
@@ -32,32 +34,32 @@ $(document).ready(function () {
             notify(link.text(), data, 'success');
         });
     });
-   $('a.ajax-confirm').click(function (e) {
-     e.preventDefault();
-     var link = $(this);
-     bootbox.confirm(link.attr('title') + '?', function (result) {
-        bootbox.classes('ConfirmModal');
-         if (result) {
-             $.getJSON(link.attr('href'), function (data) {
-                 notify(link.attr('title'), data, 'info');
-             });
-         }
-     });
- });
-     $('a.settingsdisabled').click(function(e) {
+
+    $('a.ajax-confirm').click(function (e) {
         e.preventDefault();
-     });
+        var link = $(this);
+        bootbox.confirm(link.attr('title') + '?', function (result) {
+            bootbox.classes('ConfirmModal');
+            if (result) {
+                $.getJSON(link.attr('href'), function (data) {
+                    notify(link.attr('title'), data, 'info');
+                });
+            }
+        });
+    });
+
+    $('a.settingsdisabled').click(function (e) {
+        e.preventDefault();
+    });
+
     $('a.confirm').click(function (e) {
         e.preventDefault();
         var t = $(this).attr('title') + ' ?';
         var href = $(this).attr('href');
-        alert(href);
-        bootbox.confirm('Are you sure ' + t + '', function (result) {
+        bootbox.confirm('Are you sure you want to ' + t + '', function (result) {
             bootbox.classes('ConfirmModal');
             if (result) {
-                alert('confirm is true');
-                window.location.replace = href;
-                //window.location.reload(true);
+                window.location.replace(href);
             }
         });
     });
@@ -65,7 +67,6 @@ $(document).ready(function () {
     $('#btn-check-update').click(function (e) {
         e.preventDefault();
         notify('Update', 'Checking for update.', 'info');
-
         $.ajax({
             dataType: "json",
             timeout: 10000,
@@ -74,30 +75,34 @@ $(document).ready(function () {
                 if ($.isNumeric(data.versionsBehind) && data.versionsBehind === 0) {
                     notify('Update', 'Already running latest version.', 'success');
                 } else if (data.updateNeeded) {
-                    if (ConfirmModal('You are ' + data.versionsBehind + ' versions behind. Update needed. Update to latest version?')) {
-                        $.post(WEBDIR + 'update/', function (data) {
-                            if (data == 1) {
-                                showModal('Installing update', '<div class="progress progress-striped active"><div class="bar" style="width:100%"></div></div>', '', '', 'modal_update_body');
-                            } else {
-                                notify('Update', 'An error occured while updating!', 'error');
-                            }
-                        }, 'json').always(function () {
-                            checkUpdate();
-                        });
+                    bootbox.confirm('You are ' + data.versionsBehind + ' versions behind. Update needed. Update to latest version?', function(result) {
+                        if (result) {
+                            $.post(WEBDIR + 'update/', function (data) {
+                                if (data == 1) {
+                                    showModal('Installing update', '<div class="progress progress-striped active"><div class="bar" style="width:100%"></div></div>', '', '', 'modal_update_body');
+                                } else {
+                                    notify('Update', 'An error occured while updating!', 'error');
+                                }
+                            }, 'json').always(function () {
+                                checkUpdate();
+                            });
+                        }
+                    });
+                    } else {
+                        notify('Update', 'Failed. Check errorlog.', 'error');
                     }
-                } else {
-                    notify('Update', 'Failed. Check errorlog.', 'error');
                 }
-            }
+            });
         });
-    });
 
     $('#modal_dialog').on('hidden', function () {
         $('#modal_dialog .modal-body').empty();
         $('#modal_dialog .trans').removeClass('trans');
         $('#modal_dialog .modal-fanart').css('background', '#fff');
     });
+
 });
+
 
 function makeIcon(iconClass, title) {
     return $('<i>')
@@ -196,12 +201,11 @@ function checkUpdate() {
     });
 }
 
-$('.dropdown-toggle').click(function(e) {
-  e.preventDefault();
-  setTimeout($.proxy(function() {
-    if ('ontouchstart' in document.documentElement) {
-      $(this).siblings('.dropdown-backdrop').off().remove();
-    }
-  }, this), 0);
+$('.dropdown-toggle').click(function (e) {
+    e.preventDefault();
+    setTimeout($.proxy(function () {
+        if ('ontouchstart' in document.documentElement) {
+            $(this).siblings('.dropdown-backdrop').off().remove();
+        }
+    }, this), 0);
 });
-
