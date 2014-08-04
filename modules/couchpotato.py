@@ -5,7 +5,6 @@ import cherrypy
 import pytunes
 from pytunes.proxy import get_image
 import json
-#from urllib2 import urlopen
 import requests
 from urllib import quote_plus
 import logging
