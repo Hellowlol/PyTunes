@@ -5,7 +5,7 @@ import cherrypy
 import pytunes
 from pytunes.proxy import get_image
 import json
-from urllib2 import urlopen
+import requests
 from urllib import quote_plus
 import logging
 import hashlib
@@ -60,7 +60,8 @@ class Couchpotato:
         ssl = 's' if couchpotato_ssl else ''
         url = 'http' + ssl + '://' + couchpotato_host + ':' + couchpotato_port + couchpotato_basepath + 'api/' + couchpotato_apikey
         try:
-            return json.loads(urlopen(url + '/app.available/', timeout=10).read())
+            f = requests.get(url + '/app.available/', timeout= 10)
+            return f.json()
         except:
             self.logger.error("Unable to connect to couchpotato")
             self.logger.debug("connection-URL: " + url)
@@ -83,11 +84,12 @@ class Couchpotato:
         ssl = 's' if couchpotato_ssl else ''
         url = 'http' + ssl + '://' + couchpotato_host + ':' + couchpotato_port + couchpotato_basepath + getkey
         try:
-            return json.loads(urlopen(url, timeout=2).read())
+            f = requests.get(url, timeout=2)
+            return f.json()
         except:
             self.logger.error("Unable to connect to couchpotato")
             self.logger.debug("connection-URL: " + url)
-            return json.loads(urlopen(url, timeout=2).read())
+            return
 
     @cherrypy.expose()
     @require()
@@ -196,7 +198,8 @@ class Couchpotato:
             url = 'http' + ssl + '://' + host + ':' + port + basepath + 'api/' + apikey + '/' + path
 
             self.logger.debug("Fetching information from: " + url)
-            return json.loads(urlopen(url, timeout=30).read())
+            f = requests.get(url, timeout=10, stream=True)
+            return f.json()
         except Exception, e:
             self.logger.debug("Exception: " + str(e))
             self.logger.debug(path)
