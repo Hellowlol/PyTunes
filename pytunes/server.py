@@ -11,7 +11,6 @@ from pytunes.manageusers import Manageusers
 from sqlobject import SQLObjectNotFound
 from cherrypy.lib.auth2 import AuthController, require, member_of
 from cherrypy.process.plugins import Daemonizer, PIDFile
-#from cherrypy.lib.auth_digest import get_ha1_dict_plain
 
 
 def start():
@@ -33,7 +32,7 @@ def start():
         cherrypy.config.update({
             'tools.sessions.on': True,
             'tools.auth.on': True,
-            'tools.sessions.timeout':20
+            'tools.sessions.timeout':60
         })
     
 
@@ -41,7 +40,9 @@ def start():
     cherrypy.config.update({
         'server.socket_host': pytunes.HOST,
         'server.socket_port': pytunes.PORT,
-        'log.screen': False
+        'log.screen': False,
+        'server.thread_pool': 15,
+        'server.socket_queue_size': 10
     })
 
     # Set server environment to production unless when debugging
@@ -83,7 +84,7 @@ def start():
             'tools.encode.on': True,
             'tools.encode.encoding': 'utf-8',
             'tools.gzip.on': True,
-            'tools.gzip.mime_types': ['text/html', 'text/plain', 'text/css', 'text/javascript']
+            'tools.gzip.mime_types': ['text/html', 'text/plain', 'text/css', 'text/javascript', 'application/json', 'application/javascript']
         },
         '/js': {
             'tools.caching.on': True,
