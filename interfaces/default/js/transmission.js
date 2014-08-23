@@ -114,7 +114,7 @@ function getTorrents() {
                     actionButton = generateTorrentActionButton(torrent);
                     buttons.append(actionButton);
 
-                    // Remove button
+                    // Remove torrent button
                     removeButton = $('<a>').
                     addClass('btn btn-mini').
                     html('<i class="icon-remove"></i>').
@@ -122,16 +122,42 @@ function getTorrents() {
                     attr('title', 'Remove torrent');
                     buttons.append(removeButton);
 
+                    var doneSize = torrent.totalSize - torrent.leftUntilDone;
+                    // Remove torrent and files button
+                    removeButtonAndFiles = $('<a>').
+                    addClass('btn btn-mini').
+                    html('<i class="icon-trash"></i>').
+                    attr('href', WEBDIR + 'transmission/remove_with_files/' + torrent.id).
+                    attr('title', 'Remove torrent and all files');
+                    buttons.append(removeButtonAndFiles);
+
+                    var doneSize = torrent.totalSize - torrent.leftUntilDone;
+                    // View and edit files 
+                    viewFilesButton = $('<a>').
+                    addClass('btn btn-mini').
+                    html('<i class="icon-copy"></i>').
+                    attr('href', WEBDIR + 'transmission/ViewFiles/' + torrent.id).
+                    attr('title', 'View and edit files');
+                    buttons.append(viewFilesButton);
+
+                    var doneSize = torrent.totalSize - torrent.leftUntilDone;
+
                     tr.append(
                     $('<td>').html(torrent.name + '<br><small><i class="icon-download"></i> ' + getReadableFileSizeString(torrent.rateDownload) + '/s' + '&nbsp;&nbsp;' + ' <i class="icon-upload"></i> ' + getReadableFileSizeString(torrent.rateUpload) + '/s</small>'),
+                    $('<td>').text(torrent.downloadDir),
                     $('<td>').text(ratio),
+                    $('<td>').text(torrent.priorities),
+                    $('<td>').text(torrent.queuePosition),
+                    $('<td>').text(getReadableFileSizeString(doneSize)),
+                    $('<td>').text(getReadableFileSizeString(torrent.totalSize)),
                     $('<td>').text(getReadableTime(torrent.eta)),
                     $('<td>').text(torrentStatus(torrent.status)),
+                    //$('<td>').addClass('span3').html(progress).text('<br><small>').text(getReadableFileSizeString(doneSize) + '/' + getReadableFileSizeString(torrent.totalSize)),
                     $('<td>').addClass('span3').html(progress),
                     $('<td>').addClass('torrent-action').append(buttons));
-                    $('#torrent-all').append(tr);
-                });
-                $('.spinner').hide();
+                $('#torrent-all').append(tr)
+            });
+            $('.spinner').hide();
             }
         }
     });
@@ -184,7 +210,7 @@ function getStatus() {
  */
 function getReadableFileSizeString(fileSizeInBytes) {
     var i = -1;
-    var byteUnits = [' kB', ' MB', ' GB', ' TB', 'PB'];
+    var byteUnits = [' KB', ' MB', ' GB', ' TB', 'PB'];
     do {
         fileSizeInBytes = fileSizeInBytes / 1024;
         i++;
