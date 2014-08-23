@@ -25,7 +25,13 @@ class Transmission:
                 {'type': 'text', 'label': 'IP / Host *', 'name': 'transmission_host', 'placeholder':''},
                 {'type': 'text', 'label': 'Port *', 'name': 'transmission_port', 'placeholder':'', 'desc':'Default is 9091'},
                 {'type': 'text', 'label': 'Username', 'name': 'transmission_username'},
-                {'type': 'password', 'label': 'Password', 'name': 'transmission_password'}
+                {'type': 'text', 'label': 'Movie Directory', 'name': 'transmission_moviedir', 'dir':False},
+                {'type': 'text', 'label': 'TV Directory', 'name': 'transmission_tvdir', 'dir':False},
+                {'type': 'text', 'label': 'Music Directory', 'name': 'transmission_musicdir', 'dir':False},
+                {'type': 'text', 'label': 'Music Vid Directory', 'name': 'transmission_musicviddir', 'dir':False},
+                {'type': 'text', 'label': 'Concert Directory', 'name': 'transmission_concertdir', 'dir':False},
+                {'type': 'text', 'label': 'Anime Directory', 'name': 'transmission_animedir', 'dir':False},
+                {'type': 'text', 'label': 'Other Directory', 'name': 'transmission_otherdir', 'dir':False}
         ]})
 
     @cherrypy.expose()
@@ -38,7 +44,7 @@ class Transmission:
     @require()
     @cherrypy.tools.json_out()
     def queue(self):
-        fields = ['id', 'name', 'status', 'comment', 'downloadDir', 'downloadDir', 'percentDone', 'isFinished', 'eta', 'rateDownload', 'rateUpload', 'uploadRatio']
+        fields = ['id', 'name', 'status', 'comment', 'downloadDir', 'percentDone', 'leftUntilDone', 'totalSize', 'isFinished', 'eta', 'rateDownload', 'rateUpload', 'uploadRatio', 'priorities', 'queuePosition']
         return self.fetch('torrent-get', {'fields': fields})
 
     @cherrypy.expose()

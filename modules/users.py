@@ -41,11 +41,6 @@ class Users:
 
     @cherrypy.expose()
     @require(member_of("admin")) 
-    def index(self):
-        return pytunes.LOOKUP.get_template('manageusers.html').render(scriptname='manageusers')
-
-    @cherrypy.expose()
-    @require(member_of("admin")) 
     def setusers(self, users_user_id, users_user_username, users_user_password, users_user_role):
         if users_user_id == "0":
             self.logger.debug('Creating Manage users in db')
