@@ -68,6 +68,14 @@ class Sickbeard:
     @cherrypy.tools.json_out()
     def GetShowList(self):
         self.logger.debug("Fetching Shows list")
+        list = self.fetch('shows&sort=name')
+        for show in list['data']:
+            print show
+            if show[:4] == 'The ':
+                print show[4:]
+            else:
+                print show
+            print list['data'][show]
         return self.fetch('shows&sort=name')
 
     @cherrypy.expose()

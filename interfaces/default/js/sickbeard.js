@@ -50,12 +50,14 @@ function loadShows() {
                 $('<td>').html(sickbeardStatusLabel(tvshow.quality)));
                 $('#tvshows_table_body').append(row);
             });
-            $('#tvshows_table_body').parent().trigger('update');
-            $('#tvshows_table_body').parent().trigger("sorton", [
-                [
-                    [0, 0]
-                ]
-            ]);
+            //$('#tvshows_table_body').parent().trigger('update');
+            //$('#tvshows_table_body').parent().trigger("sorton", [
+            //$('.tvshows_table').parent().trigger('update');
+            //$('.tvshows_table').parent().trigger("sorton", [
+            //    [
+            //        [0, 1]
+            //    ]
+            //]);
         }
     });
 }
