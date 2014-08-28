@@ -75,7 +75,23 @@ class Sickbeard:
                 print show[4:]
             else:
                 print show
-            print list['data'][show]
+            #print show['status']
+            #print show['network']
+            #print show['quality']
+            #print show['tvdbid']
+            print list['data'][show]['status']
+            print list['data'][show]['network']
+            print list['data'][show]['quality']
+            print list['data'][show]['tvdbid']
+            sdata = self.fetch('show.stats&tvdbid=%s' % list['data'][show]['tvdbid'])
+            print sdata
+            if sdata['message']:
+                print sdata['message']
+                #log it and put error on prog bar
+                continue
+            print sdata['data']['downloaded']['total']
+            print sdata['data']['total']
+            print ''
         return self.fetch('shows&sort=name')
 
     @cherrypy.expose()
@@ -90,21 +106,21 @@ class Sickbeard:
     def GetBanner(self, tvdbid):
         self.logger.debug("Fetching Banner")
         cherrypy.response.headers['Content-Type'] = 'image/jpeg'
-        return self.fetch('show.getbanner&tvdbid=' + tvdbid, True)
+        return self.fetch('show.getbanner&tvdbid=%s' % tvdbid, True)
 
     @cherrypy.expose()
     @require()
     def GetPoster(self, tvdbid):
         self.logger.debug("Fetching Poster")
         cherrypy.response.headers['Content-Type'] = 'image/jpeg'
-        return self.fetch('show.getposter&tvdbid=' + tvdbid, True)
+        return self.fetch('show.getposter&tvdbid=%s' % tvdbid, True)
 
     @cherrypy.expose()
     @require()
     @cherrypy.tools.json_out()
     def GetHistory(self, limit=''):
         self.logger.debug("Fetching History")
-        return self.fetch('history&limit=' + limit)
+        return self.fetch('history&limit=%s' % limit)
 
     @cherrypy.expose()
     @require()
@@ -118,35 +134,35 @@ class Sickbeard:
     @cherrypy.tools.json_out()
     def AddShow(self, tvdbid):
         self.logger.debug("Adding a Show")
-        return self.fetch('show.addnew&tvdbid=' + tvdbid)
+        return self.fetch('show.addnew&tvdbid=%s' % tvdbid)
 
     @cherrypy.expose()
     @require()
     @cherrypy.tools.json_out()
     def GetShow(self, tvdbid):
         self.logger.debug("Fetching Show")
-        return self.fetch('show&tvdbid=' + tvdbid)
+        return self.fetch('show&tvdbid=#s' % tvdbid)
 
     @cherrypy.expose()
     @require()
     @cherrypy.tools.json_out()
     def GetSeason(self, tvdbid, season):
         self.logger.debug("Fetching Season")
-        return self.fetch('show.seasons&tvdbid=' + tvdbid + '&season=' + season)
+        return self.fetch('show.seasons&tvdbid=%s&season=%s' % (tvdbid, season))
 
     @cherrypy.expose()
     @require()
     @cherrypy.tools.json_out()
     def SearchEpisodeDownload(self, tvdbid, season, episode):
         self.logger.debug("Fetching Episode Downloads")
-        return self.fetch('episode.search&tvdbid=' + tvdbid + '&season=' + season + '&episode=' + episode, False, 45)
+        return self.fetch('episode.search&tvdbid=%s&season=%s&episode=%s' % (tvdbid, season, episode), False, 45)
 
     @cherrypy.expose()
     @require()
     @cherrypy.tools.json_out()
     def RemoveShow(self, tvdbid):
         self.logger.debug("Force full update for tvdbid " + tvdbid)
-        return self.fetch("show.delete&tvdbid=" + tvdbid)
+        return self.fetch("show.delete&tvdbid=%s" % tvdbid)
 
     @cherrypy.expose()
     @require()
@@ -180,21 +196,21 @@ class Sickbeard:
     @require()
     @cherrypy.tools.json_out()
     def ForceFullUpdate(self, tvdbid):
-        self.logger.debug("Force full update for tvdbid " + tvdbid)
-        return self.fetch("show.update&tvdbid=" + tvdbid)
+        self.logger.debug("Force full update for tvdbid %s" % tvdbid)
+        return self.fetch("show.update&tvdbid=%s" % tvdbid)
 
     @cherrypy.expose()
     @require()
     @cherrypy.tools.json_out()
     def RescanFiles(self, tvdbid):
-        self.logger.debug("Rescan all local files for tvdbid " + tvdbid)
-        return self.fetch("show.refresh&tvdbid=" + tvdbid)
+        self.logger.debug("Rescan all local files for tvdbid %s" % tvdbid)
+        return self.fetch("show.refresh&tvdbid=%s" % tvdbid)
 
     @cherrypy.expose()
     @require()
     def SearchShow(self, query):
         try:
-            url = 'http://www.thetvdb.com/api/GetSeries.php?seriesname=' + quote(query)
+            url = 'http://www.thetvdb.com/api/GetSeries.php?seriesname=%s' % quote(query)
             return urlopen(url, timeout=10).read()
         except:
             return
@@ -209,9 +225,9 @@ class Sickbeard:
 
             if not (sickbeard_basepath.endswith('/')):
                 sickbeard_basepath += "/"
-            url = 'http' + ssl + '://' + host + ':' + str(port) + sickbeard_basepath + 'api/' + apikey + '/?cmd=' + cmd
+            url = 'http%s://%s:%s%sapi/%s/?cmd=' % (ssl, host, str(port), sickbeard_basepath, apikey, cmd)
 
-            self.logger.debug("Fetching information from: " + url)
+            self.logger.debug("Fetching information from: %s" % url)
 
             if (img == True):
                 return urlopen(url, timeout=timeout).read()

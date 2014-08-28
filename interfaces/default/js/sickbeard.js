@@ -240,10 +240,9 @@ function shutdownSB() {
                 if (data.result == 'success') {
                     notify('OK', data.message, 'success');
                     return;
-                } 
-                else {
+                } else {
                     notify('Error', data.message, 'error');
-                     return;
+                    return;
                 }
             },
             error: function (data) {
@@ -264,10 +263,9 @@ function restartSB() {
                 if (data.result == 'success') {
                     notify('OK', data.message, 'success');
                     return;
-                } 
-                else {
+                } else {
                     notify('Error', data.message, 'error');
-                     return;
+                    return;
                 }
             },
             error: function (data) {

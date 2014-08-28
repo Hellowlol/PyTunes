@@ -127,7 +127,7 @@ def start():
     # Start the CherryPy server (remove trailing slash from webdir)
     logger.info("Starting up webserver")
     print '******************************************************'
-    print 'Starting Pytunes on ' + secure + 'Port ' + str(pytunes.PORT) + '.'
-    print 'Start your browser and go to http' + ssl + '://localhost:' + str(pytunes.PORT) + '/' + pytunes.WEBDIR[:-1]
+    print 'Starting Pytunes on %sPort %s.' % (secure, str(pytunes.PORT))
+    print 'Start your browser and go to http%s://localhost:%s/%s' % (ssl, str(pytunes.PORT), pytunes.WEBDIR[:-1])
     print '******************************************************'
     cherrypy.quickstart(pytunes.ROOT, pytunes.WEBDIR[:-1], config=app_config)
