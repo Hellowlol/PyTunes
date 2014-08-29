@@ -40,7 +40,7 @@ def art_count(db, media_type, media_id, type):
     con = lite.connect(db)
     with con:
         cur = con.cursor()    
-        count = cur.execute("SELECT COUNT FROM art WHERE media_type = " + media_type + " AND media_id = " + media_id + " AND type = " + type)
+        count = cur.execute("SELECT COUNT FROM art WHERE media_type = %s AND media_id = %s AND type = %s" % (media_type, media_id, type))
     return count
 
     

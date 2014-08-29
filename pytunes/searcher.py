@@ -12,7 +12,7 @@ def FindMovies():
     for movie in movies:
         #search nzb by imdb or title?
         #search kickasstorrents by title, year and category 
-        results =  ka.search(urllib.quote(movie['str_title'] + ' ' + movie['str_year']), 'movies')
+        results =  ka.search(urllib.quote('%s %s' % (movie['str_title'], movie['str_year'])), 'movies')
         if results:
             for result in results:
                 languages = []
@@ -76,7 +76,7 @@ def fetch(self, cmd):
         host = settings.get('newznab_host', '').replace('http://', '').replace('https://', '')
         ssl = 's' if settings.get('newznab_ssl', 0) else ''
         apikey = settings.get('newznab_apikey', '')
-        url = 'http' + ssl + '://' + host + '/api?o=json&apikey=' + apikey + '&t=' + cmd
+        url = 'http%s://%s/api?o=json&apikey=%s&t=%s' % (ssl, host, apikey, cmd)
         self.logger.debug("Fetching information from: %s" % url)
         return loads(urlopen(url, timeout=10).read())
     except:

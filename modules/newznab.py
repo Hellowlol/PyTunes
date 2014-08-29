@@ -38,7 +38,7 @@ class Newznab:
         pytunes.MODULES.append({
             'name': 'Newznab Servers',
             'id': 'newznab_update_server',
-            'action': pytunes.WEBDIR + 'settings/setnewzserver',
+            'action': '%ssettings/setnewzserver' % pytunes.WEBDIR,
             #'test': pytunes.WEBDIR + 'newznab/ping',
             'fields': [
                 {'type':'select',
@@ -78,7 +78,7 @@ class Newznab:
             host = settings.get('newznab_host', '').replace('http://', '').replace('https://', '')
             ssl = 's' if settings.get('newznab_ssl', 0) else ''
 
-            url = 'http' + ssl + '://' + host + '/covers/tv/' + url[6:] + '.jpg'
+            url = 'http%s://%s/covers/tv/%s.jpg' % (ssl, host, url[6:])
 
         return get_image(url, h, w, o)
 
@@ -93,8 +93,8 @@ class Newznab:
             host = self.current.host.replace('http://', '').replace('https://', '')
             ssl = '' if self.current.ssl == '0' else 's'
             apikey = self.current.apikey
-            url = 'http' + ssl + '://' + host + '/api?t=caps&o=xml'
-            self.logger.debug("Fetching Cat information from: " + url)
+            url = 'http%s://%s/api?t=caps&o=xml' % (ssl, host)
+            self.logger.debug("Fetching Cat information from: %s" % url)
             caps = urlopen(url, timeout=10).read()
             lines = caps.split('\n')
             opt_line = '<option value="%s">%s</option>'
@@ -107,7 +107,7 @@ class Newznab:
                 if 'subcat' in line:
                     subcat = line.strip().split(' name')
                     id = subcat[0].split('"')[1]
-                    name = main_name + ' > ' + subcat[1].split('"')[1]
+                    name = '%s > %s' % (main_name, subcat[1].split('"')[1])
                     ret += opt_line % (id, name)
         except:
             self.logger.error('Unable to fetch categories from: %s' % url)
@@ -130,8 +130,8 @@ class Newznab:
             '8000':settings.get('newznab_other', '')
         }        
         if cat:
-            cat = '&cat=' + cat
-        res = self.fetch('search&q=' + quote(q) + cat + '&extended=1')
+            cat = '&cat=%s' % cat
+        res = self.fetch('search&q=%s%s&extended=1' % (quote(q), cat))
         #put in staticvars
         link = "<a href='/newznab/AddNzbFromUrl?nzb_url=%s&nzb_category=%s' class='ajax-link' title='Download' cat='%s'><i class='icon-download-alt'></i></a>"
         try:
@@ -160,8 +160,8 @@ class Newznab:
     def AddNzbFromUrl(self, nzb_url, nzb_category=''):
         self.logger.debug("Adding nzb from url")
         if nzb_category:
-            nzb_category = '&cat=' + nzb_category
-        return self.send('&mode=addurl&name=' + quote(nzb_url) + nzb_category)
+            nzb_category = '&cat=%s' % nzb_category
+        return self.send('&mode=addurl&name=%s%s' % (quote(nzb_url), nzb_category))
 
     def fetch(self, cmd):
         try:
@@ -170,12 +170,12 @@ class Newznab:
             host = self.current.host.replace('http://', '').replace('https://', '')
             ssl = 's' if settings.get('newznab_ssl') == 'on' else ''
             apikey = self.current.apikey
-            url = 'http' + ssl + '://' + host + '/api?o=json&apikey=' + apikey + '&t=' + cmd
+            url = 'http%s://%s/api?o=json&apikey=%s&t=%s' ( ssl, host, apikey, cmd)
             self.logger.debug("Fetching information from: %s" % url)
             return loads(urlopen(url, timeout=30).read())
         except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to fetch information from: newznab" + str(e))
+            self.logger.debug("Exception%s: " % str(e))
+            self.logger.error("Unable to fetch information from: newznab %s" % str(e))
 
     def send(self, link):
         try:
@@ -190,7 +190,7 @@ class Newznab:
             if not(sabnzbd_basepath.endswith('/')):
                 sabnzbd_basepath += "/"
 
-            url = 'http' + ssl + '://' + host + ':' + port + sabnzbd_basepath + 'api?output=json&apikey=' + apikey + link
+            url = 'http%s://%s:%s%sapi?output=json&apikey=%s%s' % (ssl, host, port, sabnzbd_basepath, apikey, link)
             self.logger.debug("Sending NZB to: %s: " % url)
             return loads(urlopen(url, timeout=10).read())
         except:

@@ -17,7 +17,7 @@ class NZBGet:
         pytunes.MODULES.append({
             'name': 'NZBGet',
             'id': 'nzbget',
-            'test': pytunes.WEBDIR + 'nzbget/version',
+            'test': '%snzbget/version' % pytunes.WEBDIR,
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'nzbget_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'nzbget_name'},
@@ -46,11 +46,11 @@ class NZBGet:
         if not(nzbget_basepath.endswith('/')):
             nzbget_basepath += "/"
 
-        url = 'http' + ssl + '://'+ nzbget_username + ':' + nzbget_password + '@' + nzbget_host + ':' + nzbget_port + nzbget_basepath + 'jsonrpc/'
+        url = 'http%s://%s:%s@%s:%s%sjsonrpc/' % (ssl, nzbget_username, nzbget_password, nzbget_host, nzbget_port, nzbget_basepath)
         try:
-            return loads(urlopen(url + 'version', timeout=10).read())
+            return loads(urlopen('%sversion' % url, timeout=10).read())
         except:
-            self.logger.error("Unable to contact nzbget via " + url)
+            self.logger.error("Unable to contact nzbget via %s" % url)
             return
 
     @cherrypy.expose()
@@ -88,12 +88,12 @@ class NZBGet:
             if not(nzbget_basepath.endswith('/')):
                 nzbget_basepath += "/"
             
-            url = 'http' + ssl + '://' + host + ':' + port + nzbget_basepath + 'jsonrpc/' + path
+            url = 'http%s://%s:%s%sjsonrpc/%s' % (ssl, host, port, nzbget_basepath, path)
             request = Request(url)
-            base64string = base64.encodestring(username + ':' + password).replace('\n', '')
+            base64string = base64.encodestring('%s:%s' % (username, password).replace('\n', ''))
             request.add_header("Authorization", "Basic %s" % base64string) 
-            self.logger.debug("Fetching information from: " + url)
+            self.logger.debug("Fetching information from: %s" % url)
             return loads(urlopen(request, timeout=10).read())
         except:
-            self.logger.error("Cannot contact nzbget via: " + url)
+            self.logger.error("Cannot contact nzbget via: %s" % url)
             return

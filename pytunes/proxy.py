@@ -25,7 +25,7 @@ def get_image(url, height=None, width=None, opacity=100, auth=None):
     # Create image directory if it doesnt exist
     imgdir = os.path.join(pytunes.DATADIR, 'images/')
     if not os.path.exists(imgdir):
-        logger.debug("Creating image directory at " + imgdir)
+        logger.debug("Creating image directory at %s" % imgdir)
         os.makedirs(imgdir)
 
     # Create a hash of the path to use as filename
@@ -36,7 +36,7 @@ def get_image(url, height=None, width=None, opacity=100, auth=None):
 
     # If there is no local copy of the original
     if not os.path.isfile(image):
-        logger.debug("No local image found for " + image + ". Downloading")
+        logger.debug("No local image found for %s. Downloading" % image)
         download_image(url, image, auth)
         #need to convert png to jpg
         imagetype = imghdr.what(image)
@@ -47,7 +47,7 @@ def get_image(url, height=None, width=None, opacity=100, auth=None):
     if (height and width) or (opacity < 100):
         if PIL:
             # Set filename for resized file
-            resized = image + '_w' + width + '_h' + height + '_o' + str(opacity)
+            resized = '%s_w%s_h%s_o%s' % (image, width, height, str(opacity))
             # If there is no local resized copy
             if not os.path.isfile(resized):
                 resize_image(image, height, width, opacity, resized)
@@ -60,20 +60,20 @@ def get_image(url, height=None, width=None, opacity=100, auth=None):
     # Load file from disk
     imagetype = imghdr.what(image)
     if imagetype is not None:
-        return serve_file(path=image, content_type='image/' + imagetype)
+        return serve_file(path=image, content_type='image/%s' % imagetype)
 
 def download_image(url, dest, auth=None):
     """ Download image and save to disk """
-    logger.debug("Downloading image from " + url + " to " + dest)
+    logger.debug("Downloading image from %s to %s" % (url, dest))
     try:
         request = Request(url)
         if (auth):
             request.add_header("Authorization", "Basic %s" % auth)
         with open(dest, "wb") as local_file:
             local_file.write(urlopen(request).read())
-        logger.debug("Finished downloading image from " + url + " to " + dest)
+        logger.debug("Finished downloading image from %s to %s " % (url, dest))
     except Exception:
-        logger.error("Failed downloading image from " + url + " to " + dest)
+        logger.error("Failed downloading image from %s to %s " % (url, dest))
         pass
 
 def resize_image(img, height, width, opacity, dest):

@@ -45,7 +45,7 @@ class Stats:
         pytunes.MODULES.append({
             'name': 'System',
             'id': 'stats',
-            'test': pytunes.WEBDIR + 'stats/ping',
+            'test': '%sstats/ping' % pytunes.WEBDIR,
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'stats_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'stats_name'},
@@ -74,7 +74,7 @@ class Stats:
             #psutil.version_info >= (0, 7)
             return 'happy'
         except Exception, e:
-            self.logger.debug("Exception: " + str(e))
+            self.logger.debug("Exception: %s" % str(e))
             self.logger.error("psutil not installed or version too low ")
             return
 
@@ -278,7 +278,6 @@ class Stats:
                     total += float(usage.total)
                     free += float(usage.free)
                     used += float(usage.used)
-                    #print dash
             if total:
                 percent = (used/total)*100
             dash['bar'] = html('dash_stats') % (self.sizeof(total), self.sizeof(used), str(percent) + '%', str(100 - percent) + '%')

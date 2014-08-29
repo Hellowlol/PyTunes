@@ -16,7 +16,7 @@ class Users:
         pytunes.MODULES.append({
             'name': 'Manage users',
             'id': 'users',
-            'action': pytunes.WEBDIR + 'users/setusers',
+            'action': '%susers/setusers' % pytunes.WEBDIR,
             'fields': [
                 {'type':'select',
                  'label':'User',
@@ -88,6 +88,6 @@ class Users:
     @require(member_of("admin")) 
     def delusers(self, id):
         """ Delete a user """
-        self.logger.debug("Deleting user " + str(id))
+        self.logger.debug("Deleting user %s" % str(id))
         Manageusers.delete(id)
         return

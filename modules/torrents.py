@@ -133,7 +133,7 @@ class Torrents:
         icon = "<img alt='icon' src='../img/yts.png'/>"
         for r in results:
             if t['seeder'] >= pytunes.settings.get('torrents_seeds', ''):
-                name = "<a href='" + r['MovieUrl'] + "' target='_blank'>" + r['MovieTitle'] + "</a>"
+                name = "<a href='%s' target='_blank'>%s</a>" % (r['MovieUrl'], r['MovieTitle'])
                 out += html('torrent_search_table') % (icon, name, r['Size'], r['TorrentSeeds'], r['TorrentPeers'], 'yts', r['TorrentUrl'])
         return out
         
@@ -146,7 +146,7 @@ class Torrents:
         icon = "<img alt='icon' src='../img/kickasstorrents.png'/>"
         for r in results:
             link = r['link'].split('?')[0]
-            name = "<a href='" + r['desc_link'] + "' target='_blank'>" + r['name'] + "</a>"   
+            name = "<a href='%s' target='_blank'>%s</a>" % (r['desc_link'], r['name']) 
             out += html('torrent_search_table') % (icon, name, self.sizeof(int(r['size'])), r['seeds'], r['leech'], r['engine_url'], link)
         return out
 
@@ -159,11 +159,11 @@ class Torrents:
             if t['seeder'] >= pytunes.settings.get('torrents_seeds', ''):
                 if verified and t['verified'] != 1:
                     continue
-                name = "<a href='" + t['page'] + "' target='_blank'>" + t['name'] + "</a>"
+                name = "<a href='%s' target='_blank'>%s</a>" % (t['page'], t['name'])
                 out += html('torrent_search_table') % (icon, name, self.sizeof(t['size']), t['seeder'], t['leecher'], 'Fenopy', t['torrent'])
             if verified and t['verified'] != 1:
                 continue
-            name = "<a href='" + t['page'] + "' target='_blank'>" + t['name'] + "</a>"
+            name = "<a href='%s' target='_blank'>%s</a>" % (t['page'], t['name'])
             out += html('torrent_search_table') % (icon, name, self.sizeof(t['size']), t['seeder'], t['leecher'], 'Fenopy', t['torrent'])
         return out
 
@@ -177,7 +177,7 @@ class Torrents:
         elif results['data']['torrents']:
             for t in results['data']['torrents']:
                 downloadurl = 'https://norbits.net/download.php?id=%s&passkey=%s' % (t['id'], passkey)
-                name = "<a href='https://norbits.net/details.php?id=" + t['id'] + "' target='_blank'>" + t['name'] + "</a>"
+                name = "<a href='https://norbits.net/details.php?id=&s' target='_blank'>%s</a>" % (t['id'], t['name'])
                 out += html('torrent_search_table') % (icon, name, self.sizeof(int(t['size'])), t['seeders'], t['leechers'], 'Norbits', downloadurl)
         return out
 
@@ -186,6 +186,7 @@ class Torrents:
         s = piratebay.piratebay()
         results = s.search(s)
         icon = "<img alt='icon' src='../img/kickasstorrents.png'/>"
+
         out = ''
         for r in results:
             name = "<a href='" + r['desc_link'] + "' target='_blank'>" + r['name'] + "</a>"   

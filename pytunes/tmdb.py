@@ -93,13 +93,8 @@ def MovieInfo(tmdbid):
     language = []
     movie = tmdb.Movies(tmdbid)
     response = movie.trailers()
-    #print response
     for each in response['youtube']:
-        #trailers += '    <trailer>plugin://plugin.video.youtube/?action=play_video&amp;videoid=' + each['source'] + '</trailer>\n'
         trailers.append(each['source'])
-    #if len(trailers) == 0:
-    #    trailers += '    <trailer></trailer>\n'
-    #print 'trailers     ', response
     response = movie.images()
     for each in response['backdrops']:
         fanart.append(tmdb_url + each['file_path'])
@@ -199,17 +194,14 @@ def Popular(page):
 
 def Toprated(page):
     stuff = tmdb.Movies()
-    #print 'top ratedstuff', stuff.top_rated
     return stuff.top_rated({'page':page})
 
 def PopularTV(page):
     stuff = tmdb.TV()
-    #print 'popular stuff', stuff.popular({'page':page})
     return stuff.popular({'page':page})
 
 def TopratedTV(page):
     stuff = tmdb.TV()
-    #print 'stuff',  stuff.top_rated({'page':page})
     return stuff.top_rated({'page':page})
 
 

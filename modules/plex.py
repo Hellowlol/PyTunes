@@ -31,7 +31,7 @@ class Plex:
         pytunes.MODULES.append({
             'name': 'Plex',
             'id': 'plex',
-            'test': pytunes.WEBDIR + 'plex/ping',
+            'test': '%splex/ping' % pytunes.WEBDIR,
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'plex_enable'},
 
@@ -56,12 +56,12 @@ class Plex:
             self.logger.debug("Testing Plex connectivity")
 
             url = "http://%s:%s" % (plex_host, plex_port)
-            self.logger.debug("Trying to contact Plex via " + url)
+            self.logger.debug("Trying to contact Plex via %s" % url)
             request =  loads(urlopen(Request(url, headers={"Accept": "application/json"})).read())
             self.logger.info("Connected to the Plex Media Server %s at %s" % (request.get('friendlyName'), url))
             return True
         except:
-            self.logger.error("Unable to contact Plex via " + url)
+            self.logger.error("Unable to contact Plex via %s" % url)
             return
 
     @cherrypy.expose()
@@ -130,7 +130,7 @@ class Plex:
 
             return {'movies': sorted(movies, key=lambda k: k['addedAt'], reverse=True)[:int(limit)]}
         except Exception, e:
-            self.logger.error("Unable to fetch recent movies! Exception: " + str(e))
+            self.logger.error("Unable to fetch recent movies! Exception: %s" % str(e))
             return
 
 
@@ -178,7 +178,7 @@ class Plex:
 
             return {'episodes': sorted(episodes, key=lambda k: k['addedAt'], reverse=True)[:int(limit)]}
         except Exception, e:
-            self.logger.error("Unable to fetch episodes movies! Exception: " + str(e))
+            self.logger.error("Unable to fetch episodes movies! Exception: %s" % str(e))
             return
 
     @cherrypy.expose()
@@ -216,7 +216,7 @@ class Plex:
 
             return {'albums': sorted(albums, key=lambda k: k['addedAt'], reverse=True)[:int(limit)]}
         except Exception, e:
-            self.logger.error("Unable to fetch albums! Exception: " + str(e))
+            self.logger.error("Unable to fetch albums! Exception: %s" % str(e))
             return
 
 
@@ -229,7 +229,7 @@ class Plex:
         else:
             url = "/images/DefaultVideo.png"
 
-        self.logger.debug("Trying to fetch image via " + url)
+        self.logger.debug("Trying to fetch image via %s" % url)
         return get_image(url, h, w, o, "")
 
     @cherrypy.expose()
@@ -301,7 +301,7 @@ class Plex:
             return {'limits': limits, 'movies': sorted(movies, key=lambda k: k['title'])[int(start):int(end)] }
         except Exception, e:
 
-            self.logger.error("Unable to fetch all movies! Exception: " + str(e))
+            self.logger.error("Unable to fetch all movies! Exception: %s" % str(e))
             return
 
     @cherrypy.expose()
@@ -358,7 +358,7 @@ class Plex:
             return {'limits': limits, 'tvShows': sorted(tvShows, key=lambda k: k['title'])[int(start):int(end)] }
         except Exception, e:
 
-            self.logger.error("Unable to fetch all shows! Exception: " + str(e))
+            self.logger.error("Unable to fetch all shows! Exception: %s" % str(e))
             return
 
     @cherrypy.expose()
@@ -393,7 +393,7 @@ class Plex:
 
             return {'limits': limits, 'artists': sorted(artists, key=lambda k: k['title'])[int(start):int(end)] }
         except Exception, e:
-            self.logger.error("Unable to fetch all artists! Exception: " + str(e))
+            self.logger.error("Unable to fetch all artists! Exception: %s" % str(e))
             return
 
     @cherrypy.expose()
@@ -430,7 +430,7 @@ class Plex:
 
             return {'limits': limits, 'albums': sorted(albums, key=lambda k: k['title'])[int(start):int(end)] }
         except Exception, e:
-            self.logger.error("Unable to fetch all Albums! Exception: " + str(e))
+            self.logger.error("Unable to fetch all Albums! Exception: %s" % str(e))
             return
 
     @cherrypy.expose()
@@ -438,7 +438,7 @@ class Plex:
     @cherrypy.tools.json_out()
     def GetEpisodes(self, start=0, end=0, tvshowid=None, hidewatched=0):
         """ Get information about a single TV Show """
-        self.logger.debug("Loading information for TVID" + str(tvshowid))
+        self.logger.debug("Loading information for TVID: %s" % str(tvshowid))
         try:
             plex_host = pytunes.settings.get('plex_host', '')
             plex_port = pytunes.settings.get('plex_port', '32400')
@@ -488,7 +488,7 @@ class Plex:
 
             return {'limits': limits, 'episodes': episodes[int(start):int(end)] }
         except Exception, e:
-            self.logger.error("Unable to fetch all episodes! Exception: " + str(e))
+            self.logger.error("Unable to fetch all episodes! Exception: %s" % str(e))
             return
 
 
@@ -511,10 +511,10 @@ class Plex:
             s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
             s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
             s.sendto(msg, ("255.255.255.255", 9))
-            self.logger.info("WOL package sent to " + pytunes.settings.get('plex_mac', ''))
+            self.logger.info("WOL package sent to %s" % pytunes.settings.get('plex_mac', ''))
             return 'WOL package sent'
         except Exception, e:
-            self.logger.debug("Exception: " + str(e))
+            self.logger.debug("Exception: %s" % str(e))
             self.logger.error("Unable to send WOL packet")
             return 'Unable to send WOL packet'
 
@@ -595,7 +595,7 @@ class Plex:
             return {'playing_items': playing_items}
             
         except Exception, e:
-            self.logger.error("Unable to fetch currently playing information! Exception: " + str(e))
+            self.logger.error("Unable to fetch currently playing information! Exception: %s" % str(e))
             return
 
     @cherrypy.expose()
@@ -614,10 +614,10 @@ class Plex:
                     try:
                         urllib.urlopen('http://%s:%s/library/sections/%s/refresh' % (plex_host, plex_port, section['key']))
                     except Exception, e:
-                        self.logger.error('Failed to update section %s on Plex: ' + (section['key'], ex(e)))
+                        self.logger.error('Failed to update section %s on Plex: %s' % (section['key'], ex(e)))
             return 'Update command sent to Plex'
         except Exception, e:
-            self.logger.error("Failed to update library! Exception: " + str(e))
+            self.logger.error("Failed to update library! Exception: %s" % str(e))
             return 'Failed to update library!'
 
     @cherrypy.expose()
@@ -625,7 +625,7 @@ class Plex:
     @cherrypy.tools.json_out()
     def ControlPlayer(self, player, action, value=''):
         """ Various commands to control Plex Player """
-        self.logger.debug("Sending control to Plex: " + action)
+        self.logger.debug("Sending control to Plex: %s" % action)
         try:
 
             self.navigationCommands = ['moveUp', 'moveDown', 'moveLeft', 'moveRight', 'pageUp', 'pageDown', 'nextLetter', 'previousLetter', 'select', 'back', 'contextMenu', 'toggleOSD']
@@ -641,11 +641,11 @@ class Plex:
             elif action.split('?')[0] in self.applicationCommands:
                 urllib.urlopen('http://%s:%s/system/players/%s/application/%s' % (plex_host, plex_port, player, action))
             else:
-                raise ValueError("Unable to control Plex with action: " + action)
+                raise ValueError("Unable to control Plex with action: %s" % action)
 
         except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to control Plex with action: " + action)
+            self.logger.debug("Exception: %s" % str(e))
+            self.logger.error("Unable to control Plex with action: %s" % action)
             return 'error'
 
     @cherrypy.expose()
@@ -673,7 +673,7 @@ class Plex:
             return {'players': players}
 
         except Exception, e:
-            self.logger.debug("Exception: " + str(e))
+            self.logger.debug("Exception: %s" % str(e))
             self.logger.error("Unable to get players")
             return 'error'
 
@@ -753,7 +753,7 @@ class Plex:
             return {'servers': PMS_list}
 
         except Exception, e:
-            self.logger.debug("Exception: " + str(e))
+            self.logger.debug("Exception: %s" % str(e))
             self.logger.error("Unable to get players")
             return 'error'
 
@@ -762,7 +762,7 @@ class Plex:
     @cherrypy.tools.json_out()
     def PlayItem(self, player, item=None, type=None, offset=0):
         """ Play a file in Plex """
-        self.logger.debug("Playing '" + item + "' on player " + player)
+        self.logger.debug("Playing '%s' on player %s" % (item, player))
         try:
 
             plex_host = pytunes.settings.get('plex_host', '')
@@ -770,6 +770,6 @@ class Plex:
             urllib.urlopen('http://%s:%s/system/players/%s/application/playMedia?key=/library/metadata/%s&viewOffset=%s&path=http://%s:%s/library/metadata/%s' % (plex_host, plex_port, player, item, offset, plex_host, plex_port, item))
 
         except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to play '" + item + "' on player " + player)
+            self.logger.debug("Exception: %s" % str(e))
+            self.logger.error("Unable to play '%s' on player %s" % (item, player))
             return 'error'

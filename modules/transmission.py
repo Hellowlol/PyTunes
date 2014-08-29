@@ -18,7 +18,7 @@ class Transmission:
         pytunes.MODULES.append({
             'name': 'Transmission',
             'id': 'transmission',
-            'test': pytunes.WEBDIR + 'transmission/ping',
+            'test': '%stransmission/ping' % pytunes.WEBDIR,
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'transmission_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'transmission_name', 'placeholder':''},
@@ -111,12 +111,12 @@ class Transmission:
     # If the first call fails, there probably is no valid Session ID so we try it again
     def fetch(self, method, arguments=''):
         """ Do request to Transmission api """
-        self.logger.debug("Request transmission method: "+method)
+        self.logger.debug("Request transmission method: %s" % method)
 
         host = pytunes.settings.get('transmission_host', '')
         port = str(pytunes.settings.get('transmission_port', ''))
 
-        url = 'http://' +  host + ':' + str(port) + '/transmission/rpc/'
+        url = 'http://%s:%s/transmission/rpc/' % (host, str(port))
 
         # format post data
         data = {'method': method}
@@ -158,7 +158,7 @@ class Transmission:
                     self.logger.error("Unable access Transmission api with new session id.")
                     return
         except Exception:
-            self.logger.error("Unable to fetch information from: " + url)
+            self.logger.error("Unable to fetch information from: %s" % url)
             return
 
 

@@ -17,7 +17,7 @@ class Sickbeard:
         pytunes.MODULES.append({
             'name': 'Sickbeard',
             'id': 'sickbeard',
-            'test': pytunes.WEBDIR + 'sickbeard/ping',
+            'test': '%sickbeard/ping' % pytunes.WEBDIR,
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'sickbeard_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'sickbeard_name', 'placeholder':''},
@@ -38,7 +38,7 @@ class Sickbeard:
     def view(self, tvdbid):
         if not (tvdbid.isdigit()):
             raise cherrypy.HTTPError("500 Error", "Invalid show ID.")
-            self.logger.error("Invalid show ID was supplied: " + str(tvdbid))
+            self.logger.error("Invalid show ID was supplied: %s" % str(tvdbid))
             return False
 
         return pytunes.LOOKUP.get_template('sickbeard_view.html').render(scriptname='sickbeard_view', tvdbid=tvdbid)
@@ -53,14 +53,14 @@ class Sickbeard:
             if not (sickbeard_basepath.endswith('/')):
                 sickbeard_basepath += "/"
 
-            url = 'http' + ssl + '://' + sickbeard_host + ':' + sickbeard_port + sickbeard_basepath + 'api/' + sickbeard_apikey + '/?cmd=sb.ping'
-            self.logger.debug("Trying to contact sickbeard via " + url)
+            url = 'http%s://%s:%s%sapi/%s/?cmd=sb.ping' % (ssl, sickbeard_host, sickbeard_port, sickbeard_basepath, sickbeard_apikey)
+            self.logger.debug("Trying to contact sickbeard via %s" % url)
             response = loads(urlopen(url, timeout=10).read())
             if response.get('result') == "success":
                 self.logger.debug("Sicbeard connectivity test success")
                 return response
         except:
-            self.logger.error("Unable to contact sickbeard via " + url)
+            self.logger.error("Unable to contact sickbeard via %s" % url)
             return
 
     @cherrypy.expose()
@@ -161,7 +161,7 @@ class Sickbeard:
     @require()
     @cherrypy.tools.json_out()
     def RemoveShow(self, tvdbid):
-        self.logger.debug("Force full update for tvdbid " + tvdbid)
+        self.logger.debug("Force full update for tvdbid %s" % tvdbid)
         return self.fetch("show.delete&tvdbid=%s" % tvdbid)
 
     @cherrypy.expose()

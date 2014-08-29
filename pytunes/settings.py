@@ -182,11 +182,11 @@ class Settings:
                 #self.changenewzserver(str(new.id))
                 return 1
             except Exception, e:
-                self.logger.debug("Exception: " + str(e))
-                self.logger.error("Unable to create Newznab-Server in database: " + str(e))
+                self.logger.debug("Exception: %s" % str(e))
+                self.logger.error("Unable to create Newznab-Server in database: %s" % str(e))
                 return 0
         else:
-            self.logger.debug("Updating Newznab-Server " + newznab_server_name + " in database")
+            self.logger.debug("Updating Newznab Server %s in database" % newznab_server_name)
             try:
                 server = NewznabServers.selectBy(id=int(newznab_server_id)).getOne()
                 server.name = newznab_server_name
@@ -195,7 +195,7 @@ class Settings:
                 server.ssl = newznab_server_ssl
                 return 1
             except SQLObjectNotFound, e:
-                self.logger.error("Unable to update Newznab Server " + server.name + " in database: " + e)
+                self.logger.error("Unable to update Newznab Server %s in database: %s" (newznab_server_name, e))
                 return 0
 
     @cherrypy.expose()
@@ -213,7 +213,7 @@ class Settings:
         try:
             #self.current_newznab_client = NewznabServers.selectBy(id=id).getOne()
             self.set('default_nzb_id', str(id))
-            self.logger.info("Setting default Newznab client: " + id)
+            self.logger.info("Setting default Newznab client: %s" % id)
             return "success"
         except :
             self.logger.error("Failed Newznab client.")
@@ -226,7 +226,7 @@ class Settings:
         try:
             self.current_newznab = NewznabServers.selectBy(id=int(id)).getOne()
             self.set('newznab_current_server', id)
-            self.logger.info("Selecting Newznab server: " + id)
+            self.logger.info("Selecting Newznab server: %s" % id)
             return "success"
         except SQLObjectNotFound:
             try:
@@ -279,11 +279,11 @@ class Settings:
                 self.changexbmcserver(str(new.id))
                 return 1
             except Exception, e:
-                self.logger.debug("Exception: " + str(e))
-                self.logger.error("Unable to create XBMC-Server in database:" + str(e))
+                self.logger.debug("Exception: %s" % str(e))
+                self.logger.error("Unable to create XBMC-Server in database: %s" % str(e))
                 return 0
         else:
-            self.logger.debug("Updating XBMC-Server " + xbmc_server_name + " in database")
+            self.logger.debug("Updating XBMC-Server %s in database" % xbmc_server_name)
             try:
                 server = XbmcServers.selectBy(id=xbmc_server_id).getOne()
                 server.name = xbmc_server_name
@@ -294,13 +294,13 @@ class Settings:
                 server.mac = xbmc_server_mac
                 return 1
             except SQLObjectNotFound, e:
-                self.logger.error("Unable to update XBMC-Server " + server.name + " in database")
+                self.logger.error("Unable to update XBMC-Server %s in database" % xbmc_server_name)
                 return 0
 
     @cherrypy.expose()
     def delxbmcserver(self, id):
         """ Delete a server """
-        self.logger.debug("Deleting server " + str(id))
+        self.logger.debug("Deleting server %s" % str(id))
         XbmcServers.delete(id)
         self.changexbmcserver()
         return
@@ -311,7 +311,7 @@ class Settings:
         try:
             self.current_xbmc = XbmcServers.selectBy(id=id).getOne()
             self.set('xbmc_current_server', id)
-            self.logger.info("Selecting XBMC server: " + id)
+            self.logger.info("Selecting XBMC server: %s" % id)
             return "success"
         except SQLObjectNotFound:
             try:
