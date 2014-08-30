@@ -24,6 +24,7 @@ function search(query, engineid, catid) {
         },
         success: function (data) {
             if (data === null) return errorHandler();
+            byteSizeOrdering()
             $('#results_table_body').append(data);
             $('table').trigger("update");
             $('table').trigger("sorton", [
