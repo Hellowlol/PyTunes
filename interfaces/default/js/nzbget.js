@@ -1,3 +1,6 @@
+// Globally define download speed in bytes per second
+var downloadSpeed = 0;
+
 $(document).ready(function () {
     $(window).trigger('hashchange');
     if ($('.nav-tabs li.active a').attr('href') == "#warnings") loadWarnings();
@@ -6,6 +9,46 @@ $(document).ready(function () {
         if (e.target.text == 'Warnings') loadWarnings();
         else if (e.target.text == 'History') loadHistory();
     });
+
+    $('#nzb_pause_button').click(function () {
+        var clickItem = $(this);
+        clickItem.button('loading');
+        $.ajax({
+            url: WEBDIR + 'nzbget/QueueAction/' + queueToggleStatusAction,
+            dataType: 'json',
+            type: 'get'
+        });
+    });
+
+    $('#add_nzb_form').ajaxForm({
+        url: WEBDIR + 'nzbget/AddNzbFromUrl',
+        type: 'post',
+        dataType: 'json',
+        success: function (result) {
+            if (result.status !== undefined && result.status) {
+                $('[href=#active]').trigger('click');
+                $('#nzb_url').val('');
+                $('#nzb_category').val('');
+            }
+        }
+    });
+
+    getconfig('#nzb_category', '*');
+
+    $('#nzb_set_speed').click(function () {
+        var speed = ($('#nzb_get_speed').val());
+        $.ajax({
+            url: WEBDIR + 'nzbget/SetSpeed?speed=' + speed,
+            type: 'post',
+            dataType: 'json'
+        });
+    });
+
+    getStatus(1);
+    setInterval(function () {
+        getStatus(0);
+    }, 5000);
+
     loadQueue(1);
     setInterval(function () {
         loadQueue(0);
@@ -24,7 +67,7 @@ function loadHistory() {
                 return false;
             }
             $('#history_table_body').html('');
-            $.each(data.result, function (i, slot) {
+            $.each(data, function (i, slot) {
 
                 var failMessage = $('<span>');
                 failMessage.addClass('label');
@@ -41,11 +84,21 @@ function loadHistory() {
                     $(name).append('&nbsp;').append(failMessage);
                 }
 
+                buttons = $('<div>').addClass('btn-group pull-right');
+
+                removeButton = $('<a class="nzbget_removenzbhistory nzb_action" data-action="" data-id="" data-name="">').
+                addClass('btn btn-mini').
+                html('<i class="icon-remove"></i>').
+                attr('data-id', slot.NZBID).
+                attr('data-action', 'hidehistory').
+                attr('data-name', slot.Name).
+                attr('title', 'Remove NZB');
+                buttons.append(removeButton);
+
                 row.append(name);
                 row.append($('<td>').append(nzbgetStatusLabel(slot.MoveStatus)));
                 row.append($('<td style="text-align:right;">').html(prettySize(slot.FileSizeMB * 1048576)));
-                //row.append($('<td>').append(deleteImage));
-                //row.append($('<td>').append(retryImage));
+                row.append($('<td>').append(buttons));
 
                 $('#history_table_body').append(row);
             });
@@ -54,6 +107,9 @@ function loadHistory() {
 }
 
 function prettySize(bytes) {
+    if (!bytes) {
+        return '0 kb';
+    }
     var units = ['bytes', 'kb', 'MB', 'GB', 'TB', 'PB'];
     var e = Math.floor(Math.log(bytes) / Math.log(1024));
     var size = (bytes / Math.pow(1024, Math.floor(e))).toFixed(2);
@@ -61,21 +117,45 @@ function prettySize(bytes) {
     return size + ' ' + unit;
 }
 
-function loadQueue(once) {
+function getStatus(initial) {
     $.ajax({
-        url: WEBDIR + 'nzbget/GetStatus',
+        url: WEBDIR + 'nzbget/status',
         type: 'get',
         dataType: 'json',
-        success: function (object) {
-            data = object.result;
+        success: function (response) {
+            var status;
+            // write download speed to global var
+            downloadSpeed = response.DownloadRate;
+            downloadLimit = prettySize(response.DownloadLimit) + '/s';
+            //DownloadLimit
+            $('#nzb_get_speed').attr('placeholder', downloadLimit);
             $('#nzb_pause_button').button('reset');
-            if (data.status == 'Paused') {
-                $('#nzb_pause_button').html('<i class="icon-play"></i> Resume');
+            if (response.ServerPaused) {
+                // if server is paused
+                status = 'Paused';
                 queueToggleStatusAction = 'resume';
+                $('#nzb_pause_button').html('<i class="icon-play"></i> Resume');
             } else {
+                status = 'Running';
                 $('#nzb_pause_button').html('<i class="icon-pause"></i> Pause');
                 queueToggleStatusAction = 'pause';
             }
+
+            $('#queue_speed').text(prettySize(response.DownloadRate) + '/s');
+            $('#queue_state').text(status);
+        }
+    });
+}
+
+var queueToggleStatusAction = '';
+
+function loadQueue(once) {
+    $.ajax({
+        url: WEBDIR + 'nzbget/queue',
+        type: 'get',
+        dataType: 'json',
+        success: function (object) {
+            data = object;
 
 
             $('#active_table_body').html('');
@@ -85,38 +165,79 @@ function loadQueue(once) {
                 row.append($('<td>').html('Queue is empty').attr('colspan', 5));
                 $('#active_table_body').append(row);
             }
-
             $.each(data, function (i, job) {
-                var percentage = (100 * (job.FileSizeLo - job.RemainingSizeLo)) / job.FileSizeLo;
+                /*
+                 * Concat filesizes.
+                 * The file sizes consist of two 32bit ints that makeup a 64bit int.
+                 * The Hi comes first, followed by the Low.
+                 * Preceded with an empty string so the two values do not sum, but concat.
+                 */
+                totalSize = "" + job.FileSizeHi + job.FileSizeLo;
+                remainingSize = "" + job.RemainingSizeHi + job.RemainingSizeLo;
+                pausedSize = "" + job.PausedSizeHi + job.PausedSizeLo;
+                queuedSize = "" + remainingSize - pausedSize;
+
+                // determine status
+                status = 'Queued';
+                if (job.ActiveDownloads > 0) {
+                    status = 'Downloading';
+                } else if (pausedSize == remainingSize) {
+                    status = 'Paused';
+                }
+
+                var percentage = (100 * (totalSize - queuedSize)) / totalSize;
                 var progressBar = $('<div>');
                 progressBar.addClass('bar');
                 progressBar.css('width', percentage + '%');
 
                 var progress = $('<div>');
                 progress.addClass('progress');
+                if (status == 'Downloading') {
+                    progress.addClass('progress-striped active');
+                }
                 progress.append(progressBar);
 
-                var row = $('<tr>');
-                row.append($('<td>').html(job.NZBName));
+                if (job.Category != '') {
+                    categoryLabel = ' <span class="label" title="Category ' + job.Category + '">' + job.Category + '</span>';
+                } else {
+                    categoryLabel = '';
+                }
 
-                row.append($('<td>').html(job.Category));
+                var row = $('<tr>');
+                row.attr('data-id', job.LastID);
+                // Job status
+                row.append($('<td>').append(nzbgetStatusLabel(status)));
+
+                // job name + category
+                row.append($('<td>').html(job.NZBName + categoryLabel));
 
                 row.append($('<td>').html(progress));
-                var min = job.MaxPostTime - job.MinPostTime;
-                var hours = Math.floor(min / 60);
-                var eta = hours > 0 ? hours + 'h ' + min + 'm' : min + 'm';
-                row.append($('<td>').html(eta + ' / ' + job.RemainingSizeMB + ' MB').addClass('span3'));
 
-                var deleteImage = $('<a>');
-                deleteImage.html('&times;');
-                deleteImage.attr('alt', 'Remove');
-                deleteImage.addClass('close');
-                deleteImage.attr('href', '#');
-                deleteImage.click(function () {
-                    removeQueueItem(job.NZBID); //editqueue('GroupDelete',0,'',[ID])
-                });
+                if (status == 'Downloading' && downloadSpeed) {
+                    var min = Math.round((remainingSize / downloadSpeed) / 60);
+                    var hours = Math.floor(min / 60);
+                    min = min - (hours * 60);
+                    var eta = hours > 0 ? hours + 'h ' + min + 'm' : min + 'm';
+                    eta += ' / ';
+                } else {
+                    var eta = '';
+                }
+                // buttons
+                buttons = $('<div>').addClass('btn-group pull-right');
+                // Sets name and action based on job.Status
+                actionButton = generateNzbActionButton(job);
+                buttons.append(actionButton);
 
-                //row.append($('<td>').html(deleteImage)); 
+                deleteButton = $('<a class="nzbget_deleteenzb nzb_action" data-action="delete" data-id="" data-name="">').
+                addClass('btn btn-mini').
+                html('<i class="icon-remove"></i>').
+                attr('data-id', job.NZBID).
+                attr('data-name', job.NZBName).
+                attr('title', 'Delete NZB');
+                buttons.append(deleteButton);
+
+                row.append($('<td>').html(eta + prettySize(queuedSize)).addClass('span3'));
+                row.append($('<td>').html(buttons));
 
                 $('#active_table_body').append(row);
             });
@@ -130,12 +251,12 @@ function loadWarnings() {
         type: 'get',
         dataType: 'json',
         success: function (data) {
-            if (data.result === 0) {
+            if (!data) {
                 var row = $('<tr>');
                 row.append($('<td>').html('No warnings'));
                 $('#warning_table_body').append(row);
             }
-            $.each(data.result, function (i, warning) {
+            $.each(data, function (i, warning) {
                 var myDate = new Date(warning.Time * 1000);
                 var row = $('<tr>');
                 row.prepend($('<td>').html('[' + myDate.toLocaleString() + '] ' + warning.Text));
@@ -146,7 +267,7 @@ function loadWarnings() {
 }
 
 function nzbgetStatusLabel(text) {
-    var statusOK = ['SUCCESS'];
+    var statusOK = ['SUCCESS', 'Downloading'];
     var statusInfo = ['Extracting', 'Running'];
     var statusError = ['FAILURE'];
     var statusWarning = ['Verifying', 'Repairing'];
@@ -195,3 +316,75 @@ function nzbgetStatusIcon(iconText, white) {
     }
     return '';
 }
+
+function getconfig(selector, select) {
+    $.ajax({
+        url: WEBDIR + 'nzbget/GetConfig',
+        type: 'get',
+        dataType: 'json',
+        success: function (data) {
+            var defaultoption = $('<option>');
+            defaultoption.attr('value', '');
+            defaultoption.html('*');
+            $(selector).append(defaultoption);
+            $.each(data, function (i, cat) {
+                var re = /(Category\d+\.Name)/;
+                tname = cat.Name;
+                if (re.test(tname)) {
+
+                    var option = $('<option>');
+                    if (select == cat.Name) {
+                        option.attr('selected', true);
+                    }
+                    option.attr('value', cat.Value);
+                    option.html(cat.Value);
+                    $(selector).append(option);
+
+                }
+            });
+        }
+    });
+}
+
+function generateNzbActionButton(nzb) {
+    button = $('<a>').addClass('btn btn-mini nzb_action');
+    // Resume button if nzb is paused
+    var status = nzb.Status;
+    var icon = cmd = title = "";
+
+    if (status == "PAUSED") {
+        icon = "icon-play";
+        title = "Resume NZB";
+        cmd = "resume";
+    } else {
+        icon = "icon-pause";
+        title = "Pause NZB";
+        cmd = "pause";
+    }
+
+    // Set icon, command and title to button
+    button.html('<i class="' + icon + '"></i>');
+    button.attr('title', title);
+    button.attr('data-id', nzb.NZBID);
+    button.attr('data-name', nzb.NZBName);
+    button.attr('data-action', cmd);
+    return button;
+}
+
+
+$(document).on('click', '.nzb_action', function () {
+    //var i = $('#cmdinput').val();
+    //$(this).data('action')
+    var a = $(this).data('action');
+    var n = $(this).data('name');
+    param = {
+        'id': $(this).data('id'),
+            'action': $(this).data('action'),
+            'name': $(this).data('name')
+    };
+    if (confirm('Are you sure you want to "' + a + ' ' + n + '" to nzbget?')) {
+        $.getJSON(WEBDIR + "nzbget/IndividualAction/", param, function (response) {
+
+        });
+    }
+});
