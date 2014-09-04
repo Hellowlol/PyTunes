@@ -3,6 +3,7 @@
 
 import cherrypy
 import pytunes
+from pytunes.staticvars import get_var as html
 import urllib2
 import base64
 from json import loads, dumps
@@ -44,8 +45,15 @@ class Transmission:
     @require()
     @cherrypy.tools.json_out()
     def queue(self):
+        table = []
         fields = ['id', 'name', 'status', 'comment', 'downloadDir', 'percentDone', 'leftUntilDone', 'totalSize', 'isFinished', 'eta', 'rateDownload', 'rateUpload', 'uploadRatio', 'priorities', 'queuePosition']
-        return self.fetch('torrent-get', {'fields': fields})
+        queue = self.fetch('torrent-get', {'fields': fields})
+        for torrent in queue['arguments']['torrents']:
+            barwidth = '%s%s' % (torrent['percentDone'] * 100, '%')
+            #print barwidth
+            table.append(html('trans_row') % (torrent['id'], torrent['name'], torrent['rateDownload'], torrent['rateUpload'], torrent['downloadDir'], torrent['uploadRatio'], torrent['priorities'], torrent['queuePosition'], torrent['leftUntilDone'], torrent['totalSize'], torrent['eta'], torrent['status'], 'progress-default', barwidth))
+        return ''.join(table).replace("\n", "")
+        #return self.fetch('torrent-get', {'fields': fields})
 
     @cherrypy.expose()
     @require()
@@ -92,7 +100,7 @@ class Transmission:
     @cherrypy.tools.json_out()
     def to_client2(self, info):
         try:
-            self.logger.info('Added torrent infp to Transmission from file')
+            self.logger.info('Added torrent info to Transmission from file')
             return self.fetch('torrent-add', {'metainfo': info})
         except Exception as e:
             self.logger.debug('Failed to add torrent %s link to Transmission %s' % (link, e))
@@ -100,12 +108,12 @@ class Transmission:
     @cherrypy.expose()
     @require()
     @cherrypy.tools.json_out()
-    def remove(self, torrentId):
+    def remove(self, torrentId, deletedata = False):
         try:
             torrentId = int(torrentId)
         except ValueError:
             return False
-        return self.fetch('torrent-remove', {'ids': torrentId})
+        return self.fetch('torrent-remove', {'ids': torrentId, 'delete-local-data': deletedata})
 
     # Wrapper to access the Transmission Api
     # If the first call fails, there probably is no valid Session ID so we try it again

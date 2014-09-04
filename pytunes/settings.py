@@ -21,6 +21,7 @@ try:
     from certgen import * # yes yes, I know, I'm lazy
 except Exception as e:
     print 'Import error %s' % e
+    #need to log
 
 class NewznabServers(SQLObject):
     """ SQLObject class for newznab_servers table """

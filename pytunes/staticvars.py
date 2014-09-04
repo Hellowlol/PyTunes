@@ -340,6 +340,67 @@ ${arts}
 </tr>
 
     """
+    vars['trans_row'] = """
+<tr>
+    <td class='torr-id'>
+        <a href='#' class='show-torr' torr-id='%s'>
+            %s
+        </a>
+        <br>
+        <small><i class='icon-download'></i>
+            %s
+        &nbsp;&nbsp;
+        <i class='icon-upload'></i>
+            %s
+        </small>
+    </td>
+    <td>
+        %s
+    </td>
+    <td>
+        %s
+    </td>
+    <td>
+        %s
+    </td>
+    <td>
+        %s
+    </td>
+    <td>
+        %s
+    </td>
+    <td>
+        %s
+    </td>
+    <td>
+        %s
+    </td>
+    <td>
+        %s
+    </td>
+    <td>
+        <div class = 'progress %s'>
+            <div class='bar' style='width:%s;'></div>
+        </div>
+    </td>
+    <td>
+        <div class='button-group'>
+            <a href='#' title='Pause/Resume' class='btn btn-mini torr-pause'>
+                <i class='icon-pause'></i>
+            </a>
+            <a href='#' title='Remove Torrent' class='btn btn-mini torr-remove'>
+                <i class='icon-remove'></i>
+            </a>
+            <a href='#' title='Remove Torrent and Data' class='btn btn-mini torr-remove-data'>
+                <i class='icon-remove'></i>
+            </a>
+            <a href='#' title='Files' class='btn btn-mini torr-files'>
+                <i class='icon-remove'></i>
+            </a>
+        </div>
+    </td>
+</tr>
+    """
 
     vars['yify_carousel'] = """
 <div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=%s')">
