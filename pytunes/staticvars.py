@@ -379,6 +379,15 @@ ${arts}
         %s
     </td>
     <td>
+        %s
+    </td>
+    <td>
+        %s
+    </td>
+    <td>
+        %s
+    </td>
+    <td>
         <div class = 'progress %s'>
             <div class='bar' style='width:%s;'></div>
         </div>

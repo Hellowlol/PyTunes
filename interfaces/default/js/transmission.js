@@ -140,38 +140,5 @@ function getReadableFileSizeString(fileSizeInBytes) {
     return Math.round(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
 }
 
-/**
- * Converts seconds to readable time.
- */
-function getReadableTime(timeInSeconds) {
-    if (timeInSeconds < 1) {
-        return '0:00:00';
-    }
 
-    var days = parseInt(timeInSeconds / 86400, 10) % 7;
-    var hours = parseInt(timeInSeconds / 3600, 10) % 24;
-    var minutes = parseInt(timeInSeconds / 60, 10) % 60;
-    var seconds = parseInt(timeInSeconds % 60, 10);
 
-    // Add leading 0 and : to seconds
-    seconds = ':' + (seconds < 10 ? "0" + seconds : seconds);
-
-    if (days < 1) {
-        days = '';
-    } else {
-        days = days + 'd ';
-        // remove seconds if the eta is 1 day or more
-        seconds = '';
-    }
-    return days + hours + ":" + (minutes < 10 ? "0" + minutes : minutes) + seconds;
-}
-
-/**
- * Get textual representation of torrent status
- *
- * Since torrent status is retured as integer by the Transmission API the number must be mapped to a string
- */
-function torrentStatus(statusNr) {
-    states = ['Paused', 'unkown 1', 'unknown 2', 'Queued', 'Downloading', 'unknown 5', 'Seeding'];
-    return states[statusNr];
-}

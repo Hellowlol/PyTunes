@@ -26,6 +26,7 @@ class Transmission:
                 {'type': 'text', 'label': 'IP / Host *', 'name': 'transmission_host', 'placeholder':''},
                 {'type': 'text', 'label': 'Port *', 'name': 'transmission_port', 'placeholder':'', 'desc':'Default is 9091'},
                 {'type': 'text', 'label': 'Username', 'name': 'transmission_username'},
+                {'type': 'password', 'label': 'Password', 'name': 'transmission_password'},
                 {'type': 'text', 'label': 'Movie Directory', 'name': 'transmission_moviedir', 'dir':False},
                 {'type': 'text', 'label': 'TV Directory', 'name': 'transmission_tvdir', 'dir':False},
                 {'type': 'text', 'label': 'Music Directory', 'name': 'transmission_musicdir', 'dir':False},
@@ -40,20 +41,58 @@ class Transmission:
     def index(self):
         return pytunes.LOOKUP.get_template('transmission.html').render(scriptname='transmission')
 
+    @cherrypy.expose()
+    @require()
+    def sizeof(self, num):
+        for x in ['B','KB','MB','GB']:
+            if num < 1024.0:
+                return "%3.1f %s" % (num, x)
+            num /= 1024.0
+        return "%3.1f %s" % (num, 'TB')
 
     @cherrypy.expose()
     @require()
     @cherrypy.tools.json_out()
     def queue(self):
         table = []
-        fields = ['id', 'name', 'status', 'comment', 'downloadDir', 'percentDone', 'leftUntilDone', 'totalSize', 'isFinished', 'eta', 'rateDownload', 'rateUpload', 'uploadRatio', 'priorities', 'queuePosition']
+        fields = ['id', 'name', 'error', 'errorstring', 'isFinished', 'isStalled', 'peers', 'peersConnected', 'peersFrom',   'status', 'comment', 'downloadDir', 'percentDone', 'leftUntilDone', 'totalSize', 'isFinished', 'eta', 'rateDownload', 'rateUpload', 'uploadRatio', 'priorities', 'queuePosition', 'wanted']
         queue = self.fetch('torrent-get', {'fields': fields})
-        for torrent in queue['arguments']['torrents']:
-            barwidth = '%s%s' % (torrent['percentDone'] * 100, '%')
-            #print barwidth
-            table.append(html('trans_row') % (torrent['id'], torrent['name'], torrent['rateDownload'], torrent['rateUpload'], torrent['downloadDir'], torrent['uploadRatio'], torrent['priorities'], torrent['queuePosition'], torrent['leftUntilDone'], torrent['totalSize'], torrent['eta'], torrent['status'], 'progress-default', barwidth))
-        return ''.join(table).replace("\n", "")
-        #return self.fetch('torrent-get', {'fields': fields})
+        states = ['Paused', 'unknown', 'unknown', 'Queued', 'Downloading', 'unknown', 'Seeding'];
+        print queue
+        count = len(queue['arguments']['torrents'])
+        print 'count: ', count
+        if count:
+            for torrent in queue['arguments']['torrents']:
+                barwidth = '%s%s' % (torrent['percentDone'] * 100, '%')
+                ratio = 0.0 if torrent['uploadRatio'] == -1 else torrent['uploadRatio']
+                eta = '&infin;' if torrent['eta'] == -1 else str(torrent['eta'])
+                status = 'Unknown'
+                if states[torrent['status']] != 'unknown':
+                    status = states[torrent['status']]
+                if torrent['isFinished']:
+                    status = 'Finished'
+                if torrent['isStalled']:
+                    status = 'Stalled'
+                elif torrent['error']:
+                    status = 'Error'
+                dlrate = self.sizeof(torrent['rateDownload'])
+                ulrate = self.sizeof(torrent['rateUpload'])
+                total = self.sizeof(torrent['totalSize'])
+                left = self.sizeof(torrent['leftUntilDone'])
+                queuetop = "<a href='#' class='queue btn btn-mini' action='top' id='%s' newpos='0' title='Top'><i class='icon-long-arrow-up'></i></a>" % torrent['id']
+                queueup = "<a href='#' class='queue btn btn-mini' action='up' id='%s' newpos='%s' title='Up 1 Level'><i class='icon-level-up'></i></a>" % (torrent['id'], str(torrent['queuePosition'] + 1))
+                queuedown = "<a href='#' class='queue btn btn-mini' action='down' id='%s' newpos='%s' title='Down 1 Level'><i class='icon-level-down'></i></a>" % (torrent['id'], str(torrent['queuePosition'] - 1))
+                queuebottom = "<a href='#' class='queue btn btn-mini' action='bottom' id='%s' newpos='%s' title='Bottom'><i class='icon-long-arrow-down'></i></a>" % (torrent['id'], str(count - 1))
+                if torrent['queuePosition'] == 0:
+                    queuepos = '%s%s' % (queuedown, queuebottom)
+                elif torrent['queuePosition'] == count - 1:
+                    queuepos = '%s%s' % (queuetop, queueup)
+                else:
+                    queuepos = '%s%s%s%s' % (queuetop, queueup, queuedown, queuebottom)
+                table.append(html('trans_row') % (torrent['id'], torrent['name'], dlrate, ulrate, torrent['downloadDir'], ratio, torrent['priorities'], queuepos, left, total, eta, status, torrent['isFinished'], torrent['isStalled'], torrent['error'], 'progress-default', barwidth))
+            return ''.join(table).replace("\n", "")
+        else:
+            return '<tr><td>Queue is Empty</td></tr>'
 
     @cherrypy.expose()
     @require()
@@ -95,7 +134,7 @@ class Transmission:
         except Exception as e:
             self.logger.debug('Failed to add torrent %s link to Transmission %s' % (link, e))
 
-    #For torrent upload have to base 64 encode
+    #For torrent upload have to be base 64 encode
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def to_client2(self, info):
@@ -103,7 +142,7 @@ class Transmission:
             self.logger.info('Added torrent info to Transmission from file')
             return self.fetch('torrent-add', {'metainfo': info})
         except Exception as e:
-            self.logger.debug('Failed to add torrent %s link to Transmission %s' % (link, e))
+            self.logger.debug('Failed to add torrent %s file to Transmission %s' % (info, e))
 
     @cherrypy.expose()
     @require()

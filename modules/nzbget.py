@@ -54,7 +54,7 @@ class NZBGet:
         else:
             authstring = ''
 
-        url = 'http' + ssl + '://' + authstring + host + ':' + port + nzbget_basepath + 'jsonrpc/'
+        url = 'http%s://%s:%s%sjsonrpc/' % (ssl, authstring, host, port, nzbget_basepath)
         return url
 
 
@@ -71,6 +71,7 @@ class NZBGet:
             nzbget_basepath += "/"
 
         url = 'http' + ssl + '://'+  nzbget_host + ':' + nzbget_port + nzbget_basepath + 'jsonrpc/version'
+        url = 'http%s://%s:%s%sjsonrpc/version' % (ssl,  nzbget_host, nzbget_port, nzbget_basepath)
         try:
             request = Request(url)
             if(nzbget_username != ""):
@@ -165,7 +166,7 @@ class NZBGet:
                 status = nzbget.pause()
             return status
         except Exception as e:
-            self.logger.error("Failed to %s" % (action, e))
+            self.logger.error("Failed to %s %s" % (action, e))
 
     @cherrypy.expose()
     @require()

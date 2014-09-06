@@ -5,29 +5,31 @@
       <div class="page-header page-title">
             <img alt="PyTunes" src="../img/pytuneslogosm.png"/><img alt="Transmission Logo" class="pull-right" src="../img/transmission_logo_sm.png"/>
       </div>
-<span style="float:right">
-		<form enctype="multipart/form-data">
-			<input name="file" type="file" />
-			<input type="button" class="btn btn-primary" value="Upload" />
-		</form>
-        <form  id="add_trans_form" method="post" class="form-inline" action="" style="">
+        <div>
+        <div class="pull-left">
+          <big><big><strong>
+            <i class="icon-download"></i> <span id="queue_download"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            <i class="icon-upload"></i> <span id="queue_upload"></span>
+          </strong></big></big>
+        </div><br>
+          <div class="form-inline">
+    <form  id="add_trans_form" method="post" class="form-inline pull-right" action="" style="">
 			<button class="btn" id="trans_pause_button"><i class="icon-pause"></i> Pause</button>
             <input type="text" class="span1" id="nzb_get_speed" placeholder="200 Kb/s" value="" />
             <button class="btn" id="nzb_set_speed"><i class="icon-cog"></i> Set speed</button>&nbsp;
-          <div class="btn-group pull-right">
             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-wrench"> </i><span class="caret"></span></a>
             <ul class="dropdown-menu">
               <!-- dropdown menu links-->
               <li><a href="#" id="transmission-resume-all" data-action="start">Resume all</a></li>
               <li><a href="#" id="transmission-stop-all" data-action="stop">Pause all</a></li>
             </ul>
-          </div>
         </form>
-</span>
-          <big><big><strong>
-            <i class="icon-download"></i> <span id="queue_download"></span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-            <i class="icon-upload"></i> <span id="queue_upload"></span>
-          </strong></big></big><br>
+		<form action="transmission/to_client2" enctype="multipart/form-data" method="post"class="form-inline pull-right">
+			<input name="file" type="file" size="30"style="color:#000; background:#ddd"/>
+			<input type="button" class="btn btn-primary upload" value="Upload" />
+		</form>
+</div>
+</div><br>
       <ul class="nav nav-tabs">
           <li class="active"><a href="#all" data-toggle="tab"><i class="icon-all"></i> All</a></li>
           <li><a href="#active" data-toggle="tab"><i class="icon-cogs"> </i>Active</a></li>
@@ -47,10 +49,13 @@
 		                  <th class="span1">Ratio</th>
 		                  <th class="span1">Priority</th>
 		                  <th class="span1">Queue</th>
-		                  <th class="span1">Done Size</th>
-		                  <th class="span1">Total Size</th>
+		                  <th class="span1">Left</th>
+		                  <th class="span1">Total</th>
 		                  <th class="span1">ETA</th>
 		                  <th class="span1">Status</th>
+		                  <th class="span1">Finished</th>
+		                  <th class="span1">Stalled</th>
+		                  <th class="span1">Error</th>
 		                  <th class="span2">Progress</th>
 		                  <th class="span2"></th>
 		              </tr>
