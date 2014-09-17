@@ -77,31 +77,13 @@ function getTorrents() {
         type: 'get',
         dataType: 'html',
         success: function (response) {
-                $('#torrent-all').html('');
-               $('#torrent-all').append(response);
+            $('#torrent-all').html('');
+            $('#torrent-all').append(response);
             $('.spinner').hide();
          }
     });
 }
 
-/**
- * Generate a start or stop button based on the torrent status
- */
-function generateTorrentActionButton(torrent) {
-    button = $('<a>').addClass('btn btn-mini');
-    // Resume button if torrent is paused
-    if (torrent.status === 0) {
-        button.html('<i class="icon-play"></i>');
-        button.attr('href', WEBDIR + 'transmission/start/' + torrent.id);
-        button.attr('title', 'Resume torrent');
-    } else { // Pause button
-        button.html('<i class="icon-pause"></i>');
-        button.attr('href', WEBDIR + 'transmission/stop/' + torrent.id);
-        button.attr('title', 'Pause torrent');
-    }
-
-    return button;
-}
 
 /**
  * Get General transmission stats

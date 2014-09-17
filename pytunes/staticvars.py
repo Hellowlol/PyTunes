@@ -385,31 +385,30 @@ ${arts}
         %s
     </td>
     <td>
-        %s
-    </td>
-    <td>
         <div class = 'progress %s'>
             <div class='bar' style='width:%s;'></div>
         </div>
     </td>
     <td>
         <div class='button-group'>
-            <a href='#' title='Pause/Resume' class='btn btn-mini torr-pause'>
-                <i class='icon-pause'></i>
-            </a>
-            <a href='#' title='Remove Torrent' class='btn btn-mini torr-remove'>
-                <i class='icon-remove'></i>
-            </a>
-            <a href='#' title='Remove Torrent and Data' class='btn btn-mini torr-remove-data'>
-                <i class='icon-remove'></i>
-            </a>
-            <a href='#' title='Files' class='btn btn-mini torr-files'>
-                <i class='icon-remove'></i>
-            </a>
+            %s
         </div>
     </td>
 </tr>
     """
+    vars['trans_start'] = "<a href='/transmission/start/%s' title='Send to Queue' class='btn btn-mini torr-queue'><b>Que</b></a>"
+
+    vars['trans_start_now'] = "<a href='/transmission/start_now/%s' title='Force Start Now' class='btn btn-mini torr-start-now'><i class='icon-exclamation'></i>&nbsp;<i class='icon-play'></i></a>"
+
+    vars['trans_pause'] = "<a href='/transmission/stop/%s' title='Pause Torrent' class='btn btn-mini torr-start-now'><i class='icon-pause'></i></a>"
+
+    vars['trans_remove'] = "<a href='/transmission/remove/%s' title='Remove Torrent' class='btn btn-mini torr-remove'></i><i class='icon-remove'></i></a>"
+
+    vars['trans_remove_data'] = "<a href='/transmission/remove/%s/True' title='Remove Torrent and Data' class='btn btn-mini torr-remove-data'><i class='icon-trash'></i></a>"
+
+    vars['trans_files'] = "<a href='/transmission/files/%s' title='Edit Files' class='btn btn-mini torr-files'><i class='icon-copy'></i></a>"
+
+    vars['trans_error'] = "<a href='#' title='Click for Error Message' class='btn btn-mini btn-danger torr-error' message='%s'><i class='icon-warning-sign'></i></a>"
 
     vars['yify_carousel'] = """
 <div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=%s')">

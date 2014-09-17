@@ -69,6 +69,7 @@ class Sickbeard:
     def GetShowList(self):
         self.logger.debug("Fetching Shows list")
         list = self.fetch('shows&sort=name')
+        print list
         for show in list['data']:
             print show
             if show[:4] == 'The ':
@@ -140,8 +141,9 @@ class Sickbeard:
     @require()
     @cherrypy.tools.json_out()
     def GetShow(self, tvdbid):
+        
         self.logger.debug("Fetching Show")
-        return self.fetch('show&tvdbid=#s' % tvdbid)
+        return self.fetch('show&tvdbid=%s' % tvdbid)
 
     @cherrypy.expose()
     @require()
@@ -225,7 +227,7 @@ class Sickbeard:
 
             if not (sickbeard_basepath.endswith('/')):
                 sickbeard_basepath += "/"
-            url = 'http%s://%s:%s%sapi/%s/?cmd=' % (ssl, host, str(port), sickbeard_basepath, apikey, cmd)
+            url = 'http%s://%s:%s%sapi/%s/?cmd=%s' % (ssl, host, str(port), sickbeard_basepath, apikey, cmd)
 
             self.logger.debug("Fetching information from: %s" % url)
 

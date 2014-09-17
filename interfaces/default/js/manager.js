@@ -175,7 +175,7 @@ function loadWantedMovies() {
 function loadPopularTV(page) {
     //alert("In Popular TV" + page);
     var sendData = {
-        source: 'popular',
+        source: 'populartv',
         page: page
     };
     $.ajax({
