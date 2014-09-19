@@ -308,3 +308,14 @@ table th.tablesorter-header {
 #query {
     margin-top: 10px !important;
 }
+
+.ConfirmModal {
+    width: 400px !important;
+    height: 300px !important;
+}
+
+.AlertModal {
+    //width: inherit !important;
+    //height: inherit !important;
+}
+

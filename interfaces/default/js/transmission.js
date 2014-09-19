@@ -8,12 +8,12 @@ $(document).ready(function () {
     setInterval(function () {
         getTorrents();
         getStatus();
-    }, 4000);
+    }, 10000);
 
 	$(':button').click(function(){
 		var formData = new FormData($('form')[0]);
 		$.ajax({
-			url: 'transmission/to_client2',  //Server script to process data
+			url: '/transmission/to_client2',  //Server script to process data
 			type: 'POST',
 			xhr: function() {  // Custom XMLHttpRequest
 				var myXhr = $.ajaxSettings.xhr();
@@ -34,23 +34,6 @@ $(document).ready(function () {
 			processData: false
 		});
 	});
-	$(document.body).off('click', '#torrent-all .torrent-action a');
-    $(document.body).on('click', '#torrent-all .torrent-action a', function (event) {
-        event.preventDefault();
-        // set spinner inside button
-        $(this).html('<i class="icon-spinner icon-spin"></i>');
-
-        // do ajax request
-        $.ajax({
-            url: $(this).attr('href'),
-            success: function (response) {
-                // Refresh torrent list after successfull request with a tiny delay
-                if (response.result == 'success') {
-                    window.setTimeout(getTorrents, 500);
-                }
-            }
-        });
-    });
 });
 
 /**
@@ -80,6 +63,44 @@ function getTorrents() {
             $('#torrent-all').html('');
             $('#torrent-all').append(response);
             $('.spinner').hide();
+            $(".torrent-error").click(function (event) {
+                alert($(this).attr('message'));
+            });
+            $('.torrent-action').click(function (event) {
+                event.preventDefault();
+                // set spinner inside button
+                $(this).html('<i class="icon-spinner icon-spin"></i>');
+
+                // do ajax request
+                $.ajax({
+                    url: $(this).attr('href'),
+                    success: function (response) {
+                        // Refresh torrent list after successfull request with a tiny delay
+                        if (response.result == 'success') {
+                            window.setTimeout(getTorrents, 500);
+                        }
+                    }
+                });
+            });
+            $('.torrent-files').click(function (event) {
+                event.preventDefault();
+                // set spinner inside button
+                //$(this).html('<i class="icon-spinner icon-spin"></i>');
+
+                // do ajax request
+                $.ajax({
+                    url: $(this).attr('href'),
+                    type: 'get',
+                    dataType: 'text',
+                    success: function (response) {
+                        // Refresh torrent list after successfull request with a tiny delay
+                        alert(response);
+                        //if (response.result == 'success') {
+                        //    window.setTimeout(getTorrents, 500);
+                        //}
+                    }
+                });
+            });
          }
     });
 }

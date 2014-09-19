@@ -73,20 +73,18 @@ class Transmission:
         count = len(queue['arguments']['torrents'])
         cats = self.get_cats()
         if count:
-            for torrent in queue['arguments']['torrents']:
+            for torrent in sorted(queue['arguments']['torrents'], key=lambda k: k['queuePosition']):
                 cat_select = []
                 selected = False
                 barwidth = '%s%s' % (torrent['percentDone'] * 100, '%')
                 ratio = 0.0 if torrent['uploadRatio'] == -1 else torrent['uploadRatio']
                 eta = '&infin;' if torrent['eta'] < 0 else str(datetime.timedelta(seconds=torrent['eta']))
-                #status = 'Unknown'
                 for cat in cats:
                     if torrent['downloadDir'] == cats[cat] and not selected:
                         cat_select.append('<option value="%s" selected="true">%s</option>' % (cats[cat], cat))
                         selected = True
                     else:
                         cat_select.append('<option value="%s">%s</option>' % (cats[cat], cat))
-                #torrent['downloadDir']
                     categories = "<select torrid='%s' class='span1 select_cat'>%s</select>" % (torrent['id'], ''.join(cat_select))
                 if states[torrent['status']] != 'unknown':
                     status = states[torrent['status']]
@@ -100,10 +98,14 @@ class Transmission:
                 ulrate = self.sizeof(torrent['rateUpload'])
                 total = self.sizeof(torrent['totalSize'])
                 left = self.sizeof(torrent['leftUntilDone'])
-                queuetop = "<a href='/transmission/Queue_Move?pos=%s&id=%s' class='queue btn btn-mini' title='Move to Top'><i class='icon-long-arrow-up'></i></a>" % ('0', torrent['id'])
-                queueup = "<a href='/transmission/Queue_Move?pos=%s&id=%s' class='queue btn btn-mini' action='up' title='Move Up 1 Level'><i class='icon-level-up'></i></a>" % (torrent['id'], str(torrent['queuePosition'] + 1))
-                queuedown = "<a href='/transmission/Queue_Move?pos=%s&id=%s' class='queue btn btn-mini' action='down' title='Move Down 1 Level'><i class='icon-level-down'></i></a>" % (torrent['id'], str(torrent['queuePosition'] - 1))
-                queuebottom = "<a href='/transmission/Queue_Move?pos=%s&id=%s' class='queue btn btn-mini' action='bottom' title='Move to Bottom'><i class='icon-long-arrow-down'></i></a>" % (torrent['id'], str(count - 1))
+                trans_queuetop = "<a href='/transmission/Queue_Move?id=%s&pos=%s' class='queue btn btn-mini torrent-action' title='Move to Top'><i class='icon-long-arrow-up'></i></a>"
+                trans_queueup = "<a href='/transmission/Queue_Move?id=%s&pos=%s' class='queue btn btn-mini torrent-action' title='Move Up 1 Level'><i class='icon-level-up'></i></a>"
+                trans_queuedown = "<a href='/transmission/Queue_Move?id=%s&pos=%s' class='queue btn btn-mini torrent-action' title='Move Down 1 Level'><i class='icon-level-down'></i></a>"
+                trans_queuebottom = "<a href='/transmission/Queue_Move?id=%s&pos=%s' class='queue btn btn-mini torrent-action' title='Move to Bottom'><i class='icon-long-arrow-down'></i></a>"
+                queuetop = trans_queuetop % (torrent['id'], '0')
+                queueup = trans_queueup % (torrent['id'], str(torrent['queuePosition'] - 1))
+                queuedown = trans_queuedown % (torrent['id'], str(torrent['queuePosition'] + 1))
+                queuebottom = trans_queuebottom % (torrent['id'], str(count - 1))
                 if torrent['queuePosition'] == 0:
                     queuepos = '%s%s' % (queuedown, queuebottom)
                 elif torrent['queuePosition'] == count - 1:
@@ -115,7 +117,7 @@ class Transmission:
                     buttons = '%s%s%s%s%s%s' % (html('trans_start') % torrent['id'], html('trans_start_now') % torrent['id'],  html('trans_remove') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_files') % torrent['id'], queuepos)
                 if status == 'Downloading':
                     status_out = status
-                    buttons = '%s%s%s%s%s' % (html('trans_pause') % torrent['id'], html('trans_remove') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_files') % torrent['id'], queuepos)
+                    buttons = '%s%s%s%s%s%s' % (html('trans_pause') % torrent['id'], html('trans_remove') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_reannounce') % torrent['id'], html('trans_files') % torrent['id'], queuepos)
                 if status == 'Queued':
                     status_out = status
                     buttons = '%s%s%s%s%s' % (html('trans_start_now') % torrent['id'], html('trans_pause') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_files') % torrent['id'], queuepos)
@@ -127,9 +129,8 @@ class Transmission:
                     buttons = '%s%s%s' % (html('trans_remove') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_files') % torrent['id'])
                 if status == 'Stalled':
                     status_out = status
-                    buttons = '%s%s%s%s%s' % (html('trans_pause') % torrent['id'], html('trans_remove') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_files') % torrent['id'], queuepos)
+                    buttons = '%s%s%s%s%s%s' % (html('trans_pause') % torrent['id'], html('trans_remove') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_reannounce') % torrent['id'], html('trans_files') % torrent['id'], queuepos)
                 if status == 'Error':
-                    #print torrent['errorString'].replace("\"", "")
                     buttons = '%s%s' % (html('trans_remove') % torrent['id'], html('trans_remove_data') % str(torrent['id']))
                     status_out = html('trans_error') % torrent['errorString']
                 table.append(html('trans_row') % (torrent['id'], torrent['name'], dlrate, ulrate, categories, ratio, torrent['priorities'], left, total, eta, status_out, torrent['isFinished'], torrent['isStalled'], torrent['error'], bars[status], barwidth, buttons))
@@ -210,6 +211,16 @@ class Transmission:
             return False
         return self.fetch('torrent-stop', {'ids': torrentId})
 
+    @cherrypy.expose()
+    @require()
+    @cherrypy.tools.json_out()
+    def reannounce(self, torrentId):
+        try:
+            torrentId = int(torrentId)
+        except ValueError:
+            return False
+        return self.fetch('torrent-reannounce', {'ids': torrentId})
+
     #For torrent search
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -239,6 +250,27 @@ class Transmission:
         except ValueError:
             return False
         return self.fetch('torrent-remove', {'ids': torrentId, 'delete-local-data': deletedata})
+
+    @cherrypy.expose()
+    @require()
+    @cherrypy.tools.json_out()
+    def Queue_Move(self, id, pos):
+        return self.fetch('torrent-set', {'ids': int(id), 'queuePosition': int(pos)})
+
+    @cherrypy.expose()
+    @require()
+    @cherrypy.tools.json_out()
+    def files(self, id):
+        #files = self.fetch('torrent-get', {'ids': int(id), 'fields': ['files', 'fileStats']})
+        files = self.fetch('torrent-get', {'ids': int(id), 'fields': ['files']})
+        files = files['arguments']['torrents'][0]['files']
+        filestats = self.fetch('torrent-get', {'ids': int(id), 'fields': ['fileStats']})
+        filestats = filestats['arguments']['torrents'][0]['fileStats']
+        return filestats
+        i = 0
+        for file in files['arguments']['torrents'][0]['files']:
+            print file
+
 
     # Wrapper to access the Transmission Api
     # If the first call fails, there probably is no valid Session ID so we try it again
