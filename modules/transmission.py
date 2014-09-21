@@ -55,7 +55,7 @@ class Transmission:
     @cherrypy.expose()
     @require()
     @cherrypy.tools.json_out()
-    def queue(self):
+    def queue(self, filter):
         table = []
         bars = {
             'Queued': 'progress-default',
@@ -67,7 +67,7 @@ class Transmission:
             'Downloading': 'progress-success progress-striped active'
         }
 
-        fields = ['id', 'name', 'error', 'errorString', 'isFinished', 'isStalled', 'peers', 'peersConnected', 'peersFrom',   'status', 'comment', 'downloadDir', 'percentDone', 'leftUntilDone', 'totalSize', 'isFinished', 'eta', 'rateDownload', 'rateUpload', 'uploadRatio', 'priorities', 'queuePosition', 'wanted']
+        fields = ['id', 'name', 'error', 'errorString', 'isFinished', 'isStalled', 'peers', 'peersConnected', 'peersFrom',   'status', 'comment', 'downloadDir', 'percentDone', 'leftUntilDone', 'totalSize', 'isFinished', 'eta', 'rateDownload', 'rateUpload', 'uploadRatio', 'priorities', 'queuePosition', 'wanted', 'peersGettingFromUs', 'peersSendingToUs', 'peersConnected']
         queue = self.fetch('torrent-get', {'fields': fields})
         states = ['Paused', 'unknown', 'unknown', 'Queued', 'Downloading', 'unknown', 'Seeding'];
         count = len(queue['arguments']['torrents'])
@@ -81,11 +81,11 @@ class Transmission:
                 eta = '&infin;' if torrent['eta'] < 0 else str(datetime.timedelta(seconds=torrent['eta']))
                 for cat in cats:
                     if torrent['downloadDir'] == cats[cat] and not selected:
-                        cat_select.append('<option value="%s" selected="true">%s</option>' % (cats[cat], cat))
+                        cat_select.append("<option value='%s' selected='true'>%s</option>" % (cats[cat], cat))
                         selected = True
                     else:
-                        cat_select.append('<option value="%s">%s</option>' % (cats[cat], cat))
-                    categories = "<select torrid='%s' class='span1 select_cat'>%s</select>" % (torrent['id'], ''.join(cat_select))
+                        cat_select.append("<option value='%s'>%s</option>" % (cats[cat], cat))
+                    categories = "<form><select title='Configure in Settings' torrid='%s' class='span2 select_cat'>%s</select></form>" % (torrent['id'], ''.join(cat_select))
                 if states[torrent['status']] != 'unknown':
                     status = states[torrent['status']]
                 if torrent['isFinished']:
@@ -114,26 +114,28 @@ class Transmission:
                     queuepos = '%s%s%s%s' % (queuetop, queueup, queuedown, queuebottom)
                 if status == 'Paused':
                     status_out = status
-                    buttons = '%s%s%s%s%s%s' % (html('trans_start') % torrent['id'], html('trans_start_now') % torrent['id'],  html('trans_remove') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_files') % torrent['id'], queuepos)
+                    buttons = '%s%s%s%s%s%s' % (html('trans_start') % torrent['id'], html('trans_start_now') % torrent['id'],  html('trans_remove') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_files') % (torrent['id'], len(torrent['priorities'])), queuepos)
                 if status == 'Downloading':
                     status_out = status
-                    buttons = '%s%s%s%s%s%s' % (html('trans_pause') % torrent['id'], html('trans_remove') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_reannounce') % torrent['id'], html('trans_files') % torrent['id'], queuepos)
+                    buttons = '%s%s%s%s%s%s' % (html('trans_pause') % torrent['id'], html('trans_remove') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_reannounce') % torrent['id'], html('trans_files') % (torrent['id'], len(torrent['priorities'])), queuepos)
                 if status == 'Queued':
                     status_out = status
-                    buttons = '%s%s%s%s%s' % (html('trans_start_now') % torrent['id'], html('trans_pause') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_files') % torrent['id'], queuepos)
+                    buttons = '%s%s%s%s%s' % (html('trans_start_now') % torrent['id'], html('trans_pause') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_files') % (torrent['id'], len(torrent['priorities'])), queuepos)
                 if status == 'Seeding':
                     status_out = status
-                    buttons = '%s%s%s%s' % (html('trans_pause') % torrent['id'], html('trans_remove') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_files') % torrent['id'])
+                    buttons = '%s%s%s%s' % (html('trans_pause') % torrent['id'], html('trans_remove') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_files') % (torrent['id'], len(torrent['priorities'])))
                 if status == 'Finished':
                     status_out = status
-                    buttons = '%s%s%s' % (html('trans_remove') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_files') % torrent['id'])
+                    buttons = '%s%s%s' % (html('trans_remove') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_files') % (torrent['id'], len(torrent['priorities'])))
                 if status == 'Stalled':
                     status_out = status
-                    buttons = '%s%s%s%s%s%s' % (html('trans_pause') % torrent['id'], html('trans_remove') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_reannounce') % torrent['id'], html('trans_files') % torrent['id'], queuepos)
+                    buttons = '%s%s%s%s%s%s' % (html('trans_pause') % torrent['id'], html('trans_remove') % torrent['id'], html('trans_remove_data') % torrent['id'], html('trans_reannounce') % torrent['id'], html('trans_files') % (torrent['id'], len(torrent['priorities'])), queuepos)
                 if status == 'Error':
                     buttons = '%s%s' % (html('trans_remove') % torrent['id'], html('trans_remove_data') % str(torrent['id']))
                     status_out = html('trans_error') % torrent['errorString']
-                table.append(html('trans_row') % (torrent['id'], torrent['name'], dlrate, ulrate, categories, ratio, torrent['priorities'], left, total, eta, status_out, torrent['isFinished'], torrent['isStalled'], torrent['error'], bars[status], barwidth, buttons))
+                if filter == 'All' or filter == status:
+                    table.append(html('trans_row') % (torrent['id'], torrent['name'], dlrate, ulrate, torrent['peersConnected'], torrent['peersSendingToUs'], torrent['peersGettingFromUs'], categories, ratio, left, total, eta, status_out, bars[status], barwidth, buttons))
+            #print table
             return ''.join(table).replace("\n", "")
         else:
             return '<tr><td>Queue is Empty</td></tr>'
@@ -260,8 +262,14 @@ class Transmission:
     @cherrypy.expose()
     @require()
     @cherrypy.tools.json_out()
+    def ChangeCat(self, id, dir):
+        print id, dir
+        return self.fetch('torrent-set-location', {'ids': int(id), 'location': dir, 'move': True})
+
+    @cherrypy.expose()
+    @require()
+    @cherrypy.tools.json_out()
     def files(self, id):
-        #files = self.fetch('torrent-get', {'ids': int(id), 'fields': ['files', 'fileStats']})
         files = self.fetch('torrent-get', {'ids': int(id), 'fields': ['files']})
         files = files['arguments']['torrents'][0]['files']
         filestats = self.fetch('torrent-get', {'ids': int(id), 'fields': ['fileStats']})

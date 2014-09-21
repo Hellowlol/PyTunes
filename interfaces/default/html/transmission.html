@@ -32,12 +32,13 @@
 </div><br>
       <ul class="nav nav-tabs">
           <li class="active"><a href="#all" data-toggle="tab"><i class="icon-all"></i> All</a></li>
-          <li><a href="#active" data-toggle="tab"><i class="icon-cogs"> </i>Active</a></li>
           <li><a href="#downloading" data-toggle="tab"><i class="icon-download"></i> Downloading</a></li>
           <li><a href="#seeding" data-toggle="tab"><i class="icon-upload"></i> Seeding</a></li>
+          <li><a href="#queued" data-toggle="tab"><i class="icon-cogs"> </i>Queued</a></li>
           <li><a href="#paused" data-toggle="tab"><i class="icon-pause"></i> Paused</a></li>
+          <li><a href="#stalled" data-toggle="tab"><i class="icon-thumbs-down"></i> Stalled</a></li>
           <li><a href="#finished" data-toggle="tab"><i class="icon-thumbs-up"></i> Finished</a></li>
-          <li><a href="#error" data-toggle="tab"><i class="icon-thumbs-down"></i> Error</a></li>
+          <li><a href="#error" data-toggle="tab"><i class="icon-warning-sign"></i> Error</a></li>
       </ul>
       <div class="tab-content">
           <div id="all" class="tab-pane active">
@@ -45,16 +46,12 @@
 		          <thead class="pt-thead">
 		              <tr>
 		                  <th class="span3">File</th>
-		                  <th class="span1">Download Dir</th>
+		                  <th class="span2">Download Directory</th>
 		                  <th class="span1">Ratio</th>
-		                  <th class="span1">Priority</th>
 		                  <th class="span1">Left</th>
 		                  <th class="span1">Total</th>
 		                  <th class="span1">ETA</th>
 		                  <th class="span1">Status</th>
-		                  <th class="span1">Finished</th>
-		                  <th class="span1">Stalled</th>
-		                  <th class="span1">Error</th>
 		                  <th class="span2">Progress</th>
 		                  <th class="span3">Mutators</th>
 		              </tr>
@@ -62,22 +59,23 @@
 		          <tbody id="torrent-all">
 		          </tbody>
 	    	  </table>
-		      <i class="icon-spinner icon-spin spinner"></i>
           </div>
-          <div id="active" class="tab-pane">
+          <div id="queued" class="tab-pane">
               <table class="table table-striped table-hover table-condensed table-responsive table-bordered">
 		          <thead class="pt-thead">
 		              <tr>
-		                  <th>File</th>
-		                  <th class="span3">Download Dir</th>
+		                  <th class="span3">File</th>
+		                  <th class="span2">Download Directory</th>
 		                  <th class="span1">Ratio</th>
+		                  <th class="span1">Left</th>
+		                  <th class="span1">Total</th>
 		                  <th class="span1">ETA</th>
-		                  <th class="span2">Status</th>
-		                  <th class="span3">Progress</th>
-		                  <th class="span1"></th>
+		                  <th class="span1">Status</th>
+		                  <th class="span2">Progress</th>
+		                  <th class="span3">Mutators</th>
 		              </tr>
 		          </thead>
-		          <tbody id="torrent-active">
+		          <tbody id="torrent-queued">
 		          </tbody>
 	    	  </table>
           </div>
@@ -85,13 +83,15 @@
               <table class="table table-striped table-hover table-condensed table-responsive table-bordered">
 		          <thead class="pt-thead">
 		              <tr>
-		                  <th>File</th>
-		                  <th class="span3">Download Dir</th>
+		                  <th class="span3">File</th>
+		                  <th class="span2">Download Directory</th>
 		                  <th class="span1">Ratio</th>
+		                  <th class="span1">Left</th>
+		                  <th class="span1">Total</th>
 		                  <th class="span1">ETA</th>
-		                  <th class="span2">Status</th>
-		                  <th class="span3">Progress</th>
-		                  <th class="span1"></th>
+		                  <th class="span1">Status</th>
+		                  <th class="span2">Progress</th>
+		                  <th class="span3">Mutators</th>
 		              </tr>
 		          </thead>
 		          <tbody id="torrent-downloading">
@@ -102,13 +102,15 @@
               <table class="table table-striped table-hover table-condensed table-responsive table-bordered">
 		          <thead class="pt-thead">
 		              <tr>
-		                  <th>File</th>
-		                  <th class="span3">Download Dir</th>
+		                  <th class="span3">File</th>
+		                  <th class="span2">Download Directory</th>
 		                  <th class="span1">Ratio</th>
+		                  <th class="span1">Left</th>
+		                  <th class="span1">Total</th>
 		                  <th class="span1">ETA</th>
-		                  <th class="span2">Status</th>
-		                  <th class="span3">Progress</th>
-		                  <th class="span1"></th>
+		                  <th class="span1">Status</th>
+		                  <th class="span2">Progress</th>
+		                  <th class="span2">Mutators</th>
 		              </tr>
 		          </thead>
 		          <tbody id="torrent-seeding">
@@ -119,16 +121,37 @@
               <table class="table table-striped table-hover table-condensed table-responsive table-bordered">
 		          <thead class="pt-thead">
 		              <tr>
-		                  <th>File</th>
-		                  <th class="span3">Download Dir</th>
+		                  <th class="span3">File</th>
+		                  <th class="span2">Download Directory</th>
 		                  <th class="span1">Ratio</th>
+		                  <th class="span1">Left</th>
+		                  <th class="span1">Total</th>
 		                  <th class="span1">ETA</th>
-		                  <th class="span2">Status</th>
-		                  <th class="span3">Progress</th>
-		                  <th class="span1"></th>
+		                  <th class="span1">Status</th>
+		                  <th class="span2">Progress</th>
+		                  <th class="span3">Mutators</th>
 		              </tr>
 		          </thead>
 		          <tbody id="torrent-paused">
+		          </tbody>
+	    	  </table>
+          </div>
+          <div id="stalled" class="tab-pane">
+              <table class="table table-striped table-hover table-condensed table-responsive table-bordered">
+		          <thead class="pt-thead">
+		              <tr>
+		                  <th class="span3">File</th>
+		                  <th class="span2">Download Directory</th>
+		                  <th class="span1">Ratio</th>
+		                  <th class="span1">Left</th>
+		                  <th class="span1">Total</th>
+		                  <th class="span1">ETA</th>
+		                  <th class="span1">Status</th>
+		                  <th class="span2">Progress</th>
+		                  <th class="span3">Mutators</th>
+		              </tr>
+		          </thead>
+		          <tbody id="torrent-stalled">
 		          </tbody>
 	    	  </table>
           </div>
@@ -136,16 +159,18 @@
               <table class="table table-striped table-hover table-condensed table-responsive table-bordered">
 		          <thead class="pt-thead">
 		              <tr>
-		                  <th>File</th>
-		                  <th class="span3">Download Dir</th>
+		                  <th class="span3">File</th>
+		                  <th class="span2">Download Directory</th>
 		                  <th class="span1">Ratio</th>
+		                  <th class="span1">Left</th>
+		                  <th class="span1">Total</th>
 		                  <th class="span1">ETA</th>
-		                  <th class="span2">Status</th>
-		                  <th class="span3">Progress</th>
-		                  <th class="span1"></th>
+		                  <th class="span1">Status</th>
+		                  <th class="span2">Progress</th>
+		                  <th class="span2">Mutators</th>
 		              </tr>
 		          </thead>
-		          <tbody id="torrent-done">
+		          <tbody id="torrent-finished">
 		          </tbody>
 	    	  </table>
           </div>
@@ -153,18 +178,21 @@
               <table class="table table-striped table-hover table-condensed table-responsive table-bordered">
 		          <thead class="pt-thead">
 		              <tr>
-		                  <th>File</th>
-		                  <th class="span3">Download Dir</th>
+		                  <th class="span3">File</th>
+		                  <th class="span2">Download Directory</th>
 		                  <th class="span1">Ratio</th>
+		                  <th class="span1">Left</th>
+		                  <th class="span1">Total</th>
 		                  <th class="span1">ETA</th>
-		                  <th class="span2">Status</th>
-		                  <th class="span3">Progress</th>
-		                  <th class="span1"></th>
+		                  <th class="span1">Status</th>
+		                  <th class="span2">Progress</th>
+		                  <th class="span2">Mutators</th>
 		              </tr>
 		          </thead>
 		          <tbody id="torrent-error">
 		          </tbody>
 	    	  </table>
           </div>
+      <i class="icon-spinner icon-spin spinner"></i>
     </div>
 </div>

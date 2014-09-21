@@ -352,19 +352,8 @@ ${arts}
         &nbsp;&nbsp;
         <i class='icon-upload'></i>
             %s
+            &nbsp;&nbsp;&nbsp;&nbsp;connected:&nbsp;%s&nbsp;&nbsp;seeds:&nbsp;%s&nbsp;&nbsp;leach:&nbsp;%s
         </small>
-    </td>
-    <td>
-        %s
-    </td>
-    <td>
-        %s
-    </td>
-    <td>
-        %s
-    </td>
-    <td>
-        %s
     </td>
     <td>
         %s
@@ -408,7 +397,7 @@ ${arts}
 
     vars['trans_reannounce'] = "<a href='/transmission/reannounce/%s' title='Ask Tracker For More Peers' class='btn btn-mini torrent-action'><i class='icon-microphone'></i></a>"
 
-    vars['trans_files'] = "<a href='/transmission/files/%s' title='Edit Files' class='btn btn-mini torrent-files'><i class='icon-copy'></i></a>"
+    vars['trans_files'] = "<a href='/transmission/files/%s' title='Edit %s Files' class='btn btn-mini torrent-files'><i class='icon-copy'></i></a>"
 
     vars['trans_error'] = "<button title='Click for Error Message' class='btn btn-mini btn-danger torrent-error' message='%s'><i class='icon-warning-sign'></i></button>"
 
