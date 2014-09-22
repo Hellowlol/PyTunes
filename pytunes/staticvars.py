@@ -342,7 +342,7 @@ ${arts}
     """
     vars['trans_row'] = """
 <tr>
-    <td class='torr-id'>
+    <td>
         <a href='#' class='show-torr' torr-id='%s'>
             %s
         </a>
@@ -376,6 +376,7 @@ ${arts}
     <td>
         <div class = 'progress %s'>
             <div class='bar' style='width:%s;'></div>
+            <span><b>%s</b></span>
         </div>
     </td>
     <td>

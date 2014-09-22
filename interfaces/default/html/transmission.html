@@ -15,7 +15,7 @@
           <div class="form-inline">
     <form  id="add_trans_form" method="post" class="form-inline pull-right" action="" style="">
 			<button class="btn" id="trans_pause_button"><i class="icon-pause"></i> Pause</button>
-            <input type="text" class="span1" id="nzb_get_speed" placeholder="200 Kb/s" value="" />
+            <input type="text" class="span1" id="nzb_get_speed" placeholder="" value="" />
             <button class="btn" id="nzb_set_speed"><i class="icon-cog"></i> Set speed</button>&nbsp;
             <a class="btn dropdown-toggle" data-toggle="dropdown" href="#"><i class="icon-wrench"> </i><span class="caret"></span></a>
             <ul class="dropdown-menu">
@@ -34,7 +34,7 @@
           <li class="active"><a href="#all" data-toggle="tab"><i class="icon-all"></i> All</a></li>
           <li><a href="#downloading" data-toggle="tab"><i class="icon-download"></i> Downloading</a></li>
           <li><a href="#seeding" data-toggle="tab"><i class="icon-upload"></i> Seeding</a></li>
-          <li><a href="#queued" data-toggle="tab"><i class="icon-cogs"> </i>Queued</a></li>
+          <li><a href="#queued" data-toggle="tab"><strong><sm><sm>/</sm>/</sm>/</strong> Queued</a></li>
           <li><a href="#paused" data-toggle="tab"><i class="icon-pause"></i> Paused</a></li>
           <li><a href="#stalled" data-toggle="tab"><i class="icon-thumbs-down"></i> Stalled</a></li>
           <li><a href="#finished" data-toggle="tab"><i class="icon-thumbs-up"></i> Finished</a></li>
@@ -42,7 +42,7 @@
       </ul>
       <div class="tab-content">
           <div id="all" class="tab-pane active">
-		      <table class="table table-striped table-hover table-condensed table-responsive table-bordered">
+		      <table class="table table-striped table-hover table-condensed table-responsive table-bordered torr-table">
 		          <thead class="pt-thead">
 		              <tr>
 		                  <th class="span3">File</th>

@@ -134,7 +134,7 @@ class Transmission:
                     buttons = '%s%s' % (html('trans_remove') % torrent['id'], html('trans_remove_data') % str(torrent['id']))
                     status_out = html('trans_error') % torrent['errorString']
                 if filter == 'All' or filter == status:
-                    table.append(html('trans_row') % (torrent['id'], torrent['name'], dlrate, ulrate, torrent['peersConnected'], torrent['peersSendingToUs'], torrent['peersGettingFromUs'], categories, ratio, left, total, eta, status_out, bars[status], barwidth, buttons))
+                    table.append(html('trans_row') % (torrent['id'], torrent['name'], dlrate, ulrate, torrent['peersConnected'], torrent['peersSendingToUs'], torrent['peersGettingFromUs'], categories, ratio, left, total, eta, status_out, bars[status], barwidth, barwidth, buttons))
             #print table
             return ''.join(table).replace("\n", "")
         else:
