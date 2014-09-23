@@ -134,8 +134,7 @@ class Transmission:
                     buttons = '%s%s' % (html('trans_remove') % torrent['id'], html('trans_remove_data') % str(torrent['id']))
                     status_out = html('trans_error') % torrent['errorString']
                 if filter == 'All' or filter == status:
-                    table.append(html('trans_row') % (torrent['id'], torrent['name'], dlrate, ulrate, torrent['peersConnected'], torrent['peersSendingToUs'], torrent['peersGettingFromUs'], categories, ratio, left, total, eta, status_out, bars[status], barwidth, barwidth, buttons))
-            #print table
+                    table.append(html('trans_row') % (torrent['id'], torrent['name'], dlrate, ulrate, torrent['peersConnected'], torrent['peersSendingToUs'], torrent['peersGettingFromUs'], categories, ratio, total, eta, left, status_out, bars[status], barwidth, barwidth, buttons))
             return ''.join(table).replace("\n", "")
         else:
             return '<tr><td>Queue is Empty</td></tr>'
@@ -144,7 +143,10 @@ class Transmission:
     @require()
     @cherrypy.tools.json_out()
     def stats(self):
-        return self.fetch('session-stats')
+        stats = self.fetch('session-stats')
+        session = self.fetch('session-get')
+        cats = {'up': session['arguments']['speed-limit-up'], 'down': session['arguments']['speed-limit-down']}
+        return stats
 
     @require()
     def get_cats(self):
@@ -264,7 +266,7 @@ class Transmission:
     @cherrypy.tools.json_out()
     def ChangeCat(self, id, dir):
         print id, dir
-        return self.fetch('torrent-set-location', {'ids': int(id), 'location': dir, 'move': True})
+        return self.fetch('torrent-set-location', {'ids': int(id), 'location': dir, 'move': False})
 
     @cherrypy.expose()
     @require()

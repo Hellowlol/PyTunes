@@ -365,10 +365,7 @@ ${arts}
         %s
     </td>
     <td>
-        %s
-    </td>
-    <td>
-        %s
+        %s&nbsp;/&nbsp;%s
     </td>
     <td>
         %s
