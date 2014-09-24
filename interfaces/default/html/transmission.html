@@ -13,7 +13,7 @@
           </strong></big></big>
         </div><br>
           <div class="form-inline">
-    <form  id="add_trans_form" method="post" class="form-inline pull-right" action="" style="">
+    <form  id="add_trans_form" method="post" class="form-inline pull-right" action="/transmission/to_client2" style="">
 			<button class="btn" id="trans_pause_button"><i class="icon-pause"></i> Pause</button>
             <input type="text" class="span1" id="nzb_get_speed" placeholder="" value="" />
             <button class="btn" id="nzb_set_speed"><i class="icon-cog"></i> Set speed</button>&nbsp;
@@ -24,9 +24,9 @@
               <li><a href="#" id="transmission-stop-all" data-action="stop">Pause all</a></li>
             </ul>
         </form>
-		<form action="transmission/to_client2" enctype="multipart/form-data" method="post"class="form-inline pull-right">
-			<input name="file" type="file" size="30"style="color:#000; background:#ddd"/>
-			<input type="button" class="btn btn-primary upload" value="Upload" />
+		<form id="add-torr" name="add-torr" action="/transmission/to_client2" enctype="multipart/form-data" method="post" class="form-inline pull-right">
+			<input id="torr-files" type="file" size="30"style="color:#000; background:#ddd" multiple />
+			<button id="add-torr-button" type="submit" class="btn btn-primary upload">Upload</button>
 		</form>
 </div>
 </div><br><br>

@@ -5,55 +5,56 @@ def get_var(var):
 
     vars = {}
     vars['movienfo'] = """
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <movie>
-    <title>${title}</title>
-    <originaltitle>${originaltitle}</originaltitle>
-    <sorttitle></sorttitle>
-    <set>${setname}</set>
-    <setthumb>${setthumb}</setthumb>
-    <setfanart>${setfanart}</setfanart>
-    <rating>${rating}</rating>
-    <year>${year}</year>
-    <top250>${top250}</top250>
-    <votes>${votes}</votes>
-    <outline>${outline}</outline>
-    <plot>${plot}</plot>
-    <tagline>${tagline}</tagline>
-    <runtime>${runtime}</runtime> //runtime in minutes
-${thumbs}
+    <title>%s</title>
+    <originaltitle>%s</originaltitle>
+    <sorttitle>%s</sorttitle>
+    <set>%s</set>
+    <setthumb>%s</setthumb>
+    <setfanart>%s</setfanart>
+    <rating>%s</rating>
+    <year>%s</year>
+    <top250>%s</top250>
+    <votes>%s</votes>
+    <outline>%s</outline>
+    <plot>%s</plot>
+    <tagline>%s</tagline>
+    <runtime>%s</runtime> //runtime in minutes
+%s      //thumbs
     <fanart>
-${fanarts}
+%s
     </fanart>
-    <mpaa>${mpaa}</mpaa>
+    <mpaa>%s</mpaa>
     <playcount>0</playcount>
     <id>${imdb}</id>
     <filenameandpath></filenameandpath>
-${trailers}
+%s     //trailers
     <genre>${genre}</genre>
     <credits></credits>
     <fileinfo>
         <streamdetails>
             <video>
-                <codec>${vcodec}</codec>
-                <aspect>$aspect}</aspect>
-                <width>${width}</width>
-                <height>${height}</height>
+                <codec>%s</codec>
+                <aspect>%s</aspect>
+                <width>%s</width>
+                <height>%s</height>
             </video>
             <audio>
-                <codec>${acodec}</codec>
+                <codec>%s</codec>
                 <language></language>
-                <channels>${channels}</channels>
+                <channels>%s</channels>
             </audio>
             <subtitle>
                 <language></language>
             </subtitle>
         </streamdetails>
     </fileinfo>
-    <director>${director}</director>
-    <writer>${writer}</writer>
-${actors}
+    <director>%s</director>
+    <writer>%s</writer>
+%s      //actors
     <art>
-${arts}
+%s      //arts
     </art>
 </movie>
     """

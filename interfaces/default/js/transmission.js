@@ -14,30 +14,48 @@ $(document).ready(function () {
         $('.spinner').show();
         getTorrents();
     });
-	$(':button').click(function(){
-		var formData = new FormData($('form')[0]);
-		$.ajax({
-			url: '/transmission/to_client2',  //Server script to process data
-			type: 'POST',
-			xhr: function() {  // Custom XMLHttpRequest
-				var myXhr = $.ajaxSettings.xhr();
-				if(myXhr.upload){ // Check if upload property exists
-					myXhr.upload.addEventListener('progress',progressHandlingFunction, false); // For handling the progress of the upload
-				}
-				return myXhr;
-			},
-			//Ajax events
-			//beforeSend: beforeSendHandler,
-			//success: completeHandler,
-			//error: errorHandler,
-			// Form data
-			data: formData,
-			//Options to tell jQuery not to process data or worry about content-type.
-			cache: false,
-			contentType: false,
-			processData: false
-		});
-	});
+	var form = document.getElementById('add-torr');
+	form.onsubmit = function(upload){
+		upload.preventDefault();
+		var uploadButton = document.getElementById('upload-torr-button');
+        var data = new FormData();
+        //var data;
+        jQuery.each($('#torr-files')[0].files, function(i, file) {
+            data.append('file-'+i, file);
+            //data += 'file-'+i + file.text;
+            //alert(data);
+        });
+        //var request = new XMLHttpRequest();
+        //request.open("POST", "/transmission/to_client2");
+        //request.send(data);
+        $.ajax({
+            url: "/transmission/to_client2",
+            type: "POST",
+            data: $("#add-torr").serialize(),
+            success: function(response){
+                alert(response);
+            },
+            error: function(){
+                alert("error in ajax form submission");
+            }
+        });
+		//alert($('#torr-files').val.text);
+        //$.ajax({
+        //    url: '/transmission/to_client2',
+        //    data: data,
+        //    dataType: 'json',
+        //    cache: false,
+        //    contentType: false,
+        //    processData: false,
+        //    type: 'POST',
+        //    success: function(response){
+        //        alert(response);
+        //    },
+        //    error: function(){
+        //        alert("error in ajax form submission");
+        //    }
+        //});	
+    };
 });
 
 /**

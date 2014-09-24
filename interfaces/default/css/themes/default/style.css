@@ -61,7 +61,7 @@ h2
 }
 .spinner {
     display: none;
-    background: url('../img/loader.gif') 50% 50% no-repeat;
+    background: url('../img/spinner.png') 50% 50% no-repeat;
     height: 40px;
 }
 .spinner-inline {

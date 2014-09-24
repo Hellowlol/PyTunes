@@ -238,12 +238,13 @@ class Transmission:
     #For torrent upload have to be base 64 encode
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def to_client2(self, info):
+    def to_client2(self, data):
+        print 'info: ', data
         try:
             self.logger.info('Added torrent info to Transmission from file')
             return self.fetch('torrent-add', {'metainfo': info})
         except Exception as e:
-            self.logger.debug('Failed to add torrent %s file to Transmission %s' % (info, e))
+            self.logger.error('Failed to add torrent %s file to Transmission %s' % (info, e))
 
     @cherrypy.expose()
     @require()

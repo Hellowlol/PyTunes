@@ -129,7 +129,8 @@ def procpics(destdir, info):
                 i += 1
     if info['posters']:    
         name, ext = os.path.splitext(info['posters'][0])            
-        download(info['posters'][0], '%s/folder%s' (destdir, ext))
+        download(info['posters'][0], '%s/folder%s' % (destdir, ext))
+        #download(info['posters'][0], '%s/movie' % (destdir, ext))
         if len(info['posters']) > 1:    
             i = 1
             dldir = '%s/posters' % destdir
@@ -252,6 +253,7 @@ def process():
     for path in paths:
         match = 0
         matches = {}
+        #need to open folder here.
         if not os.path.isfile(path):
               continue
         fileName, fileExtension = os.path.splitext(path)
