@@ -341,6 +341,10 @@ def get_var(var):
 </tr>
 
     """
+    vars['trans_queuetop'] = "<a href='/transmission/Queue_Move?id=%s&pos=%s' class='queue btn btn-mini torrent-action' title='Move to Top'><i class='icon-long-arrow-up'></i></a>"
+    vars['trans_queueup'] = "<a href='/transmission/Queue_Move?id=%s&pos=%s' class='queue btn btn-mini torrent-action' title='Move Up 1 Level'><i class='icon-level-up'></i></a>"
+    vars['trans_queuedown'] = "<a href='/transmission/Queue_Move?id=%s&pos=%s' class='queue btn btn-mini torrent-action' title='Move Down 1 Level'><i class='icon-level-down'></i></a>"
+    vars['trans_queuebottom'] = "<a href='/transmission/Queue_Move?id=%s&pos=%s' class='queue btn btn-mini torrent-action' title='Move to Bottom'><i class='icon-long-arrow-down'></i></a>"
     vars['trans_row'] = """
 <tr>
     <td>

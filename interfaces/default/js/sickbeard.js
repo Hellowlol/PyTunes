@@ -32,32 +32,15 @@ function loadShows() {
     $.ajax({
         url: WEBDIR + 'sickbeard/GetShowList',
         type: 'get',
-        dataType: 'json',
+        dataType: 'text',
         success: function (result) {
-            if (result.data.length === 0) {
-                var row = $('<tr>');
-                row.append($('<td>').html('No shows found'));
-                $('#tvshows_table_body').append(row);
-            }
-            $.each(result.data, function (showname, tvshow) {
-                var name = $('<a>').attr('href', WEBDIR + 'sickbeard/view/' + tvshow.tvdbid).text(showname);
-                var row = $('<tr>');
-                row.append(
-                $('<td>').html(name),
-                $('<td>').html(sickbeardStatusLabel(tvshow.status)),
-                $('<td>').html(tvshow.next_ep_airdate),
-                $('<td>').html(tvshow.network),
-                $('<td>').html(sickbeardStatusLabel(tvshow.quality)));
-                $('#tvshows_table_body').append(row);
-            });
-            //$('#tvshows_table_body').parent().trigger('update');
-            //$('#tvshows_table_body').parent().trigger("sorton", [
-            //$('.tvshows_table').parent().trigger('update');
-            //$('.tvshows_table').parent().trigger("sorton", [
-            //    [
-            //        [0, 1]
-            //    ]
-            //]);
+            //alert(result);
+            //if (result.data.length === 0) {
+            //    var row = $('<tr>');
+            //    row.append($('<td>').html('No shows found'));
+            //    $('#tvshows_table_body').append(row);
+            //}
+            $('#tvshows_table_body').append(result);
         }
     });
 }

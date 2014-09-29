@@ -98,14 +98,10 @@ class Transmission:
                 ulrate = self.sizeof(torrent['rateUpload'])
                 total = self.sizeof(torrent['totalSize'])
                 left = self.sizeof(torrent['leftUntilDone'])
-                trans_queuetop = "<a href='/transmission/Queue_Move?id=%s&pos=%s' class='queue btn btn-mini torrent-action' title='Move to Top'><i class='icon-long-arrow-up'></i></a>"
-                trans_queueup = "<a href='/transmission/Queue_Move?id=%s&pos=%s' class='queue btn btn-mini torrent-action' title='Move Up 1 Level'><i class='icon-level-up'></i></a>"
-                trans_queuedown = "<a href='/transmission/Queue_Move?id=%s&pos=%s' class='queue btn btn-mini torrent-action' title='Move Down 1 Level'><i class='icon-level-down'></i></a>"
-                trans_queuebottom = "<a href='/transmission/Queue_Move?id=%s&pos=%s' class='queue btn btn-mini torrent-action' title='Move to Bottom'><i class='icon-long-arrow-down'></i></a>"
-                queuetop = trans_queuetop % (torrent['id'], '0')
-                queueup = trans_queueup % (torrent['id'], str(torrent['queuePosition'] - 1))
-                queuedown = trans_queuedown % (torrent['id'], str(torrent['queuePosition'] + 1))
-                queuebottom = trans_queuebottom % (torrent['id'], str(count - 1))
+                queuetop = html('trans_queuetop') % (torrent['id'], '0')
+                queueup = html('trans_queueup') % (torrent['id'], str(torrent['queuePosition'] - 1))
+                queuedown = html('trans_queuedown') % (torrent['id'], str(torrent['queuePosition'] + 1))
+                queuebottom = html('trans_queuebottom') % (torrent['id'], str(count - 1))
                 if torrent['queuePosition'] == 0:
                     queuepos = '%s%s' % (queuedown, queuebottom)
                 elif torrent['queuePosition'] == count - 1:

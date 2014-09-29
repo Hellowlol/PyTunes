@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
+from __future__ import division
 import cherrypy
 import pytunes
 from urllib import quote
@@ -9,7 +10,6 @@ from json import loads
 import logging
 import cgi
 from cherrypy.lib.auth2 import require
-
 
 class Sickbeard:
     def __init__(self):
@@ -68,32 +68,55 @@ class Sickbeard:
     @cherrypy.tools.json_out()
     def GetShowList(self):
         self.logger.debug("Fetching Shows list")
+        sb_table = []
+        sb_table_out = []
         list = self.fetch('shows&sort=name')
-        print list
+        sb_row = "<tr><td><a href='/sickbeard/view/%s'>%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td title='Downloaded/Snatched/Wanted/Skipped/Ignored/Unaired/Total'>%s</td><td><div class='progress span2'><div class='bar bar-success' style='width: %s%s;'></div><div class='bar bar-warning' style='width: %s%s;'></div></div></td></tr>"
+        #print list
         for show in list['data']:
-            print show
+            showlist = {}
+            showlist['show'] = show
             if show[:4] == 'The ':
-                print show[4:]
+                showlist['sortshow'] = show[4:]
             else:
-                print show
+                showlist['sortshow'] = show
+            #showlist['sortshow'] = shortshow
             #print show['status']
             #print show['network']
             #print show['quality']
-            #print show['tvdbid']
-            print list['data'][show]['status']
-            print list['data'][show]['network']
-            print list['data'][show]['quality']
-            print list['data'][show]['tvdbid']
+            showlist['nextair'] = list['data'][show]['next_ep_airdate']
+            showlist['status'] = list['data'][show]['status']
+            showlist['network'] = list['data'][show]['network']
+            showlist['quality'] = list['data'][show]['quality']
+            showlist['tvdbid'] = list['data'][show]['tvdbid']
             sdata = self.fetch('show.stats&tvdbid=%s' % list['data'][show]['tvdbid'])
-            print sdata
+            #print sdata
             if sdata['message']:
-                print sdata['message']
+                print sdata['message'], show
                 #log it and put error on prog bar
                 continue
-            print sdata['data']['downloaded']['total']
-            print sdata['data']['total']
-            print ''
-        return self.fetch('shows&sort=name')
+            showlist['downloaded'] = sdata['data']['downloaded']['total']
+            showlist['snatched'] = sdata['data']['snatched']['total']
+            showlist['total'] = sdata['data']['total']
+            showlist['unaired'] = sdata['data']['unaired']
+            showlist['wanted'] = sdata['data']['wanted']
+            showlist['ignored'] = sdata['data']['ignored']
+            showlist['skipped'] = sdata['data']['skipped']
+            showlist['stats'] = '%s/%s/%s/%s/%s/%s/%s' % (showlist['downloaded'], showlist['snatched'], showlist['wanted'], showlist['skipped'], showlist['ignored'], showlist['unaired'], showlist['total'])
+            downloaded = 0
+            snatched = 0
+            if showlist['total']:
+                showlist['downloaded'] = 100*(showlist['downloaded']/showlist['total'])
+                showlist['snatched'] = 100*(showlist['snatched']/showlist['total'])
+            print downloaded, snatched
+            #print stats
+            sb_table.append(showlist)
+        for showrow in sorted(sb_table, key=lambda k: k['sortshow']):
+            sb_table_out.append(sb_row % (showrow['tvdbid'], showrow['show'], showrow['status'], showrow['nextair'], showrow['network'], showrow['quality'], showrow['stats'], showrow['downloaded'], '%', showrow['snatched'], '%'))
+        #print ''.join(sb_table_out)
+        return ''.join(sb_table_out)
+            
+        #return self.fetch('shows&sort=name')
 
     @cherrypy.expose()
     @require()
