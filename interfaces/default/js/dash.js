@@ -19,11 +19,11 @@ $(document).ready(function () {
 function loadStats() {
     if (!$('#stats-table').length) return;
     $.ajax({
-        'url': WEBDIR + 'stats/Dash',
+        url: WEBDIR + 'stats/Dash',
         type: 'get',
-            'dataType': 'json',
-            'success': function (data) {
-            //alert("Stats: " + data['bar']);
+        dataType: 'json',
+        timeout: 120000,
+        success: function (data) {
             if (data === null) return;
             $('#stats-table').append(data['bar']);
             $('#stats-table').show();
@@ -34,11 +34,11 @@ function loadStats() {
 function loadYify() {
     if (!$('#yify-carousel').length) return;
     $.ajax({
-        'url': WEBDIR + 'yify/Carousel',
+        url: WEBDIR + 'yify/Carousel',
         type: 'get',
-            'dataType': 'html',
-            'success': function (data) {
-            //alert("Yify: " + data);
+        dataType: 'html',
+        timeout: 120000,
+        success: function (data) {
             if (data === null) return;
             $('#yify-carousel-inner').append(data);
             $('#yify-carousel').show();
@@ -49,26 +49,26 @@ function loadYify() {
 function loadTopRated() {
     if (!$('#toprated-carousel').length) return;
     $.ajax({
-        'url': WEBDIR + 'manager/Carousel?carousel=toprated&page=1',
+        url: WEBDIR + 'manager/Carousel?carousel=toprated&page=1',
         type: 'get',
-            'dataType': 'html',
-            'success': function (data) {
-            //alert("Toprated: " + data);
+        dataType: 'html',
+        timeout: 120000,
+        success: function (data) {
             if (data === null) return;
             $('#toprated-carousel .carousel-inner').append(data);
             $('#toprated-carousel').show();
-        }
+       }
     });
 }
 
 function loadTopRatedTV() {
     if (!$('#topratedtv-carousel').length) return;
     $.ajax({
-        'url': WEBDIR + 'manager/Carousel?carousel=topratedtv&page=1',
+        url: WEBDIR + 'manager/Carousel?carousel=topratedtv&page=1',
         type: 'get',
-            'dataType': 'html',
-            'success': function (data) {
-            //alert("TopratedTV: " + data);
+        dataType: 'html',
+        timeout: 120000,
+        success: function (data) {
             if (data === null) return;
             $('#topratedtv-carousel .carousel-inner').append(data);
             $('#topratedtv-carousel').show();
@@ -79,11 +79,11 @@ function loadTopRatedTV() {
 function loadInTheaters() {
     if (!$('#theaters-carousel').length) return;
     $.ajax({
-        'url': WEBDIR + 'manager/Carousel?carousel=theaters&page=1',
+        url: WEBDIR + 'manager/Carousel?carousel=theaters&page=1',
         type: 'get',
-            'dataType': 'html',
-            'success': function (data) {
-            //alert("Theaters: " + data);
+        dataType: 'html',
+        timeout: 120000,
+        success: function (data) {
             if (data === null) return;
             $('#theaters-carousel .carousel-inner').append(data);
             $('#theaters-carousel').show();
@@ -96,9 +96,9 @@ function loadUpcomingMovies() {
     $.ajax({
         'url': WEBDIR + 'manager/Carousel?carousel=upcoming&page=1',
         type: 'get',
-            'dataType': 'html',
-            'success': function (data) {
-            //alert("Upcoming: " + data);
+        dataType: 'html',
+        timeout: 120000,
+        success: function (data) {
             if (data === null) return;
             $('#upcoming-carousel .carousel-inner').append(data);
             $('#upcoming-carousel').show();
@@ -109,11 +109,11 @@ function loadUpcomingMovies() {
 function loadPopular() {
     if (!$('#popular-carousel').length) return;
     $.ajax({
-        'url': WEBDIR + 'manager/Carousel?carousel=popular&page=1',
+        url: WEBDIR + 'manager/Carousel?carousel=popular&page=1',
         type: 'get',
-            'dataType': 'html',
-            'success': function (data) {
-            //alert("Popular: " + data);
+        dataType: 'html',
+        timeout: 120000,
+        success: function (data) {
             if (data === null) return;
             $('#popular-carousel .carousel-inner').append(data);
             $('#popular-carousel').show();
@@ -124,11 +124,11 @@ function loadPopular() {
 function loadPopularTV() {
     if (!$('#populartv-carousel').length) return;
     $.ajax({
-        'url': WEBDIR + 'manager/Carousel?carousel=populartv&page=1',
+        url: WEBDIR + 'manager/Carousel?carousel=populartv&page=1',
         type: 'get',
-            'dataType': 'html',
-            'success': function (data) {
-            //alert("PopularTV: " + data);
+        dataType: 'html',
+        timeout: 120000,
+        success: function (data) {
             if (data === null) return;
             $('#populartv-carousel .carousel-inner').append(data);
             $('#populartv-carousel').show();

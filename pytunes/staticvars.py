@@ -66,16 +66,7 @@ def get_var(var):
         <thumb>%s</thumb>
     </actor> 
     """
-    vars['carousel_item'] = "<div class='item carousel-item' style='background-image: url(\"/xbmc/GetThumb?h=240&w=430&thumb=http://image.tmdb.org/t/p/original%s\")'><div class='carousel-caption'><h4>%s (%s)</h4></div></div>"
-    
-    vars['carousel_item2'] = """
-<div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=http://image.tmdb.org/t/p/original%s')">
-    <div class='carousel-caption'>
-        <h4>%s (%s)</h4>
-            <b>Rating</b>: 
-    </div>
-</div> 
-    """
+    vars['carousel_item'] = """<div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=http://image.tmdb.org/t/p/original%s')"><div class="carousel-caption"><h4>%s (%s)</h4></div></div>"""
 
     vars['tmdb_movie_modal_middle'] = """
             <div>
@@ -440,8 +431,6 @@ def get_var(var):
     vars['tmdb_thumb_item'] = """<li class="pull-left" title="%s"><a href="#" id="%s" class="tmdb"><img class="thumbnail" src="/manager/GetThumb?w=100&h=150&thumb=%s"></img><h6 class="title">%s</h6></a></li>"""
 
     vars['yify_thumb_item'] = """<li title="%s"><a href="#" id="%s" class="yify"><img src="/manager/GetThumb?w=100&h=150&thumb=%s"></img><h6 class="title">%s</h6></a></li>"""
-
-    vars['carousel_item'] = """<div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=http://image.tmdb.org/t/p/original%s')"><div class="carousel-caption"><h4>%s (%s)</h4></div></div>"""
 
     vars['trailer_button'] = '<div class="btn-group"><button id="youtube" ytid="%s" class="btn btn-primary">Trailer</button></div>'
 
