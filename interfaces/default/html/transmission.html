@@ -32,7 +32,7 @@
 </div><br><br>
 	<div class="tabbable tabs-left">	
       <ul class="nav nav-tabs">
-          <li class="active"><a href="#all" data-toggle="tab"><i class="icon-all"></i> All</a></li>
+          <li class="active"><a href="#all" data-toggle="tab"><i class="icon-globe"></i> All</a></li>
           <li><a href="#downloading" data-toggle="tab"><i class="icon-download"></i> Downloading</a></li>
           <li><a href="#seeding" data-toggle="tab"><i class="icon-upload"></i> Seeding</a></li>
           <li><a href="#queued" data-toggle="tab"><i class="icon-chevron-right"></i><i class="icon-chevron-right"></i> Queued</a></li>
@@ -40,6 +40,7 @@
           <li><a href="#stalled" data-toggle="tab"><i class="icon-thumbs-down"></i> Stalled</a></li>
           <li><a href="#finished" data-toggle="tab"><i class="icon-thumbs-up"></i> Finished</a></li>
           <li><a href="#error" data-toggle="tab"><i class="icon-warning-sign"></i> Error</a></li>
+          <li><a href="#config" data-toggle="tab"><i class="icon-warning-sign"></i> Config</a></li>
       </ul>
       <div class="tab-content">
           <div id="all" class="tab-pane active">
@@ -186,7 +187,14 @@
 		          </tbody>
 	    	  </table>
           </div>
+          <div id="config" class="tab-pane span9 container-fluid well"><br><br>
+                <form action="/transmission/SaveConfig">
+                    <div class="row-fluid">
+                        <div class="span1 offset6">Test</div> 
+                    </div>
+                </form>
+          </div>
         </div>
-      <i class="icon-spinner icon-spin spinner"></i>
+        <div class="center-icon"><i class="icon-spinner icon-spin icon-4x spinner"></i></div>
     </div>
 </div>

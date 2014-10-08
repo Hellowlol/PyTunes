@@ -1,9 +1,15 @@
 $(document).ready(function () {
     $(window).trigger('hashchange');
-    loadShows();
-    loadNextAired();
-    loadSickbeardHistory(25);
-    loadLogs();
+    loadTab();
+
+    // Load data on tab display
+    $('a[data-toggle="tab"]').click(function (e) {
+        $('#search').val('');
+        searchString = '';
+    }).on('shown', loadTab);
+
+    $(window).trigger('hashchange');
+
 
     $('#restart').click(function () {
         restartSB();
@@ -28,19 +34,31 @@ $(document).ready(function () {
 
 });
 
+function loadTab() {
+    if ($('#tvshows').is(':visible')) {
+        loadShows();
+    } 
+    else if ($('#nextaired').is(':visible')) {
+        loadNextAired();
+    } 
+    else if ($('#history').is(':visible')) {
+        loadSickbeardHistory(25);
+    } 
+    else if ($('#logs').is(':visible')) {
+        loadLogs();
+    } 
+    $('.spinner').hide();
+}
+
 function loadShows() {
+    $('.spinner').show();
     $.ajax({
         url: WEBDIR + 'sickbeard/GetShowList',
         type: 'get',
         dataType: 'text',
         success: function (result) {
-            //alert(result);
-            //if (result.data.length === 0) {
-            //    var row = $('<tr>');
-            //    row.append($('<td>').html('No shows found'));
-            //    $('#tvshows_table_body').append(row);
-            //}
             $('#tvshows_table_body').append(result);
+            $('.spinner').hide();
         }
     });
 }
@@ -98,6 +116,7 @@ function loadShow(tvdbid) {
 }
 
 function loadNextAired(options) {
+    $('.spinner').show();
     var defaults = {
         limit: 0
     };
@@ -165,6 +184,7 @@ function loadNextAired(options) {
 }
 
 function loadSickbeardHistory(limit) {
+    $('.spinner').show();
     $.ajax({
         url: WEBDIR + 'sickbeard/GetHistory?limit=' + limit,
         type: 'get',
@@ -193,6 +213,7 @@ function loadSickbeardHistory(limit) {
 }
 
 function loadLogs() {
+    $('.spinner').show();
     $.ajax({
         url: WEBDIR + 'sickbeard/GetLogs',
         type: 'get',

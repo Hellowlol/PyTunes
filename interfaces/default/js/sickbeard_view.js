@@ -7,6 +7,11 @@ $(document).ready(function () {
     $("#ckbCheckAll").click(function () {
         $(".checkBoxClass").prop('checked', $(this).prop('checked'));
     });
+    $("form").submit(function (e) {
+        e.preventDefault();
+        //var data = $("#statusform").serialize();
+        alert($("form").serialize());
+    });
 });
 
 function loadShowData(showid){

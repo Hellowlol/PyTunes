@@ -141,8 +141,16 @@ class Transmission:
     def stats(self):
         stats = self.fetch('session-stats')
         session = self.fetch('session-get')
-        cats = {'up': session['arguments']['speed-limit-up'], 'down': session['arguments']['speed-limit-down']}
+        speed = {'up': session['arguments']['speed-limit-up'], 'down': session['arguments']['speed-limit-down']}
         return stats
+
+    @cherrypy.expose()
+    @require()
+    @cherrypy.tools.json_out()
+    def session(self):
+        session = self.fetch('session-get')
+        cats = {'up': session['arguments']['speed-limit-up'], 'down': session['arguments']['speed-limit-down']}
+        return session
 
     @require()
     def get_cats(self):

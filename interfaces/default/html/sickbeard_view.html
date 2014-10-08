@@ -41,8 +41,8 @@
 
         <div class="page-header">
 Change selected episodes to 
-<form>
-<select id="statusSelect">
+<form id="#statusform">
+<select id="status">
     <option value="wanted">
         Wanted
     </option>
@@ -58,8 +58,10 @@ Change selected episodes to
 
 </select>
 <input id="showID" type="hidden" value="84947"></input>
-<input id="changeStatus" class="btn" type="button" value="Go"></input>
-                 <div class="btn-group show-options-menu pull-right">
+<input id="changeStatus" class="btn" type="submit" value="Go"></input>
+<input id='CheckAll' type='checkbox' checked=0 />
+</form>
+                <div class="btn-group show-options-menu pull-right">
                 <a class="btn btn-primary dropdown-toggle" data-toggle="dropdown" href="#">
                     <i class="icon-wrench"></i>&nbsp;<i class="caret"></i>
                 </a>
@@ -93,7 +95,7 @@ Change selected episodes to
                 </tr>
             </thead>
             <tbody id="season-content"></tbody>
-        </table></form>
-        <i class="icon-spinner icon-spin spinner"></i>
+        </table><!--</form>-->
+        <div class="center-icon"><i class="icon-spinner icon-spin icon-4x spinner"></i></div>
     </div>
 </div>

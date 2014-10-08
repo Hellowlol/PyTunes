@@ -71,7 +71,7 @@ class Sickbeard:
         sb_table = []
         sb_table_out = []
         list = self.fetch('shows&sort=name')
-        sb_row = "<tr><td><a href='/sickbeard/view/%s'>%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td title='Downloaded/Snatched/Wanted/Skipped/Ignored/Unaired/Total'>%s</td><td><div class='progress span2'><div class='bar bar-success' style='width: %s%s;'></div><div class='bar bar-warning' style='width: %s%s;'></div></div></td></tr>"
+        sb_row = "<tr><td><a href='/sickbeard/view/%s'>%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td title='Downloaded/Snatched/Wanted/Skipped/Ignored/Unaired/Total'>%s</td><td><div class='progress span2'><div class='bar bar-success' style='width: %s%s;' title='%s Downloaded'></div><div class='bar bar-warning' style='width: %s%s;'title='%s Snatched'></div></div></td></tr>"
         #print list
         for show in list['data']:
             showlist = {}
@@ -103,16 +103,24 @@ class Sickbeard:
             showlist['ignored'] = sdata['data']['ignored']
             showlist['skipped'] = sdata['data']['skipped']
             showlist['stats'] = '%s/%s/%s/%s/%s/%s/%s' % (showlist['downloaded'], showlist['snatched'], showlist['wanted'], showlist['skipped'], showlist['ignored'], showlist['unaired'], showlist['total'])
-            downloaded = 0
-            snatched = 0
+            showlist['percent_downloaded'] = 0
+            showlist['percent_snatched'] = 0
             if showlist['total']:
-                showlist['downloaded'] = 100*(showlist['downloaded']/showlist['total'])
-                showlist['snatched'] = 100*(showlist['snatched']/showlist['total'])
-            print downloaded, snatched
+                showlist['percent_downloaded'] = 100*(showlist['downloaded']/showlist['total'])
+                showlist['percent_snatched'] = 100*(showlist['snatched']/showlist['total'])
+            #print downloaded, snatched
             #print stats
             sb_table.append(showlist)
         for showrow in sorted(sb_table, key=lambda k: k['sortshow']):
-            sb_table_out.append(sb_row % (showrow['tvdbid'], showrow['show'], showrow['status'], showrow['nextair'], showrow['network'], showrow['quality'], showrow['stats'], showrow['downloaded'], '%', showrow['snatched'], '%'))
+            if showrow['status'] == 'Continuing':
+                status = "<span class='label label-success'><i class='icon-repeat icon-white' /> %s</span>" % showrow['status']
+            else: 
+                status = "<span class='label label-important'><i class='icon-remove icon-white' /> %s</span>" % showrow['status']
+            if showrow['quality'] in ['HD720p', 'HD TV', 'HD 1080p', 'HD']:
+                quality = "<span class='label label-info'>%s</span>" % showrow['quality']
+            else:
+                quality = "<span class='label label-warning'>%s</span>" % showrow['quality']
+            sb_table_out.append(sb_row % (showrow['tvdbid'], showrow['show'], status, showrow['nextair'], showrow['network'], quality, showrow['stats'], showrow['percent_downloaded'], '%', showrow['downloaded'], showrow['percent_snatched'], '%', showrow['snatched']))
         #print ''.join(sb_table_out)
         return ''.join(sb_table_out)
             

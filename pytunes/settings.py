@@ -18,7 +18,7 @@ import shutil
 
 try:
     from OpenSSL import crypto
-    from certgen import * # yes yes, I know, I'm lazy
+    from certgen import createKeyPair, createCertRequest, createCertificate, TYPE_RSA
 except Exception as e:
     print 'Import error %s' % e
     #need to log
@@ -125,8 +125,16 @@ class Settings:
             cakey = createKeyPair(TYPE_RSA, 1024)
             careq = createCertRequest(cakey, CN=gethostname())
             cacert = createCertificate(careq, (careq, cakey), 0, (0, 60*60*24*365*10)) # 10 years
-            open(join(cert_dir, key_file), 'w').write(crypto.dump_privatekey(crypto.FILETYPE_PEM, cakey))
-            open(join(cert_dir, cert_file), 'w').write(crypto.dump_certificate(crypto.FILETYPE_PEM, cacert))
+
+            cname = 'PyTunes'
+            pkey = createKeyPair(TYPE_RSA, 1024)
+            req = createCertRequest(pkey, CN=cname)
+            cert = createCertificate(req, (cacert, cakey), 0, (0, 60*60*24*365*10)) # ten years
+
+            # Save the key and certificate to disk
+
+            open(join(cert_dir, key_file), 'w').write(crypto.dump_privatekey(crypto.FILETYPE_PEM, pkey))
+            open(join(cert_dir, cert_file), 'w').write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
 
     @cherrypy.expose()
     @require(member_of("admin")) 
