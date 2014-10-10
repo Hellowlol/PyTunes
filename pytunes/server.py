@@ -41,8 +41,9 @@ def start():
         'server.socket_host': pytunes.HOST,
         'server.socket_port': pytunes.PORT,
         'log.screen': False,
-        'server.thread_pool': 15,
-        'server.socket_queue_size': 10
+        'server.thread_pool': 30,
+        'server.socket_queue_size': 30,
+        'server.request_queue_size': 50
     })
 
     # Set server environment to production unless when debugging

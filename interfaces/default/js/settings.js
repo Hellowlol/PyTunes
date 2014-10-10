@@ -131,16 +131,14 @@ $(document).ready(function () {
             $('#xbmc_server_mac').val(data.mac);
             $("button:reset:visible").html('Delete').addClass('btn-danger').click(function (e) {
                 var name = item.find('option:selected').text();
-                bootbox.confirm('Delete ' + name, function (result) {
-                    bootbox.classes('ConfirmModal');
-                    if (!result) return;
-                    $.get(WEBDIR + 'settings/delxbmcserver?id=' + id, function (data) {
+                if (confirm('Delete ' + name)) {
+                     $.get(WEBDIR + 'settings/delxbmcserver?id=' + id, function (data) {
                         notify('Settings', 'Server deleted', 'info');
                         $(this).val(0);
                         item.find('option[value=' + id + ']').remove();
                         $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
                     });
-                });
+                }
             });
         });
     });
@@ -186,16 +184,14 @@ $(document).ready(function () {
             $('#users_user_role').val(data.role);
             $("button:reset:visible").html('Delete').addClass('btn-danger').click(function (e) {
                 var name = item.find('option:selected').text();
-                bootbox.confirm('Delete ' + name, function (result) {
-                    bootbox.classes('ConfirmModal');
-                    if (!result) return;
+                if (confirm('Delete ' + name)) {
                     $.get(WEBDIR + 'users/deluser?id=' + id, function (data) {
                         notify('Settings', 'User deleted', 'info');
                         $(this).val(0);
                         item.find('option[value=' + id + ']').remove();
                         $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
                     });
-                });
+                }
             });
         }); 
     });

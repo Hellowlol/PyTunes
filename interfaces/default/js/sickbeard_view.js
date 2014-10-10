@@ -229,9 +229,7 @@ function forceFullUpdate(tvdbid, name) {
 }
 
 function removeShow(tvdbid, name) {
-    bootbox.confirm('Are you sure you want to delete ' + name , function (result) {
-        bootbox.classes('ConfirmModal');
-        if (result) {
+    if (confirm('Are you sure you want to delete ')) {
             $.ajax({
                 url: WEBDIR + 'sickbeard/RemoveShow?tvdbid=' + tvdbid,
                 type: 'get',
@@ -252,7 +250,6 @@ function removeShow(tvdbid, name) {
             });
 
         }
-    });
 }
 
 function rescanFiles(tvdbid, name) {
