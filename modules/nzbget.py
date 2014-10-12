@@ -8,7 +8,6 @@ from urllib2 import urlopen, Request
 from json import loads
 import logging
 import base64
-from cherrypy.lib.auth2 import require
 from jsonrpclib import jsonrpc
 
 
@@ -31,12 +30,10 @@ class NZBGet:
         ]})
 
     @cherrypy.expose()
-    @require()
     def index(self):
         return pytunes.LOOKUP.get_template('nzbget.html').render(scriptname='nzbget')
 
     @cherrypy.expose()
-    @require()
     def nzbget_url(self):
         host = pytunes.settings.get('nzbget_host', '')
         port = str(pytunes.settings.get('nzbget_port', ''))
@@ -59,7 +56,6 @@ class NZBGet:
 
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def version(self, nzbget_host, nzbget_basepath, nzbget_port, nzbget_username, nzbget_password, nzbget_ssl=False, **kwargs):
         self.logger.debug("Fetching version information from nzbget")
@@ -84,7 +80,6 @@ class NZBGet:
             return
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def GetHistory(self):
         try:
@@ -95,7 +90,6 @@ class NZBGet:
             self.logger.error("Failed to get history %s" % e)
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def AddNzbFromUrl(self, nzb_url= '', nzb_category='', nzb_name='') : 
         if not nzb_url:
@@ -114,14 +108,12 @@ class NZBGet:
 
     #Used to grab the categories from the config
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def GetConfig(self):
         nzbget = jsonrpc.ServerProxy('%s/jsonrpc' % self.nzbget_url())
         return nzbget.config()
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def GetWarnings(self):
         try:
@@ -132,7 +124,6 @@ class NZBGet:
             self.logger.error("Failed to fetch warnings %s" % e)
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def queue(self):
         try:
@@ -143,7 +134,6 @@ class NZBGet:
             self.logger.error("Failed to fetch queue %s" % e)
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def status(self):
         try:
@@ -154,7 +144,6 @@ class NZBGet:
             self.logger.error("Failed to fetch queue %s" % e)
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def QueueAction(self, action):
         try:
@@ -169,7 +158,6 @@ class NZBGet:
             self.logger.error("Failed to %s %s" % (action, e))
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def IndividualAction(self, id='', name='', action=''):
         try:
@@ -192,7 +180,6 @@ class NZBGet:
 
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def SetSpeed(self, speed):
         try:

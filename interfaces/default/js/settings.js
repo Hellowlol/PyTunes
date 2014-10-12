@@ -171,31 +171,6 @@ $(document).ready(function () {
         loadNzbServers();
 
     
-    $('input.enable-module').trigger('change');
-    $('#users_user_id').change(function () {
-        $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
-        var item = $(this);
-        var id = item.val();
-        if (id === 0) $('button:reset:visible').trigger('click');
-        $.get(WEBDIR + 'users/getuser?id=' + id, function (data) {
-            if (data === null) return;
-            $('#users_user_username').val(data.username);
-            $('#users_user_password').val(data.password);
-            $('#users_user_role').val(data.role);
-            $("button:reset:visible").html('Delete').addClass('btn-danger').click(function (e) {
-                var name = item.find('option:selected').text();
-                if (confirm('Delete ' + name)) {
-                    $.get(WEBDIR + 'users/deluser?id=' + id, function (data) {
-                        notify('Settings', 'User deleted', 'info');
-                        $(this).val(0);
-                        item.find('option[value=' + id + ']').remove();
-                        $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
-                    });
-                }
-            });
-        }); 
-    });
-    users_update_user(0);
 });
 
 
@@ -246,18 +221,6 @@ function loadNzbServers() {
             $('#newznab_server_id').append(data);
         }
     });
-}
-
-function users_update_user(id) {
-    $.get(WEBDIR + 'users/getuser', function (data) {
-        if (data === null) return;
-        var users = $('#users_user_id').empty().append($('<option>').text('New').val(0));
-        $.each(data.users, function (i, item) {
-            var option = $('<option>').text(item.name).val(item.id);
-            if (id == item.id) option.attr('selected', 'selected');
-            users.append(option);
-        });
-    }, 'json');
 }
 
 $(document).on('click', '.delete_cache', function(e){

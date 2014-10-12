@@ -25,7 +25,6 @@ from sqlobject.col import StringCol, IntCol, FloatCol
 import logging
 from random import randint
 from apscheduler.scheduler import Scheduler
-from cherrypy.lib.auth2 import require
 sched = Scheduler()
 sched.start() 
 settings = pytunes.settings
@@ -382,14 +381,12 @@ class Manager:
 
 
     @cherrypy.expose()
-    @require()
     def index(self):
         """ Generate page from template """
         return pytunes.LOOKUP.get_template('manager.html').render(scriptname='manager')
 
 
     @cherrypy.expose()
-    @require()
     def GetTVShow(self, tmdbid):
         """ Get Movie info """
         show = {}
@@ -430,7 +427,6 @@ class Manager:
         return json.dumps(show)
 
     @cherrypy.expose()
-    @require()
     def AddMovie(self, tmdbid='', imdbid='', year='', title='', fanart='', thumb='', plot='', rating='', genre='', runtime='', writers='', country='', studios='', actors='', directors=''):
         self.logger.debug("Saving wanted movie to the database: %s" % title)
         try:
@@ -445,7 +441,6 @@ class Manager:
         return msg
         
     @cherrypy.expose()
-    @require()
     def WantedMovies(self):
         """ Get Wanted Movie info for interface """
         movies = ''
@@ -460,7 +455,6 @@ class Manager:
         return movies
         
     @cherrypy.expose()
-    @require()
     def Top250Movies(self):
         """ Get top 250 Movie info for interface """
         movies = imdb.Top250()
@@ -540,7 +534,6 @@ class Manager:
 
         
     @cherrypy.expose()
-    @require()
     def GetMovies(self, offset, limit):
         """ Generate page from template """
         table = ''
@@ -602,7 +595,6 @@ class Manager:
         return table
 
     @cherrypy.expose()
-    @require()
     def RebuildDB(self, action):
         """ Generate page from template """
         if action == "movies":
@@ -626,7 +618,6 @@ class Manager:
         return pytunes.LOOKUP.get_template('manager.html').render(scriptname='manager')
 
     @cherrypy.expose()
-    @require()
     def ViewAlbum(self, album_id):
         response = self.fetch('getAlbum&id=%s' % album_id)
 
@@ -651,7 +642,6 @@ class Manager:
         )
 
     @cherrypy.expose()
-    @require()
     def Tmdb(self, source, page):
         self.logger.debug("Get list of %s movies from TMDB" % source)
         moviecats = ['intheaters', 'releases', 'toprated', 'popular']
@@ -693,7 +683,6 @@ class Manager:
         return movies
 
     @cherrypy.expose()
-    @require()
     def Carousel(self, carousel, page=1):
         limit = 1
         self.logger.debug("Get list of movies for %s" % carousel)
@@ -726,7 +715,6 @@ class Manager:
         return movies
 
     @cherrypy.expose()
-    @require()
     def GetThumb(self, thumb=None, h=None, w=None, o=100):
         """ Parse thumb to get the url and send to pytunes.proxy.get_image """
         if h and w:

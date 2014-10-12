@@ -7,8 +7,6 @@ from urllib import quote
 from urllib2 import urlopen
 from json import loads
 import logging
-from cherrypy.lib.auth2 import require
-
 
 class Sabnzbd:
     def __init__(self):
@@ -21,25 +19,22 @@ class Sabnzbd:
                 {'type': 'bool', 'label': 'Enable', 'name': 'sabnzbd_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'sabnzbd_name', 'placeholder':''},
                 {'type': 'text', 'label': 'IP / Host *', 'name': 'sabnzbd_host', 'placeholder':''},
-                {'type': 'text', 'label': 'Port *', 'name': 'sabnzbd_port', 'placeholder':'', 'desc':'Deault is 8080'},
+                {'type': 'text', 'label': 'Port *', 'name': 'sabnzbd_port', 'placeholder':'', 'desc':'Default is 8080'},
                 {'type': 'text', 'label': 'Basepath', 'name': 'sabnzbd_basepath'},
                 {'type': 'text', 'label': 'API key', 'name': 'sabnzbd_apikey'},
                 {'type': 'bool', 'label': 'Use SSL', 'name': 'sabnzbd_ssl'}
         ]})
 
     @cherrypy.expose()
-    @require()
     def index(self):
         return pytunes.LOOKUP.get_template('sabnzbd.html').render(scriptname='sabnzbd')
 
     @cherrypy.expose()
-    @require()
     def sabupload(self):
         return 'sabupload.html'
         #return pytunes.LOOKUP.get_template('sabupload.html')
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def version(self, sabnzbd_host, sabnzbd_basepath, sabnzbd_port, sabnzbd_apikey, sabnzbd_ssl=False, **kwargs):
         self.logger.debug("Fetching version information from sabnzbd")
@@ -58,35 +53,30 @@ class Sabnzbd:
             return
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def GetHistory(self, limit=''):
         self.logger.debug("Fetching history")
         return self.fetch('&mode=history&limit=' + limit)
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def GetStatus(self):
         self.logger.debug("Fetching queue")
         return self.fetch('&mode=queue')
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def GetWarnings(self):
         self.logger.debug("Fetching warning")
         return self.fetch('&mode=warnings')
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def TogglePause(self, mode=''):
         self.logger.debug("Pausing")
         return self.fetch('&mode=' + mode)
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def AddNzbFromUrl(self, nzb_url, nzb_category=''):
         self.logger.debug("Adding nzb from url")
@@ -95,7 +85,6 @@ class Sabnzbd:
         return self.fetch('&mode=addurl&name=' + quote(nzb_url) + nzb_category)
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def UploadNzb(self, nzb_url, nzb_category=''):
         self.logger.debug("Upload nzb from afar")
@@ -104,42 +93,36 @@ class Sabnzbd:
         return self.fetch('&mode=addurl&name=' + quote(nzb_url) + nzb_category)
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def DeleteNzb(self, id):
         self.logger.debug("Deleting nzb")
         return self.fetch('&mode=queue&name=delete&value=' + id)
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def DeleteHistory(self, id):
         self.logger.debug("Deleting history")
         return self.fetch('&mode=history&name=delete&value=' + id)
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def Retry(self, id):
         self.logger.debug("Retry download")
         return self.fetch('&mode=retry&value=' + id)
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def GetCategories(self):
         self.logger.debug("Fetch available categories")
         return self.fetch('&mode=get_cats')
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def ChangeCategory(self, id, cat):
         self.logger.debug("Changing category of download")
         return self.fetch('&mode=change_cat&value=' + id + '&value2=' + cat)
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def SetSpeed(self, speed):
         self.logger.debug("Setting speed-limit")

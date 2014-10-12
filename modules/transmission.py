@@ -10,7 +10,6 @@ import base64
 import datetime
 from json import loads, dumps
 import logging
-from cherrypy.lib.auth2 import require
 
 class Transmission:
     # Transmission Session ID
@@ -39,12 +38,10 @@ class Transmission:
         ]})
 
     @cherrypy.expose()
-    @require()
     def index(self):
         return pytunes.LOOKUP.get_template('transmission.html').render(scriptname='transmission')
 
     @cherrypy.expose()
-    @require()
     def sizeof(self, num):
         for x in ['B','KB','MB','GB']:
             if num < 1024.0:
@@ -53,7 +50,6 @@ class Transmission:
         return "%3.1f %s" % (num, 'TB')
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def queue(self, filter):
         table = []
@@ -136,7 +132,6 @@ class Transmission:
             return '<tr><td>Queue is Empty</td></tr>'
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def stats(self):
         stats = self.fetch('session-stats')
@@ -145,14 +140,12 @@ class Transmission:
         return stats
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def session(self):
         session = self.fetch('session-get')
         cats = {'up': session['arguments']['speed-limit-up'], 'down': session['arguments']['speed-limit-down']}
         return session
 
-    @require()
     def get_cats(self):
         session = self.fetch('session-get')
         cats = {'Default': session['arguments']['download-dir']}
@@ -172,7 +165,6 @@ class Transmission:
         return cats
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def start(self, torrentId = False):
         if (torrentId == False) :
@@ -184,7 +176,6 @@ class Transmission:
         return self.fetch('torrent-start', {'ids': torrentId})
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def pause(self, torrentId = False):
         if (torrentId == False) :
@@ -196,7 +187,6 @@ class Transmission:
         return self.fetch('torrent-start-now', {'ids': torrentId})
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def start_now(self, torrentId = False):
         if (torrentId == False) :
@@ -208,7 +198,6 @@ class Transmission:
         return self.fetch('torrent-start-now', {'ids': torrentId})
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def stop(self, torrentId = False):
         if (torrentId == False) :
@@ -220,7 +209,6 @@ class Transmission:
         return self.fetch('torrent-stop', {'ids': torrentId})
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def reannounce(self, torrentId):
         try:
@@ -251,7 +239,6 @@ class Transmission:
             self.logger.error('Failed to add torrent %s file to Transmission %s' % (info, e))
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def remove(self, torrentId, deletedata = False):
         try:
@@ -261,20 +248,17 @@ class Transmission:
         return self.fetch('torrent-remove', {'ids': torrentId, 'delete-local-data': deletedata})
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def Queue_Move(self, id, pos):
         return self.fetch('torrent-set', {'ids': int(id), 'queuePosition': int(pos)})
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def ChangeCat(self, id, dir):
         print id, dir
         return self.fetch('torrent-set-location', {'ids': int(id), 'location': dir, 'move': False})
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def files(self, id):
         files = self.fetch('torrent-get', {'ids': int(id), 'fields': ['files']})
