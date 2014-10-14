@@ -188,7 +188,7 @@ function showModal(title, content, buttons) {
     $('#modal_dialog .modal-h3').html(title);
     $('#modal_dialog').attr('tabindex', '-1').addClass(modal_dialog);
     $('#modal_dialog .modal-body').html(content);
-    $('#modal-body').addClass(modal_body);
+    $('#modal-body').addClass("modal_body");
     var footer = $('#modal_dialog .modal-footer').empty();
     $.extend(buttons, {
         'Close': hideModal()
