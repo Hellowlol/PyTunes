@@ -352,6 +352,7 @@ class Manager:
         pytunes.MODULES.append({
             'name': 'Media Manager',
             'id': 'manager',
+            'directions': '',
             'fields': [
                 {'type':'bool', 
                     'label':'Enable', 

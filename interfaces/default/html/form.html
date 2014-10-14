@@ -36,9 +36,9 @@ settings =  pytunes.settings
                 % elif field.get('type') == 'select':
                 <select name="${field.get('name')}" id="${field.get('name')}">
                     % for option in field.get('options'):
-                    <option value="${option.get('value')}"${
+                        <option value="${option.get('value')}"${
                     ' selected="selected"' if option.get('selected', 0) else ''}>${option.get('name')}</option>
-            % endfor
+                    % endfor
                 </select>
                 % endif
                 % if field.get('desc'):

@@ -59,7 +59,7 @@ class Stats:
         else:
             self.logger.error("Psutil is outdated, needs atleast version 0,7")
 
-        return pytunes.LOOKUP.get_template('stats.html').render(scriptname='stats')
+        return pytunes.LOOKUP.get_template('stats.html').render(scriptname='stats', importPsutil=importPsutil)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -423,14 +423,11 @@ class Stats:
 
     @cherrypy.expose()
     def command(self, cmd=None, pid=None, signal=None):
-        #pid = int(json.loads(pid))
-        print 'in command', cmd, pid
         dmsg = {}
         try:
             if pid:
                 p = psutil.Process(int(pid))
                 name = p.name
-                print 'name: ', name
             else:
                 pass
 
@@ -466,19 +463,14 @@ class Stats:
                 return json.dumps(dmsg)
 
         except Exception as e:
-            #print msg
             self.logger.error("Error trying to %s %s" % (cmd, e))
-
-
 
     @cherrypy.expose()
     def cmdpopen(self, cmd=None, popen=None):
         d = {}
         msg = None
         if not pytunes.NOSHELL:
-            #print cmd,popen
             if cmd == 'popen':
-                print 'in popen'
                 r = psutil.Popen(popen,stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=True)
                 msg = r.communicate()
             else:

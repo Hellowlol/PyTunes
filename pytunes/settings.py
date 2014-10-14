@@ -16,6 +16,13 @@ from os.path import exists, join
 import shutil
 
 try:
+    import psutil
+    importPsutil = True
+except ImportError:
+    logger.error("Couldn't import psutil. See https://raw.githubusercontent.com/giampaolo/psutil/master/INSTALL.rst")
+    importPsutil = False
+
+try:
     from OpenSSL import crypto
     from certgen import createKeyPair, createCertRequest, createCertificate, TYPE_RSA
 except Exception as e:
@@ -344,8 +351,20 @@ class Settings:
         self.set('default_torr_id', client)
         return
 
-
-
-
-
+    @cherrypy.expose()
+    def branches(self, action=None, branch=None):
+        d = {}
+        msg = None
+        if importPsutil:
+            if action == 'change':
+                cmd = 'git checkout %s' % branch
+                result = psutil.Popen(popen,stdout=PIPE, stdin=PIPE, stderr=PIPE, shell=True)
+                msg = result.communicate()
+            else:
+                pass
+            return msg
+        else:
+            msg = '<option>Psutil not installed</option>'
+            self.logger.error(msg)
+            return msg
 

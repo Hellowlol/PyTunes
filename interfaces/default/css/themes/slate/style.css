@@ -1,12 +1,13 @@
+.navbar .brand,
+.navbar .nav > li > a {
+    padding: 10px 7px 10px;
+}
 div.page-header.page-title {
-    //background-color: #f5f5f5;
     padding: 15px 15px 15px;
     margin: -20px -20px 20px;
     font-size: 20px;
-    //background: url('../../../img/bg-falling.png')
 }
 div.page-header.page-title a {
-    //color: #000;
     text-decoration: none;
 }
 div .pull-right {
@@ -54,7 +55,6 @@ table th.tablesorter-header {
 }
 
 .content {
-    //background: #fff;
     margin: -20px;
     padding: 20px;
     -webkit-border-radius: 0 0 10px 10px;
