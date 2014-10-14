@@ -11,7 +11,6 @@ import cherrypy
 import pytunes
 import logging
 from threading import Thread
-from cherrypy.lib.auth2 import *
 
 
 def do_restart():
@@ -25,26 +24,14 @@ def do_restart():
     cherrypy.engine.exit()
     os.execv(sys.executable, arguments)
 
-class RestrictedArea:
-    # all methods in this controller (and subcontrollers) is
-    # open only to members of the admin group
-    _cp_config = {
-        'auth.require': [member_of('admin')]
-    }
-    
-
 class Root:
     """ Root class """
     def __init__(self):
         """ Do nothing on load """
         self.logger = logging.getLogger('pytunes.root')
         pass
-  
-    auth = AuthController()
-    restricted = RestrictedArea()
     
     @cherrypy.expose()
-    @require()
     def index(self):
         """ Load template for frontpage """
         return pytunes.LOOKUP.get_template('dash.html').render(scriptname='dash')
@@ -55,13 +42,11 @@ class Root:
         return "An error occured"
 
     @cherrypy.expose()
-    @require()
     def notices(self):
         """ Show notices """
         return "Notice"
 
     @cherrypy.expose()
-    @require()
     def shutdown(self):
         """ Shutdown CherryPy and exit script """
         self.logger.info("Shutting down PyTunes.")
@@ -70,7 +55,6 @@ class Root:
 
     @cherrypy.tools.json_out()
     @cherrypy.expose()
-    @require()
     def restart(self):
         """ Shutdown script and rerun with the same variables """
         self.logger.info("Restarting PyTunes.")
@@ -78,7 +62,6 @@ class Root:
         return "Restart in progress."
 
     @cherrypy.expose
-    @require()
     def logout(self, from_page="/"):
         sess = cherrypy.session
         username = sess.get(SESSION_KEY, None)
@@ -86,3 +69,4 @@ class Root:
         if username:
             cherrypy.request.login = None
         raise cherrypy.HTTPRedirect(from_page or "/")
+

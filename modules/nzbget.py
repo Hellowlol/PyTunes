@@ -8,7 +8,6 @@ from urllib2 import urlopen, Request
 from json import loads
 import logging
 import base64
-from cherrypy.lib.auth2 import require
 from jsonrpclib import jsonrpc
 
 
@@ -18,7 +17,7 @@ class NZBGet:
         pytunes.MODULES.append({
             'name': 'NZBGet',
             'id': 'nzbget',
-            'test': pytunes.WEBDIR + 'nzbget/version',
+            'test': '%snzbget/version' % pytunes.WEBDIR,
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'nzbget_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'nzbget_name'},
@@ -31,12 +30,10 @@ class NZBGet:
         ]})
 
     @cherrypy.expose()
-    @require()
     def index(self):
         return pytunes.LOOKUP.get_template('nzbget.html').render(scriptname='nzbget')
 
     @cherrypy.expose()
-    @require()
     def nzbget_url(self):
         host = pytunes.settings.get('nzbget_host', '')
         port = str(pytunes.settings.get('nzbget_port', ''))
@@ -54,12 +51,11 @@ class NZBGet:
         else:
             authstring = ''
 
-        url = 'http' + ssl + '://' + authstring + host + ':' + port + nzbget_basepath + 'jsonrpc/'
+        url = 'http%s://%s:%s%sjsonrpc/' % (ssl, authstring, host, port, nzbget_basepath)
         return url
 
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def version(self, nzbget_host, nzbget_basepath, nzbget_port, nzbget_username, nzbget_password, nzbget_ssl=False, **kwargs):
         self.logger.debug("Fetching version information from nzbget")
@@ -71,6 +67,7 @@ class NZBGet:
             nzbget_basepath += "/"
 
         url = 'http' + ssl + '://'+  nzbget_host + ':' + nzbget_port + nzbget_basepath + 'jsonrpc/version'
+        url = 'http%s://%s:%s%sjsonrpc/version' % (ssl,  nzbget_host, nzbget_port, nzbget_basepath)
         try:
             request = Request(url)
             if(nzbget_username != ""):
@@ -79,11 +76,10 @@ class NZBGet:
             self.logger.debug("Fetching information from: " + url)
             return loads(urlopen(request, timeout=10).read())
         except:
-            self.logger.error("Unable to contact nzbget via " + url)
+            self.logger.error("Unable to contact nzbget via %s" % url)
             return
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def GetHistory(self):
         try:
@@ -94,7 +90,6 @@ class NZBGet:
             self.logger.error("Failed to get history %s" % e)
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def AddNzbFromUrl(self, nzb_url= '', nzb_category='', nzb_name='') : 
         if not nzb_url:
@@ -113,14 +108,12 @@ class NZBGet:
 
     #Used to grab the categories from the config
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def GetConfig(self):
         nzbget = jsonrpc.ServerProxy('%s/jsonrpc' % self.nzbget_url())
         return nzbget.config()
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def GetWarnings(self):
         try:
@@ -131,7 +124,6 @@ class NZBGet:
             self.logger.error("Failed to fetch warnings %s" % e)
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def queue(self):
         try:
@@ -142,7 +134,6 @@ class NZBGet:
             self.logger.error("Failed to fetch queue %s" % e)
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def status(self):
         try:
@@ -153,7 +144,6 @@ class NZBGet:
             self.logger.error("Failed to fetch queue %s" % e)
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def QueueAction(self, action):
         try:
@@ -165,10 +155,9 @@ class NZBGet:
                 status = nzbget.pause()
             return status
         except Exception as e:
-            self.logger.error("Failed to %s" % (action, e))
+            self.logger.error("Failed to %s %s" % (action, e))
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def IndividualAction(self, id='', name='', action=''):
         try:
@@ -191,7 +180,6 @@ class NZBGet:
 
 
     @cherrypy.expose()
-    @require()
     @cherrypy.tools.json_out()
     def SetSpeed(self, speed):
         try:
@@ -200,4 +188,5 @@ class NZBGet:
             return nzbget.rate(int(speed))
         except Exception as e:
             self.logger.error("Failed to set speed to %s %s" % (speed, e))
+
 

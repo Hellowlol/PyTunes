@@ -22,12 +22,9 @@
         <link href="${pytunes.WEBDIR}css/themes/${s.get('app_theme','default')}/style.css" rel="stylesheet">
         <link href="${pytunes.WEBDIR}css/font-awesome.min.css" rel="stylesheet">
         <link href="${self.attr.webdir}css/${scriptname}.css" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" media="screen" href="${pytunes.WEBDIR}css/elfinder.min.css">
-		<link rel="stylesheet" type="text/css" media="screen" href="${pytunes.WEBDIR}css/elfinder.theme.css">
-        <!--<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
-<script src="http://code.jquery.com/jquery-1.9.1.js"></script>
-<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>-->
-        
+        <link rel="stylesheet" type="text/css" media="screen" href="${pytunes.WEBDIR}css/elfinder.min.css">
+        <link rel="stylesheet" type="text/css" media="screen" href="${pytunes.WEBDIR}css/elfinder.theme.css">
+
     </head>
     <body>
         <div class="navbar navbar-fixed-top">
@@ -40,9 +37,9 @@
                     <div class="nav-collapse">
                         <ul class="nav">
                             % for m in pytunes.MODULES:
-                            % if s.get(m.get('id')+'_enable'):
-                            <li id="nav-${m.get('id')}"><a href="${pytunes.WEBDIR}${m.get('id')}/">${s.get(m.get('id')+'_name')}</a></li>
-                            %endif
+                                % if s.get(m.get('id')+'_enable'):
+                                    <li id="nav-${m.get('id')}"><a href="${pytunes.WEBDIR}${m.get('id')}/">${s.get(m.get('id')+'_name')}</a></li>
+                                %endif
                             % endfor
                             <li class="hidden-desktop visible-phone visible-tablet">
                                 <a href="#" class="btn-check-update"><i class="icon-eye-open"></i> Check for updates</a>
@@ -109,7 +106,6 @@
                 </div>
             </div>
         </div>
-        ${self.body()}
         <div id="modal_dialog" class="modal fade hide">
             <div class="modal-header">
                 <button class="close" data-dismiss="modal"><i class='icon-remove-circle'></i></button>
@@ -118,6 +114,7 @@
             <div class="modal-fanart modal-body"></div>
             <div class="modal-footer"></div>
         </div>
+        ${self.body()}
         <script src="${pytunes.WEBDIR}js/libs/jquery.min.js"></script>
         <script src="${pytunes.WEBDIR}js/libs/jquery-ui.min.js"></script>
         <script src="${pytunes.WEBDIR}js/libs/jquery.form.js"></script>
@@ -125,14 +122,14 @@
         <script src="${pytunes.WEBDIR}js/libs/jquery.metadata.js"></script>
         <script src="${pytunes.WEBDIR}js/libs/jquery.tablesorter.min.js"></script>
         <script src="${pytunes.WEBDIR}js/libs/jquery.raty.min.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/jquery.tablesorter.min.js"></script>
         <script src="${pytunes.WEBDIR}js/libs/jquery.pnotify.min.js"></script>
         <script src="${pytunes.WEBDIR}js/libs/jquery.pager.js"></script>
         <script src="${pytunes.WEBDIR}js/libs/bootstrap.min.js"></script>
-        <script src="${pytunes.WEBDIR}js/libs/bootstrap-paginator.js"></script>
         <script src="${pytunes.WEBDIR}js/libs/bootstrap-slider.js"></script>
-        <script src="${pytunes.WEBDIR}js/libs/bootbox.js"></script>
         <script src="${pytunes.WEBDIR}js/libs/holder.js"></script>
         <script src="${pytunes.WEBDIR}js/elfinder.min.js"></script>
+        <script src="${pytunes.WEBDIR}js/libs/moment.js"></script>
         <script src="${pytunes.WEBDIR}js/default.js"></script>
         <script src="${pytunes.WEBDIR}js/${scriptname}.js"></script>
     </body>

@@ -1,5 +1,4 @@
 function loadClients() {
-    //alert('clients');
     $.ajax({
         url: WEBDIR + 'torrents/GetClients',
         type: 'get',
@@ -17,7 +16,7 @@ function search(query, engineid, catid) {
         url: WEBDIR + 'torrents/search?q=' + query + '&engineid=' + engineid + '&cat=' + catid,
         type: 'get',
         dataType: 'html',
-        timeout: 60000,
+        timeout: 120000,
         beforeSend: function () {
             $('#results_table_body').empty();
             $('.spinner').show();

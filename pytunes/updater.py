@@ -121,7 +121,7 @@ class Updater:
             behind = self.behind_by(current, latest)
             output['versionsBehind'] = behind
 
-        self.logger.info("Currently " + str(output['versionsBehind']) + " commits behind.")
+        self.logger.info("Currently %s commits behind." % str(output['versionsBehind']))
         return output
 
     def latest(self):
@@ -131,7 +131,7 @@ class Updater:
             url = 'https://api.github.com/repos/%s/%s/commits/%s' % (gitUser, gitRepo, gitBranch)
             result = loads(urllib2.urlopen(url).read())
             latest = result['sha'].strip()
-            self.logger.debug('Latest version: ' + latest)
+            self.logger.debug('Latest version: %s' % latest)
             self.updateEngine.latestHash = latest
             return latest
         except:
@@ -144,7 +144,7 @@ class Updater:
             url = 'https://api.github.com/repos/%s/%s/compare/%s...%s' % (gitUser, gitRepo, current, latest)
             result = loads(urllib2.urlopen(url).read())
             behind = int(result['total_commits'])
-            self.logger.debug('Behind: ' + str(behind))
+            self.logger.debug('Behind: %s' % str(behind))
             return behind
         except Exception, e:
             self.logger.error(str(e))
@@ -166,7 +166,7 @@ class GitUpdater():
         """ Get hash of current Git commit """
         self.logger.debug('Getting current version.')
         output = self.git_exec('rev-parse HEAD')
-        self.logger.debug('Current version: ' + output)
+        self.logger.debug('Current version: %s' % output)
 
         if (output == '') :
             self.logger.error('Got no response for current Git version.')
@@ -197,7 +197,7 @@ class GitUpdater():
     def git_exec(self, args):
         """ Tool for running git program on system """
         try:
-            proc = subprocess.Popen(self.git + " " + args, stdout=subprocess.PIPE,
+            proc = subprocess.Popen("%s %s" % (self.git, args), stdout=subprocess.PIPE,
                    stderr=subprocess.STDOUT, shell=True, cwd=pytunes.RUNDIR)
             output, err = proc.communicate()
         except OSError, e:
@@ -205,7 +205,7 @@ class GitUpdater():
             return ''
 
         if err:
-            self.logger.warning(output + ' - ' + err)
+            self.logger.warning('%s - %s' % (output, err))
             return ''
         elif any(s in output for s in ['not found', 'not recognized', 'fatal:']):
             self.logger.warning(output)
@@ -251,7 +251,7 @@ class SourceUpdater():
         currentVersion = fp.read().strip(' \n\r')
         fp.close()
 
-        self.logger.debug('Current version: ' + currentVersion)
+        self.logger.debug('Current version: %s' % currentVersion)
 
         if (currentVersion == '') :
             self.logger.error('No commit hash found in version file.')

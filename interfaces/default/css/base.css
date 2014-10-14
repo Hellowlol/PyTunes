@@ -1,7 +1,12 @@
 .divider-tab {
- margin: 4px 0px;
- overflow:hidden;
- height: 1px;
- border-bottom: 1px solid #ddd;
+    margin: 4px 0px;
+    overflow:hidden;
+    height: 1px;
+    border-bottom: 1px solid #ddd;
 }
+
+.center-icon {
+    display:block;
+    text-align: center;
+}}
 

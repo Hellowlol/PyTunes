@@ -2,7 +2,7 @@ $(document).ready(function () {
     var showid = $('div.page-title').attr('data-showid');
     loadShowData(showid);
 
-    $('#banner').css('background-image', 'url(' + WEBDIR + 'sickbeard/GetBanner/' + showid + ')');
+    $('#banner').css('background-image', 'url(' + WEBDIR + 'sickrage/GetBanner/' + showid + ')');
 
     $("#ckbCheckAll").click(function () {
         $(".checkBoxClass").prop('checked', $(this).prop('checked'));
@@ -16,7 +16,7 @@ $(document).ready(function () {
 
 function loadShowData(showid){
   $.ajax({
-    url: WEBDIR + 'sickbeard/GetShow?tvdbid=' + showid,
+    url: WEBDIR + 'sickrage/GetShow?indexerid=' + showid,
     type: 'get',
     dataType: 'json',
     success: function(data){
@@ -25,13 +25,13 @@ function loadShowData(showid){
         return;
       }
       data = data.data;
-      $('.sickbeard_showname').text(data.show_name);
-      $('.sickbeard_status').append(sickbeardStatusLabel(data.status));
-      $('.sickbeard_network').text(data.network);
-      $('.sickbeard_location').text(data.location);
-      $('.sickbeard_airs').text(data.airs);
+      $('.sickrage_showname').text(data.show_name);
+      $('.sickrage_status').append(sickrageStatusLabel(data.status));
+      $('.sickrage_network').text(data.network);
+      $('.sickrage_location').text(data.location);
+      $('.sickrage_airs').text(data.airs);
       if (data.next_ep_airdate != '') {
-        $('.sickbeard_next_air').text(data.next_ep_airdate);
+        $('.sickrage_next_air').text(data.next_ep_airdate);
       }
 
       var menu = $('.show-options-menu')
@@ -95,7 +95,7 @@ function renderSeason(){
   season = $(this).attr('data-season');
 
   $.ajax({
-    url: WEBDIR + 'sickbeard/GetSeason?tvdbid=' + showid + '&season=' + season,
+    url: WEBDIR + 'sickrage/GetSeason?indexerid=' + showid + '&season=' + season,
     type: 'get',
     dataType: 'json',
     success: function(data){
@@ -124,7 +124,7 @@ function renderSeason(){
           $('<td>').text(index),
           $('<td>').text(value.name),
           $('<td>').text(value.airdate),
-          $('<td>').append(sickbeardStatusLabel(value.status)),
+          $('<td>').append(sickrageStatusLabel(value.status)),
           $('<td>').text(value.quality),
           $('<td>').append(search_link)
         );
@@ -142,7 +142,7 @@ function renderSeason(){
   $('.spinner').hide();
 }
 
-function sickbeardStatusLabel(text){
+function sickrageStatusLabel(text){
   var statusOK = ['Continuing', 'Downloaded', 'HD'];
   var statusInfo = ['Snatched', 'Unaired'];
   var statusError = ['Ended'];
@@ -163,14 +163,14 @@ function sickbeardStatusLabel(text){
     label.addClass('label-warning');
   }
 
-  var icon = sickbeardStatusIcon(text, true);
+  var icon = sickrageStatusIcon(text, true);
   if (icon != '') {
     label.prepend(' ').prepend(icon);
   }
   return label;
 }
 
-function sickbeardStatusIcon(iconText, white){
+function sickrageStatusIcon(iconText, white){
   var text =[
     'Downloaded',
     'Continuing',
@@ -198,14 +198,14 @@ function sickbeardStatusIcon(iconText, white){
   return '';
 }
 
-function forceFullUpdate(tvdbid, name) {
+function forceFullUpdate(indexerid, name) {
   var modalcontent = $('<div>');
   modalcontent.append($('<p>').html('Queueing &quot;' + name +' &quot; for full TVDB information update..'));
   modalcontent.append($('<div>').html('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>'));
   showModal('Queueing...', modalcontent, {});
 
   $.ajax({
-    url: WEBDIR + 'sickbeard/ForceFullUpdate?tvdbid=' + tvdbid,
+    url: WEBDIR + 'sickrage/ForceFullUpdate?indexerid=' + indexerid,
     type: 'get',
     dataType: 'json',
     timeout: 15000,
@@ -228,10 +228,10 @@ function forceFullUpdate(tvdbid, name) {
   });
 }
 
-function removeShow(tvdbid, name) {
+function removeShow(indexerid, name) {
     if (confirm('Are you sure you want to delete ')) {
             $.ajax({
-                url: WEBDIR + 'sickbeard/RemoveShow?tvdbid=' + tvdbid,
+                url: WEBDIR + 'sickrage/RemoveShow?indexerid=' + indexerid,
                 type: 'get',
                 dataType: 'json',
                 timeout: 15000,
@@ -252,14 +252,14 @@ function removeShow(tvdbid, name) {
         }
 }
 
-function rescanFiles(tvdbid, name) {
+function rescanFiles(indexerid, name) {
   var modalcontent = $('<div>');
   modalcontent.append($('<p>').html('Queueing &quot;' + name +' &quot; for files rescan..'));
   modalcontent.append($('<div>').html('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>'));
   showModal('Queueing...', modalcontent, {});
 
   $.ajax({
-    url: WEBDIR + 'sickbeard/RescanFiles?tvdbid=' + tvdbid,
+    url: WEBDIR + 'sickrage/RescanFiles?indexerid=' + indexerid,
     type: 'get',
     dataType: 'json',
     timeout: 15000,
@@ -282,14 +282,14 @@ function rescanFiles(tvdbid, name) {
   });
 }
 
-function searchEpisode(tvdbid, season, episode, name) {
+function searchEpisode(indexerid, season, episode, name) {
   var modalcontent = $('<div>');
   modalcontent.append($('<p>').html('Looking for episode &quot;'+ name +'&quot;.'));
   modalcontent.append($('<div>').html('<div class="progress progress-striped active"><div class="bar" style="width: 100%;"></div></div>'));
   showModal('Searching episode '+season + 'x'+episode, modalcontent, {});
 
   $.ajax({
-    url: WEBDIR + 'sickbeard/SearchEpisodeDownload?tvdbid=' + tvdbid +'&season=' + season +'&episode='+episode,
+    url: WEBDIR + 'sickrage/SearchEpisodeDownload?indexerid=' + indexerid +'&season=' + season +'&episode='+episode,
     type: 'get',
     dataType: 'json',
     timeout: 40000,

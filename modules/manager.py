@@ -25,7 +25,6 @@ from sqlobject.col import StringCol, IntCol, FloatCol
 import logging
 from random import randint
 from apscheduler.scheduler import Scheduler
-from cherrypy.lib.auth2 import require
 sched = Scheduler()
 sched.start() 
 settings = pytunes.settings
@@ -336,7 +335,7 @@ class Manager:
     def __init__(self):
         """ Add module to list of modules on load and set required settings """
         self.logger = logging.getLogger('modules.manager')
-        Monitor(cherrypy.engine, processmovies.process, frequency=180).subscribe()
+        Monitor(cherrypy.engine, processmovies.process, frequency=90).subscribe()
         #job1 = sched.add_cron_job(processmovies.process, minute="*/%s" % 15)
         #job2 = sched.add_cron_job(processtv.process, minute="*/%s" % 15)
         #job3 = sched.add_cron_job(processmusic.process, minute=randint(0,59))
@@ -377,19 +376,17 @@ class Manager:
                 {'type':'text', 
                     'label':'Music Destination Folder', 
                     'name':'music_out', 
-                    'dir':False}
+                    'dir':True}
         ]})
 
 
     @cherrypy.expose()
-    @require()
     def index(self):
         """ Generate page from template """
         return pytunes.LOOKUP.get_template('manager.html').render(scriptname='manager')
 
 
     @cherrypy.expose()
-    @require()
     def GetTVShow(self, tmdbid):
         """ Get Movie info """
         show = {}
@@ -400,11 +397,8 @@ class Manager:
         genres = []
         actors = ''
 
-        #print 'tmdbid tv', tmdbid
         info = tmdb.TVInfo(tmdbid)
         addshow = html('addshow_button') % info['name']
-        #print info
-        #return
         for each in info['directors']:
             directors.append(each['name'])
         if directors:
@@ -415,27 +409,25 @@ class Manager:
             writers.append(each['name'])
         if writers:
             writers = ", ".join(writers)
-            writers = (writers[:40] + '..') if len(writers) > 42 else writers
+            writers = ('%s..' % writers[:40]) if len(writers) > 42 else writers
         else:
             writers = 'N/A'
         for each in info['cast']:
             if each['thumb']:
                 thumb = each['thumb']
             else:
-                thumb = pytunes.IMGURL + 'no_art_square.png'
-            shortname = (each['name'][:14] + '..') if len(each['name']) > 16 else each['name']
-            shortrole = (each['role'][:14] + '..') if len(each['role']) > 16 else each['role']
+                thumb = '%sno_art_square.png' % pytunes.IMGURL
+            shortname = ('%s..' % each['name'][:14]) if len(each['name']) > 16 else each['name']
+            shortrole = ('%s..' % each['role'][:14]) if len(each['role']) > 16 else each['role']
             actors += html('actor_li') % (each['name'], each['role'], thumb, shortname, shortrole)
         show['fanart'] = info['fanart']
         show['body'] = html('tmdb_tv_modal_middle') % (info['poster'], info['plot'], directors, info['genre'], info['status'], info['first_air'], info['last_air'], writers, info['country'], info['networks'], info['seasons'], info['episodes'], actors)
-        show['head'] = info['name'] + '   ' + info['first_air']
+        show['head'] = '%s   %s' % (info['name'], info['first_air'])
         show['foot'] = addshow + html('close_button')
         return json.dumps(show)
 
     @cherrypy.expose()
-    @require()
     def AddMovie(self, tmdbid='', imdbid='', year='', title='', fanart='', thumb='', plot='', rating='', genre='', runtime='', writers='', country='', studios='', actors='', directors=''):
-        #print 'in add movie', tmdbid, imdbid, year, title
         self.logger.debug("Saving wanted movie to the database: %s" % title)
         try:
             movie = MoviesWanted.selectBy(strTmdb=tmdbid).getOne()
@@ -445,12 +437,10 @@ class Manager:
             MoviesWanted(strYear=year, strTmdb=tmdbid, strImdb=imdbid, strTitle=title.encode('utf-8'), strFanart=fanart, strThumb=thumb, strPlot=plot.encode('utf-8'), strRating=rating, strGenre=genre, strRuntime=runtime, strWriters=writers.encode('utf-8'), strCountry=country.encode('utf-8'), strStudios=studios.encode('utf-8'), strActors=actors.encode('utf-8'), strDirectors=directors.encode('utf-8'))
             self.logger.debug('Movie added to wanted database: %s' % title)
             msg = 'Movie added to wanted database: %s' % title
-            #print tmdbid, imdbid, year, title, fanart, thumb, plot, rating, genre, runtime, writers, country, studios, actors, directors
 
         return msg
         
     @cherrypy.expose()
-    @require()
     def WantedMovies(self):
         """ Get Wanted Movie info for interface """
         movies = ''
@@ -458,15 +448,13 @@ class Manager:
             if movie.strThumb:
                 thumb = 'http://image.tmdb.org/t/p/original%s' % movie.strThumb
             else:
-                thumb = pytunes.IMGURL + 'no_art_square.png'
-            shorttitle = (movie.strTitle[:14] + '..') if len(movie.strTitle) > 16 else movie.strTitle[:14]
-            shorttitle += '<br>' + movie.strYear
+                thumb = '%sno_art_square.png' % pytunes.IMGURL
+            shorttitle = ('%s..' % movie.strTitle[:14]) if len(movie.strTitle) > 16 else movie.strTitle[:14]
+            shorttitle += '%s<br>' % movie.strYear
             movies += html('tmdb_thumb_item') % (movie.strTitle, movie.strTmdb,  thumb, shorttitle) 
-            #print movie.strTitle
         return movies
         
     @cherrypy.expose()
-    @require()
     def Top250Movies(self):
         """ Get top 250 Movie info for interface """
         movies = imdb.Top250()
@@ -475,10 +463,9 @@ class Manager:
                 thumb = movie['thumb']
             else:
                 thumb = pytunes.IMGURL + 'no_art_square.png'
-            shorttitle = (movie['title'][:14] + '..') if len(movie['title']) > 16 else movie['title'][:14]
-            shorttitle += '<br>' + movie['year']
+            shorttitle = ('%s..' % movie['title'][:14]) if len(movie['title']) > 16 else movie['title'][:14]
+            shorttitle += '<br>%s' % movie['year']
             movies += html('tmdb_thumb_item') % (movie['title'], movie['imdbid'],  thumb, shorttitle) 
-            #print movie.strTitle
         return movies
         
     @cherrypy.expose()
@@ -510,15 +497,15 @@ class Manager:
             poster = info['posters'][0]
             wposter = info['posters'][0]
         else:
-            poster = pytunes.IMGURL + 'no_art_square.png'
+            poster = '%sno_art_square.png' % pytunes.IMGURL
             wposter = ''
         for each in info['cast']:
             if each['thumb']:
                 thumb = each['thumb']
             else:
-                thumb = pytunes.IMGURL + 'no_art_square.png'
-            shortname = (each['name'][:14] + '..') if len(each['name']) > 16 else each['name']
-            shortrole = (each['role'][:14] + '..') if len(each['role']) > 16 else each['role']
+                thumb = '%sno_art_square.png' % pytunes.IMGURL
+            shortname = ('%s..' % each['name'][:14]) if len(each['name']) > 16 else each['name']
+            shortrole = ('%s..' % each['role'][:14]) if len(each['role']) > 16 else each['role']
             actors += html('actor_li') % (each['name'], each['role'], thumb, shortname, shortrole)
             wactors.append(each['name'])
         if info['trailers']:
@@ -538,7 +525,7 @@ class Manager:
             movie['fanart']  = ''
         download = html('download_button') % (tmdbid, info['imdb'], info['title'], info['year'], movie['fanart'], wposter, info['plot'].replace("\"", "'"), 'rating', ", ".join(info['genre']), info['runtime'], writers, ", ".join(info['country']), ", ".join(info['studios']), ", ".join(wactors), directors)
         movie['body'] = html('tmdb_movie_modal_middle') % (poster, info['plot'], directors, ", ".join(info['genre']), info['runtime'], writers, ", ".join(info['country']), ", ".join(info['studios']), actors)
-        movie['head'] = info['title'] + '   ' + info['release_date']
+        movie['head'] = '%s   %s' % (info['title'], info['release_date'])
         if page == 'wantedmovie':
             movie['foot'] = imdb + trailer + remove + html('close_button')
         else:
@@ -547,7 +534,6 @@ class Manager:
 
         
     @cherrypy.expose()
-    @require()
     def GetMovies(self, offset, limit):
         """ Generate page from template """
         table = ''
@@ -609,7 +595,6 @@ class Manager:
         return table
 
     @cherrypy.expose()
-    @require()
     def RebuildDB(self, action):
         """ Generate page from template """
         if action == "movies":
@@ -633,7 +618,6 @@ class Manager:
         return pytunes.LOOKUP.get_template('manager.html').render(scriptname='manager')
 
     @cherrypy.expose()
-    @require()
     def ViewAlbum(self, album_id):
         response = self.fetch('getAlbum&id=%s' % album_id)
 
@@ -658,9 +642,7 @@ class Manager:
         )
 
     @cherrypy.expose()
-    @require()
     def Tmdb(self, source, page):
-        #print 'TMDB: ', source, page
         self.logger.debug("Get list of %s movies from TMDB" % source)
         moviecats = ['intheaters', 'releases', 'toprated', 'popular']
         tvcats = ['topratedtv', 'populartv']
@@ -679,31 +661,28 @@ class Manager:
         else:
             return
         movies = ''
-        #print data
-        #print data['total_pages'], 'total pages'
         if source in moviecats:
             for each in data['results']:
                 if each['poster_path']:
                     thumb = 'http://image.tmdb.org/t/p/original%s' % each['poster_path']
                 else:
-                    thumb = pytunes.IMGURL + 'no_art_square.png'
-                shorttitle = (each['title'][:14] + '..') if len(each['title']) > 16 else each['title']
-                shorttitle += '<br>' + each['release_date']
+                    thumb = '%sno_art_square.png' % pytunes.IMGURL
+                shorttitle = ('%s..' % each['title'][:14]) if len(each['title']) > 16 else each['title']
+                shorttitle += '<br>%s' % each['release_date']
                 movies += html('tmdb_thumb_item') % (each['title'], each['id'],  thumb, shorttitle) 
         elif source in tvcats:
             for each in data['results']:
                 if each['poster_path']:
                     thumb = 'http://image.tmdb.org/t/p/original%s' % each['poster_path']
                 else:
-                    thumb = pytunes.IMGURL + 'no_art_square.png'
-                shortname = (each['name'][:14] + '..') if len(each['name']) > 16 else each['name']
+                    thumb = '%sno_art_square.png' % pytunes.IMGURL
+                shortname = ('%s..' % each['name'][:14]) if len(each['name']) > 16 else each['name']
                 if each['first_air_date']:
-                    shortname += '<br>' + each['first_air_date']
+                    shortname += '<br>%s' % each['first_air_date']
                 movies += html('tmdb_thumb_item') % (each['name'], each['id'],  thumb, shortname) 
         return movies
 
     @cherrypy.expose()
-    @require()
     def Carousel(self, carousel, page=1):
         limit = 1
         self.logger.debug("Get list of movies for %s" % carousel)
@@ -736,35 +715,6 @@ class Manager:
         return movies
 
     @cherrypy.expose()
-    @require()
-    @cherrypy.tools.json_out()
-    def GetArtist(self, artist_id):
-        """ Get data of a specific artist """
-        self.logger.debug("Get data of a specific artist")
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            properties = ['musicbrainzartistid', 'thumbnail', 'fanart', 'style', 'died', 'born', 'formed', 'mood', 'disbanded', 'instrument', 'yearsactive', 'description']
-            return xbmc.AudioLibrary.GetArtistDetails(artistid=int(artist_id), properties=properties)
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to fetch artist info!")
-            return
-
-
-    @cherrypy.expose()
-    @require()
-    def ViewArtist(self, artist_id, artist):
-        """ Load artist template """
-        self.logger.debug("Get data of a specific artist")
-        template = pytunes.LOOKUP.get_template('xbmc_artist.html')
-        return template.render(
-            scriptname='xbmc_artist',
-            artist_id=artist_id,
-            name=artist
-        )
-
-    @cherrypy.expose()
-    @require()
     def GetThumb(self, thumb=None, h=None, w=None, o=100):
         """ Parse thumb to get the url and send to pytunes.proxy.get_image """
         if h and w:
@@ -778,339 +728,7 @@ class Manager:
             url = '../img/no_art_square.png'
         if thumb:
             url = thumb
-            self.logger.debug("Trying to fetch image via " + url)
+            self.logger.debug("Trying to fetch image via %s" % url)
         return get_image(url, h, w, o, "")
 
-    @cherrypy.expose()
-    @require()
-    @cherrypy.tools.json_out()
-    def GetShows(self, offset, limit):
-        """ Get a list of all the TV Shows """
-        self.logger.debug("Fetching TV Shows")
-        table = ''
-        data = table_dump('video.db', 'tvshowview', limit, offset, 'c00')
-        for show in data:
-            title = show['c00']
-            year = show['c05']
-            seasons = show['totalSeasons']
-            #duration = show['c11']
-            vcodec = "vcodec"
-            quality = "quality"
-            acodec = "acodec"
-            channels = "channels"
-            subt = "subt"
-            table += html['row19'] %  (title, year, seasons, channels, subt, vcodec, quality, acodec, channels, subt, vcodec, quality, acodec, channels, subt, vcodec, quality, acodec, channels) 
-        return table
 
-    @cherrypy.expose()
-    @require()
-    @cherrypy.tools.json_out()
-    def GetEpisodes(self, start=0, end=0, sortmethod='episode', sortorder='ascending', tvshowid=None, hidewatched=False, filter=''):
-        """ Get information about a single TV Show """
-        self.logger.debug("Loading information for TVID" + str(tvshowid))
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            sort = {'order': sortorder, 'method': sortmethod, 'ignorearticle': True}
-            properties = ['episode', 'season', 'thumbnail', 'plot', 'file', 'playcount']
-            limits = {'start': int(start), 'end': int(end)}
-            filter = {'field': 'title', 'operator': 'contains', 'value': filter}
-            if hidewatched == "1":
-                filter = {"and": [filter, {'field': 'playcount', 'operator': 'is', 'value': '0'}]}
-            episodes = xbmc.VideoLibrary.GetEpisodes(sort=sort, tvshowid=int(tvshowid), properties=properties, limits=limits, filter=filter)
-            return episodes
-        except:
-            return
-
-    @cherrypy.expose()
-    @require()
-    @cherrypy.tools.json_out()
-    def GetArtists(self, start=0, end=0, sortmethod='artist', sortorder='ascending', filter=''):
-        """ Get a list of all artists """
-        self.logger.debug("Fetching all artists in the music database")
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            sort = {'order': sortorder, 'method': sortmethod, 'ignorearticle': True}
-            properties = ['musicbrainzartistid', 'thumbnail', 'fanart']
-            limits = {'start': int(start), 'end': int(end)}
-            filter = {'field': 'artist', 'operator': 'contains', 'value': filter}
-            return xbmc.AudioLibrary.GetArtists(properties=properties, limits=limits, sort=sort, filter=filter, albumartistsonly=True)
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to fetch artists!")
-            return
-
-    @cherrypy.expose()
-    @require()
-    @cherrypy.tools.json_out()
-    def GetAlbums(self, start=0, end=0, sortmethod='label', sortorder='ascending', artistid=None, filter=''):
-        """ Get a list of all albums for artist """
-        self.logger.debug("Loading all albums for ARTISTID " + str(artistid))
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            sort = {'order': sortorder, 'method': sortmethod, 'ignorearticle': True}
-            properties = ['title', 'artist', 'year', 'thumbnail']
-            limits = {'start': int(start), 'end': int(end)}
-            if artistid:
-                filter = {'artistid': int(artistid)}
-            else:
-                filter = {'or': [{'field': 'album', 'operator': 'contains', 'value': filter},
-                                 {'field': 'artist', 'operator': 'contains', 'value': filter}]}
-            return xbmc.AudioLibrary.GetAlbums(properties=properties, limits=limits, sort=sort, filter=filter)
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to fetch albums!")
-            return
-
-    @cherrypy.expose()
-    @require()
-    @cherrypy.tools.json_out()
-    def GetSongs(self, start=0, end=0, albumid=None, artistid=None, filter='', *args, **kwargs):
-        """ Get a list of all songs """
-        self.logger.debug("Fetching all artists in the music database")
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            sort = {'order': sortorder, 'method': sortmethod, 'ignorearticle': True}
-            properties = ['artist', 'artistid', 'album', 'albumid', 'duration', 'year', 'thumbnail']
-            limits = {'start': int(start), 'end': int(end)}
-            if albumid and filter == '':
-                filter = {'albumid': int(albumid)}
-            elif artistid and filter == '':
-                filter = {'artistid': int(artistid)}
-            else:
-                filter = {'or': [{'field': 'album', 'operator': 'contains', 'value': filter},
-                                 {'field': 'artist', 'operator': 'contains', 'value': filter},
-                                 {'field': 'title', 'operator': 'contains', 'value': filter}]}
-
-            return xbmc.AudioLibrary.GetSongs(properties=properties, limits=limits, sort=sort, filter=filter)
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to fetch artists!")
-            return
-
-
-    @cherrypy.expose()
-    @require()
-    @cherrypy.tools.json_out()
-    def RemoveItem(self, item, playlistid=0):
-        """ Remove a file from the playlist """
-        self.logger.debug("Removing '" + item + "' from the playlist")
-        xbmc = Server(self.url('/jsonrpc', True))
-        return xbmc.Playlist.Remove(playlistid=playlistid, position=int(item))
-
-    @cherrypy.expose()
-    @require()
-    @cherrypy.tools.json_out()
-    def LibraryRemoveItem(self, libraryid, media):
-        """ Remove an entry from the database """
-        self.logger.debug("Removing '" + libraryid + "' from the database")
-        xbmc = Server(self.url('/jsonrpc', True))
-        if media == 'movie':
-            return xbmc.VideoLibrary.RemoveMovie(movieid=int(libraryid))
-        elif media == 'musicvideo':
-            return xbmc.VideoLibrary.RemoveMusicVideo(musicvideoid=int(libraryid))
-        elif media == 'tvshow':
-            return xbmc.VideoLibrary.RemoveTVShow(tvshowid=int(libraryid))
-        elif media == 'episode':
-            return xbmc.VideoLibrary.RemoveEpisode(episodeid=int(libraryid))
-
-    @cherrypy.expose()
-    @require()
-    @cherrypy.tools.json_out()
-    def ExecuteAddon(self, addon, cmd0, cmd1):
-        """ Execute an XBMC addon """
-        self.logger.debug("Execute '" + addon + "' with commands '" + cmd0 + "' and '" + cmd1 +"'")
-        xbmc = Server(self.url('/jsonrpc', True))
-        if addon == 'script.artwork.downloader':
-            return xbmc.Addons.ExecuteAddon(addon)
-        elif addon == 'script.cinema.experience':
-            cmd = 'movieid=' + int(cmd0)
-            return xbmc.Addons.ExecuteAddon(addon, cmd)
-
-    @cherrypy.expose()
-    @require()
-    @cherrypy.tools.json_out()
-    def PlaylistMove(self, position1, position2, playlistid=0):
-        """ Swap files in playlist """
-        playlistid = int(playlistid)
-        position1 = int(position1)
-        position2 = int(position2)
-        i = 1 if position1 < position2 else -1
-        xbmc = Server(self.url('/jsonrpc', True))
-        while(position1 != position2):
-            xbmc.Playlist.Swap(playlistid=playlistid, position1=position1, position2=position1 + i)
-            position1 += i
-        return "Moved from " + str(position1) + " to " + str(position2)
-
-    @cherrypy.expose()
-    @require()
-    @cherrypy.tools.json_out()
-    def Playlist(self, type='audio'):
-        """ Get a playlist from XBMC """
-        self.logger.debug("Loading Playlist of type " + type)
-        xbmc = Server(self.url('/jsonrpc', True))
-        if type == 'video':
-            return xbmc.Playlist.GetItems(playlistid=1, properties=['year', 'showtitle', 'season', 'episode', 'runtime'])
-
-        return xbmc.Playlist.GetItems(playlistid=0, properties=['artist', 'title', 'album', 'duration'])
-
-
-    @cherrypy.expose()
-    @require()
-    @cherrypy.tools.json_out()
-    def ControlPlayer(self, action, value=''):
-        """ Various commands to control XBMC Player """
-        self.logger.debug("Sending control to XBMC: " + action)
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            if action == 'seek':
-                player = xbmc.Player.GetActivePlayers()[0]
-                return xbmc.Player.Seek(playerid=player[u'playerid'], value=float(value))
-            elif action == 'jump':
-                player = xbmc.Player.GetActivePlayers()[0]
-                return xbmc.Player.GoTo(playerid=player[u'playerid'], to=int(value))
-            elif action == 'party':
-                return xbmc.Player.Open(item={'partymode': 'audio'})
-            elif action == 'fullscreen':
-                return xbmc.GUI.SetFullscreen(fullscreen='toggle')
-            else:
-                return xbmc.Input.ExecuteAction(action=action)
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to control XBMC with action: " + action)
-            return 'error'
-
-
-    @cherrypy.expose()
-    @require()
-    @cherrypy.tools.json_out()
-    def SendText(self, text):
-        """ Send text to XBMC """
-        self.logger.debug("Sending text to XBMC: " + text)
-        xbmc = Server(self.url('/jsonrpc', True))
-        return xbmc.Input.SendText(text=text)
-
-
-    @cherrypy.expose()
-    @require()
-    @cherrypy.tools.json_out()
-    def System(self, action=''):
-        """ Various system commands """
-        xbmc = Server(self.url('/jsonrpc', True))
-        if action == 'shutdown-server':
-            self.logger.info("Shutting down Server")
-            xbmc.System.Shutdown()
-            return 'Shutting down Server.'
-        elif action == 'suspend-server':
-            self.logger.info("Suspending Server")
-            xbmc.System.Suspend()
-            return 'Suspending Server.'
-        elif action == 'reboot-server':
-            self.logger.info("Rebooting Server")
-            xbmc.System.Reboot()
-            return 'Rebooting Server.'
-        elif action == 'wake-xbmc':
-            self.logger.info("Waking Up XBMC")
-            xbmc.System.OnWake()
-            return 'Waking UP XBMC.'
-        elif action == 'shutdown-xbmc':
-            self.logger.info("Shutting down XBMC")
-            xbmc.System.OnQuit()
-            return 'Shutting down XBMC.'
-        elif action == 'suspend-xbmc':
-            self.logger.info("Suspending XBMC")
-            xbmc.System.OnSleep()
-            return 'Suspending XBMC.'
-        elif action == 'reboot-xbmc':
-            self.logger.info("Rebooting XBMC")
-            xbmc.System.OnRestart()
-            return 'Rebooting XBMC.'
-
-    @cherrypy.expose()
-    @require()
-    @cherrypy.tools.json_out()
-    def Wake(self):
-        """ Send WakeOnLan package """
-        self.logger.info("Waking up XBMC-System")
-        try:
-            addr_byte = self.current.mac.split(':')
-            hw_addr = struct.pack('BBBBBB',
-            int(addr_byte[0], 16),
-            int(addr_byte[1], 16),
-            int(addr_byte[2], 16),
-            int(addr_byte[3], 16),
-            int(addr_byte[4], 16),
-            int(addr_byte[5], 16))
-            msg = '\xff' * 6 + hw_addr * 16
-            s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-            s.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
-            s.sendto(msg, ("255.255.255.255", 9))
-            self.logger.info("WOL package sent to " + self.current.mac)
-            return "WOL package sent"
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to send WOL packet")
-            return "Unable to send WOL packet"
-
-    @cherrypy.expose()
-    @require()
-    @cherrypy.tools.json_out()
-    def Notify(self, text):
-        """ Create popup in XBMC """
-        self.logger.debug("Sending notification to XBMC: " + text)
-        xbmc = Server(self.url('/jsonrpc', True))
-        image = 'https://raw.github.com/styxit/HTPC-Manager/master/interfaces/default/img/xbmc-logo.png'
-        return xbmc.GUI.ShowNotification(title='PyTunes', message=text, image=image)
-
-    @cherrypy.expose()
-    @require()
-    @cherrypy.tools.json_out()
-    def GetRecentMovies(self, limit=5):
-        """ Get a list of recently added movies """
-        self.logger.debug("Fetching recently added movies")
-        try:
-            xbmc = Server(self.url('/jsonrpc', True))
-            properties = ['title', 'year', 'runtime', 'plot', 'thumbnail', 'file',
-                          'fanart', 'trailer', 'imdbnumber', 'studio', 'genre', 'rating']
-            limits = {'start': 0, 'end': int(limit)}
-            return xbmc.VideoLibrary.GetRecentlyAddedMovies(properties=properties, limits=limits)
-        except Exception, e:
-            self.logger.debug("Exception: " + str(e))
-            self.logger.error("Unable to fetch recently added movies!")
-            return
-
-
-    @cherrypy.expose()
-    @require()
-    @cherrypy.tools.json_out()
-    def Library(self, do='scan', lib='video'):
-        xbmc = Server(self.url('/jsonrpc', True))
-        if lib == 'video':
-            if do == 'clean':
-                return xbmc.VideoLibrary.Clean()
-            elif do == 'export':
-                return xbmc.VideoLibrary.Export()
-            else:
-                return xbmc.VideoLibrary.Scan()
-        else:
-            if do == 'clean':
-                return xbmc.AudioLibrary.Clean()
-            elif do == 'export':
-                return xbmc.AudioLibrary.Export()
-            else:
-                return xbmc.AudioLibrary.Scan()
-
-    def url(self, path='', auth=False):
-        """ Generate a URL for the RPC based on XBMC settings """
-        self.logger.debug("Generate URL to call XBMC")
-        url = self.current.host + ':' + str(self.current.port) + path
-        if auth and self.current.username and self.current.password:
-            url = self.current.username + ':' + self.current.password + '@' + url
-
-        self.logger.debug("URL: http://" + url)
-        return 'http://' + url
-
-    def auth(self):
-        """ Generate a base64 HTTP auth string based on settings """
-        self.logger.debug("Generating authentication string")
-        if self.current.username and self.current.password:
-            return base64.encodestring('%s:%s' % (self.current.username, self.current.password)).strip('\n')

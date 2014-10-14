@@ -351,8 +351,10 @@ function loadMovies(options) {
 function loadMovie(movie) {
     var poster = WEBDIR + 'xbmc/GetThumb?w=133&h=200&thumb=' + encodeURIComponent(movie.thumbnail);
     var info = $('<div>').addClass('modal-movieinfo');
+    var actors = "";
     var castshow = $('<ul>').addClass('thumbnails');
     var actorItem = "";    
+    var actors = [];
     var director = "";
     var writers = "";
     var genre = "";
@@ -470,11 +472,15 @@ function loadMovie(movie) {
            hideModal();
         },
         'Remove': function () {
-            if (confirm('Are you sure you want to remove: ' + movie.title + '? This will remove this entry forever!')) {
+            bootbox.confirm('Are you sure you want to remove: ' + movie.title + '? This will remove this entry forever!', function (result) {
+            bootbox.classes('ConfirmModal ');
+            if (result) {
                 removeLibraryItem(movie.movieid, 'movie');
                 reloadTab();
                 hideModal();
                 }
+            });
+            
         }
      };
     if (movie.imdbnumber) {
@@ -828,7 +834,7 @@ function loadAlbums(options) {
                     $('<h6>').html(album.title),
                     $('<h6>').html(album.artist).addClass('artist')).click(function (e) {
                         e.preventDefault();
-                        ViewAlbum(album.albumid,'search');
+                        xbmc/ViewAlbum(album.albumid,'search');
                     }),
                     $('<div>').addClass('grid-control').append(
                     $('<a>').attr('href', '#').append(
@@ -1206,18 +1212,24 @@ function playItem(item, type) {
 }
 
 function executeAddon2(addon, cmd0, cmd1) {
-    if (confirm('Execute: ' + addon + 'with cmd0: ' + cmd0 + 'and cmd1: ' + cmd1)) {
+    bootbox.confirm('Execute: ' + addon + 'with cmd0: ' + cmd0 + 'and cmd1: ' + cmd1, function (result) {
+        bootbox.classes('ConfirmModal ');
+        if (result) {
             $.get(WEBDIR + 'xbmc/ExecuteAddon?addon=' + addon + ' & cmd0 = ' + cmd0 + ' & cmd1 = ' + cmd1);
             $('#filter ').val('');
         }
+    });
 }
 
-function executeAddon(addon, cmd0, cmd1) {
-    if (confirm('Execute: ' + addon + 'with cmd0: ' + cmd0 + 'and cmd1: ' + cmd1)) {
+function executeAddon2(addon, cmd0, cmd1) {
+    bootbox.confirm('Execute: ' + addon + 'with cmd0: ' + cmd0 + 'and cmd1: ' + cmd1, function (result) {
+        bootbox.classes('ConfirmModal ');
+        if (result) {
             cmd0 = typeof cmd0 !== 'undefined' ? '&cmd0=' + cmd0 : '';
             cmd1 = typeof cmd1 !== 'undefined' ? '&cmd1=' + cmd1 : '';
             $.get(WEBDIR + 'xbmc/ExecuteAddon?addon=' + addon + cmd0 + cmd1);
         }
+    });
 }
 
 function queueItem(item, type) {

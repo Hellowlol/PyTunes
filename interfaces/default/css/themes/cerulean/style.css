@@ -107,3 +107,13 @@ html, body {
         padding-top: 60px;
     }
 }
+
+.ConfirmModal {
+    //width: inherit !important;
+    //height: inherit !important;
+}
+
+.AlertModal {
+    //width: inherit !important;
+    //height: inherit !important;
+}

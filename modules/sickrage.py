@@ -10,53 +10,53 @@ from json import loads
 import logging
 import cgi
 
-class Sickbeard:
+class Sickrage:
     def __init__(self):
-        self.logger = logging.getLogger('modules.sickbeard')
+        self.logger = logging.getLogger('modules.sickrage')
         pytunes.MODULES.append({
-            'name': 'Sickbeard',
-            'id': 'sickbeard',
-            'test': '%sickbeard/ping' % pytunes.WEBDIR,
+            'name': 'SickRage',
+            'id': 'sickrage',
+            'test': '%sickrage/ping' % pytunes.WEBDIR,
             'fields': [
-                {'type': 'bool', 'label': 'Enable', 'name': 'sickbeard_enable'},
-                {'type': 'text', 'label': 'Menu name', 'name': 'sickbeard_name', 'placeholder':''},
-                {'type': 'text', 'label': 'IP / Host *', 'name': 'sickbeard_host', 'placeholder':''},
-                {'type': 'text', 'label': 'Port *', 'name': 'sickbeard_port', 'placeholder':'', 'desc':'Default is 8081'},
-                {'type': 'text', 'label': 'Basepath', 'name': 'sickbeard_basepath'},
-                {'type': 'text', 'label': 'API key', 'name': 'sickbeard_apikey'},
-                {'type': 'bool', 'label': 'Use SSL', 'name': 'sickbeard_ssl'}
+                {'type': 'bool', 'label': 'Enable', 'name': 'sickrage_enable'},
+                {'type': 'text', 'label': 'Menu name', 'name': 'sickrage_name', 'placeholder':''},
+                {'type': 'text', 'label': 'IP / Host *', 'name': 'sickrage_host', 'placeholder':''},
+                {'type': 'text', 'label': 'Port *', 'name': 'sickrage_port', 'placeholder':'', 'desc':'Default is 8081'},
+                {'type': 'text', 'label': 'Basepath', 'name': 'sickrage_basepath'},
+                {'type': 'text', 'label': 'API key', 'name': 'sickrage_apikey'},
+                {'type': 'bool', 'label': 'Use SSL', 'name': 'sickrage_ssl'}
         ]})
 
     @cherrypy.expose()
     def index(self, query=''):
-        return pytunes.LOOKUP.get_template('sickbeard.html').render(scriptname='sickbeard', query=query)
+        return pytunes.LOOKUP.get_template('sickrage.html').render(scriptname='sickrage', query=query)
 
     @cherrypy.expose()
-    def view(self, tvdbid):
-        if not (tvdbid.isdigit()):
+    def view(self, indexerid):
+        if not (indexerid.isdigit()):
             raise cherrypy.HTTPError("500 Error", "Invalid show ID.")
-            self.logger.error("Invalid show ID was supplied: %s" % str(tvdbid))
+            self.logger.error("Invalid show ID was supplied: %s" % str(indexerid))
             return False
 
-        return pytunes.LOOKUP.get_template('sickbeard_view.html').render(scriptname='sickbeard_view', tvdbid=tvdbid)
+        return pytunes.LOOKUP.get_template('sickrage_view.html').render(scriptname='sickrage_view', indexerid=indexerid)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def ping(self, sickbeard_host, sickbeard_port, sickbeard_apikey, sickbeard_basepath, sickbeard_ssl = False, **kwargs):
-        ssl = 's' if sickbeard_ssl else ''
+    def ping(self, sickrage_host, sickrage_port, sickrage_apikey, sickrage_basepath, sickrage_ssl = False, **kwargs):
+        ssl = 's' if sickrage_ssl else ''
         self.logger.debug("Testing connectivity")
         try:
-            if not (sickbeard_basepath.endswith('/')):
-                sickbeard_basepath += "/"
+            if not (sickrage_basepath.endswith('/')):
+                sickrage_basepath += "/"
 
-            url = 'http%s://%s:%s%sapi/%s/?cmd=sb.ping' % (ssl, sickbeard_host, sickbeard_port, sickbeard_basepath, sickbeard_apikey)
-            self.logger.debug("Trying to contact sickbeard via %s" % url)
+            url = 'http%s://%s:%s%sapi/%s/?cmd=sb.ping' % (ssl, sickrage_host, sickrage_port, sickrage_basepath, sickrage_apikey)
+            self.logger.debug("Trying to contact sickrage via %s" % url)
             response = loads(urlopen(url, timeout=10).read())
             if response.get('result') == "success":
-                self.logger.debug("Sicbeard connectivity test success")
+                self.logger.debug("Sicrage connectivity test success")
                 return response
         except:
-            self.logger.error("Unable to contact sickbeard via %s" % url)
+            self.logger.error("Unable to contact sickrage via %s" % url)
             return
 
     @cherrypy.expose()
@@ -66,7 +66,7 @@ class Sickbeard:
         sb_table = []
         sb_table_out = []
         list = self.fetch('shows&sort=name')
-        sb_row = "<tr><td><a href='/sickbeard/view/%s'>%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td title='Downloaded/Snatched/Wanted/Skipped/Ignored/Unaired/Total'>%s</td><td><div class='progress span2'><div class='bar bar-success' style='width: %s%s;' title='%s Downloaded'></div><div class='bar bar-warning' style='width: %s%s;'title='%s Snatched'></div></div></td></tr>"
+        sb_row = "<tr><td><a href='/sickrage/view/%s'>%s</a></td><td>%s</td><td>%s</td><td>%s</td><td>%s</td><td title='Downloaded/Snatched/Wanted/Skipped/Ignored/Unaired/Total'>%s</td><td><div class='progress span2'><div class='bar bar-success' style='width: %s%s;' title='%s Downloaded'></div><div class='bar bar-warning' style='width: %s%s;'title='%s Snatched'></div></div></td></tr>"
         #print list
         for show in list['data']:
             showlist = {}
@@ -83,8 +83,8 @@ class Sickbeard:
             showlist['status'] = list['data'][show]['status']
             showlist['network'] = list['data'][show]['network']
             showlist['quality'] = list['data'][show]['quality']
-            showlist['tvdbid'] = list['data'][show]['tvdbid']
-            sdata = self.fetch('show.stats&tvdbid=%s' % list['data'][show]['tvdbid'])
+            showlist['indexerid'] = list['data'][show]['indexerid']
+            sdata = self.fetch('show.stats&indexerid=%s' % list['data'][show]['indexerid'])
             #print sdata
             if sdata['message']:
                 print sdata['message'], show
@@ -115,7 +115,7 @@ class Sickbeard:
                 quality = "<span class='label label-info'>%s</span>" % showrow['quality']
             else:
                 quality = "<span class='label label-warning'>%s</span>" % showrow['quality']
-            sb_table_out.append(sb_row % (showrow['tvdbid'], showrow['show'], status, showrow['nextair'], showrow['network'], quality, showrow['stats'], showrow['percent_downloaded'], '%', showrow['downloaded'], showrow['percent_snatched'], '%', showrow['snatched']))
+            sb_table_out.append(sb_row % (showrow['indexerid'], showrow['show'], status, showrow['nextair'], showrow['network'], quality, showrow['stats'], showrow['percent_downloaded'], '%', showrow['downloaded'], showrow['percent_snatched'], '%', showrow['snatched']))
         #print ''.join(sb_table_out)
         return ''.join(sb_table_out)
             
@@ -128,16 +128,16 @@ class Sickbeard:
         return self.fetch('future')
 
     @cherrypy.expose()
-    def GetBanner(self, tvdbid):
+    def GetBanner(self, indexerid):
         self.logger.debug("Fetching Banner")
         cherrypy.response.headers['Content-Type'] = 'image/jpeg'
-        return self.fetch('show.getbanner&tvdbid=%s' % tvdbid, True)
+        return self.fetch('show.getbanner&indexerid=%s' % indexerid, True)
 
     @cherrypy.expose()
-    def GetPoster(self, tvdbid):
+    def GetPoster(self, indexerid):
         self.logger.debug("Fetching Poster")
         cherrypy.response.headers['Content-Type'] = 'image/jpeg'
-        return self.fetch('show.getposter&tvdbid=%s' % tvdbid, True)
+        return self.fetch('show.getposter&indexerid=%s' % indexerid, True)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -153,34 +153,34 @@ class Sickbeard:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def AddShow(self, tvdbid):
+    def AddShow(self, indexerid):
         self.logger.debug("Adding a Show")
-        return self.fetch('show.addnew&tvdbid=%s' % tvdbid)
+        return self.fetch('show.addnew&indexerid=%s' % indexerid)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def GetShow(self, tvdbid):
+    def GetShow(self, indexerid):
         
         self.logger.debug("Fetching Show")
-        return self.fetch('show&tvdbid=%s' % tvdbid)
+        return self.fetch('show&indexerid=%s' % indexerid)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def GetSeason(self, tvdbid, season):
+    def GetSeason(self, indexerid, season):
         self.logger.debug("Fetching Season")
-        return self.fetch('show.seasons&tvdbid=%s&season=%s' % (tvdbid, season))
+        return self.fetch('show.seasons&indexerid=%s&season=%s' % (indexerid, season))
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def SearchEpisodeDownload(self, tvdbid, season, episode):
+    def SearchEpisodeDownload(self, indexerid, season, episode):
         self.logger.debug("Fetching Episode Downloads")
-        return self.fetch('episode.search&tvdbid=%s&season=%s&episode=%s' % (tvdbid, season, episode), False, 45)
+        return self.fetch('episode.search&indexerid=%s&season=%s&episode=%s' % (indexerid, season, episode), False, 45)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def RemoveShow(self, tvdbid):
-        self.logger.debug("Force full update for tvdbid %s" % tvdbid)
-        return self.fetch("show.delete&tvdbid=%s" % tvdbid)
+    def RemoveShow(self, indexerid):
+        self.logger.debug("Force full update for indexerid %s" % indexerid)
+        return self.fetch("show.delete&indexerid=%s" % indexerid)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
@@ -191,33 +191,33 @@ class Sickbeard:
         status = cgi.escape(statusSelect)
         episodes = form.getlist('changestatus')
         for each in episodes:
-            tvdbid, season, episode = cgi.escape(each).split('|')
-            self.fetch("episode.setstatus&tvdbid=%s&season=%s&episode=%s&status=%s" % (tvdbid, season, episode, status)) 
+            indexerid, season, episode = cgi.escape(each).split('|')
+            self.fetch("episode.setstatus&indexerid=%s&season=%s&episode=%s&status=%s" % (indexerid, season, episode, status)) 
         return
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def Restart(self):
-        self.logger.debug("Restarting Sickbeard")
+        self.logger.debug("Restarting Sickrage")
         return self.fetch("sb.restart")
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def Shutdown(self):
-        self.logger.debug("Shutting Down Sickbeard")
+        self.logger.debug("Shutting Down Sickrage")
         return self.fetch("sb.shutdown")
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def ForceFullUpdate(self, tvdbid):
-        self.logger.debug("Force full update for tvdbid %s" % tvdbid)
-        return self.fetch("show.update&tvdbid=%s" % tvdbid)
+    def ForceFullUpdate(self, indexerid):
+        self.logger.debug("Force full update for indexerid %s" % indexerid)
+        return self.fetch("show.update&indexerid=%s" % indexerid)
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def RescanFiles(self, tvdbid):
-        self.logger.debug("Rescan all local files for tvdbid %s" % tvdbid)
-        return self.fetch("show.refresh&tvdbid=%s" % tvdbid)
+    def RescanFiles(self, indexerid):
+        self.logger.debug("Rescan all local files for indexerid %s" % indexerid)
+        return self.fetch("show.refresh&indexerid=%s" % indexerid)
 
     @cherrypy.expose()
     def SearchShow(self, query):
@@ -229,15 +229,15 @@ class Sickbeard:
 
     def fetch(self, cmd, img=False, timeout=10):
         try:
-            host = pytunes.settings.get('sickbeard_host', '')
-            port = str(pytunes.settings.get('sickbeard_port', ''))
-            apikey = pytunes.settings.get('sickbeard_apikey', '')
-            ssl = 's' if pytunes.settings.get('sickbeard_ssl', 0) else ''
-            sickbeard_basepath = pytunes.settings.get('sickbeard_basepath', '/')
+            host = pytunes.settings.get('sickrage_host', '')
+            port = str(pytunes.settings.get('sickrage_port', ''))
+            apikey = pytunes.settings.get('sickrage_apikey', '')
+            ssl = 's' if pytunes.settings.get('sickrage_ssl', 0) else ''
+            sickrage_basepath = pytunes.settings.get('sickrage_basepath', '/')
 
-            if not (sickbeard_basepath.endswith('/')):
-                sickbeard_basepath += "/"
-            url = 'http%s://%s:%s%sapi/%s/?cmd=%s' % (ssl, host, str(port), sickbeard_basepath, apikey, cmd)
+            if not (sickrage_basepath.endswith('/')):
+                sickrage_basepath += "/"
+            url = 'http%s://%s:%s%sapi/%s/?cmd=%s' % (ssl, host, str(port), sickrage_basepath, apikey, cmd)
 
             self.logger.debug("Fetching information from: %s" % url)
 

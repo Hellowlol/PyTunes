@@ -1,3 +1,23 @@
+$(document).ready(function () {
+    $('.spinner').show();
+    loadTab();
+    $('.spinner').hide();
+
+    // Load data on tab display
+    $('a[data-toggle="tab"]').click(function (e) {
+        $('#search').val('');
+        searchString = '';
+    }).on('shown', loadTab);
+
+    $(window).trigger('hashchange');
+
+    // Load more titles on scroll
+    $(window).scroll(function () {
+        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 10) {
+            reloadTab();
+        }
+    });
+});
 
 var page_counts = {
     theaters: 1,
@@ -175,7 +195,7 @@ function loadWantedMovies() {
 function loadPopularTV(page) {
     //alert("In Popular TV" + page);
     var sendData = {
-        source: 'popular',
+        source: 'populartv',
         page: page
     };
     $.ajax({
@@ -437,26 +457,4 @@ var pageoptions = {
     offset: 0
 };
     
-$(document).ready(function () {
-    $('.spinner').show();
-    loadTab();
-    $('.spinner').hide();
-
-    // Load data on tab display
-    $('a[data-toggle="tab"]').click(function (e) {
-        $('#search').val('');
-        searchString = '';
-    }).on('shown', loadTab);
-
-    $(window).trigger('hashchange');
-
-    // Load more titles on scroll
-    $(window).scroll(function () {
-        if ($(window).scrollTop() + $(window).height() >= $(document).height() - 10) {
-            reloadTab();
-        }
-    });
-
-
-});
 

@@ -38,14 +38,11 @@ $(document).ready(function () {
     $('a.ajax-confirm').click(function (e) {
         e.preventDefault();
         var link = $(this);
-        bootbox.confirm(link.attr('title') + '?', function (result) {
-            bootbox.classes('ConfirmModal');
-            if (result) {
-                $.getJSON(link.attr('href'), function (data) {
-                    notify(link.attr('title'), data, 'info');
-                });
-            }
-        });
+        if (confirm(link.attr('title') + '?')) {
+            $.getJSON(link.attr('href'), function (data) {
+                notify(link.attr('title'), data, 'info');
+            });
+        }
     });
 
     $('a.settingsdisabled').click(function (e) {
@@ -56,12 +53,11 @@ $(document).ready(function () {
         e.preventDefault();
         var t = $(this).attr('title') + ' ?';
         var href = $(this).attr('href');
-        bootbox.confirm('Are you sure you want to ' + t + '', function (result) {
-            bootbox.classes('ConfirmModal');
+        if (confirm('Are you sure you want to ' + t + '')) {
             if (result) {
                 window.location.replace(href);
             }
-        });
+        }
     });
 
     $('#btn-check-update').click(function (e) {
@@ -75,25 +71,23 @@ $(document).ready(function () {
                 if ($.isNumeric(data.versionsBehind) && data.versionsBehind === 0) {
                     notify('Update', 'Already running latest version.', 'success');
                 } else if (data.updateNeeded) {
-                    bootbox.confirm('You are ' + data.versionsBehind + ' versions behind. Update needed. Update to latest version?', function(result) {
-                        if (result) {
-                            $.post(WEBDIR + 'update/', function (data) {
-                                if (data == 1) {
-                                    showModal('Installing update', '<div class="progress progress-striped active"><div class="bar" style="width:100%"></div></div>', '', '', 'modal_update_body');
-                                } else {
-                                    notify('Update', 'An error occured while updating!', 'error');
-                                }
-                            }, 'json').always(function () {
-                                checkUpdate();
-                            });
-                        }
-                    });
-                    } else {
-                        notify('Update', 'Failed. Check errorlog.', 'error');
+                    if (confirm('You are ' + data.versionsBehind + ' versions behind. Update needed. Update to latest version?')) {
+                        $.post(WEBDIR + 'update/', function (data) {
+                            if (data == 1) {
+                                showModal('Installing update', '<div class="progress progress-striped active"><div class="bar" style="width:100%"></div></div>', '');
+                            } else {
+                                notify('Update', 'An error occured while updating!', 'error');
+                            }
+                        }, 'json').always(function () {
+                            checkUpdate();
+                        });
                     }
+                } else {
+                    notify('Update', 'Failed. Check errorlog.', 'error');
                 }
-            });
+            }
         });
+    });
 
     $('#modal_dialog').on('hidden', function () {
         $('#modal_dialog .modal-body').empty();
@@ -165,45 +159,36 @@ function notify(title, text, type, time) {
 
 // "Stolen from Maraschino"
 function byteSizeOrdering() {
-    jQuery.tablesorter.addParser(
-    {
-      id: 'filesize',
-      is: function (s)
-      {
-        return s.match(new RegExp(/[0-9]+(\.[0-9]+)?\ (KB|B|GB|MB|TB)/i));
-      },
-      format: function (s)
-      {
-        var suf = s.match(new RegExp(/(KB|B|GB|MB|TB)$/i))[1];
-        var num = parseFloat(s.match(new RegExp(/^[0-9]+(\.[0-9]+)?/))[0]);
-        switch (suf)
-        {
-          case 'B':
-            return num;
-          case 'KB':
-            return num * 1024;
-          case 'MB':
-            return num * 1024 * 1024;
-          case 'GB':
-            return num * 1024 * 1024 * 1024;
-          case 'TB':
-            return num * 1024 * 1024 * 1024 * 1024;
-        }
-      },
-      type: 'numeric'
+    jQuery.tablesorter.addParser({
+        id: 'filesize',
+        is: function (s) {
+            return s.match(new RegExp(/[0-9]+(\.[0-9]+)?\ (KB|B|GB|MB|TB)/i));
+        },
+        format: function (s) {
+            var suf = s.match(new RegExp(/(KB|B|GB|MB|TB)$/i))[1];
+            var num = parseFloat(s.match(new RegExp(/^[0-9]+(\.[0-9]+)?/))[0]);
+            switch (suf) {
+                case 'B':
+                    return num;
+                case 'KB':
+                    return num * 1024;
+                case 'MB':
+                    return num * 1024 * 1024;
+                case 'GB':
+                    return num * 1024 * 1024 * 1024;
+                case 'TB':
+                    return num * 1024 * 1024 * 1024 * 1024;
+            }
+        },
+        type: 'numeric'
     });
-  }
+}
 
-//function showModal(title, content, buttons) {
-//<<<<<<< HEAD
-function showModal(title, content, buttons, modal_dialog, modal_body) {
-//=======
-
-//>>>>>>> 71a07633daa23863748ca0c18bca2b1709deb8a5
+function showModal(title, content, buttons) {
     $('#modal_dialog .modal-h3').html(title);
     $('#modal_dialog').attr('tabindex', '-1').addClass(modal_dialog);
     $('#modal_dialog .modal-body').html(content);
-    $('#modal-body').addClass(modal_body);
+    $('#modal-body').addClass("modal_body");
     var footer = $('#modal_dialog .modal-footer').empty();
     $.extend(buttons, {
         'Close': hideModal()

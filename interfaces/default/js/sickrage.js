@@ -24,7 +24,7 @@ $(document).ready(function () {
         searchTvDb($('#add_show_name').val());
     });
 
-    $('#add_tvdbid_button').click(function () {
+    $('#add_indexerid_button').click(function () {
         addShow($('#add_show_select').val());
     });
 
@@ -42,7 +42,7 @@ function loadTab() {
         loadNextAired();
     } 
     else if ($('#history').is(':visible')) {
-        loadSickbeardHistory(25);
+        loadSickrageHistory(25);
     } 
     else if ($('#logs').is(':visible')) {
         loadLogs();
@@ -53,7 +53,7 @@ function loadTab() {
 function loadShows() {
     $('.spinner').show();
     $.ajax({
-        url: WEBDIR + 'sickbeard/GetShowList',
+        url: WEBDIR + 'sickrage/GetShowList',
         type: 'get',
         dataType: 'text',
         success: function (result) {
@@ -63,9 +63,9 @@ function loadShows() {
     });
 }
 
-function loadShow(tvdbid) {
+function loadShow(indexerid) {
     $.ajax({
-        url: WEBDIR + 'sickbeard/GetShow?tvdbid=' + tvdbid,
+        url: WEBDIR + 'sickrage/GetShow?indexerid=' + indexerid,
         type: 'get',
         dataType: 'json',
         success: function (data) {
@@ -100,13 +100,13 @@ function loadShow(tvdbid) {
 
             modalContent = $('<div>');
             modalContent.append(
-            $('<img>').attr('src', WEBDIR + 'sickbeard/GetBanner/' + tvdbid).addClass('img-rounded'),
+            $('<img>').attr('src', WEBDIR + 'sickrage/GetBanner/' + indexerid).addClass('img-rounded'),
             $('<hr>'),
             table);
 
             var modalButtons = {
                 'Show': function () {
-                    window.location = WEBDIR + 'sickbeard/view/' + tvdbid;
+                    window.location = WEBDIR + 'sickrage/view/' + indexerid;
                 }
             };
 
@@ -123,11 +123,11 @@ function loadNextAired(options) {
     $.extend(defaults, options);
 
     $.ajax({
-        url: WEBDIR + 'sickbeard/GetNextAired',
+        url: WEBDIR + 'sickrage/GetNextAired',
         type: 'get',
         dataType: 'json',
         success: function (result) {
-            // If sickbeard not configured, return false (Dashboard)
+            // If sickrage not configured, return false (Dashboard)
             if (result === null) return false;
 
             if (result.data.soon.length === 0) {
@@ -149,7 +149,7 @@ function loadNextAired(options) {
                 }
                 var row = $('<tr>');
                 var name = $('<a>').attr('href', '#').html(tvshow.show_name).click(function (e) {
-                    loadShow(tvshow.tvdbid);
+                    loadShow(tvshow.indexerid);
                 });
 
                 row.append(
@@ -167,7 +167,7 @@ function loadNextAired(options) {
                 }
                 var row = $('<tr>');
                 var name = $('<a>').attr('href', '#').html(tvshow.show_name).click(function (e) {
-                    loadShow(tvshow.tvdbid);
+                    loadShow(tvshow.indexerid);
                 });
 
                 row.append(
@@ -183,10 +183,10 @@ function loadNextAired(options) {
     });
 }
 
-function loadSickbeardHistory(limit) {
+function loadSickrageHistory(limit) {
     $('.spinner').show();
     $.ajax({
-        url: WEBDIR + 'sickbeard/GetHistory?limit=' + limit,
+        url: WEBDIR + 'sickrage/GetHistory?limit=' + limit,
         type: 'get',
         dataType: 'json',
         success: function (result) {
@@ -196,13 +196,13 @@ function loadSickbeardHistory(limit) {
                 $('#history_table_body').append(row);
             }
 
-            $.each(result.data, function (tvdbid, tvshow) {
+            $.each(result.data, function (indexerid, tvshow) {
                 var row = $('<tr>');
                 row.append(
                 $('<td>').html(tvshow.date),
-                $('<td>').append($('<a>').text(tvshow.show_name).attr('href', WEBDIR + 'sickbeard/view/' + tvshow.tvdbid)),
+                $('<td>').append($('<a>').text(tvshow.show_name).attr('href', WEBDIR + 'sickrage/view/' + tvshow.indexerid)),
                 $('<td>').html(tvshow.season + 'x' + tvshow.episode),
-                $('<td>').append(sickbeardStatusLabel(tvshow.status)),
+                $('<td>').append(sickrageStatusLabel(tvshow.status)),
                 $('<td>').html(tvshow.quality));
 
                 $('#history_table_body').append(row);
@@ -215,7 +215,7 @@ function loadSickbeardHistory(limit) {
 function loadLogs() {
     $('.spinner').show();
     $.ajax({
-        url: WEBDIR + 'sickbeard/GetLogs',
+        url: WEBDIR + 'sickrage/GetLogs',
         type: 'get',
         dataType: 'json',
         success: function (result) {
@@ -236,7 +236,7 @@ function loadLogs() {
 function shutdownSB() {
     if (confirm('Are you sure? Shutdown. ')) {
         $.ajax({
-            url: WEBDIR + 'sickbeard/Shutdown',
+            url: WEBDIR + 'sickrage/Shutdown',
             type: 'get',
             dataType: 'json',
             timeout: 15000,
@@ -259,7 +259,7 @@ function shutdownSB() {
 function restartSB() {
     if (confirm('Are you sure? Restart.')) {
         $.ajax({
-            url: WEBDIR + 'sickbeard/Restart',
+            url: WEBDIR + 'sickrage/Restart',
             type: 'get',
             dataType: 'json',
             timeout: 15000,
@@ -282,7 +282,7 @@ function restartSB() {
 
 function searchTvDb(query) {
     $.ajax({
-        url: WEBDIR + 'sickbeard/SearchShow?query=' + query,
+        url: WEBDIR + 'sickrage/SearchShow?query=' + query,
         type: 'get',
         dataType: 'xml',
         success: function (result) {
@@ -294,11 +294,11 @@ function searchTvDb(query) {
             }
             $('#add_show_select').html('');
             series.each(function () {
-                var tvdbid = $(this).find('seriesid').text();
+                var indexerid = $(this).find('seriesid').text();
                 var showname = $(this).find('SeriesName').text();
                 var language = $(this).find('language').text();
                 var option = $('<option>');
-                option.attr('value', tvdbid);
+                option.attr('value', indexerid);
                 option.html(showname + ' (' + language + ')');
                 $('#add_show_select').append(option);
             });
@@ -306,14 +306,14 @@ function searchTvDb(query) {
             $('#cancel_show_button').show();
             $('#add_show_select').fadeIn();
             $('#add_show_button').attr('disabled', false).hide();
-            $('#add_tvdbid_button').show();
+            $('#add_indexerid_button').show();
         }
     });
 }
 
-function addShow(tvdbid) {
+function addShow(indexerid) {
     $.ajax({
-        url: WEBDIR + 'sickbeard/AddShow?tvdbid=' + tvdbid,
+        url: WEBDIR + 'sickrage/AddShow?indexerid=' + indexerid,
         type: 'get',
         dataType: 'json',
         success: function (data) {
@@ -328,11 +328,11 @@ function cancelAddShow() {
     $('#add_show_select').hide();
     $('#cancel_show_button').hide();
     $('#add_show_name').fadeIn();
-    $('#add_tvdbid_button').hide();
+    $('#add_indexerid_button').hide();
     $('#add_show_button').show();
 }
 
-function sickbeardStatusLabel(text) {
+function sickrageStatusLabel(text) {
     var statusOK = ['Continuing', 'Downloaded', 'HD'];
     var statusInfo = ['Snatched', 'Unaired'];
     var statusError = ['Ended'];
@@ -350,14 +350,14 @@ function sickbeardStatusLabel(text) {
         label.addClass('label-warning');
     }
 
-    var icon = sickbeardStatusIcon(text, true);
+    var icon = sickrageStatusIcon(text, true);
     if (icon !== '') {
         label.prepend(' ').prepend(icon);
     }
     return label;
 }
 
-function sickbeardStatusIcon(iconText, white) {
+function sickrageStatusIcon(iconText, white) {
     var text = [
         'Downloaded',
         'Continuing',

@@ -131,16 +131,14 @@ $(document).ready(function () {
             $('#xbmc_server_mac').val(data.mac);
             $("button:reset:visible").html('Delete').addClass('btn-danger').click(function (e) {
                 var name = item.find('option:selected').text();
-                bootbox.confirm('Delete ' + name, function (result) {
-                    bootbox.classes('ConfirmModal');
-                    if (!result) return;
-                    $.get(WEBDIR + 'settings/delxbmcserver?id=' + id, function (data) {
+                if (confirm('Delete ' + name)) {
+                     $.get(WEBDIR + 'settings/delxbmcserver?id=' + id, function (data) {
                         notify('Settings', 'Server deleted', 'info');
                         $(this).val(0);
                         item.find('option[value=' + id + ']').remove();
                         $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
                     });
-                });
+                }
             });
         });
     });
@@ -173,33 +171,6 @@ $(document).ready(function () {
         loadNzbServers();
 
     
-    $('input.enable-module').trigger('change');
-    $('#users_user_id').change(function () {
-        $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
-        var item = $(this);
-        var id = item.val();
-        if (id === 0) $('button:reset:visible').trigger('click');
-        $.get(WEBDIR + 'users/getuser?id=' + id, function (data) {
-            if (data === null) return;
-            $('#users_user_username').val(data.username);
-            $('#users_user_password').val(data.password);
-            $('#users_user_role').val(data.role);
-            $("button:reset:visible").html('Delete').addClass('btn-danger').click(function (e) {
-                var name = item.find('option:selected').text();
-                bootbox.confirm('Delete ' + name, function (result) {
-                    bootbox.classes('ConfirmModal');
-                    if (!result) return;
-                    $.get(WEBDIR + 'users/deluser?id=' + id, function (data) {
-                        notify('Settings', 'User deleted', 'info');
-                        $(this).val(0);
-                        item.find('option[value=' + id + ']').remove();
-                        $('button:reset:visible').html('Clear').removeClass('btn-danger').unbind();
-                    });
-                });
-            });
-        }); 
-    });
-    users_update_user(0);
 });
 
 
@@ -252,19 +223,8 @@ function loadNzbServers() {
     });
 }
 
-function users_update_user(id) {
-    $.get(WEBDIR + 'users/getuser', function (data) {
-        if (data === null) return;
-        var users = $('#users_user_id').empty().append($('<option>').text('New').val(0));
-        $.each(data.users, function (i, item) {
-            var option = $('<option>').text(item.name).val(item.id);
-            if (id == item.id) option.attr('selected', 'selected');
-            users.append(option);
-        });
-    }, 'json');
-}
-
 $(document).on('click', '.delete_cache', function(e){
+
     $.ajax({
         'url': WEBDIR + 'settings/delete_cache',
         'dataType': 'json',
@@ -280,3 +240,24 @@ $(document).on('click', '.delete_cache', function(e){
         }
     });
 });
+
+$(document).on('click', '.restart', function(){
+
+    $.ajax({
+        'url': WEBDIR + 'restart',
+        'dataType': 'text',
+        'success': function(response) {
+            //if (response.success) {
+                //$('.delete_cache').addClass('btn-success').removeClass('btn-danger');
+                notify('Info', response, 'success', 5);
+                //alert('success' + response);
+
+            //} else {
+                //$('.delete_cache').addClass('btn-danger').removeClass('btn-success');
+                //notify('Error', 'Failed to delete cache folder', 'error', 5);
+                //alert('failed' + response);
+            //}
+        }
+    });
+});
+

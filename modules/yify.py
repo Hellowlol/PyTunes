@@ -58,8 +58,8 @@ class Yify:
         moviedata = self._fetch_data(url)
         if 'MovieList' in moviedata:
             for movie in moviedata['MovieList']:
-                title = (movie['MovieTitleClean'][:14] + '..') if len(movie['MovieTitleClean']) > 16 else movie['MovieTitleClean']
-                title += '<br>' + movie['MovieYear']
+                title = ('%s..' % movie['MovieTitleClean'][:14]) if len(movie['MovieTitleClean']) > 16 else movie['MovieTitleClean']
+                title += '<br>%s' % movie['MovieYear']
                 movies += html('yify_thumb_item') % (movie['MovieTitle'], movie['MovieID'],  movie['CoverImage'], title) 
             return movies
         else:

@@ -1,4 +1,3 @@
-
 function loadClients() {
     //alert('clients');
     $.ajax({
@@ -53,13 +52,14 @@ function loadMovie(id) {
             $('#youtube').click(function (e) {
                 var src = 'http://www.youtube.com/embed/' + $(this).attr('ytid') + '?rel=0&autoplay=1';
                 var youtube = $('<iframe allowfullscreen>').attr('src', src).addClass('modal-youtube');
-               $('#modal_dialog .modal-body').html(youtube);
+                $('#modal_dialog .modal-body').html(youtube);
             });
         }
     });
 }
 
 function search(set, keywords, quality, genre, rating, sort, order, append) {
+    $('.spinner').show();
     var sendData = {
         set: set,
         keywords: keywords,
@@ -79,45 +79,46 @@ function search(set, keywords, quality, genre, rating, sort, order, append) {
             if (!append) {
                 document.getElementById("yify-grid").innerHTML = "";
             }
-            //for some reason the .empty method didn't work
-            //$('#yify-grid').empty;
-            $('.spinner').show();
             if (data === null) return errorHandler();
             $('#yify-grid').append(data);
+            $('.spinner').hide();
         },
         complete: function () {
-            $('.yify').click(function(e){
+            $('.yify').click(function (e) {
                 e.preventDefault();
                 loadMovie($(this).prop('id'));
             });
-            $('.spinner').hide();
         }
     });
-} 
+}
 
 var set = 1;
 
 $(document).ready(function () {
-    $('.spinner').show();
-    search(set, $('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val(),$('#order').val(), 0);
-    $('.spinner').hide();
+    //$('.spinner').show();
+    search(set, $('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val(), $('#order').val(), 0);
+    //$('.spinner').hide();
     $('#searchform').submit(function () {
         //e.preventDefault();
         set = 1;
-        search(set, $('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val(),$('#order').val(), 0);
+        search(set, $('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val(), $('#order').val(), 0);
         return false;
     });
     // Load more titles on scroll
     $(window).scroll(function () {
         if ($(window).scrollTop() + $(window).height() >= $(document).height() - 10) {
             set += 1;
-            search(set, $('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val(),$('#order').val(), 1);
+            $('.spinner').show();
+            search(set, $('#keywords').val(), $('#quality').val(), $('#genre').val(), $('#rating').val(), $('#sort').val(), $('#order').val(), 1);
         }
+            $('.spinner').hide();
     });
     loadClients();
     // Client change. send command, reload options.
     $('#defclient').change(function () {
-        sendData = {client: $("#defclient option:selected").text()};
+        sendData = {
+            client: $("#defclient option:selected").text()
+        };
         $.ajax({
             url: WEBDIR + 'settings/SetTorrClient',
             type: 'get',
@@ -129,4 +130,3 @@ $(document).ready(function () {
         });
     });
 });
-

@@ -5,55 +5,56 @@ def get_var(var):
 
     vars = {}
     vars['movienfo'] = """
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <movie>
-    <title>${title}</title>
-    <originaltitle>${originaltitle}</originaltitle>
-    <sorttitle></sorttitle>
-    <set>${setname}</set>
-    <setthumb>${setthumb}</setthumb>
-    <setfanart>${setfanart}</setfanart>
-    <rating>${rating}</rating>
-    <year>${year}</year>
-    <top250>${top250}</top250>
-    <votes>${votes}</votes>
-    <outline>${outline}</outline>
-    <plot>${plot}</plot>
-    <tagline>${tagline}</tagline>
-    <runtime>${runtime}</runtime> //runtime in minutes
-${thumbs}
+    <title>%s</title>
+    <originaltitle>%s</originaltitle>
+    <sorttitle>%s</sorttitle>
+    <set>%s</set>
+    <setthumb>%s</setthumb>
+    <setfanart>%s</setfanart>
+    <rating>%s</rating>
+    <year>%s</year>
+    <top250>%s</top250>
+    <votes>%s</votes>
+    <outline>%s</outline>
+    <plot>%s</plot>
+    <tagline>%s</tagline>
+    <runtime>%s</runtime> //runtime in minutes
+%s      //thumbs
     <fanart>
-${fanarts}
+%s
     </fanart>
-    <mpaa>${mpaa}</mpaa>
+    <mpaa>%s</mpaa>
     <playcount>0</playcount>
     <id>${imdb}</id>
     <filenameandpath></filenameandpath>
-${trailers}
+%s     //trailers
     <genre>${genre}</genre>
     <credits></credits>
     <fileinfo>
         <streamdetails>
             <video>
-                <codec>${vcodec}</codec>
-                <aspect>$aspect}</aspect>
-                <width>${width}</width>
-                <height>${height}</height>
+                <codec>%s</codec>
+                <aspect>%s</aspect>
+                <width>%s</width>
+                <height>%s</height>
             </video>
             <audio>
-                <codec>${acodec}</codec>
+                <codec>%s</codec>
                 <language></language>
-                <channels>${channels}</channels>
+                <channels>%s</channels>
             </audio>
             <subtitle>
                 <language></language>
             </subtitle>
         </streamdetails>
     </fileinfo>
-    <director>${director}</director>
-    <writer>${writer}</writer>
-${actors}
+    <director>%s</director>
+    <writer>%s</writer>
+%s      //actors
     <art>
-${arts}
+%s      //arts
     </art>
 </movie>
     """
@@ -65,16 +66,7 @@ ${arts}
         <thumb>%s</thumb>
     </actor> 
     """
-    vars['carousel_item'] = "<div class='item carousel-item' style='background-image: url(\"/xbmc/GetThumb?h=240&w=430&thumb=http://image.tmdb.org/t/p/original%s\")'><div class='carousel-caption'><h4>%s (%s)</h4></div></div>"
-    
-    vars['carousel_item2'] = """
-<div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=http://image.tmdb.org/t/p/original%s')">
-    <div class='carousel-caption'>
-        <h4>%s (%s)</h4>
-            <b>Rating</b>: 
-    </div>
-</div> 
-    """
+    vars['carousel_item'] = """<div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=http://image.tmdb.org/t/p/original%s')"><div class="carousel-caption"><h4>%s (%s)</h4></div></div>"""
 
     vars['tmdb_movie_modal_middle'] = """
             <div>
@@ -340,6 +332,68 @@ ${arts}
 </tr>
 
     """
+    vars['trans_queuetop'] = "<a href='/transmission/Queue_Move?id=%s&pos=%s' class='queue btn btn-mini torrent-action' title='Move to Top'><i class='icon-long-arrow-up'></i></a>"
+    vars['trans_queueup'] = "<a href='/transmission/Queue_Move?id=%s&pos=%s' class='queue btn btn-mini torrent-action' title='Move Up 1 Level'><i class='icon-level-up'></i></a>"
+    vars['trans_queuedown'] = "<a href='/transmission/Queue_Move?id=%s&pos=%s' class='queue btn btn-mini torrent-action' title='Move Down 1 Level'><i class='icon-level-down'></i></a>"
+    vars['trans_queuebottom'] = "<a href='/transmission/Queue_Move?id=%s&pos=%s' class='queue btn btn-mini torrent-action' title='Move to Bottom'><i class='icon-long-arrow-down'></i></a>"
+    vars['trans_row'] = """
+<tr>
+    <td>
+        <a href='#' class='show-torr' torr-id='%s'>
+            %s
+        </a>
+        <br>
+        <small><i class='icon-download'></i>
+            %s
+        &nbsp;&nbsp;
+        <i class='icon-upload'></i>
+            %s
+            &nbsp;&nbsp;&nbsp;&nbsp;connected:&nbsp;%s&nbsp;&nbsp;seeds:&nbsp;%s&nbsp;&nbsp;leach:&nbsp;%s
+        </small>
+    </td>
+    <td>
+        %s
+    </td>
+    <td>
+        %s
+    </td>
+    <td>
+        %s
+    </td>
+    <td>
+        %s&nbsp;/&nbsp;%s
+    </td>
+    <td>
+        %s
+    </td>
+    <td>
+        <div class = 'progress %s'>
+            <div class='bar' style='width:%s;'></div>
+            <span><b>%s</b></span>
+        </div>
+    </td>
+    <td>
+        <div class='button-group'>
+            %s
+        </div>
+    </td>
+</tr>
+    """
+    vars['trans_start'] = "<a href='/transmission/start/%s' title='Send to Queue' class='btn btn-mini torrent-action'><b>Que</b></a>"
+
+    vars['trans_start_now'] = "<a href='/transmission/start_now/%s' title='Force Start Now' class='btn btn-mini torrent-action'><i class='icon-exclamation'></i>&nbsp;<i class='icon-play'></i></a>"
+
+    vars['trans_pause'] = "<a href='/transmission/stop/%s' title='Pause Torrent' class='btn btn-mini torrent-action'><i class='icon-pause'></i></a>"
+
+    vars['trans_remove'] = "<a href='/transmission/remove/%s' title='Remove Torrent' class='btn btn-mini torrent-action'></i><i class='icon-remove'></i></a>"
+
+    vars['trans_remove_data'] = "<a href='/transmission/remove/%s/True' title='Remove Torrent and Data' class='btn btn-mini torrent-action'><i class='icon-trash'></i></a>"
+
+    vars['trans_reannounce'] = "<a href='/transmission/reannounce/%s' title='Ask Tracker For More Peers' class='btn btn-mini torrent-action'><i class='icon-microphone'></i></a>"
+
+    vars['trans_files'] = "<a href='/transmission/files/%s' title='Edit %s Files' class='btn btn-mini torrent-files'><i class='icon-copy'></i></a>"
+
+    vars['trans_error'] = "<button title='Click for Error Message' class='btn btn-mini btn-danger torrent-error' message='%s'><i class='icon-warning-sign'></i></button>"
 
     vars['yify_carousel'] = """
 <div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=%s')">
@@ -377,8 +431,6 @@ ${arts}
     vars['tmdb_thumb_item'] = """<li class="pull-left" title="%s"><a href="#" id="%s" class="tmdb"><img class="thumbnail" src="/manager/GetThumb?w=100&h=150&thumb=%s"></img><h6 class="title">%s</h6></a></li>"""
 
     vars['yify_thumb_item'] = """<li title="%s"><a href="#" id="%s" class="yify"><img src="/manager/GetThumb?w=100&h=150&thumb=%s"></img><h6 class="title">%s</h6></a></li>"""
-
-    vars['carousel_item'] = """<div class="item carousel-item" style="background-image: url('/manager/GetThumb?h=240&w=430&thumb=http://image.tmdb.org/t/p/original%s')"><div class="carousel-caption"><h4>%s (%s)</h4></div></div>"""
 
     vars['trailer_button'] = '<div class="btn-group"><button id="youtube" ytid="%s" class="btn btn-primary">Trailer</button></div>'
 
