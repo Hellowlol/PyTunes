@@ -105,7 +105,6 @@ function get_local_ip() {
 
 function network_usage() {
     $.getJSON(WEBDIR + "stats/network_usage", function (response) {
-        //alert(response);
         $("#stat-sent").text(getReadableFileSizeString(response.bytes_sent));
         $("#stat-recv").text(getReadableFileSizeString(response.bytes_recv));
         $("#errin").text(response.errin);
@@ -138,7 +137,6 @@ function virtual_memory() {
 
 function swap_memory() {
     $.getJSON(WEBDIR + "stats/swap_memory", function (swap) {
-        //alert(response.total);
         $('#stot').text(getReadableFileSizeString(swap.total));
         $('#sfree').text(getReadableFileSizeString(swap.free));
         $('#sused').text(getReadableFileSizeString(swap.used));
@@ -150,7 +148,7 @@ function cpu_percent() {
     $.getJSON(WEBDIR + "stats/cpu_percent", function (cpu) {
         $('#cuser').text(cpu.user + '%');
         $('#cidle').text(cpu.idle + '%');
-        $('#csys').text(cpu.system +'%');
+        $('#csys').text(cpu.system + '%');
         $("#cpu").text((100 - cpu.idle).toFixed(1) + '%');
     });
 }
@@ -169,7 +167,7 @@ function processes() {
             });
             $('.show-proc').click(function (e) {
                 e.preventDefault();
-                showProcess($(this).attr('data-pid'))
+                showProcess($(this).attr('data-pid'));
             });
             $('.spinner').hide();
         }
@@ -227,14 +225,11 @@ function loadtabs() {
         get_local_ip();
         network_usage();
         sys_info();
-    } 
-    else if ($('#filesystems_tab').is(':visible')) {
+    } else if ($('#filesystems_tab').is(':visible')) {
         disk_info();
-    }
-    else if ($('#processes_tab').is(':visible')) {
+    } else if ($('#processes_tab').is(':visible')) {
         processes();
-    }
-    else if ($('#users_tab').is(':visible')) {
+    } else if ($('#users_tab').is(':visible')) {
         get_users();
     }
 }
@@ -251,89 +246,68 @@ function reloadtabs() {
         get_local_ip();
         network_usage();
         sys_info();
-    } 
-    else if ($('#filesystems_tab').is(':visible')) {
+    } else if ($('#filesystems_tab').is(':visible')) {
         disk_info();
-    }
-    else if ($('#processes_tab').is(':visible')) {
+    } else if ($('#processes_tab').is(':visible')) {
         $('#proc-table').empty();
         processes();
     }
 }
 
-   $('#summary_tab').click(function () {
-        get_diskinfo2();
-        uptime();
-        get_user();
-        cpu_percent();
-        swap_memory();
-        virtual_memory();
-        get_external_ip();
-        get_local_ip();
-        network_usage();
-        sys_info();
-   });
-   $('#filesystems_tab').click(function () {
-       get_diskinfo();
-   });
-    $('#processes_tab').click(function () {
-        $('#proc-table').empty();
-        processes();
-   });
-   $('#users_tab').click(function () {
-        $('#user-table').empty();
-        get_users();
-   });
-
-   // Used for popen
-    $(document).on('click', '#sendcmd', function(){
-        var i = $('#cmdinput').val();
-        $('#shellres').append('<b>' + i + '</b>\n')
-       $.get(WEBDIR + "stats/cmdpopen/"+ $(this).attr('data-cmd')+"/" + i, function (response) {
-            $('#shellres').append(response);
-            document.getElementById("cmdinput").value = "";
-       
-       });
-   });
-
-    $(document).on('click', '#clearhistory', function(){
-            $('#shellres').empty();
-   });
-
-
-
 // Loads the moduleinfo
 $(document).ready(function () {
-    $('.spinner').show();
-    loadtabs();
-	var elf = $('#elfinder').elfinder({
-		url : WEBDIR + "connector/"  // connector URL (REQUIRED)
-	}).elfinder('instance');
-   $.get(WEBDIR + "connector/", function (response) {
-        //alert(response);       
-   });
+    if (importPsutil) {
+        $('.spinner').show();
+        loadtabs();
+        var elf = $('#elfinder').elfinder({
+            url: WEBDIR + "connector/" // connector URL (REQUIRED)
+        }).elfinder('instance');
+        $.get(WEBDIR + "connector/", function (response) {
+            //alert(response);       
+        });
+        $('#summary_tab').click(function () {
+            get_diskinfo2();
+            uptime();
+            get_user();
+            cpu_percent();
+            swap_memory();
+            virtual_memory();
+            get_external_ip();
+            get_local_ip();
+            network_usage();
+            sys_info();
+        });
+        $('#filesystems_tab').click(function () {
+            get_diskinfo();
+        });
+        $('#processes_tab').click(function () {
+            $('#proc-table').empty();
+            processes();
+        });
+        $('#users_tab').click(function () {
+            $('#user-table').empty();
+            get_users();
+        });
+
+        // Used for popen
+        $(document).on('click', '#sendcmd', function () {
+            var i = $('#cmdinput').val();
+            $('#shellres').append('<b>' + i + '</b>\n');
+            $.get(WEBDIR + "stats/cmdpopen/" + $(this).attr('data-cmd') + "/" + i, function (response) {
+                $('#shellres').append(response);
+                document.getElementById("cmdinput").value = "";
+
+            });
+        });
+
+        $(document).on('click', '#clearhistory', function () {
+            $('#shellres').empty();
+        });
+
+        setInterval(function () {
+            cpu_percent();
+            virtual_memory();
+        }, 10000);
+    }
+
 });
-
-setInterval(function () {
-    //get_diskinfo();
-    //get_diskinfo2();
-//    sys_info();
-//    processes();
-    cpu_percent();
-    virtual_memory();
-}, 10000);
-setInterval(function () {
-//    get_diskinfo();
-//    get_diskinfo2();
-//    uptime();
-//    get_user();
-//    get_external_ip(); // dont want to spam a external service.
-//    get_local_ip();
-//    network_usage();
-//    cpu_percent();
-//    virtual_memory();
-//    sys_info();
-//    return_settings3();
-}, 5000);
-
-

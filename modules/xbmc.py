@@ -22,10 +22,10 @@ class Xbmc:
         """ Add module to list of modules on load and set required settings """
         self.logger = logging.getLogger('modules.xbmc')
 
-        #XbmcServers.createTable(ifNotExists=True)
         pytunes.MODULES.append({
             'name': 'XBMC',
             'id': 'xbmc',
+            'button': {'name':'Delete Cache', 'classes': 'btn btn-danger delete_cache', 'type': 'button'}, 
             'fields': [
                 {'type':'bool',
                  'label':'Enable',
@@ -37,6 +37,9 @@ class Xbmc:
                 {'type':'bool',
                  'label':'Enable PVR',
                  'name':'xbmc_enable_pvr'},
+                {'type':'button',
+                 'name':'Delete Cache',
+                 'classes':'btn btn-danger delete_cache'},
                 {'type':'bool',
                  'label':'Hide watched',
                  'name':'xbmc_hide_watched'}
