@@ -37,12 +37,12 @@ class Deluge:
     @cherrypy.expose()
     def index(self):
         return pytunes.LOOKUP.get_template('deluge.html').render(scriptname='deluge')
-   
+
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def connected(self):
-        return self.fetch('web.connected')   
-    
+        return self.fetch('web.connected')
+
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def connect(self,hostid):
@@ -85,7 +85,7 @@ class Deluge:
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()
-    def to_client(self, link, torrentname, **kwargs):
+    def to_client(self, link, torrentname=None, **kwargs):
         try:
             #Fetch download path from settings
             download_path = self.fetch('core.get_config_value', ['download_location'])
@@ -105,8 +105,8 @@ class Deluge:
 
         # format post data
         data = {'id':1,'method': method,'params':arguments}
-           
-    
+
+
         response = self.read_data(data)
         print "response: ", response
         self.logger.debug ("response is %s" %response)
@@ -120,11 +120,11 @@ class Deluge:
     def auth(self):
         self.read_data({"method": "auth.login","params": [pytunes.settings.get('deluge_password', '')],"id": 1})
 
-        
+
     def read_data(self,data):
         try:
             self.logger.debug("Read data from server. Data:%s" % data)
-            
+
             host = pytunes.settings.get('deluge_host', '')
             port = str(pytunes.settings.get('deluge_port', ''))
 
