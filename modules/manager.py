@@ -335,7 +335,7 @@ class Manager:
     def __init__(self):
         """ Add module to list of modules on load and set required settings """
         self.logger = logging.getLogger('modules.manager')
-        Monitor(cherrypy.engine, processmovies.process, frequency=90).subscribe()
+        Monitor(cherrypy.engine, processmovies.process, frequency=30).subscribe()
         #job1 = sched.add_cron_job(processmovies.process, minute="*/%s" % 15)
         #job2 = sched.add_cron_job(processtv.process, minute="*/%s" % 15)
         #job3 = sched.add_cron_job(processmusic.process, minute=randint(0,59))
@@ -352,6 +352,7 @@ class Manager:
         pytunes.MODULES.append({
             'name': 'Media Manager',
             'id': 'manager',
+            'directions': '',
             'fields': [
                 {'type':'bool', 
                     'label':'Enable', 

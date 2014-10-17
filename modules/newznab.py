@@ -13,7 +13,7 @@ class Newznab:
     def __init__(self):
         self.logger = logging.getLogger('modules.newznab')
         pytunes.MODULES.append({
-            'name': 'NZB Search',
+            'name': 'Newznab Search',
             'id': 'newznab',
             'fields': [
                 {'type':'bool', 'label':'Enable', 'name':'newznab_enable'},

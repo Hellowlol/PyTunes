@@ -1,3 +1,7 @@
+.navbar .brand,
+.navbar .nav > li > a {
+    padding: 10px 7px 10px;
+}
 html, body {
     background: #eee url('../../../img/bodybg.jpg');
 }

@@ -16,7 +16,7 @@ class Sickbeard:
         pytunes.MODULES.append({
             'name': 'Sickbeard',
             'id': 'sickbeard',
-            'test': '%sickbeard/ping' % pytunes.WEBDIR,
+            'test': '%ssickbeard/ping' % pytunes.WEBDIR,
             'fields': [
                 {'type': 'bool', 'label': 'Enable', 'name': 'sickbeard_enable'},
                 {'type': 'text', 'label': 'Menu name', 'name': 'sickbeard_name', 'placeholder':''},
