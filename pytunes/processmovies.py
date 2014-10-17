@@ -271,7 +271,7 @@ def process():
                 continue
             st=os.stat(path) 
             age=(time.time()-st.st_mtime)
-            print 'age: ', age
+            logger.debug('age: %s' % age)
             if age < 300:
                 logger.debug('not age %s' % path)
                 continue
