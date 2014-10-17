@@ -187,7 +187,7 @@ def streaminfo(file):
     try:
         info = enzyme.parse(file)
     except:
-        return 'Enzyme error'
+        logger.debug('Enzyme error')
     movieinfo = {
         'length':'',
         'vcodec':'',
@@ -198,10 +198,14 @@ def streaminfo(file):
         'samplerate':'',
         'channels':''}
     info = str(info)
+    logger.debug('info: %s' % info)
     lines =  info.split('+--')
     head = lines[0].split('\n')
     video = lines[1].split('\n')
-    audio = lines[2].split('\n')
+    if len(lines) == 3:
+        audio = lines[2].split('\n')
+    else:
+        audio = []
 
     for line in head:
         if 'length' in line:
@@ -225,40 +229,58 @@ def streaminfo(file):
     return movieinfo
 
 def process():
-    #For future to check age of file in seconds
-    #st=os.stat(Filename) 
-    #Age=(time.time()-st.st_mtime)
     moviedir = pytunes.settings.get('movie_in', '')
     destdir = pytunes.settings.get('movie_out', '')
     total = 0
+    paths = []
     hits = 0 
     moviepath = ''
     matched = []  
     unmatched = []
-    exts = ['.avi', '.mp4', '.mkv', '.flv', '.mpeg', '.riff']
+    exts = ['.avi', '.mp4', '.mkv', '.flv', '.mpeg', '.riff', '.webm', 'm4v', 'm4p', '.mpg', 'mp2', 'mpv', 'mpe']
     if moviedir and destdir:  
         if not os.path.exists(moviedir):
             os.makedirs(moviedir)
         if not os.path.exists(destdir):
             os.makedirs(destdir)
         if not os.access(destdir, os.W_OK):
-            sys.exit("No write access to destination movie folder")
+            logger.error("No write access to destination movie folder")
+            return
         if not (moviedir.endswith('/')):
             moviedir += '/'
         if not (destdir.endswith('/')):
             destdir += '/'
     else:
         return
-    paths = glob.glob('%s*' % moviedir)
+    for root, dirs, files in os.walk(moviedir):
+        #handle dirs
+        logger.debug('walking in %s' % moviedir)
+        #print root, dirs, files
+        for file in files:
+            #print  file
+            path = os.path.join(root, file)
+            #print pat
+
+            if root == '%sfailed' % moviedir:
+                continue
+            if not os.path.isfile(path):
+                continue
+            fileName, fileExtension = os.path.splitext(path)
+            if not fileExtension in exts:
+                logger.debug('no match%s' % path)
+                continue
+            st=os.stat(path) 
+            age=(time.time()-st.st_mtime)
+            print 'age: ', age
+            if age < 300:
+                logger.debug('not age %s' % path)
+                continue
+            paths.append(path)
+        print paths
+    #return
     for path in paths:
         match = 0
         matches = {}
-        #need to open folder here.
-        if not os.path.isfile(path):
-              continue
-        fileName, fileExtension = os.path.splitext(path)
-        if not fileExtension in exts:
-            continue
         moviepath = path    
         file = os.path.basename(path)
         guess = guessit.guess_movie_info(file, info = ['filename'])
@@ -308,7 +330,7 @@ def process():
             #import ntpath
             #ntpath.basename("a/b/c")            
             if os.path.exists(path):        
-                shutil.move(path, '%sfailed%s' % (moviedir, movie))
+                shutil.move(path, '%sfailed/%s' % (moviedir, movie))
         if not matches and search['results']:
             #need to add another layer of sophistication here!
             #right now it's just a trap to log failed matches when there were search results
