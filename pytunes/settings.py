@@ -70,8 +70,8 @@ class Settings:
         """ Set keys if settings are received. Show settings page """
         if kwargs:
             if 'enable_ssl' in kwargs:
-                if kwargs['enable_ssl'] == 'on' and kwargs['app_ssl_cert'] and kwargs['app_ssl_key']:
-                    self.create_certs(kwargs['app_ssl_cert'], kwargs['app_ssl_key'])
+                if kwargs['enable_ssl'] == 'on':
+                    self.create_certs()
             for key, val in kwargs.items():
                 self.set(key, val)
         return pytunes.LOOKUP.get_template('settings.html').render(scriptname='settings', pytunes=pytunes)
@@ -117,15 +117,16 @@ class Settings:
             themes.append({'name': theme, 'value': theme, 'selected': current})
         return themes
 
-    def create_certs(self, key_file, cert_file):
+    def create_certs(self):
+        print 'create'
         cert_dir = os.path.join(pytunes.RUNDIR, "userdata/")
         """
         If key_file and cert_file don't exist in cert_dir, create a new
         self-signed cert and keypair and write them into that directory.
         """
 
-        if not exists(join(cert_dir, cert_file)) \
-            or not exists(join(cert_dir, key_file)):
+        if not exists(join(cert_dir, 'server.crt')) \
+            or not exists(join(cert_dir, 'server.key')):
             
             cakey = createKeyPair(TYPE_RSA, 1024)
             careq = createCertRequest(cakey, CN=gethostname())
@@ -134,12 +135,12 @@ class Settings:
             cname = 'PyTunes'
             pkey = createKeyPair(TYPE_RSA, 1024)
             req = createCertRequest(pkey, CN=cname)
-            cert = createCertificate(req, (cacert, cakey), 0, (0, 60*60*24*365*10)) # ten years
+            cert = createCertificate(req, (cacert, cakey), 1, (0, 60*60*24*365*10)) # ten years
 
             # Save the key and certificate to disk
 
-            open(join(cert_dir, key_file), 'w').write(crypto.dump_privatekey(crypto.FILETYPE_PEM, pkey))
-            open(join(cert_dir, cert_file), 'w').write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
+            open(join(cert_dir, 'server.key'), 'w').write(crypto.dump_privatekey(crypto.FILETYPE_PEM, pkey))
+            open(join(cert_dir, 'server.crt'), 'w').write(crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
 
     @cherrypy.expose()
     @cherrypy.tools.json_out()

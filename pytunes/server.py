@@ -10,6 +10,11 @@ import logging
 from cherrypy.process.plugins import Daemonizer, PIDFile
 from cherrypy.lib.auth_digest import get_ha1_dict_plain
 
+def secureheaders():
+    headers = cherrypy.response.headers
+    headers['X-Frame-Options'] = 'DENY'
+    headers['X-XSS-Protection'] = '1; mode=block'
+    headers['Content-Security-Policy'] = "default-src='self'"
 
 def start():
     """ Main function for starting PyTunes server """
@@ -27,6 +32,9 @@ def start():
         'server.socket_queue_size': 30,
         'server.request_queue_size': 50
     })
+    
+    #wrap in secure headers
+    cherrypy.tools.secureheaders = cherrypy.Tool('before_finalize', secureheaders, priority=60)
 
     # Set server environment to production unless when debugging
     if not pytunes.DEBUG:
@@ -36,8 +44,7 @@ def start():
 
     # Enable SSL
     if pytunes.SSLCERT and pytunes.SSLKEY:
-        #cert_dir = os.path.join(pytunes.RUNDIR, "userdata/")
-        print os.path.join(pytunes.RUNDIR, "userdata/", pytunes.SSLCERT)
+        #headers['Strict-Transport-Security'] = 'max-age=31536000'  # one year
         ssl = 's'
         secure = 'Secure '
         cherrypy.config.update({
@@ -63,6 +70,7 @@ def start():
     favicon = os.path.join(webdir, "img/favicon.ico")
     app_config = {
         '/': {
+            'tools.secureheaders.on': True,
             'tools.staticdir.root': webdir,
             'tools.encode.on': True,
             'tools.encode.encoding': 'utf-8',
