@@ -30,7 +30,15 @@ class Root:
         """ Do nothing on load """
         self.logger = logging.getLogger('pytunes.root')
         pass
-    
+
+    @cherrypy.expose(alias='robots.txt')
+    def robots(self):
+        if pytunes.settings.get('robots'):
+            r = "User-agent: *\nDisallow: /\n"
+        else:
+            r = "User-agent: *\nDisallow: /logout/\nDisallow: /restart/\nDisallow: /shutdown/\nDisallow: /update/\nDisallow: /manager/\nDisallow: /settings/"
+        return cherrypy.lib.static.serve_fileobj(r, content_type='text/plain', disposition=None, name='robots.txt', debug=False)   
+
     @cherrypy.expose()
     def index(self):
         """ Load template for frontpage """

@@ -377,6 +377,7 @@ class Xbmc:
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def ExecuteAddon(self, addon, cmd0='', cmd1=''):
+        print 'addon ', addon, 'cmd00', cmd0, 'cmd1; ', cmd1
         if cmd0 == 'undefined':
             cmd0 = ''
         if cmd1 == 'undefined':
@@ -393,10 +394,11 @@ class Xbmc:
             cmd = 'movieid=%s' % int(cmd0)
             return xbmc.Addons.ExecuteAddon(addon, cmd)
         elif addon == 'plugin.video.youtube':
-            cmd = 'action=play_video&videoid=%s' % cmd0
+            cmd = '?path=/root/video&action=play_video&videoid=%s' % cmd0
+            print cmd
             return xbmc.Addons.ExecuteAddon(addon, cmd)
         elif addon == 'script.cdartmanager':
-            return xbmc.Addons.ExecuteAddon('addonid=%s' % addon, cmd0)
+            return xbmc.Addons.ExecuteAddon(addon, cmd0)
         elif addon == 'plugin.video.twitch':
             if cmd0: # If search
                 return xbmc.Addons.ExecuteAddon(addon, '/searchresults/%s/0' % cmd0)

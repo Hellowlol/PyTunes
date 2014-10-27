@@ -71,7 +71,9 @@ def start():
     app_config = {
         '/': {
             'tools.secureheaders.on': True,
+            'tools.staticdir.on': True,
             'tools.staticdir.root': webdir,
+            'tools.staticdir.dir': 'static',
             'tools.encode.on': True,
             'tools.encode.encoding': 'utf-8',
             'tools.gzip.on': True,

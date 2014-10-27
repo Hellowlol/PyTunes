@@ -28,7 +28,8 @@
                 {'type':'bool', 'label':'Enable SSL', 'name':'enable_ssl', 'checked':bool(settings.get('enable_ssl', 0))},
                 {'type':'bool', 'label':'Open Browser at Startup', 'name':'browser', 'checked':bool(settings.get('browser', 0))},
                 {'type':'text', 'label':'Git Path', 'name':'git_path', 'value':settings.get('git_path', 'git')},
-                {'type': 'select', 'label': 'Git Branch', 'name': 'branch', 'desc':'Must have Git and psutil installed', 'options':''}
+                {'type': 'select', 'label': 'Git Branch', 'name': 'branch', 'desc':'Must have Git and psutil installed', 'options':''},
+                {'type':'bool', 'label':'Use robots.txt', 'name':'robots', 'desc':'Stop bots from indexing your site', 'value':settings.get('robots')}
             ], buttons=[
                         {'name':'Save', 'type':'submit', 'classes':'btn-primary'},
                         {'name':'Clear', 'type':'reset'},
