@@ -11,6 +11,7 @@ function loadClients() {
 }
 
 function search(query, engineid, catid) {
+    //log('search: ' + query +' , ' + engineid + ' , ' + catid);
     if (query === undefined) return;
     $.ajax({
         url: WEBDIR + 'torrents/search?q=' + query + '&engineid=' + engineid + '&cat=' + catid,
@@ -33,6 +34,7 @@ function search(query, engineid, catid) {
                 ]
             ]);
             $('.download').click(function () {
+                //log('download click: ' + $(this).attr('torr_link'));
                 var sendData = {
                     link: $(this).attr('torr_link')
                 };
@@ -52,6 +54,7 @@ function search(query, engineid, catid) {
             $('.spinner').hide();
         },
         error: function () {
+            alert("Error");
             //add error block
         }
     });

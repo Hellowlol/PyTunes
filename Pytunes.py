@@ -106,8 +106,8 @@ def main():
 
     # Check for SSL
     if not args.nossl and pytunes.settings.get('enable_ssl'):
-        pytunes.SSLCERT = 'server.crt'
-        pytunes.SSLKEY = 'server.key'
+        pytunes.SSLCERT = pytunes.settings.get('app_ssl_cert')
+        pytunes.SSLKEY = pytunes.settings.get('app_ssl_key')
     else:
         pytunes.SSLCERT = ''
         pytunes.SSLKEY = ''

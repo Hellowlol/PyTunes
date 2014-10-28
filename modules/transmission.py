@@ -231,7 +231,7 @@ class Transmission:
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def to_client2(self, data):
-        print 'info: ', data
+        #print 'info: ', data
         try:
             self.logger.info('Added torrent info to Transmission from file')
             return self.fetch('torrent-add', {'metainfo': info})
@@ -255,7 +255,7 @@ class Transmission:
     @cherrypy.expose()
     @cherrypy.tools.json_out()
     def ChangeCat(self, id, dir):
-        print id, dir
+        #print id, dir
         return self.fetch('torrent-set-location', {'ids': int(id), 'location': dir, 'move': False})
 
     @cherrypy.expose()
@@ -267,8 +267,8 @@ class Transmission:
         filestats = filestats['arguments']['torrents'][0]['fileStats']
         return filestats
         i = 0
-        for file in files['arguments']['torrents'][0]['files']:
-            print file
+        #for file in files['arguments']['torrents'][0]['files']:
+        #    print file
 
 
     # Wrapper to access the Transmission Api
@@ -338,3 +338,4 @@ class Transmission:
             return base64.encodestring('%s:%s' % (username, password)).replace('\n', '')
 
         return False
+
