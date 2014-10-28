@@ -63,11 +63,6 @@ def start():
     favicon = os.path.join(webdir, "img/favicon.ico")
     app_config = {
         '/': {
-<<<<<<< HEAD
-            'tools.secureheaders.on': True,
-            'tools.staticdir.on': True,
-=======
->>>>>>> parent of b4adfb8... Beta1
             'tools.staticdir.root': webdir,
             'tools.staticdir.dir': 'static',
             'tools.encode.on': True,
